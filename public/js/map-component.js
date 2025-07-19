@@ -64,23 +64,39 @@ class ORCASTMap {
 
     setupLayerToggles() {
         document.getElementById('togglePastBtn').addEventListener('click', () => {
-            this.showPast = !this.showPast;
-            document.getElementById('togglePastBtn').classList.toggle('active', this.showPast);
-            document.getElementById('pastSliderWrapper').style.display = this.showPast ? 'block' : 'none';
-            this.ensureAtLeastOneLayer();
+            this.showPast = true;
+            this.showPresent = false;
+            this.showFuture = false;
+            document.getElementById('togglePastBtn').classList.add('active');
+            document.getElementById('togglePresentBtn').classList.remove('active');
+            document.getElementById('toggleFutureBtn').classList.remove('active');
+            document.getElementById('pastSliderWrapper').style.display = 'block';
+            document.getElementById('futureSliderWrapper').style.display = 'none';
+            document.getElementById('thresholdWrapper').style.display = 'none';
             this.updateLayers();
         });
         document.getElementById('togglePresentBtn').addEventListener('click', () => {
-            this.showPresent = !this.showPresent;
-            document.getElementById('togglePresentBtn').classList.toggle('active', this.showPresent);
-            this.ensureAtLeastOneLayer();
+            this.showPast = false;
+            this.showPresent = true;
+            this.showFuture = false;
+            document.getElementById('togglePastBtn').classList.remove('active');
+            document.getElementById('togglePresentBtn').classList.add('active');
+            document.getElementById('toggleFutureBtn').classList.remove('active');
+            document.getElementById('pastSliderWrapper').style.display = 'none';
+            document.getElementById('futureSliderWrapper').style.display = 'none';
+            document.getElementById('thresholdWrapper').style.display = 'none';
             this.updateLayers();
         });
         document.getElementById('toggleFutureBtn').addEventListener('click', () => {
-            this.showFuture = !this.showFuture;
-            document.getElementById('toggleFutureBtn').classList.toggle('active', this.showFuture);
-            document.getElementById('futureSliderWrapper').style.display = this.showFuture ? 'block' : 'none';
-            this.ensureAtLeastOneLayer();
+            this.showPast = false;
+            this.showPresent = false;
+            this.showFuture = true;
+            document.getElementById('togglePastBtn').classList.remove('active');
+            document.getElementById('togglePresentBtn').classList.remove('active');
+            document.getElementById('toggleFutureBtn').classList.add('active');
+            document.getElementById('pastSliderWrapper').style.display = 'none';
+            document.getElementById('futureSliderWrapper').style.display = 'block';
+            document.getElementById('thresholdWrapper').style.display = 'block';
             this.updateLayers();
         });
         document.getElementById('pastSlider').addEventListener('input', (e) => {

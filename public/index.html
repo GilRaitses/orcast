@@ -53,8 +53,14 @@
                   <input type="range" min="1" max="12" value="1" class="slider" id="futureSlider">
                   <div id="futurePeriodDisplay" style="text-align: center; font-size: 0.8rem; color: #4fc3f7;">1 Month Ahead</div>
                 </div>
-                <input type="range" min="-12" max="2" value="0" class="slider" id="timeSlider" oninput="updateTimeFromSlider(this.value)">
-                <div id="periodDisplay" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #4fc3f7;">Current Month</div>
+                <div class="control-group" id="thresholdWrapper" style="display:none;">
+                  <label>Probability Threshold: <span id="thresholdValue">Medium</span></label>
+                  <input type="range" min="0" max="100" value="50" class="slider" id="thresholdSlider" oninput="updateThreshold(this.value)">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem;">
+                      <span>Low</span>
+                      <span>High</span>
+                  </div>
+                </div>
             </div>
 
             <!-- Quick Navigation -->
@@ -64,16 +70,6 @@
                     <button class="nav-btn" onclick="navigateRelative(-3)">-3</button>
                     <button class="nav-btn" onclick="navigateRelative(-1)">-1</button>
                     <button class="nav-btn" onclick="navigateRelative(1)">+1</button>
-                </div>
-            </div>
-
-            <!-- Probability Threshold -->
-            <div class="control-group">
-                <label>Probability Threshold: <span id="thresholdValue">Medium</span></label>
-                <input type="range" min="0" max="100" value="50" class="slider" id="thresholdSlider" oninput="updateThreshold(this.value)">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem;">
-                    <span>Low</span>
-                    <span>High</span>
                 </div>
             </div>
         </div>
