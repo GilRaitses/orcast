@@ -1,21 +1,109 @@
 // ORCAST Data Loader
-// Handles loading and processing of real orca sighting and environmental data
+// Handles loading and processing of live whale sighting data from Firestore
 
 class DataLoader {
     constructor() {
         this.realSightingsData = null;
         this.realProbabilityData = null;
         this.realEnvironmentalData = null;
+        this.db = null;
+        this.firebaseInitialized = false;
+    }
+
+    async initializeFirebase() {
+        if (this.firebaseInitialized) return;
+        
+        try {
+            // Wait for Firebase SDK to load
+            if (typeof firebase === 'undefined') {
+                console.log('⏳ Waiting for Firebase SDK to load...');
+                await new Promise(resolve => {
+                    const checkFirebase = () => {
+                        if (typeof firebase !== 'undefined') {
+                            resolve();
+                        } else {
+                            setTimeout(checkFirebase, 100);
+                        }
+                    };
+                    checkFirebase();
+                });
+            }
+
+            // Use the config from window.ORCA_CONFIG
+            const firebaseConfig = window.ORCA_CONFIG.firebase;
+            
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            
+            this.db = firebase.firestore();
+            this.firebaseInitialized = true;
+            console.log('🔥 Firebase initialized for live whale data');
+            
+        } catch (error) {
+            console.error('❌ Firebase initialization failed:', error);
+        }
     }
 
     async loadRealSightingsData() {
         try {
+            await this.initializeFirebase();
+            
+            if (!this.db) {
+                throw new Error('Firestore not initialized');
+            }
+            
+            console.log('🐋 Loading live whale sightings from Firestore...');
+            
+            // Query whale_sightings collection
+            const querySnapshot = await this.db.collection('whale_sightings')
+                .orderBy('timestamp', 'desc')
+                .limit(1000)
+                .get();
+            
+            const sightings = {};
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                // Convert Firestore data to expected format
+                sightings[doc.id] = {
+                    id: doc.id,
+                    timestamp: data.timestamp?.toMillis ? data.timestamp.toMillis() : (data.timestamp || Date.now()),
+                    location: {
+                        lat: data.location?.latitude || data.location?.lat || 48.5465,
+                        lng: data.location?.longitude || data.location?.lng || -123.0307
+                    },
+                    locationName: data.locationName || 'Unknown Location',
+                    confidence: data.confidence || 'medium',
+                    verified: data.verified || false,
+                    behavior: data.behavior || 'observed',
+                    orcaCount: data.orcaCount || 1,
+                    source: data.source || 'unknown'
+                };
+            });
+            
+            this.realSightingsData = sightings;
+            console.log(`✅ Loaded ${Object.keys(this.realSightingsData).length} live whale sightings from Firestore`);
+            
+            const sources = [...new Set(Object.values(sightings).map(s => s.source))];
+            console.log(`📊 Sources: ${sources.join(', ')}`);
+            
+        } catch (error) {
+            console.error('❌ Failed to load Firestore whale data:', error);
+            // Fallback to static data
+            await this.loadStaticSightingsData();
+        }
+    }
+
+    async loadStaticSightingsData() {
+        try {
+            console.log('🔄 Falling back to static whale data...');
             const response = await fetch('/data/sample_user_sightings.json');
             const data = await response.json();
             this.realSightingsData = data.userSightings;
-            console.log(`Loaded ${Object.keys(this.realSightingsData).length} real orca sightings`);
+            console.log(`📁 Loaded ${Object.keys(this.realSightingsData).length} static whale sightings`);
         } catch (error) {
-            console.error('Failed to load real sightings data:', error);
+            console.error('❌ Failed to load static sightings data:', error);
         }
     }
 
