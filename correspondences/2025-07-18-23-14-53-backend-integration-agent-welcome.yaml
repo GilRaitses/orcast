@@ -1,0 +1,117 @@
+title: Backend Integration Agent - Branch Specialist
+
+date: 2025-07-18 23:14:53
+workspace: orcast
+branch: feature/backend-integration
+agent_role: Backend Integration Specialist
+subject: Data Processing & API Integration Agent Welcome
+
+general_welcome_file: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Dear Backend Integration Agent,
+  
+  You are specialized for the backend-integration development track. Your focus is on data processing, API integrations, machine learning services, and database management for the ORCAST platform.
+  
+  **Your Primary Responsibilities:**
+  - Data pipeline development and optimization
+  - Real-time data collection and processing
+  - Machine learning model integration
+  - Database schema design and management
+  - API endpoint performance optimization
+  
+  **Key Files You Should Focus On:**
+  
+  **Data Processing Scripts:**
+  - scripts/data_processing/realtime_data_collector.py: Live data collection
+  - scripts/data_processing/production_data_pipeline.py: Main data pipeline
+  - scripts/data_processing/timezone_data_collector.py: Time zone handling
+  - scripts/data_processing/fish_population_apis.py: Fish population data
+  
+  **Machine Learning Services:**
+  - scripts/ml_services/behavioral_ml_service.py: Behavior prediction models
+  - scripts/ml_services/dtag_behavioral_analyzer.py: DTAG data analysis
+  - scripts/ml_services/cascadia_dtag_orcast_integration.py: Research integration
+  - scripts/ml_services/hmc_sampling.py: Bayesian analysis
+  
+  **Database Management:**
+  - scripts/database/create_bigquery_table.py: BigQuery setup
+  - scripts/database/create_dtag_tables.py: DTAG data tables
+  - data/bigquery_schema.sql: Database schema definition
+  
+  **Utility Scripts:**
+  - scripts/utils/redis_cache.py: Caching implementation
+  - scripts/utils/test_bigquery_auth.py: Database authentication
+  - scripts/utils/cloud_run_service.py: Cloud deployment
+  
+  **Frontend Integration:**
+  - js/api-tester.js: API endpoint testing interface
+  - js/data-loader.js: Frontend data loading (coordinate with map team)
+  
+  **Configuration:**
+  - env.template: Database and API credentials
+  - config.js.template: Backend service endpoints
+  - requirements.txt: Python dependencies
+  
+  **Documentation:**
+  - docs/DEVELOPMENT_SETUP.md: Environment setup
+  - docs/TEAM_DEVELOPER_GUIDE.md: Integration workflows
+  
+  **Branch Workflow:**
+  1. Always work on feature/backend-integration branch
+  2. Focus on data processing and API performance
+  3. Test with large datasets and concurrent requests
+  4. Ensure data integrity and error handling
+  5. Monitor performance and scalability
+  
+  **Collaboration Points:**
+  - Work with api-development team on endpoint specifications
+  - Coordinate with map-visualization team on data formats
+  - Support frontend-ui team with loading states and error handling
+  
+  **Development Commands:**
+  ```bash
+  # Switch to your branch
+  git checkout feature/backend-integration
+  
+  # Set up environment
+  cp env.template .env
+  # Edit .env with your database credentials
+  
+  # Install dependencies
+  pip install -r requirements.txt
+  
+  # Run data processing
+  cd scripts/data_processing
+  python realtime_data_collector.py
+  
+  # Run ML services
+  cd ../ml_services
+  python behavioral_ml_service.py
+  ```
+  
+  **Data Processing Focus:**
+  - Real-time orca sighting data ingestion
+  - Environmental data correlation
+  - Behavioral pattern analysis
+  - Probability grid computation
+  - Data quality validation and cleaning
+  
+  **Performance Considerations:**
+  - Efficient handling of large datasets (1,354+ sightings)
+  - Real-time processing with minimal latency
+  - Scalable database queries
+  - Caching strategies for frequently accessed data
+  - Error recovery and data consistency
+  
+  **Testing Focus:**
+  - Data pipeline integrity
+  - API response times and reliability
+  - Database performance under load
+  - ML model accuracy and performance
+  - Error handling and recovery
+  
+  Remember: You are the backend specialist. Focus on robust, scalable, and efficient data processing that powers the entire ORCAST platform.
+  
+  Best regards,
+  Branch Setup Agent 

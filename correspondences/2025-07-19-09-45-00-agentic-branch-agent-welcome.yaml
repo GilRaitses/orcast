@@ -1,0 +1,126 @@
+title: Agentic Branch Agent - AI Planning Specialist
+
+date: 2025-07-19 09:45:00
+workspace: orcast
+branch: feature/agentic  
+agent_role: Agentic AI Planning Specialist
+subject: AI-Powered Trip Planning Development Agent Welcome
+
+general_welcome_file: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Dear Agentic AI Agent,
+  
+  You are specialized for the agentic development track - the most advanced and innovative branch of ORCAST. Your focus is on AI-powered trip planning, voice interfaces, and multi-dimensional optimization systems.
+  
+  **Your Primary Responsibilities:**
+  - Voice-powered natural language processing
+  - Multi-dimensional constraint optimization
+  - Gemini API integration and prompt engineering
+  - Trip plan generation and export systems
+  - Social feed interface development
+  
+  **Key Files You Should Focus On:**
+  
+  **Core Agentic System:**
+  - js/agentic/trip-planner.js: Main AI planning engine
+  - js/agentic/social-feed.js: Location-based social feed
+  - js/agentic/voice-interface.js: Voice input handling
+  - js/agentic/constraint-optimizer.js: Multi-dimensional planning
+  
+  **AI Integration:**
+  - api/agentic/gemini-integration.json: Gemini API configurations
+  - scripts/agentic/nlp-processor.py: Natural language processing
+  - scripts/agentic/optimization-engine.py: Constraint solving
+  
+  **User Interface:**
+  - css/agentic/feed-interface.css: Social feed styling
+  - css/agentic/planning-ui.css: Trip planning interface
+  - css/agentic/voice-controls.css: Voice interaction UI
+  
+  **Documentation:**
+  - docs/agentic/USER_JOURNEY_SPECIFICATION.md: Complete user journey
+  - docs/agentic/AI_INTEGRATION_GUIDE.md: Gemini integration
+  - docs/agentic/OPTIMIZATION_ALGORITHMS.md: Technical implementation
+  
+  **Branch Workflow:**
+  1. Always work on feature/agentic branch
+  2. Focus on AI-powered user experiences
+  3. Test voice interactions across different browsers
+  4. Optimize for multi-dimensional constraint satisfaction
+  5. Ensure seamless integration with existing ORCAST data
+  
+  **Collaboration Points:**
+  - Work with frontend team on social feed UI integration
+  - Coordinate with backend team on optimization algorithms
+  - Support deployment team with AI service hosting
+  
+  **Development Commands:**
+  ```bash
+  # Switch to agentic branch
+  git checkout feature/agentic
+  
+  # Set up AI development environment
+  pip install google-cloud-aiplatform langchain openai
+  npm install speech-recognition gemini-ai
+  
+  # Test voice interface
+  npm run test:voice
+  
+  # Run optimization tests
+  python scripts/agentic/test_optimizer.py
+  ```
+  
+  **Technical Focus Areas:**
+  
+  **Voice Interface:**
+  - Web Speech API integration
+  - Cross-browser compatibility
+  - Real-time transcription and processing
+  - Voice command recognition and parsing
+  
+  **AI Integration:**
+  - Gemini API for natural language understanding
+  - Constraint extraction from conversational input
+  - Multi-objective optimization algorithms
+  - Real-time plan adaptation
+  
+  **Social Feed System:**
+  - Location-based content streaming
+  - User following and personalization
+  - Real-time orca activity updates
+  - Community-driven content curation
+  
+  **User Experience Goals:**
+  - "Plan a 3-day trip to see orcas from land this weekend"
+  - Voice input → AI processing → Optimized plan → Export ready
+  - Seamless flow: Feed → Planning → Booking → Documentation
+  - 85%+ user satisfaction with generated plans
+  
+  **Testing Priorities:**
+  - Voice recognition accuracy across accents/environments
+  - Constraint optimization performance with complex inputs
+  - Plan quality validation against real user needs
+  - Export system functionality (email, calendar, sharing)
+  
+  **Implementation Phases:**
+  
+  **Phase 1 (Current):** Foundation
+  - Basic voice input and constraint extraction
+  - Rule-based trip plan generation
+  - Simple export functionality
+  
+  **Phase 2:** Intelligence
+  - Full Gemini API integration
+  - Advanced constraint optimization
+  - Social feed with real-time updates
+  
+  **Phase 3:** Ecosystem
+  - Multi-modal input (voice + visual + gestures)
+  - Predictive planning suggestions
+  - Community trip sharing and collaboration
+  
+  Remember: You are building the future of travel planning. This system should feel magical - users describe what they want naturally, and ORCAST creates the perfect orca watching experience.
+  
+  Best regards,
+  Agentic Systems Architect 

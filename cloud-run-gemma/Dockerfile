@@ -1,14 +1,13 @@
 # ORCAST Gemma 3 Cloud Run GPU Service
 # For Google Cloud Hackathon - Agentic AI on Cloud Run GPUs
 
-FROM nvidia/cuda:12.1-runtime-ubuntu22.04
+FROM python:3.10-slim
 
-# Install Python and dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
     git \
     wget \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -16,7 +15,7 @@ WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
@@ -29,8 +28,9 @@ ENV PORT=8080
 ENV PYTHONPATH=/app
 ENV MODEL_NAME=google/gemma-2-2b-it
 
-# Download and cache model (optional - can be done at runtime)
-# RUN python3 download_model.py
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
 
 # Run the application
-CMD ["python3", "main.py"] 
+CMD ["python", "main.py"] 

@@ -1,0 +1,110 @@
+title: Consolidated Branch Strategy - Project Manager Recommendations
+
+date: 2025-07-19 09:15:00
+workspace: orcast
+subject: Simplified 3-Branch Development Strategy
+
+original_strategy: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Based on project manager feedback and best practices for small team development:
+  
+  **Problem with 5 branches:**
+  - Too much overhead for project this size
+  - UI/UX overlap significantly  
+  - API development often pairs with backend work
+  - Documentation can be handled by any developer
+  
+  **NEW CONSOLIDATED STRATEGY - 3 BRANCHES:**
+  
+  ## Branch 1: `feature/frontend` 
+  **Combined UI/UX and Map Visualization**
+  
+  **Responsibilities:**
+  - HTML structure and CSS styling
+  - Google Maps integration and visualization
+  - User experience and interface design
+  - Frontend JavaScript components
+  - Mobile responsiveness and accessibility
+  
+  **Key Files:**
+  - `index.html`: Main application structure
+  - `css/`: All stylesheets (base, sidebar, tabs, inspection)
+  - `js/map-component.js`: Google Maps integration
+  - `js/ui-controller.js`: UI state management (renamed from "controller")
+  - `js/data-loader.js`: Frontend data handling
+  - `manifest.json`: PWA configuration
+  
+  **Team Members:** Frontend developers, UI/UX designers, map specialists
+  
+  ## Branch 2: `feature/backend`
+  **Combined Backend Integration and API Development**
+  
+  **Responsibilities:**
+  - Data processing and machine learning
+  - API endpoint development and optimization
+  - Database management and queries
+  - Real-time data collection
+  - Performance optimization
+  
+  **Key Files:**
+  - `scripts/`: All Python processing scripts
+  - `api/`: API specifications and mock data
+  - `js/api-tester.js`: API testing interface
+  - `data/`: Data files and schemas
+  - `env.template` and `config.js.template`: Configuration
+  
+  **Team Members:** Backend developers, data scientists, API specialists
+  
+  ## Branch 3: `feature/deployment`
+  **DevOps, Documentation, and Deployment**
+  
+  **Responsibilities:**
+  - Deployment scripts and CI/CD
+  - Documentation maintenance
+  - Environment configuration
+  - Testing and quality assurance
+  - Project coordination
+  
+  **Key Files:**
+  - `deploy/`: Deployment scripts
+  - `docs/`: All documentation
+  - `.github/workflows/`: CI/CD workflows
+  - `firebase.json`: Hosting configuration
+  - `README.md`: Project overview
+  
+  **Team Members:** DevOps engineers, technical writers, project leads
+  
+  ## Benefits of 3-Branch Strategy:
+  
+  1. **Clearer Ownership:** Less overlap between teams
+  2. **Faster Development:** Fewer merge conflicts
+  3. **Easier Coordination:** Only 3 teams to sync instead of 5
+  4. **Natural Groupings:** Related work stays together
+  5. **Scalable:** Can split branches later if team grows
+  
+  ## Branch Workflow:
+  ```bash
+  # Frontend team
+  git checkout feature/frontend
+  
+  # Backend team  
+  git checkout feature/backend
+  
+  # Deployment team
+  git checkout feature/deployment
+  
+  # Integration
+  git checkout develop  # All features merge here first
+  git checkout main     # Production releases
+  ```
+  
+  ## Collaboration Points:
+  - **Frontend ↔ Backend:** API contracts and data formats
+  - **Backend ↔ Deployment:** Environment setup and scaling
+  - **Frontend ↔ Deployment:** Build processes and hosting
+  
+  This structure aligns with how most small-to-medium development teams naturally organize work.
+  
+  Best regards,
+  Project Strategy Agent 

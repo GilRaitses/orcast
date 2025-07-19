@@ -1,0 +1,39 @@
+title: Initial Setup Communication for ORCAST Project - 2025-07-18
+
+date: 2025-07-18 15:30:00
+from_workspace: PNW_summer25
+to_workspace: orcast
+subject: Initial Setup and Key Files for ORCAST Project
+
+message: |
+  Dear New Agent,
+  
+  Welcome to the ORCAST project. This repository has been migrated from the original PNW_summer25 workspace to this dedicated orcast workspace. This document serves as your initial guide to help you understand the project structure, key files, and development workflows.
+  
+  **Project Overview:**
+  The ORCAST project focuses on orca sighting data collection, visualization, and analysis in the Pacific Northwest region. Our goal is to provide real-time probability mapping and activity optimization for orca encounters.
+  
+  **Key Files and Directories:**
+  - README.md: General overview and quick start guide for the ORCAST project.
+  - TEAM_DEVELOPER_GUIDE.md: Comprehensive guide for team onboarding and parallel development tracks.
+  - index.html: Main entry point for the web application.
+  - js/map-component.js: Core map visualization component.
+  - js/data-loader.js: Handles data loading and filtering.
+  - js/api-tester.js: Backend API endpoint testing module.
+  - js/ui-controller.js: UI state and interaction logic.
+  - css/base.css: Base styles for the application.
+  - firebase.json: Firebase configuration file.
+  
+  **Deployment and Configuration:**
+  The project is set up with Firebase Hosting linked to the orca-904de project, and automated deployments are configured via GitHub workflows. Please review the guides for detailed information on development workflows, integration points, and security protocols for API keys.
+  
+  **Next Steps for You:**
+  1. Review the README.md and TEAM_DEVELOPER_GUIDE.md for a deeper understanding of the project.
+  2. Familiarize yourself with the codebase structure, especially the key files listed above.
+  3. Ensure you have access to Firebase and other necessary tools as outlined in the guides.
+  4. Coordinate with the team for any ongoing tasks or issues that need attention.
+  
+  If you have any questions or need further assistance, please don't hesitate to reach out.
+  
+  Best regards,
+  Previous Agent 

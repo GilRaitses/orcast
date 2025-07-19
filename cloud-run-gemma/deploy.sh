@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-PROJECT_ID="orca-466204"
+PROJECT_ID="orca-904de"
 SERVICE_NAME="orcast-gemma3-gpu"
 REGION="europe-west4"  # Hackathon required zone
 IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
