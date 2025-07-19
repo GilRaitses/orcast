@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class HMCAnalysisRunner:
     """Runs HMC analysis on orca sighting data"""
     
-    def __init__(self, project_id: str = "orca-904de"):
+    def __init__(self, project_id: str = "orca-466204"):
         self.project_id = project_id
         self.bq_client = bigquery.Client()
         self.redis_cache = OrCastRedisCache()
@@ -46,7 +46,7 @@ class HMCAnalysisRunner:
                 behavior_observed,
                 environmental_conditions,
                 quality_score
-            FROM `{self.project_id}.orca_data.sightings`
+            FROM `{self.project_id}.orca_production_data.sightings`
             WHERE timestamp >= '{start_date.isoformat()}'
             AND timestamp <= '{end_date.isoformat()}'
             AND quality_score >= 0.6
@@ -233,7 +233,7 @@ class HMCAnalysisRunner:
             )
             
             # Save to BigQuery
-            table_id = f"{self.project_id}.orca_data.hmc_analysis"
+            table_id = f"{self.project_id}.orca_production_data.hmc_analysis"
             
             analysis_record = {
                 'analysis_id': f"hmc_{datetime.now().strftime('%Y%m%d_%H%M%S')}",

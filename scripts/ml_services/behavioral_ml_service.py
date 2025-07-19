@@ -153,7 +153,7 @@ class BehavioralMLModel:
             feeding_strategy_label,
             success_label,
             data_quality_score
-        FROM `orcast-app-2024.orca_data.ml_training_data`
+        FROM `orca-466204.orca_production_data.ml_training_data`
         WHERE DATE(created_at) BETWEEN '{start_date}' AND '{end_date}'
             AND train_test_split = 'train'
             AND data_quality_score > 0.7
@@ -557,7 +557,7 @@ def get_recent_sightings_24h(lat: float, lng: float) -> int:
     # Query BigQuery for recent sightings
     query = f"""
     SELECT COUNT(*) as count
-    FROM `orcast-app-2024.orca_data.sightings`
+    FROM `orca-466204.orca_production_data.sightings`
     WHERE ST_DWITHIN(location, ST_GEOGPOINT({lng}, {lat}), 5000)
         AND timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
     """
@@ -573,7 +573,7 @@ def get_days_since_last_feeding(lat: float, lng: float) -> int:
     """Get days since last feeding event in area"""
     query = f"""
     SELECT DATE_DIFF(CURRENT_DATE(), DATE(timestamp), DAY) as days_since
-    FROM `orcast-app-2024.orca_data.sightings`
+    FROM `orca-466204.orca_production_data.sightings`
     WHERE ST_DWITHIN(location, ST_GEOGPOINT({lng}, {lat}), 5000)
         AND behavior_primary = 'feeding'
     ORDER BY timestamp DESC
@@ -759,7 +759,7 @@ class BehavioralMLService:
     uncertainty quantification, and real-time features.
     """
     
-    def __init__(self, project_id: str = "orca-904de"):
+    def __init__(self, project_id: str = "orca-466204"):
         self.project_id = project_id
         self.client = bigquery.Client(project=project_id)
         
@@ -823,8 +823,8 @@ class BehavioralMLService:
             b.primary_behavior,
             b.feeding_strategy,
             b.feeding_success
-        FROM `{}.orca_data.sightings` s
-        JOIN `{}.orca_data.behavioral_data` b
+        FROM `{}.orca_production_data.sightings` s
+        JOIN `{}.orca_production_data.behavioral_data` b
         ON s.sighting_id = b.sighting_id
         WHERE s.timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 365 DAY)
         AND b.primary_behavior IS NOT NULL
