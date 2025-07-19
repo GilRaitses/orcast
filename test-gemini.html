@@ -61,7 +61,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🤖 ORCAST Gemini API Test</h1>
+        <h1>ORCAST Gemini API Test</h1>
         <p>Test your Gemini API key integration for agentic trip planning.</p>
         
         <div class="input-group">
@@ -71,9 +71,9 @@
                    placeholder="Enter a trip planning request...">
         </div>
         
-        <button onclick="testConnection()">🔌 Test API Connection</button>
-        <button onclick="testConstraintExtraction()">🧠 Test Constraint Extraction</button>
-        <button onclick="testFullIntegration()">🚀 Test Full Integration</button>
+                 <button onclick="testConnection()">Test API Connection</button>
+         <button onclick="testConstraintExtraction()">Test Constraint Extraction</button>
+         <button onclick="testFullIntegration()">Test Full Integration</button>
         
         <div id="results"></div>
     </div>
@@ -89,14 +89,14 @@
         function initGemini() {
             try {
                 gemini = new GeminiIntegration();
-                addResult('✅ Gemini integration initialized', 'success');
-                addResult(`🔑 API Key: ${gemini.apiKey ? '✅ Found' : '❌ Missing'}`, 
-                         gemini.apiKey ? 'success' : 'error');
-                addResult(`📍 Project ID: ${gemini.projectId}`, 'success');
-                addResult(`🤖 Model: ${gemini.model}`, 'success');
+                                 addResult('SUCCESS: Gemini integration initialized', 'success');
+                 addResult(`API Key: ${gemini.apiKey ? 'Found' : 'Missing'}`, 
+                          gemini.apiKey ? 'success' : 'error');
+                 addResult(`Project ID: ${gemini.projectId}`, 'success');
+                 addResult(`Model: ${gemini.model}`, 'success');
                 return true;
             } catch (error) {
-                addResult(`❌ Failed to initialize: ${error.message}`, 'error');
+                                 addResult(`ERROR: Failed to initialize: ${error.message}`, 'error');
                 return false;
             }
         }
@@ -105,18 +105,18 @@
         async function testConnection() {
             if (!gemini && !initGemini()) return;
             
-            addResult('🔄 Testing Gemini API connection...', 'warning');
-            
-            try {
-                const isConnected = await gemini.testConnection();
-                if (isConnected) {
-                    addResult('✅ Gemini API connection successful!', 'success');
-                } else {
-                    addResult('❌ Gemini API connection failed', 'error');
-                }
-            } catch (error) {
-                addResult(`❌ Connection test error: ${error.message}`, 'error');
-            }
+                         addResult('TESTING: Gemini API connection...', 'warning');
+             
+             try {
+                 const isConnected = await gemini.testConnection();
+                 if (isConnected) {
+                     addResult('SUCCESS: Gemini API connection successful!', 'success');
+                 } else {
+                     addResult('ERROR: Gemini API connection failed', 'error');
+                 }
+             } catch (error) {
+                 addResult(`ERROR: Connection test error: ${error.message}`, 'error');
+             }
         }
         
         // Test constraint extraction
@@ -124,15 +124,15 @@
             if (!gemini && !initGemini()) return;
             
             const query = document.getElementById('testQuery').value;
-            addResult(`🔄 Extracting constraints from: "${query}"`, 'warning');
-            
-            try {
-                const constraints = await gemini.extractConstraints(query);
-                addResult('✅ Constraint extraction successful!', 'success');
-                addResult(`📋 Extracted constraints:`, 'success');
+                         addResult(`TESTING: Extracting constraints from: "${query}"`, 'warning');
+             
+             try {
+                 const constraints = await gemini.extractConstraints(query);
+                 addResult('SUCCESS: Constraint extraction successful!', 'success');
+                 addResult(`RESULT: Extracted constraints:`, 'success');
                 addResult(JSON.stringify(constraints, null, 2), 'code');
             } catch (error) {
-                addResult(`❌ Constraint extraction error: ${error.message}`, 'error');
+                                 addResult(`ERROR: Constraint extraction error: ${error.message}`, 'error');
             }
         }
         
@@ -141,13 +141,13 @@
             if (!gemini && !initGemini()) return;
             
             const query = document.getElementById('testQuery').value;
-            addResult(`🚀 Running full integration test with: "${query}"`, 'warning');
-            
-            try {
-                // Step 1: Extract constraints
-                addResult('Step 1: Extracting constraints...', 'warning');
-                const constraints = await gemini.extractConstraints(query);
-                addResult(`✅ Constraints: ${JSON.stringify(constraints)}`, 'success');
+                         addResult(`TESTING: Running full integration test with: "${query}"`, 'warning');
+             
+             try {
+                 // Step 1: Extract constraints
+                 addResult('Step 1: Extracting constraints...', 'warning');
+                 const constraints = await gemini.extractConstraints(query);
+                 addResult(`SUCCESS: Constraints: ${JSON.stringify(constraints)}`, 'success');
                 
                 // Step 2: Mock locations for testing
                 const mockLocations = [
@@ -160,16 +160,16 @@
                 addResult('Step 2: Generating AI trip plan...', 'warning');
                 const plan = await gemini.generatePlan(constraints, mockLocations);
                 
-                if (plan) {
-                    addResult('✅ Full integration test successful!', 'success');
-                    addResult('📅 Generated plan:', 'success');
-                    addResult(JSON.stringify(plan, null, 2), 'code');
-                } else {
-                    addResult('⚠️ Plan generation failed, but constraint extraction worked', 'warning');
-                }
+                                 if (plan) {
+                     addResult('SUCCESS: Full integration test successful!', 'success');
+                     addResult('RESULT: Generated plan:', 'success');
+                     addResult(JSON.stringify(plan, null, 2), 'code');
+                 } else {
+                     addResult('WARNING: Plan generation failed, but constraint extraction worked', 'warning');
+                 }
                 
             } catch (error) {
-                addResult(`❌ Full integration test error: ${error.message}`, 'error');
+                                 addResult(`ERROR: Full integration test error: ${error.message}`, 'error');
             }
         }
         
@@ -192,7 +192,7 @@
         
         // Initialize on page load
         window.onload = function() {
-            addResult('🤖 ORCAST Gemini Test Page Loaded', 'success');
+                         addResult('ORCAST Gemini Test Page Loaded', 'success');
             initGemini();
         };
     </script>

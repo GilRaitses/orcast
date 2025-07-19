@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maps API Test - ORCAST</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
@@ -11,7 +13,7 @@
     </style>
 </head>
 <body>
-    <h1>🗺️ ORCAST Maps API Test</h1>
+    <h1>ORCAST Maps API Test</h1>
     <div id="status"></div>
     <div id="map"></div>
     
@@ -24,7 +26,7 @@
         
         function initMap() {
             try {
-                showStatus('✅ Maps API loaded successfully!', 'success');
+                showStatus('SUCCESS: Maps API loaded successfully!', 'success');
                 
                 // San Juan Islands center from config
                 const center = window.ORCA_CONFIG.map.center;
@@ -41,24 +43,24 @@
                     title: 'Lime Kiln Point - Prime Orca Viewing'
                 });
                 
-                showStatus('✅ Map loaded with orca viewing location!', 'success');
+                                 showStatus('SUCCESS: Map loaded with orca viewing location!', 'success');
                 
             } catch (error) {
-                showStatus(`❌ Map initialization failed: ${error.message}`, 'error');
+                                 showStatus(`ERROR: Map initialization failed: ${error.message}`, 'error');
             }
         }
         
         // Test API key
         const apiKey = window.ORCA_CONFIG?.apiKeys?.GOOGLE_MAPS;
-        if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY_HERE') {
-            showStatus('❌ Maps API key not configured', 'error');
-        } else {
-            showStatus(`🔑 API Key found: ${apiKey.substring(0, 20)}...`, 'success');
-        }
+                 if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY_HERE') {
+             showStatus('ERROR: Maps API key not configured', 'error');
+         } else {
+             showStatus(`SUCCESS: API Key found: ${apiKey.substring(0, 20)}...`, 'success');
+         }
     </script>
     
     <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwvuL88RoXMjvUP5lJCFDS2mwLrwo6CVs&callback=initMap">
     </script>
 </body>
 </html> 
