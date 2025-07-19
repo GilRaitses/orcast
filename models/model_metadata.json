@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-07-19T17:12:12.894189",
+  "models": [
+    "behavior",
+    "success"
+  ],
+  "scalers": [
+    "behavior"
+  ],
+  "encoders": [
+    "behavior"
+  ],
+  "classes": {
+    "behavior": [
+      "feeding",
+      "resting",
+      "socializing",
+      "traveling",
+      "unknown"
+    ]
+  }
+}
