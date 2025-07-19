@@ -1,0 +1,31 @@
+# ORCAST Gemma 3 Cloud Run GPU Service Dependencies
+
+# Core web framework
+flask==2.3.3
+gunicorn==21.2.0
+
+# ML and GPU dependencies
+torch==2.1.0
+transformers==4.35.0
+accelerate==0.24.0
+bitsandbytes==0.41.3
+
+# Hugging Face model loading
+huggingface-hub==0.17.3
+tokenizers==0.14.1
+
+# Performance and utilities
+numpy==1.24.4
+scipy==1.11.4
+psutil==5.9.6
+
+# Google Cloud integration
+google-cloud-logging==3.8.0
+google-cloud-storage==2.10.0
+
+# API and validation
+pydantic==2.5.0
+python-json-logger==2.0.7
+
+# GPU monitoring
+nvidia-ml-py==12.535.133 

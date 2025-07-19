@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini API Test - ORCAST</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .success { border-left-color: #4CAF50; background: #f0f8f0; }
+        .error { border-left-color: #f44336; background: #fdf0f0; }
+        .warning { border-left-color: #ff9800; background: #fff8f0; }
+        button {
+            background: #1976D2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1565C0; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .input-group {
+            margin: 15px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        #results { margin-top: 20px; }
+        .code-block {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ORCAST Gemini API Test</h1>
+        <p>Test your Gemini API key integration for agentic trip planning.</p>
+        
+        <div class="input-group">
+            <label><strong>Test Query:</strong></label>
+            <input type="text" id="testQuery" 
+                   value="Plan a 3-day trip to see orcas from land this weekend" 
+                   placeholder="Enter a trip planning request...">
+        </div>
+        
+                 <button onclick="testConnection()">Test API Connection</button>
+         <button onclick="testConstraintExtraction()">Test Constraint Extraction</button>
+         <button onclick="testFullIntegration()">Test Full Integration</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Load config and Gemini integration -->
+    <script src="config.js"></script>
+    <script src="js/agentic/gemini-integration.js"></script>
+    
+    <script>
+        let gemini;
+        
+        // Initialize Gemini integration
+        function initGemini() {
+            try {
+                gemini = new GeminiIntegration();
+                                 addResult('SUCCESS: Gemini integration initialized', 'success');
+                 addResult(`API Key: ${gemini.apiKey ? 'Found' : 'Missing'}`, 
+                          gemini.apiKey ? 'success' : 'error');
+                 addResult(`Project ID: ${gemini.projectId}`, 'success');
+                 addResult(`Model: ${gemini.model}`, 'success');
+                return true;
+            } catch (error) {
+                                 addResult(`ERROR: Failed to initialize: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        // Test basic API connection
+        async function testConnection() {
+            if (!gemini && !initGemini()) return;
+            
+                         addResult('TESTING: Gemini API connection...', 'warning');
+             
+             try {
+                 const isConnected = await gemini.testConnection();
+                 if (isConnected) {
+                     addResult('SUCCESS: Gemini API connection successful!', 'success');
+                 } else {
+                     addResult('ERROR: Gemini API connection failed', 'error');
+                 }
+             } catch (error) {
+                 addResult(`ERROR: Connection test error: ${error.message}`, 'error');
+             }
+        }
+        
+        // Test constraint extraction
+        async function testConstraintExtraction() {
+            if (!gemini && !initGemini()) return;
+            
+            const query = document.getElementById('testQuery').value;
+                         addResult(`TESTING: Extracting constraints from: "${query}"`, 'warning');
+             
+             try {
+                 const constraints = await gemini.extractConstraints(query);
+                 addResult('SUCCESS: Constraint extraction successful!', 'success');
+                 addResult(`RESULT: Extracted constraints:`, 'success');
+                addResult(JSON.stringify(constraints, null, 2), 'code');
+            } catch (error) {
+                                 addResult(`ERROR: Constraint extraction error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test full integration
+        async function testFullIntegration() {
+            if (!gemini && !initGemini()) return;
+            
+            const query = document.getElementById('testQuery').value;
+                         addResult(`TESTING: Running full integration test with: "${query}"`, 'warning');
+             
+             try {
+                 // Step 1: Extract constraints
+                 addResult('Step 1: Extracting constraints...', 'warning');
+                 const constraints = await gemini.extractConstraints(query);
+                 addResult(`SUCCESS: Constraints: ${JSON.stringify(constraints)}`, 'success');
+                
+                // Step 2: Mock locations for testing
+                const mockLocations = [
+                    { name: 'Lime Kiln Point', probability: 0.85, type: 'land' },
+                    { name: 'San Juan Island Ferry', probability: 0.75, type: 'ferry' },
+                    { name: 'Orcas Island Overlook', probability: 0.70, type: 'land' }
+                ];
+                
+                // Step 3: Generate plan
+                addResult('Step 2: Generating AI trip plan...', 'warning');
+                const plan = await gemini.generatePlan(constraints, mockLocations);
+                
+                                 if (plan) {
+                     addResult('SUCCESS: Full integration test successful!', 'success');
+                     addResult('RESULT: Generated plan:', 'success');
+                     addResult(JSON.stringify(plan, null, 2), 'code');
+                 } else {
+                     addResult('WARNING: Plan generation failed, but constraint extraction worked', 'warning');
+                 }
+                
+            } catch (error) {
+                                 addResult(`ERROR: Full integration test error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Helper function to add results
+        function addResult(message, type = 'success') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            
+            if (type === 'code') {
+                div.className = 'code-block';
+                div.textContent = message;
+            } else {
+                div.className = `test-result ${type}`;
+                div.innerHTML = message;
+            }
+            
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+                         addResult('ORCAST Gemini Test Page Loaded', 'success');
+            initGemini();
+        };
+    </script>
+</body>
+</html> 

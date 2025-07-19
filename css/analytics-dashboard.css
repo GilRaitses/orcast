@@ -1,0 +1,664 @@
+/**
+ * ORCAST Analytics Dashboard CSS
+ * Modern, professional styling for multi-agent analytics
+ */
+
+/* Base Dashboard Styles */
+.orcast-analytics-dashboard {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+/* Header */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.status-indicators {
+    display: flex;
+    gap: 16px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.status-icon {
+    font-size: 1.2rem;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dashboard-card h3::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+/* Chart Containers */
+.chart-container {
+    min-height: 200px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    color: #a0aec0;
+    font-style: italic;
+}
+
+/* Probability Overview */
+.probability-overview {
+    grid-column: span 2;
+}
+
+.probability-summary {
+    display: flex;
+    gap: 32px;
+    margin-top: 16px;
+}
+
+.prob-metric {
+    text-align: center;
+    padding: 16px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+    flex: 1;
+}
+
+.metric-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 8px;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+/* Probability Bars */
+.probability-bar {
+    margin-bottom: 16px;
+}
+
+.zone-name {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+.bar-container {
+    position: relative;
+    background: #e2e8f0;
+    border-radius: 8px;
+    height: 32px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    position: relative;
+    transition: width 0.6s ease;
+}
+
+.probability-value {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+}
+
+/* Zone Performance */
+.zone-performance-item {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.zone-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.zone-name {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.zone-type {
+    font-size: 0.85rem;
+    color: #718096;
+    background: #edf2f7;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.performance-metrics .metric {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.metric-label {
+    min-width: 80px;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.metric-bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.metric-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.metric-value {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.9rem;
+}
+
+/* Behavioral Insights */
+.behavior-distribution {
+    space-y: 12px;
+}
+
+.behavior-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.behavior-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.behavior-icon {
+    font-size: 1.2rem;
+}
+
+.behavior-name {
+    font-weight: 500;
+    color: #2d3748;
+    text-transform: capitalize;
+}
+
+.behavior-bar {
+    flex: 1;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.behavior-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+}
+
+.behavior-percentage {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.9rem;
+    min-width: 45px;
+}
+
+.behavior-insights {
+    background: rgba(102, 126, 234, 0.05);
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 16px;
+}
+
+.behavior-insights p {
+    margin: 8px 0;
+    color: #4a5568;
+}
+
+/* Environmental Conditions */
+.env-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.env-metric {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.env-icon {
+    font-size: 1.5rem;
+}
+
+.env-data {
+    flex: 1;
+}
+
+.env-value {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.env-label {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* Environmental Timeline */
+.environmental-timeline {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 16px 0;
+}
+
+.timeline-point {
+    min-width: 120px;
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.time-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.env-values {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.env-val {
+    font-size: 0.8rem;
+    color: #4a5568;
+}
+
+/* Agent Reasoning */
+.reasoning-content {
+    space-y: 16px;
+}
+
+.reasoning-item {
+    padding: 16px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    margin-bottom: 16px;
+}
+
+.reasoning-item h4 {
+    margin: 0 0 8px 0;
+    color: #2d3748;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.reasoning-text {
+    margin: 0;
+    color: #4a5568;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Recommendations */
+.recommendation-list {
+    space-y: 16px;
+}
+
+.recommendation-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    transition: transform 0.2s ease;
+}
+
+.recommendation-item:hover {
+    transform: translateX(4px);
+}
+
+.recommendation-item.high {
+    background: rgba(72, 187, 120, 0.1);
+    border: 1px solid rgba(72, 187, 120, 0.2);
+}
+
+.recommendation-item.medium {
+    background: rgba(237, 137, 54, 0.1);
+    border: 1px solid rgba(237, 137, 54, 0.2);
+}
+
+.recommendation-item.low {
+    background: rgba(160, 174, 192, 0.1);
+    border: 1px solid rgba(160, 174, 192, 0.2);
+}
+
+.rec-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.rec-content {
+    flex: 1;
+}
+
+.rec-content h4 {
+    margin: 0 0 8px 0;
+    color: #2d3748;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.rec-content p {
+    margin: 0 0 8px 0;
+    color: #4a5568;
+    line-height: 1.4;
+    font-size: 0.9rem;
+}
+
+.rec-score {
+    font-size: 0.8rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+/* Trip Statistics */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+/* Real-time Updates */
+.updates-feed {
+    max-height: 300px;
+    overflow-y: auto;
+    space-y: 8px;
+}
+
+.update-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    border-left: 3px solid;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.update-item.system {
+    border-left-color: #667eea;
+}
+
+.update-item.agent {
+    border-left-color: #48bb78;
+}
+
+.update-item.data {
+    border-left-color: #ed8936;
+}
+
+.update-item.sighting {
+    border-left-color: #9f7aea;
+}
+
+.update-time {
+    font-weight: 600;
+    color: #4a5568;
+    min-width: 60px;
+}
+
+.update-message {
+    color: #2d3748;
+    line-height: 1.4;
+}
+
+/* Top Zones Widget */
+.top-zone-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.zone-rank {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.zone-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zone-probability {
+    font-weight: 700;
+    color: #667eea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .probability-overview {
+        grid-column: span 1;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+    
+    .status-indicators {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .probability-summary {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .env-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Loading Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.loading {
+    animation: pulse 2s infinite;
+}
+
+/* Smooth Transitions */
+* {
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Scrollbar Styling */
+.updates-feed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.updates-feed::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.updates-feed::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 3px;
+}
+
+.updates-feed::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
+} 

@@ -1,0 +1,140 @@
+title: Documentation Agent - Branch Specialist
+
+date: 2025-07-18 23:14:53
+workspace: orcast
+branch: feature/documentation
+agent_role: Documentation Specialist
+subject: Technical Writing & Documentation Agent Welcome
+
+general_welcome_file: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Dear Documentation Agent,
+  
+  You are specialized for the documentation track. Your focus is on creating, maintaining, and improving all technical documentation for the ORCAST platform to ensure smooth onboarding and development workflows.
+  
+  **Your Primary Responsibilities:**
+  - Technical documentation writing and maintenance
+  - API documentation and examples
+  - User guides and tutorials
+  - Code commenting and inline documentation
+  - Developer onboarding materials
+  
+  **Key Files You Should Focus On:**
+  
+  **Core Documentation:**
+  - README.md: Main project overview and quick start
+  - docs/DEVELOPMENT_SETUP.md: Development environment setup
+  - docs/TEAM_DEVELOPER_GUIDE.md: Team collaboration workflows
+  - docs/DEPLOYMENT_CHECKLIST.md: Production deployment guide
+  
+  **Setup and Configuration Guides:**
+  - docs/MAPS_SETUP_GUIDE.md: Google Maps API configuration
+  - docs/CLOUDFLARE_DEPLOYMENT.md: Cloudflare Workers deployment
+  - docs/CUSTOM_DOMAIN_SETUP.md: Domain configuration
+  - docs/DNS_SETUP.md: DNS and hosting configuration
+  
+  **Partnership and Business Documentation:**
+  - docs/PARTNERSHIP_PROPOSAL.md: Research collaboration framework
+  - docs/PARTNERSHIP_SUMMARY.md: Partnership overview
+  
+  **Configuration Templates:**
+  - config.js.template: Configuration file documentation
+  - env.template: Environment variables documentation
+  
+  **API Documentation Sources:**
+  - api/api-*.json: API endpoint specifications
+  - js/api-tester.js: API usage examples
+  
+  **Branch Workflow:**
+  1. Always work on feature/documentation branch
+  2. Focus on clear, comprehensive documentation
+  3. Test all code examples and instructions
+  4. Ensure documentation stays current with codebase
+  5. Review and improve existing documentation
+  
+  **Collaboration Points:**
+  - Work with all teams to document their features
+  - Coordinate with api-development team on API docs
+  - Support frontend teams with component documentation
+  - Help backend team document data processing workflows
+  
+  **Development Commands:**
+  ```bash
+  # Switch to your branch
+  git checkout feature/documentation
+  
+  # Preview documentation locally
+  npm run docs:serve
+  
+  # Build documentation
+  npm run docs:build
+  
+  # Test documentation links
+  npm run docs:test
+  ```
+  
+  **Documentation Standards:**
+  
+  **Writing Style:**
+  - Clear, concise, and jargon-free language
+  - Step-by-step instructions with examples
+  - Consistent formatting and structure
+  - Regular updates to reflect code changes
+  
+  **Technical Documentation:**
+  - Code examples that work out of the box
+  - Screenshots for UI-related documentation
+  - Troubleshooting sections for common issues
+  - Links to external resources and APIs
+  
+  **API Documentation:**
+  - Request/response examples
+  - Error codes and messages
+  - Authentication requirements
+  - Rate limiting information
+  
+  **User Guides:**
+  - Getting started tutorials
+  - Feature-specific guides
+  - Best practices and tips
+  - FAQ sections
+  
+  **Documentation Priorities:**
+  
+  **High Priority:**
+  1. Update DEVELOPMENT_SETUP.md with latest workflow
+  2. Create comprehensive API documentation
+  3. Improve README.md with better examples
+  4. Document new features as they're developed
+  
+  **Medium Priority:**
+  1. Create troubleshooting guides
+  2. Add more code examples and snippets
+  3. Document deployment procedures
+  4. Create video tutorials for complex setup
+  
+  **Tools and Formats:**
+  - Markdown for technical documentation
+  - JSDoc for code documentation
+  - OpenAPI for API specifications
+  - Diagrams for architecture documentation
+  
+  **Quality Checklist:**
+  - All code examples are tested and working
+  - Screenshots are current and accurate
+  - Links are valid and accessible
+  - Grammar and spelling are correct
+  - Information is up-to-date with latest codebase
+  
+  **Testing Documentation:**
+  - Follow setup instructions from scratch
+  - Test all code examples
+  - Verify all links work
+  - Check formatting and readability
+  - Get feedback from other team members
+  
+  Remember: You are the documentation specialist. Focus on creating clear, accurate, and helpful documentation that enables developers and users to successfully work with the ORCAST platform.
+  
+  Best regards,
+  Branch Setup Agent 

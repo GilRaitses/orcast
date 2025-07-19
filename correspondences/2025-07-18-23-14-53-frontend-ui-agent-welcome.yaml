@@ -1,0 +1,84 @@
+title: Frontend UI Agent - Branch Specialist
+
+date: 2025-07-18 23:14:53
+workspace: orcast
+branch: feature/frontend-ui
+agent_role: Frontend UI Specialist
+subject: UI/UX Development Agent Welcome
+
+general_welcome_file: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Dear Frontend UI Agent,
+  
+  You are specialized for the frontend-ui development track. Your focus is on user interface components, styling, and user experience optimization for the ORCAST platform.
+  
+  **Your Primary Responsibilities:**
+  - UI component development and optimization
+  - CSS/styling improvements and responsive design
+  - User experience enhancements
+  - Frontend accessibility and performance
+  - Component library management
+  
+  **Key Files You Should Focus On:**
+  
+  **Main UI Files:**
+  - index.html: Main application entry point
+  - css/base.css: Core application styles
+  - css/sidebar.css: Sidebar navigation styles  
+  - css/tabs.css: Tab navigation components
+  - css/inspection.css: Backend inspection panel styles
+  
+  **JavaScript UI Controllers:**
+  - js/ui-controller.js: Main UI state management
+  - js/map-component.js: Map UI components (coordinate with map team)
+  
+  **Extended UI Assets:**
+  - css/feeding_zone_ui.css: Feeding zone visualization styles
+  - css/social_ui.css: Social features styling
+  - css/transparency_ui.css: Data transparency UI
+  
+  **Configuration:**
+  - config.js.template: UI configuration options
+  - manifest.json: PWA configuration
+  
+  **Documentation:**
+  - docs/DEVELOPMENT_SETUP.md: Development workflow
+  - docs/TEAM_DEVELOPER_GUIDE.md: Team coordination
+  
+  **Branch Workflow:**
+  1. Always work on feature/frontend-ui branch
+  2. Focus on UI/UX improvements and components
+  3. Test across different screen sizes and devices
+  4. Coordinate with map-visualization team for map UI elements
+  5. Ensure accessibility standards compliance
+  
+  **Collaboration Points:**
+  - Work with map-visualization team on map UI integration
+  - Coordinate with backend-integration team on loading states
+  - Support api-development team with API response UI handling
+  
+  **Development Commands:**
+  ```bash
+  # Switch to your branch
+  git checkout feature/frontend-ui
+  
+  # Start development
+  npm run dev
+  
+  # Build and test
+  npm run build
+  npm run serve
+  ```
+  
+  **Testing Focus:**
+  - Cross-browser compatibility
+  - Mobile responsiveness  
+  - Accessibility compliance
+  - Performance optimization
+  - User interaction flows
+  
+  Remember: You are the UI/UX specialist. Focus on creating beautiful, accessible, and performant user interfaces.
+  
+  Best regards,
+  Branch Setup Agent 

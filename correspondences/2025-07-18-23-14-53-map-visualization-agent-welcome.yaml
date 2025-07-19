@@ -1,0 +1,101 @@
+title: Map Visualization Agent - Branch Specialist
+
+date: 2025-07-18 23:14:53
+workspace: orcast
+branch: feature/map-visualization
+agent_role: Map Visualization Specialist
+subject: Google Maps & Data Visualization Agent Welcome
+
+general_welcome_file: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Dear Map Visualization Agent,
+  
+  You are specialized for the map-visualization development track. Your focus is on Google Maps integration, geospatial data visualization, and interactive mapping features for the ORCAST platform.
+  
+  **Your Primary Responsibilities:**
+  - Google Maps API integration and optimization
+  - Orca sighting data visualization on maps
+  - Probability heatmap rendering
+  - Interactive map features and controls
+  - Geospatial data processing and display
+  
+  **Key Files You Should Focus On:**
+  
+  **Core Map Components:**
+  - js/map-component.js: Main Google Maps integration class
+  - js/data-loader.js: Handles loading and filtering of sighting data
+  - index.html: Map container and initialization
+  
+  **Data Visualization:**
+  - js/feeding_zone_dynamics.js: Feeding zone visualization
+  - data/firebase_orca_probability_data.json: Probability grid data
+  - data/orca_sightings_data.json: Real sighting data (1,354+ records)
+  - data/environmental_data*.json: Environmental context data
+  
+  **Map Styling:**
+  - css/base.css: Map container styles
+  - css/feeding_zone_ui.css: Feeding zone visual elements
+  
+  **Configuration:**
+  - config.js.template: Google Maps API configuration
+  - env.template: Map API keys and settings
+  
+  **API Mock Data:**
+  - api/api-predictions.json: Probability prediction endpoints
+  - api/api-feeding-zones.json: Feeding zone data structure
+  
+  **Documentation:**
+  - docs/MAPS_SETUP_GUIDE.md: Google Maps setup instructions
+  - docs/DEVELOPMENT_SETUP.md: API key configuration
+  
+  **Branch Workflow:**
+  1. Always work on feature/map-visualization branch
+  2. Focus on map functionality and data visualization
+  3. Test with various data sizes and zoom levels
+  4. Optimize performance for large datasets
+  5. Ensure mobile map interaction works properly
+  
+  **Collaboration Points:**
+  - Work with frontend-ui team on map control styling
+  - Coordinate with api-development team on data endpoints
+  - Support backend-integration team with real-time data display
+  
+  **Development Commands:**
+  ```bash
+  # Switch to your branch
+  git checkout feature/map-visualization
+  
+  # Set up Google Maps API key
+  cp config.js.template config.js
+  # Edit config.js with your Google Maps API key
+  
+  # Start development
+  npm run dev
+  ```
+  
+  **Google Maps Features to Implement:**
+  - Interactive probability heatmaps
+  - Orca sighting markers with info windows
+  - Time-based data filtering controls
+  - Feeding zone polygon overlays
+  - Custom map styles for marine environment
+  - Mobile-optimized map interactions
+  
+  **Performance Considerations:**
+  - Efficient rendering of large datasets (1,354+ points)
+  - Map clustering for high-density areas
+  - Lazy loading of detailed sighting data
+  - Optimized heatmap rendering
+  
+  **Testing Focus:**
+  - Cross-browser map rendering
+  - Mobile touch interactions
+  - Data loading performance
+  - Map responsiveness across screen sizes
+  - API rate limit handling
+  
+  Remember: You are the mapping specialist. Focus on creating smooth, informative, and performant map visualizations that help users understand orca behavior patterns.
+  
+  Best regards,
+  Branch Setup Agent 

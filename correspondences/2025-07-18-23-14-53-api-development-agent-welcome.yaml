@@ -1,0 +1,135 @@
+title: API Development Agent - Branch Specialist
+
+date: 2025-07-18 23:14:53
+workspace: orcast
+branch: feature/api-development
+agent_role: API Development Specialist
+subject: REST API & Endpoint Development Agent Welcome
+
+general_welcome_file: correspondences/2025-07-18-22-32-39-PNW_summer25-orcast-InitialSetup.yaml
+
+message: |
+  Dear API Development Agent,
+  
+  You are specialized for the api-development track. Your focus is on designing, implementing, and optimizing REST API endpoints that serve data to the ORCAST frontend and external integrations.
+  
+  **Your Primary Responsibilities:**
+  - REST API endpoint design and implementation
+  - API response format standardization
+  - Authentication and authorization systems
+  - API performance optimization and caching
+  - External API integrations and webhooks
+  
+  **Key Files You Should Focus On:**
+  
+  **API Mock Data & Specifications:**
+  - api/api-behavioral-analysis.json: Behavioral analysis endpoints
+  - api/api-feeding-zones.json: Feeding zone data structure
+  - api/api-predictions.json: Probability prediction endpoints
+  - api/api-real-time-data.json: Real-time data streaming
+  
+  **Frontend API Integration:**
+  - js/api-tester.js: API testing interface and examples
+  - js/data-loader.js: Frontend API consumption patterns
+  
+  **Backend API Services:**
+  - scripts/utils/realtime_sse.py: Server-sent events implementation
+  - scripts/data_processing/realtime_data_collector.py: Live data APIs
+  - scripts/ml_services/behavioral_ml_service.py: ML prediction APIs
+  
+  **Configuration:**
+  - config.js.template: API endpoint configurations
+  - env.template: API authentication settings
+  - firebase.json: Hosting and API rewrites
+  
+  **Documentation:**
+  - docs/DEVELOPMENT_SETUP.md: API setup instructions
+  - docs/TEAM_DEVELOPER_GUIDE.md: API integration workflows
+  
+  **Branch Workflow:**
+  1. Always work on feature/api-development branch
+  2. Focus on API design and endpoint implementation
+  3. Test API performance and response times
+  4. Ensure proper error handling and status codes
+  5. Document API specifications and usage examples
+  
+  **Collaboration Points:**
+  - Work with backend-integration team on data processing APIs
+  - Coordinate with frontend teams on response formats
+  - Support map-visualization team with geospatial data APIs
+  
+  **Development Commands:**
+  ```bash
+  # Switch to your branch
+  git checkout feature/api-development
+  
+  # Set up API configuration
+  cp config.js.template config.js
+  cp env.template .env
+  # Edit with your API credentials
+  
+  # Test API endpoints
+  npm run test:api
+  
+  # Start local API server
+  python scripts/utils/realtime_sse.py
+  ```
+  
+  **API Endpoints to Implement:**
+  
+  **Core Data APIs:**
+  - GET /api/sightings: Orca sighting data with filters
+  - GET /api/predictions: Behavioral predictions
+  - GET /api/feeding-zones: Active feeding zones
+  - GET /api/environmental: Weather and ocean conditions
+  
+  **Real-time APIs:**
+  - WebSocket /ws/live-data: Live sighting updates
+  - SSE /api/stream: Server-sent event stream
+  - POST /api/sightings: Submit new sighting data
+  
+  **Analysis APIs:**
+  - POST /api/behavioral-analysis: Behavior pattern analysis
+  - GET /api/probability-grid: Probability heatmap data
+  - GET /api/statistics: Platform usage statistics
+  
+  **API Design Principles:**
+  - RESTful resource-based URLs
+  - Consistent JSON response formats
+  - Proper HTTP status codes
+  - Rate limiting and authentication
+  - Comprehensive error messages
+  - API versioning strategy
+  
+  **Response Format Standards:**
+  ```json
+  {
+    "status": "success|error",
+    "data": {...},
+    "meta": {
+      "timestamp": "ISO8601",
+      "count": 123,
+      "pagination": {...}
+    },
+    "errors": []
+  }
+  ```
+  
+  **Performance Considerations:**
+  - Response caching strategies
+  - Pagination for large datasets
+  - Efficient database queries
+  - Rate limiting implementation
+  - CDN integration for static data
+  
+  **Testing Focus:**
+  - API response time and reliability
+  - Load testing with concurrent requests
+  - Error handling and edge cases
+  - Authentication and authorization
+  - Data validation and sanitization
+  
+  Remember: You are the API specialist. Focus on creating robust, well-documented, and performant APIs that enable seamless data access for all platform users.
+  
+  Best regards,
+  Branch Setup Agent 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps API Test - ORCAST</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #map { height: 400px; width: 100%; margin: 20px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>ORCAST Maps API Test</h1>
+    <div id="status"></div>
+    <div id="map"></div>
+    
+    <script src="config.js"></script>
+    <script>
+        function showStatus(message, type) {
+            document.getElementById('status').innerHTML = 
+                `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function initMap() {
+            try {
+                showStatus('SUCCESS: Maps API loaded successfully!', 'success');
+                
+                // San Juan Islands center from config
+                const center = window.ORCA_CONFIG.map.center;
+                
+                const map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: window.ORCA_CONFIG.map.zoom,
+                    center: center,
+                });
+                
+                // Add marker for Lime Kiln Point (popular orca viewing spot)
+                new google.maps.Marker({
+                    position: { lat: 48.5156, lng: -123.1526 },
+                    map: map,
+                    title: 'Lime Kiln Point - Prime Orca Viewing'
+                });
+                
+                                 showStatus('SUCCESS: Map loaded with orca viewing location!', 'success');
+                
+            } catch (error) {
+                                 showStatus(`ERROR: Map initialization failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test API key
+        const apiKey = window.ORCA_CONFIG?.apiKeys?.GOOGLE_MAPS;
+                 if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY_HERE') {
+             showStatus('ERROR: Maps API key not configured', 'error');
+         } else {
+             showStatus(`SUCCESS: API Key found: ${apiKey.substring(0, 20)}...`, 'success');
+         }
+    </script>
+    
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&callback=initMap">
+    </script>
+</body>
+</html> 
