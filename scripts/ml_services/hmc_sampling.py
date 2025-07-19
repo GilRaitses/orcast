@@ -119,7 +119,7 @@ class HMCFeedingBehaviorSampler:
                       0.1 * noise_level)
             
             # Success probability
-            p_success = jnp.sigmoid(logit_p)
+            p_success = 1.0 / (1.0 + jnp.exp(-logit_p))
             
             # Likelihood
             if feeding_outcomes is not None:
@@ -342,7 +342,7 @@ class HMCFeedingBehaviorSampler:
                   params['environmental_adaptability'] * (visibility - 0.5) / 0.5 -
                   0.1 * noise_level)
         
-        return jnp.sigmoid(logit_p)
+        return 1.0 / (1.0 + jnp.exp(-logit_p))
     
     def discover_feeding_patterns(self) -> Dict[str, Any]:
         """
