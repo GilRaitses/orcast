@@ -7,7 +7,7 @@ class GeminiIntegration {
     constructor(config = {}) {
         this.apiKey = config.apiKey || window.ORCA_CONFIG?.gemini?.apiKey || window.ORCA_CONFIG?.apiKeys?.GEMINI;
         this.projectId = config.projectId || window.ORCA_CONFIG?.gemini?.projectId || 'orca-466204';
-        this.model = config.model || window.ORCA_CONFIG?.gemini?.model || 'gemini-pro';
+        this.model = config.model || window.ORCA_CONFIG?.gemini?.model || 'gemini-1.5-flash';
         this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
         
         if (!this.apiKey) {

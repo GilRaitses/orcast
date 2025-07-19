@@ -35,7 +35,7 @@ window.ORCA_CONFIG = {
     gemini: {
         apiKey: 'AIzaSyAwvuL88RoXMjvUP5lJCFDS2mwLrwo6CVs',
         projectId: 'orca-466204',
-        model: 'gemini-pro',
+        model: 'gemini-1.5-flash',
         serviceAccountEmail: 'orca-237@orca-466204.iam.gserviceaccount.com'
     }
 };
