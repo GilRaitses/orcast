@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST Multi-Agent Orchestration Demo</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/analytics-dashboard.css">
+    
+    <style>
+        /* Demo-specific styles */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .demo-header h1 {
+            margin: 0 0 16px 0;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+        
+        .demo-header p {
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 24px;
+            margin: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+        
+        .input-group input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .demo-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .demo-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .demo-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .demo-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .demo-btn.secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .demo-btn.secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        
+        .demo-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .demo-status {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .demo-status.success {
+            background: rgba(72, 187, 120, 0.1);
+            color: #22543d;
+            border: 1px solid rgba(72, 187, 120, 0.2);
+        }
+        
+        .demo-status.error {
+            background: rgba(245, 101, 101, 0.1);
+            color: #742a2a;
+            border: 1px solid rgba(245, 101, 101, 0.2);
+        }
+        
+        .demo-status.loading {
+            background: rgba(102, 126, 234, 0.1);
+            color: #3c366b;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .example-queries {
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .example-queries h3 {
+            margin-bottom: 12px;
+            color: #2d3748;
+        }
+        
+        .example-item {
+            padding: 8px 12px;
+            background: #f7fafc;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .example-item:hover {
+            background: #edf2f7;
+        }
+        
+        .example-item code {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .trip-results {
+            margin: 20px;
+            display: none;
+        }
+        
+        .trip-summary {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .hierarchy-view {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hierarchy-level {
+            margin-left: 20px;
+            border-left: 2px solid #e2e8f0;
+            padding-left: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .hierarchy-item {
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .hierarchy-item h4 {
+            margin: 0 0 4px 0;
+            color: #2d3748;
+        }
+        
+        .hierarchy-item p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        
+        .probability-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        #orcast-dashboard {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Header -->
+    <div class="demo-header">
+        <h1>ORCAST Multi-Agent System</h1>
+        <p>Hierarchical Trip Planning with Analytics Orchestration</p>
+    </div>
+
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+        <div class="input-group">
+            <label for="trip-input">Trip Planning Request:</label>
+            <input type="text" id="trip-input" placeholder="Plan a 3-day orca watching trip from land with balcony accommodation for 2 people this weekend">
+        </div>
+
+        <div class="demo-buttons">
+            <button class="demo-btn primary" id="plan-trip-btn">
+                Plan Trip with Multi-Agent System
+            </button>
+            <button class="demo-btn secondary" id="show-zones-btn" disabled>
+                Show High-Probability Zones
+            </button>
+            <button class="demo-btn secondary" id="export-trip-btn" disabled>
+                Export Trip Data
+            </button>
+            <button class="demo-btn secondary" id="refresh-dashboard-btn">
+                Refresh Dashboard
+            </button>
+        </div>
+
+        <div class="demo-status" id="demo-status"></div>
+
+        <div class="example-queries">
+            <h3>Example Queries:</h3>
+            <div class="example-item" data-query="Plan a weekend orca watching trip from land with luxury accommodation">
+                <code>"Plan a weekend orca watching trip from land with luxury accommodation"</code>
+            </div>
+            <div class="example-item" data-query="3-day boat-based orca photography expedition for 4 people next week">
+                <code>"3-day boat-based orca photography expedition for 4 people next week"</code>
+            </div>
+            <div class="example-item" data-query="Family-friendly orca watching day trip with educational activities">
+                <code>"Family-friendly orca watching day trip with educational activities"</code>
+            </div>
+            <div class="example-item" data-query="Budget orca watching adventure for 2 days under $500">
+                <code>"Budget orca watching adventure for 2 days under $500"</code>
+            </div>
+            <div class="example-item" data-query="Professional research trip to study orca feeding behavior for 1 week">
+                <code>"Professional research trip to study orca feeding behavior for 1 week"</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip Results -->
+    <div class="trip-results" id="trip-results">
+        <div class="trip-summary" id="trip-summary">
+            <!-- Trip summary will be populated here -->
+        </div>
+        
+        <div class="hierarchy-view" id="hierarchy-view">
+            <!-- Hierarchical trip structure will be shown here -->
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div id="orcast-dashboard"></div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="js/agentic/gemini-integration.js"></script>
+    <script src="js/agentic/trip-hierarchy-model.js"></script>
+    <script src="js/agentic/analytics-dashboard.js"></script>
+    <script src="js/agentic/multi-agent-orchestrator.js"></script>
+    <script src="js/agentic/orcast-multi-agent-integration.js"></script>
+
+    <script>
+        // Demo Application
+        class ORCASTDemo {
+            constructor() {
+                this.orcastSystem = null;
+                this.currentSession = null;
+                this.initializeDemo();
+            }
+
+            async initializeDemo() {
+                try {
+                    // Initialize ORCAST Multi-Agent System
+                    this.orcastSystem = new ORCASTMultiAgentSystem({
+                        // API Keys (use your actual keys)
+                        geminiApiKey: 'your-gemini-api-key-here',
+                        
+                        // Service URLs
+                        gemmaServiceUrl: 'https://orcast-gemma3-gpu-YOUR-ID.run.app',
+                        
+                        // Firebase Config (use your actual config)
+                        firebaseConfig: {
+                            apiKey: "your-firebase-config",
+                            authDomain: "orca-466204.firebaseapp.com",
+                            databaseURL: "https://orca-466204-default-rtdb.firebaseio.com",
+                            projectId: "orca-466204"
+                        },
+                        
+                        // Dashboard configuration
+                        dashboardContainer: 'orcast-dashboard',
+                        enableAnalytics: true,
+                        enableVectorSpace: true,
+                        enableRealtimeUpdates: true,
+                        
+                        // Use Gemma GPU service for hackathon
+                        useGemmaInstead: true
+                    });
+
+                    // Wait for system to be ready
+                    this.orcastSystem.eventBus.addEventListener('orcast-ready', (event) => {
+                        this.handleSystemReady(event.detail);
+                    });
+
+                    this.setupEventListeners();
+                    this.showStatus('System initializing...', 'loading');
+
+                } catch (error) {
+                    console.error('Demo initialization failed:', error);
+                    this.showStatus(`Initialization failed: ${error.message}`, 'error');
+                }
+            }
+
+            setupEventListeners() {
+                // Plan trip button
+                document.getElementById('plan-trip-btn').addEventListener('click', () => {
+                    this.planTrip();
+                });
+
+                // Show zones button
+                document.getElementById('show-zones-btn').addEventListener('click', () => {
+                    this.showHighProbabilityZones();
+                });
+
+                // Export trip button
+                document.getElementById('export-trip-btn').addEventListener('click', () => {
+                    this.exportTrip();
+                });
+
+                // Refresh dashboard button
+                document.getElementById('refresh-dashboard-btn').addEventListener('click', () => {
+                    this.refreshDashboard();
+                });
+
+                // Example queries
+                document.querySelectorAll('.example-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const query = item.getAttribute('data-query');
+                        document.getElementById('trip-input').value = query;
+                    });
+                });
+
+                // Trip planned event
+                this.orcastSystem?.eventBus.addEventListener('trip-planned', (event) => {
+                    this.handleTripPlanned(event.detail);
+                });
+            }
+
+            handleSystemReady(systemData) {
+                console.log('ORCAST system ready:', systemData);
+                this.showStatus('Multi-agent system ready! Enter a trip request above.', 'success');
+                
+                // Show system capabilities
+                const capabilities = systemData.capabilities;
+                console.log('System capabilities:', capabilities);
+            }
+
+            async planTrip() {
+                const input = document.getElementById('trip-input').value.trim();
+                
+                if (!input) {
+                    this.showStatus('Please enter a trip planning request.', 'error');
+                    return;
+                }
+
+                try {
+                    this.showStatus('Planning trip with multi-agent orchestration...', 'loading');
+                    this.setButtonsDisabled(true);
+
+                    // Plan trip using multi-agent system
+                    const result = await this.orcastSystem.planTrip(input);
+                    
+                    this.currentSession = result.sessionId;
+                    this.displayTripResults(result);
+                    this.showStatus(`Trip planned successfully! Session: ${result.sessionId}`, 'success');
+                    
+                    // Enable other buttons
+                    document.getElementById('show-zones-btn').disabled = false;
+                    document.getElementById('export-trip-btn').disabled = false;
+
+                } catch (error) {
+                    console.error('Trip planning failed:', error);
+                    this.showStatus(`Trip planning failed: ${error.message}`, 'error');
+                } finally {
+                    this.setButtonsDisabled(false);
+                }
+            }
+
+            displayTripResults(result) {
+                const { trip, analytics, reasoning, metadata } = result;
+                
+                // Show trip summary
+                const summaryHtml = `
+                    <h3>Trip Summary</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                        <div class="stat-card">
+                            <strong>Duration:</strong> ${trip.duration} days
+                        </div>
+                        <div class="stat-card">
+                            <strong>Overall Probability:</strong> 
+                            <span class="probability-badge">${(trip.overallProbability * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="stat-card">
+                            <strong>Confidence:</strong> ${(trip.confidence * 100).toFixed(1)}%
+                        </div>
+                        <div class="stat-card">
+                            <strong>Estimated Cost:</strong> $${trip.totalCost || 'TBD'}
+                        </div>
+                    </div>
+                    <p><strong>Title:</strong> ${trip.title}</p>
+                    <p><strong>Processing Time:</strong> ${metadata.processingTime}ms</p>
+                    <p><strong>Agents Used:</strong> ${metadata.agentsUsed.join(', ')}</p>
+                `;
+                
+                document.getElementById('trip-summary').innerHTML = summaryHtml;
+                
+                // Show hierarchical structure
+                this.displayHierarchy(trip);
+                
+                // Show results section
+                document.getElementById('trip-results').style.display = 'block';
+            }
+
+            displayHierarchy(trip) {
+                let hierarchyHtml = '<h3>Trip Hierarchy</h3>';
+                
+                trip.days.forEach((day, dayIndex) => {
+                    hierarchyHtml += `
+                        <div class="hierarchy-item">
+                            <h4>Day ${day.dayNumber}: ${day.date}</h4>
+                            <p>Theme: ${day.theme}</p>
+                            <div class="hierarchy-level">
+                    `;
+                    
+                    day.dayTrips.forEach((dayTrip, tripIndex) => {
+                        hierarchyHtml += `
+                            <div class="hierarchy-item">
+                                <h4>Day Trip: ${dayTrip.title}</h4>
+                                <p>${dayTrip.startTime} - ${dayTrip.endTime} | ${dayTrip.type}</p>
+                                <div class="hierarchy-level">
+                        `;
+                        
+                        dayTrip.stops.forEach((stop, stopIndex) => {
+                            hierarchyHtml += `
+                                <div class="hierarchy-item">
+                                    <h4>Stop: ${stop.name}</h4>
+                                    <p>Duration: ${stop.duration} minutes | Probability: <span class="probability-badge">${(stop.probabilityScore * 100).toFixed(1)}%</span></p>
+                                    <div class="hierarchy-level">
+                            `;
+                            
+                            stop.activities.forEach((activity, actIndex) => {
+                                hierarchyHtml += `
+                                    <div class="hierarchy-item">
+                                        <h4>Activity: ${activity.title}</h4>
+                                        <p>Type: ${activity.type} | Duration: ${activity.duration} minutes</p>
+                                        <div class="hierarchy-level">
+                                `;
+                                
+                                activity.viewingZones.forEach((zone, zoneIndex) => {
+                                    hierarchyHtml += `
+                                        <div class="hierarchy-item">
+                                            <h4>Viewing Zone: ${zone.name}</h4>
+                                            <p>Probability: <span class="probability-badge">${(zone.probability * 100).toFixed(1)}%</span> | Confidence: ${(zone.confidence * 100).toFixed(1)}%</p>
+                                        </div>
+                                    `;
+                                });
+                                
+                                hierarchyHtml += '</div></div>';
+                            });
+                            
+                            hierarchyHtml += '</div></div>';
+                        });
+                        
+                        hierarchyHtml += '</div></div>';
+                    });
+                    
+                    hierarchyHtml += '</div></div>';
+                });
+                
+                document.getElementById('hierarchy-view').innerHTML = hierarchyHtml;
+            }
+
+            showHighProbabilityZones() {
+                if (!this.currentSession) return;
+                
+                const zones = this.orcastSystem.getHighProbabilityZones(this.currentSession, 0.5);
+                
+                let zonesHtml = '<h3>High-Probability Zones (>50%)</h3>';
+                zones.forEach(zone => {
+                    zonesHtml += `
+                        <div class="hierarchy-item">
+                            <h4>${zone.name}</h4>
+                            <p>Probability: <span class="probability-badge">${(zone.probability * 100).toFixed(1)}%</span></p>
+                            <p>Path: Day ${zone.path.day} → ${zone.path.dayTrip} → ${zone.path.stop} → ${zone.path.activity}</p>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('hierarchy-view').innerHTML = zonesHtml;
+            }
+
+            exportTrip() {
+                if (!this.currentSession) return;
+                
+                try {
+                    const tripData = this.orcastSystem.exportTrip(this.currentSession, 'json');
+                    const summary = this.orcastSystem.exportTrip(this.currentSession, 'summary');
+                    
+                    console.log('Full trip data:', tripData);
+                    console.log('Trip summary:', summary);
+                    
+                    // Create downloadable file
+                    const blob = new Blob([tripData], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `orcast-trip-${this.currentSession}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    this.showStatus('Trip data exported successfully!', 'success');
+                    
+                } catch (error) {
+                    this.showStatus(`Export failed: ${error.message}`, 'error');
+                }
+            }
+
+            refreshDashboard() {
+                if (this.orcastSystem?.components?.dashboard) {
+                    this.orcastSystem.refreshDashboardData();
+                    this.showStatus('Dashboard refreshed!', 'success');
+                } else {
+                    this.showStatus('Dashboard not available', 'error');
+                }
+            }
+
+            handleTripPlanned(tripData) {
+                console.log('Trip planned event received:', tripData);
+            }
+
+            showStatus(message, type) {
+                const statusEl = document.getElementById('demo-status');
+                statusEl.textContent = message;
+                statusEl.className = `demo-status ${type}`;
+                statusEl.style.display = 'block';
+                
+                if (type === 'success' || type === 'error') {
+                    setTimeout(() => {
+                        statusEl.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            setButtonsDisabled(disabled) {
+                document.getElementById('plan-trip-btn').disabled = disabled;
+            }
+        }
+
+        // Initialize demo when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ORCASTDemo();
+        });
+    </script>
+</body>
+</html> 
