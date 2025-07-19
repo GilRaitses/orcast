@@ -1,37 +1,10 @@
-# Core ML and Data Science
-numpy>=1.24.0
-pandas>=2.0.0
-scikit-learn>=1.3.0
-
-# Explainable AI
-shap>=0.42.0
-lime>=0.2.0.1
-
-# Bayesian modeling and HMC sampling (latest versions)
-jax>=0.4.13
-jaxlib>=0.4.13
-numpyro>=0.12.1
-arviz>=0.15.1
-
-# Web framework
-fastapi>=0.100.0
-uvicorn>=0.22.0
-pydantic>=2.0.0
-
-# Web scraping for specialized orca sources
-beautifulsoup4>=4.12.0
-lxml>=4.9.0
-
-# Automated scheduling
-schedule>=1.2.0
-
-# Google Cloud services
-google-cloud-bigquery>=3.11.0
-google-cloud-storage>=2.10.0
-
-# Caching and data
-redis>=4.5.0
-requests>=2.31.0
-
-# Utilities
-python-multipart>=0.0.6 
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
+numpy==2.3.1
+pandas==2.2.3
+scikit-learn==1.7.1
+joblib==1.5.1
+google-cloud-bigquery==3.28.0
+google-cloud-core==2.4.1
+requests==2.31.0 
