@@ -5,13 +5,25 @@
 
 class GeminiIntegration {
     constructor(config = {}) {
-        this.apiKey = config.apiKey || window.ORCA_CONFIG?.gemini?.apiKey || window.ORCA_CONFIG?.apiKeys?.GEMINI;
-        this.projectId = config.projectId || window.ORCA_CONFIG?.gemini?.projectId || 'orca-466204';
-        this.model = config.model || window.ORCA_CONFIG?.gemini?.model || 'gemini-1.5-flash';
-        this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+        // Check if we should use Gemma service for hackathon
+        this.useGemma = config.useGemma || window.ORCA_CONFIG?.gemmaService?.useGemmaInstead || false;
         
-        if (!this.apiKey) {
-            console.warn('Gemini API key not found. Using fallback rule-based processing.');
+        if (this.useGemma) {
+            // Gemma 3 Cloud Run GPU service configuration
+            this.gemmaConfig = window.ORCA_CONFIG?.gemmaService;
+            this.baseUrl = this.gemmaConfig?.baseUrl;
+            this.model = 'google/gemma-2-2b-it';
+            console.log('Using Gemma 3 Cloud Run GPU service for hackathon');
+        } else {
+            // Original Gemini API configuration
+            this.apiKey = config.apiKey || window.ORCA_CONFIG?.gemini?.apiKey || window.ORCA_CONFIG?.apiKeys?.GEMINI;
+            this.projectId = config.projectId || window.ORCA_CONFIG?.gemini?.projectId || 'orca-466204';
+            this.model = config.model || window.ORCA_CONFIG?.gemini?.model || 'gemini-1.5-flash';
+            this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+            
+            if (!this.apiKey) {
+                console.warn('Gemini API key not found. Using fallback rule-based processing.');
+            }
         }
         
         this.initializePrompts();
@@ -141,6 +153,12 @@ Return as JSON:
      * Extract planning constraints from natural language input
      */
     async extractConstraints(userInput) {
+        // Use Gemma service for hackathon
+        if (this.useGemma) {
+            return this.callGemmaConstraintExtraction(userInput);
+        }
+        
+        // Original Gemini API logic
         if (!this.apiKey) {
             console.log('Using fallback constraint extraction');
             return this.fallbackConstraintExtraction(userInput);
@@ -198,6 +216,10 @@ Return as JSON:
      * Generate complete trip plan using AI
      */
     async generatePlan(constraints, locations, additionalData = {}) {
+        if (this.useGemma) {
+            return this.generatePlanWithGemma(constraints, locations, additionalData);
+        }
+        
         if (!this.apiKey) {
             return null; // Fall back to rule-based generation
         }
@@ -222,6 +244,36 @@ Return as JSON:
             
         } catch (error) {
             console.error('Gemini plan generation failed:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Generate trip plan using Gemma Cloud Run GPU service
+     */
+    async generatePlanWithGemma(constraints, locations, additionalData = {}) {
+        try {
+            const prompt = this.prompts.planGeneration
+                .replace('{constraints}', JSON.stringify(constraints))
+                .replace('{locations}', JSON.stringify(locations));
+
+            const response = await this.callGemmaGenerate(prompt);
+            
+            // Try to extract JSON from response
+            const jsonMatch = response.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                const plan = JSON.parse(jsonMatch[0]);
+                plan.id = Date.now();
+                plan.created = new Date().toISOString();
+                plan.constraints = constraints;
+                plan.generatedBy = 'gemma-3-gpu';
+                return plan;
+            }
+            
+            return null;
+            
+        } catch (error) {
+            console.error('Gemma plan generation failed:', error);
             return null;
         }
     }
@@ -340,12 +392,98 @@ Return as JSON:
      * Test the API connection
      */
     async testConnection() {
+        if (this.useGemma) {
+            return this.testGemmaConnection();
+        }
+        
         try {
             const response = await this.callGeminiAPI('Respond with just "OK" if you can hear me.');
             return response.trim().toLowerCase().includes('ok');
         } catch (error) {
             console.error('Gemini API connection test failed:', error);
             return false;
+        }
+    }
+
+    /**
+     * Test Gemma Cloud Run GPU service connection
+     */
+    async testGemmaConnection() {
+        try {
+            const healthUrl = `${this.baseUrl}${this.gemmaConfig.healthEndpoint}`;
+            const response = await fetch(healthUrl);
+            
+            if (!response.ok) {
+                throw new Error(`Health check failed: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Gemma service health check:', data);
+            return data.status === 'healthy';
+            
+        } catch (error) {
+            console.error('Gemma service connection test failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Call Gemma Cloud Run GPU service for constraint extraction
+     */
+    async callGemmaConstraintExtraction(userInput) {
+        try {
+            const url = `${this.baseUrl}${this.gemmaConfig.constraintsEndpoint}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    input: userInput
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Gemma service error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+            
+        } catch (error) {
+            console.error('Gemma constraint extraction failed:', error);
+            return this.fallbackConstraintExtraction(userInput);
+        }
+    }
+
+    /**
+     * Call Gemma Cloud Run GPU service for general text generation
+     */
+    async callGemmaGenerate(prompt, options = {}) {
+        try {
+            const url = `${this.baseUrl}${this.gemmaConfig.generateEndpoint}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    max_length: options.maxOutputTokens || 2048,
+                    temperature: options.temperature || 0.3
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Gemma service error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.response;
+            
+        } catch (error) {
+            console.error('Gemma generation failed:', error);
+            throw error;
         }
     }
 }

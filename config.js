@@ -38,6 +38,15 @@ window.ORCA_CONFIG = {
         projectId: 'orca-466204',
         model: 'gemini-1.5-flash',
         serviceAccountEmail: 'orca-237@orca-466204.iam.gserviceaccount.com'
+    },
+    
+    // Gemma 3 Cloud Run GPU Service (for Hackathon)
+    gemmaService: {
+        baseUrl: 'https://orcast-gemma3-gpu-RANDOM.run.app', // Will be updated after deployment
+        healthEndpoint: '/health',
+        generateEndpoint: '/generate',
+        constraintsEndpoint: '/extract-constraints',
+        useGemmaInstead: true // Set to true for hackathon submission
     }
 };
 
