@@ -77,14 +77,34 @@ class FirestoreToBigQueryUploader:
                 doc_id = record['doc_id']
                 data = record['data']
                 
-                # Extract location data
+                # Extract location data with improved handling
                 location = data.get('location', {})
-                if hasattr(location, 'latitude'):  # GeoPoint object
+                latitude = 0.0
+                longitude = 0.0
+                
+                # Handle nested coordinates structure
+                if isinstance(location, dict) and 'coordinates' in location:
+                    # Location has nested coordinates (our actual format)
+                    coordinates = location['coordinates']
+                    if hasattr(coordinates, 'latitude'):  # GeoPoint object
+                        latitude = coordinates.latitude
+                        longitude = coordinates.longitude
+                elif hasattr(location, 'latitude'):  # Direct GeoPoint object
                     latitude = location.latitude
                     longitude = location.longitude
-                else:  # Dict with lat/lng
-                    latitude = location.get('lat', 0.0)
-                    longitude = location.get('lng', 0.0)
+                elif isinstance(location, dict):  # Dict with lat/lng or other formats
+                    latitude = location.get('lat', location.get('latitude', 0.0))
+                    longitude = location.get('lng', location.get('longitude', 0.0))
+                
+                # Also check for direct latitude/longitude fields in data
+                if latitude == 0.0 and longitude == 0.0:
+                    latitude = data.get('latitude', data.get('lat', 0.0))
+                    longitude = data.get('longitude', data.get('lng', data.get('lon', 0.0)))
+                
+                # Skip records with invalid coordinates
+                if latitude == 0.0 and longitude == 0.0:
+                    logger.warning(f"Skipping record {doc_id} - invalid coordinates (0,0)")
+                    continue
                 
                 # Handle timestamp
                 timestamp = data.get('timestamp')
