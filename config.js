@@ -10,13 +10,14 @@ window.ORCA_CONFIG = {
     
     // Firebase Configuration
     firebase: {
-        apiKey: "your-firebase-api-key",
+        apiKey: "AIzaSyATLG7Bg6i0D1rYy3XS5GRyCkBtnghztIY",
         authDomain: "orca-904de.firebaseapp.com",
         databaseURL: "https://orca-904de-default-rtdb.firebaseio.com",
         projectId: "orca-904de",
-        storageBucket: "orca-904de.appspot.com",
-        messagingSenderId: "your-sender-id",
-        appId: "your-app-id"
+        storageBucket: "orca-904de.firebasestorage.app",
+        messagingSenderId: "293403666260",
+        appId: "1:293403666260:web:05fe93499cc62adcf4cac1",
+        measurementId: "G-ZBG8JHYJL2"
     },
     
     // San Juan Islands Configuration

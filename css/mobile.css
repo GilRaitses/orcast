@@ -1,0 +1,460 @@
+/* ORCAST Mobile Responsive Styles */
+/* Optimized for portrait and landscape mobile viewing */
+
+/* === MOBILE BREAKPOINTS === */
+/* Portrait phones: up to 767px */
+/* Landscape phones: 768px to 991px */
+/* Tablets: 992px and up */
+
+/* === BASE MOBILE STYLES === */
+@media (max-width: 991px) {
+    
+    /* App Container Mobile Layout */
+    .app-container {
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    /* Logo and Header */
+    .sidebar .logo h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .sidebar .subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Sidebar Mobile Optimization */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 0.75rem 1rem;
+        border-right: none;
+        border-bottom: 1px solid #e0e7ff;
+        order: 1;
+    }
+    
+    /* Main Content Area */
+    .main-content {
+        flex: 1;
+        order: 2;
+        padding: 0;
+        overflow: hidden;
+    }
+    
+    /* Tab Navigation Mobile */
+    .tabs {
+        padding: 0.5rem 1rem;
+        border-bottom: 2px solid #e0e7ff;
+        background: #f8fafc;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .tabs button {
+        min-width: 120px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        border-radius: 8px 8px 0 0;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    
+    /* Map Container Mobile */
+    .tab-content {
+        height: calc(100vh - 140px); /* Adjust based on header + tabs height */
+        overflow: hidden;
+    }
+    
+    #map {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+    
+    /* Live Data Indicator Mobile */
+    .live-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 20px;
+        background: rgba(16, 185, 129, 0.95);
+        color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    /* Map Controls Mobile */
+    .gm-style-mtc {
+        margin: 8px !important;
+    }
+    
+    .gm-bundled-control {
+        margin: 8px !important;
+    }
+    
+    /* Info Window Mobile Optimization */
+    .gm-style-iw {
+        max-width: 280px !important;
+    }
+    
+    .gm-style-iw-c {
+        padding: 12px !important;
+    }
+    
+    .gm-style-iw-d {
+        overflow: auto !important;
+        max-height: 200px !important;
+    }
+    
+    /* Probability Scale Mobile */
+    .probability-scale {
+        position: absolute;
+        bottom: 20px;
+        left: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 0.75rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        font-size: 0.8rem;
+        z-index: 1000;
+    }
+    
+    .probability-scale h4 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        color: #1e40af;
+    }
+    
+    .scale-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.25rem;
+    }
+    
+    .scale-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+        border-radius: 3px;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    /* Touch-Friendly Elements */
+    button, .clickable {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+    }
+    
+    /* Data Sources Tab Mobile */
+    .data-sources-content {
+        padding: 1rem;
+        height: calc(100vh - 140px);
+        overflow-y: auto;
+    }
+    
+    .data-source-card {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Backend Inspection Mobile */
+    .inspection-content {
+        padding: 1rem;
+        height: calc(100vh - 140px);
+        overflow-y: auto;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.8rem;
+    }
+    
+    /* About Button Mobile */
+    .about-btn {
+        position: absolute;
+        bottom: 80px;
+        right: 10px;
+        padding: 0.5rem 1rem;
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+}
+
+/* === PORTRAIT MOBILE OPTIMIZATION === */
+@media (max-width: 767px) and (orientation: portrait) {
+    
+    /* Tighter spacing for portrait */
+    .sidebar {
+        padding: 0.5rem 1rem;
+    }
+    
+    .sidebar .logo h1 {
+        font-size: 1.6rem;
+    }
+    
+    .tabs {
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .tabs button {
+        min-width: 100px;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Adjust map height for portrait */
+    .tab-content {
+        height: calc(100vh - 120px);
+    }
+    
+    /* Smaller probability scale in portrait */
+    .probability-scale {
+        bottom: 15px;
+        left: 8px;
+        right: 8px;
+        padding: 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .scale-color {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* Info windows smaller in portrait */
+    .gm-style-iw {
+        max-width: 240px !important;
+    }
+    
+    .gm-style-iw-c {
+        padding: 10px !important;
+    }
+}
+
+/* === LANDSCAPE MOBILE OPTIMIZATION === */
+@media (max-width: 991px) and (orientation: landscape) {
+    
+    /* Maximize map space in landscape */
+    .sidebar {
+        padding: 0.4rem 1rem;
+    }
+    
+    .sidebar .logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .sidebar .logo h1 {
+        font-size: 1.4rem;
+        margin: 0;
+    }
+    
+    .sidebar .subtitle {
+        font-size: 0.8rem;
+        margin: 0;
+    }
+    
+    .tabs {
+        padding: 0.3rem 1rem;
+    }
+    
+    .tabs button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    /* More map space in landscape */
+    .tab-content {
+        height: calc(100vh - 80px);
+    }
+    
+    /* Horizontal probability scale in landscape */
+    .probability-scale {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .probability-scale h4 {
+        margin: 0;
+        white-space: nowrap;
+    }
+    
+    .scale-items {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .scale-item {
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+    
+    /* Live indicator repositioned in landscape */
+    .live-indicator {
+        top: 8px;
+        right: 8px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* About button repositioned */
+    .about-btn {
+        bottom: 60px;
+        right: 8px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* === VERY SMALL SCREENS === */
+@media (max-width: 480px) {
+    
+    /* Ultra-compact for very small screens */
+    .sidebar .logo h1 {
+        font-size: 1.4rem;
+    }
+    
+    .sidebar .subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .tabs button {
+        min-width: 80px;
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .probability-scale {
+        font-size: 0.7rem;
+        padding: 0.5rem;
+    }
+    
+    .gm-style-iw {
+        max-width: 200px !important;
+    }
+    
+    /* Stack tabs vertically on very small screens if needed */
+    @media (max-width: 400px) {
+        .tabs {
+            white-space: normal;
+            text-align: center;
+        }
+        
+        .tabs button {
+            display: block;
+            width: 100%;
+            margin: 0 0 0.25rem 0;
+            border-radius: 6px;
+        }
+    }
+}
+
+/* === TOUCH AND INTERACTION IMPROVEMENTS === */
+@media (max-width: 991px) {
+    
+    /* Improved touch targets */
+    .tabs button:hover {
+        background-color: #dbeafe;
+        transform: none; /* Remove hover transforms on mobile */
+    }
+    
+    .tabs button.active {
+        background-color: #2563eb;
+        color: white;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+    }
+    
+    /* Smooth scrolling */
+    .tabs {
+        scroll-behavior: smooth;
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea {
+        font-size: 16px;
+    }
+    
+    /* Better map interaction */
+    #map {
+        touch-action: pan-x pan-y;
+    }
+    
+    /* Loading overlay mobile */
+    .loading-overlay {
+        font-size: 1.1rem;
+        padding: 2rem;
+    }
+}
+
+/* === ACCESSIBILITY IMPROVEMENTS === */
+@media (max-width: 991px) {
+    
+    /* Focus indicators for mobile */
+    button:focus,
+    .clickable:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+    
+    /* High contrast support */
+    @media (prefers-contrast: high) {
+        .probability-scale {
+            background: rgba(255, 255, 255, 1);
+            border: 2px solid #000;
+        }
+        
+        .live-indicator {
+            border: 2px solid #000;
+        }
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* === PRINT STYLES === */
+@media print {
+    .probability-scale,
+    .live-indicator,
+    .about-btn {
+        display: none;
+    }
+    
+    .app-container {
+        height: auto;
+    }
+    
+    #map {
+        height: 500px;
+        page-break-inside: avoid;
+    }
+} 
