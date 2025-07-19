@@ -34,9 +34,24 @@
             <div class="control-group">
                 <label>Time Unit</label>
                 <div class="time-controls">
-                    <button class="time-btn" onclick="setTimeUnit('weeks')">Weeks</button>
-                    <button class="time-btn active" onclick="setTimeUnit('months')">Months</button>
-                    <button class="time-btn" onclick="setTimeUnit('years')">Years</button>
+                    <button class="time-btn" id="weeksBtn" onclick="setTimeUnit('weeks')">Weeks</button>
+                    <button class="time-btn active" id="monthsBtn" onclick="setTimeUnit('months')">Months</button>
+                    <button class="time-btn" id="yearsBtn" onclick="setTimeUnit('years')">Years</button>
+                </div>
+                <!-- Layer Toggles (move up here) -->
+                <label>Layers</label>
+                <div class="layer-toggles" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                  <button class="time-btn active" id="togglePastBtn" type="button">Past</button>
+                  <button class="time-btn" id="togglePresentBtn" type="button">Present</button>
+                  <button class="time-btn" id="toggleFutureBtn" type="button">Future</button>
+                </div>
+                <div id="pastSliderWrapper" style="display:none; margin-bottom: 0.5rem;">
+                  <input type="range" min="-12" max="0" value="0" class="slider" id="pastSlider">
+                  <div id="pastPeriodDisplay" style="text-align: center; font-size: 0.8rem; color: #4fc3f7;">Current Month</div>
+                </div>
+                <div id="futureSliderWrapper" style="display:none; margin-bottom: 0.5rem;">
+                  <input type="range" min="1" max="12" value="1" class="slider" id="futureSlider">
+                  <div id="futurePeriodDisplay" style="text-align: center; font-size: 0.8rem; color: #4fc3f7;">1 Month Ahead</div>
                 </div>
                 <input type="range" min="-12" max="2" value="0" class="slider" id="timeSlider" oninput="updateTimeFromSlider(this.value)">
                 <div id="periodDisplay" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #4fc3f7;">Current Month</div>
