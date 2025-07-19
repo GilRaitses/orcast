@@ -47,25 +47,36 @@ class DataLoader {
             return [];
         }
 
-        const now = Date.now();
-        let timeRangeMs;
-        
-        // Calculate time range based on current settings
+        const now = new Date();
+        let windowStart, windowEnd;
         if (currentTimeUnit === 'weeks') {
-            timeRangeMs = (7 * 24 * 60 * 60 * 1000) * (Math.abs(currentPeriodOffset) + 1);
+            // Calculate start of the week at the given offset
+            const start = new Date(now);
+            start.setDate(now.getDate() - now.getDay() + (currentPeriodOffset * 7));
+            start.setHours(0, 0, 0, 0);
+            windowStart = start.getTime();
+            const end = new Date(start);
+            end.setDate(start.getDate() + 7);
+            windowEnd = end.getTime();
         } else if (currentTimeUnit === 'months') {
-            timeRangeMs = (30 * 24 * 60 * 60 * 1000) * (Math.abs(currentPeriodOffset) + 1);
+            // Calculate start of the month at the given offset
+            const start = new Date(now.getFullYear(), now.getMonth() + currentPeriodOffset, 1);
+            windowStart = start.getTime();
+            const end = new Date(now.getFullYear(), now.getMonth() + currentPeriodOffset + 1, 1);
+            windowEnd = end.getTime();
         } else { // years
-            timeRangeMs = (365 * 24 * 60 * 60 * 1000) * (Math.abs(currentPeriodOffset) + 1);
+            // Calculate start of the year at the given offset
+            const start = new Date(now.getFullYear() + currentPeriodOffset, 0, 1);
+            windowStart = start.getTime();
+            const end = new Date(now.getFullYear() + currentPeriodOffset + 1, 0, 1);
+            windowEnd = end.getTime();
         }
-
-        const cutoffTime = now - timeRangeMs;
 
         // Filter and convert real sightings
         const filteredSightings = [];
         Object.values(this.realSightingsData).forEach(sighting => {
-            // Skip if too old for current time range
-            if (sighting.timestamp < cutoffTime) return;
+            // Only include if in the window
+            if (sighting.timestamp < windowStart || sighting.timestamp >= windowEnd) return;
             
             // Calculate confidence-based probability
             let probability = 30; // base probability
@@ -110,6 +121,68 @@ class DataLoader {
             });
         });
 
+        return filteredSightings.sort((a, b) => b.probability - a.probability);
+    }
+
+    filterCurrentData(currentTimeUnit) {
+        if (!this.realSightingsData) {
+            console.warn('Real sightings data not loaded yet');
+            return [];
+        }
+        const now = new Date();
+        let startTime;
+        if (currentTimeUnit === 'weeks') {
+            // Start of current week (Sunday)
+            startTime = new Date(now);
+            startTime.setDate(now.getDate() - now.getDay());
+            startTime.setHours(0, 0, 0, 0);
+        } else if (currentTimeUnit === 'months') {
+            // Start of current month
+            startTime = new Date(now.getFullYear(), now.getMonth(), 1);
+        } else if (currentTimeUnit === 'years') {
+            // Start of current year
+            startTime = new Date(now.getFullYear(), 0, 1);
+        } else {
+            startTime = new Date(0); // fallback: all data
+        }
+        const startTimestamp = startTime.getTime();
+        const filteredSightings = [];
+        Object.values(this.realSightingsData).forEach(sighting => {
+            if (sighting.timestamp >= startTimestamp) {
+                // Calculate confidence-based probability (same as filterRealSightingsData)
+                let probability = 30;
+                if (sighting.confidence === 'high') probability += 40;
+                else if (sighting.confidence === 'medium') probability += 25;
+                else if (sighting.confidence === 'low') probability += 10;
+                if (sighting.verified) probability += 20;
+                if (sighting.behavior === 'foraging') probability += 15;
+                else if (sighting.behavior === 'socializing') probability += 10;
+                probability = Math.min(95, probability);
+                // Format time ago
+                const hoursAgo = (Date.now() - sighting.timestamp) / (1000 * 60 * 60);
+                let timeDisplay;
+                if (hoursAgo < 48) {
+                    timeDisplay = `${Math.round(hoursAgo)} hours ago`;
+                } else if (hoursAgo < 720) {
+                    timeDisplay = `${Math.round(hoursAgo / 24)} days ago`;
+                } else {
+                    timeDisplay = `${Math.round(hoursAgo / 720)} months ago`;
+                }
+                filteredSightings.push({
+                    lat: sighting.location.lat,
+                    lng: sighting.location.lng,
+                    probability: probability,
+                    lastSeen: timeDisplay,
+                    depth: Math.round(Math.random() * 40 + 20),
+                    podSize: sighting.orcaCount,
+                    location: sighting.locationName,
+                    behavior: sighting.behavior,
+                    confidence: sighting.confidence,
+                    verified: sighting.verified,
+                    hoursAgo: hoursAgo
+                });
+            }
+        });
         return filteredSightings.sort((a, b) => b.probability - a.probability);
     }
 
