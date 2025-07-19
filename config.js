@@ -1,7 +1,7 @@
 // OrCast Configuration
 window.ORCA_CONFIG = {
     apiKeys: {
-        GOOGLE_MAPS: 'AIzaSyAwvuL88RoXMjvUP5lJCFDS2mwLrwo6CVs',
+        GOOGLE_MAPS: 'AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU',
         OPENWEATHER: 'cdc69fe11f584fdb9957da45e7a98af4',
         GOOGLE_TRANSLATE: 'YOUR_GOOGLE_TRANSLATE_API_KEY_HERE',
         GOOGLE_PLACES: 'YOUR_GOOGLE_PLACES_API_KEY_HERE',
