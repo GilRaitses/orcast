@@ -1,0 +1,27 @@
+{
+  "rules": {
+    "probabilityData": {
+      ".read": true,
+      ".write": false
+    },
+    "environmentalData": {
+      ".read": true,
+      ".write": false
+    },
+    "userSightings": {
+      ".read": true,
+      "$sightingId": {
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['userId', 'timestamp', 'location', 'orcaCount', 'confidence']) && newData.child('userId').val() == auth.uid"
+      }
+    },
+    "userProfiles": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+} 

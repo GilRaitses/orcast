@@ -1,0 +1,32 @@
+{
+  "lastUpdated": "2025-07-17T04:30:55.730980+00:00",
+  "timezone_info": {
+    "storage": "UTC",
+    "display_timezone": "America/Los_Angeles",
+    "note": "All timestamps stored in UTC, display in Pacific Time"
+  },
+  "tidalHeight": 8.0,
+  "seaTemperature": null,
+  "salmonCount": 600,
+  "vesselNoise": 138,
+  "waveHeight": null,
+  "currentSpeed": null,
+  "dataQuality": {
+    "tidal": "excellent",
+    "marine": "unavailable",
+    "salmon": "estimated",
+    "noise": "estimated"
+  },
+  "sources": {
+    "tidal": "NOAA CO-OPS Station 9449880",
+    "marine": null,
+    "salmon": "DART Columbia River (seasonal estimate)",
+    "noise": "Time-based vessel traffic model (Pacific Time)"
+  },
+  "raw_timestamps": {
+    "tidal": "2025-07-17T04:30:55.180777+00:00",
+    "marine": null,
+    "salmon": "2025-07-17T04:30:55.730938+00:00",
+    "noise": "2025-07-17T04:30:55.730976+00:00"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "orcast-app",
+  "version": "1.0.0",
+  "description": "OrCast - Advanced Orca Behavioral Analysis Platform",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "build": "npm run build:public",
+    "build:public": "echo 'Static assets already in public directory'",
+    "preview": "wrangler dev --local",
+    "tail": "wrangler tail",
+    "kv:create": "wrangler kv:namespace create CACHE",
+    "kv:create:preview": "wrangler kv:namespace create CACHE --preview",
+    "test": "echo 'Tests not implemented yet'"
+  },
+  "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231121.0",
+    "wrangler": "^4.25.0"
+  },
+  "keywords": [
+    "orca",
+    "marine-biology",
+    "behavior-analysis",
+    "conservation",
+    "cloudflare-workers",
+    "dtag",
+    "tagtools"
+  ],
+  "author": "Gil Raitses",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gilraitses/orcast-app"
+  },
+  "homepage": "https://orcast.org",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

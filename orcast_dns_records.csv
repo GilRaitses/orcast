@@ -1,0 +1,4 @@
+Type,Name,Content,TTL,Proxy
+A,orcast.org,199.36.158.100,300,false
+A,www,199.36.158.100,300,false
+TXT,orcast.org,"hosting-site=orca-904de",300,false 

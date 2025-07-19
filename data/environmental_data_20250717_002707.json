@@ -1,0 +1,21 @@
+{
+  "lastUpdated": "2025-07-17T00:27:07.592787",
+  "tidalHeight": null,
+  "seaTemperature": null,
+  "salmonCount": 600,
+  "vesselNoise": 125,
+  "waveHeight": null,
+  "currentSpeed": null,
+  "dataQuality": {
+    "tidal": "unavailable",
+    "marine": "unavailable",
+    "salmon": "estimated",
+    "noise": "estimated"
+  },
+  "sources": {
+    "tidal": null,
+    "marine": null,
+    "salmon": "DART Columbia River (seasonal estimate)",
+    "noise": "Time-based vessel traffic model"
+  }
+}

@@ -1,0 +1,37 @@
+name = "orcast-app"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "orcast-app"
+route = "orcast.org/*"
+
+# Environment variables
+[env.production.vars]
+ENVIRONMENT = "production"
+API_BASE_URL = "https://orcast.org/api"
+
+# KV namespaces for caching
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "5be3501a637543079f3efc0f04b10fdc"
+
+[env.staging]
+name = "orcast-app-staging"
+route = "staging.orcast.org/*"
+
+# Environment variables for staging
+[env.staging.vars]
+ENVIRONMENT = "staging"
+API_BASE_URL = "https://staging.orcast.org/api"
+
+# KV namespaces for staging
+[[env.staging.kv_namespaces]]
+binding = "CACHE"
+preview_id = "cbdaaa98a8f34985a7fc04ebd94b75c5"
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "."
+watch_dir = "src" 

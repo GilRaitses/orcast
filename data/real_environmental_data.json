@@ -1,0 +1,74 @@
+{
+  "environmentalData": {
+    "tidalHeight": 2.3,
+    "tidalPhase": "rising",
+    "tidalTime": "2025-01-06T19:45:00Z",
+    "vesselNoise": 125,
+    "salmonCount": 342,
+    "seaTemperature": 15.8,
+    "waveHeight": 1.2,
+    "currentSpeed": 0.8,
+    "lastUpdated": "2025-01-06T19:45:00Z",
+    "dataQuality": {
+      "tidal": "excellent",
+      "noise": "good", 
+      "salmon": "good",
+      "temperature": "excellent"
+    },
+    "thresholds": {
+      "criticalNoise": 140,
+      "optimalTemperature": 16.0,
+      "salmonSaturation": 500,
+      "tidalPeriod": 12.42
+    },
+    "sources": {
+      "tidal": "NOAA CO-OPS Station 9449880 (Friday Harbor)",
+      "salmon": "DART Columbia River Bonneville Dam",
+      "marine": "Open-Meteo Marine API",
+      "vessels": "AIS tracking proxy"
+    }
+  },
+  "modelState": {
+    "sindyCoefficients": {
+      "tidalOrcaCoupling": 0.0026,
+      "noiseThreshold": 140,
+      "salmonSaturation": 500,
+      "tempOptimum": 16.0
+    },
+    "predictiveAccuracy": {
+      "tidalCoupling": 0.893,
+      "foragingIntensity": 0.833,
+      "singleOrcaDynamics": 0.397
+    },
+    "discoveredEquations": {
+      "tidal_orca_coupling": "dtidal_height/dt = 0.0026*single_orcas + 0.0016*sin(tidal) + 0.0039*single_orcas*salmon/(500+salmon)",
+      "single_orca_dynamics": "dx5/dt = 0.0002*exp(-noise/140) - 0.0008*single_orcas*salmon/(500+salmon) + 0.0005*pod_cohesion",
+      "foraging_intensity": "dforaging_intensity/dt = 0.0004*single_orcas*foraging + 0.0005*exp(-noise/140)"
+    },
+    "spatialResolution": {
+      "gridSize": "50x50",
+      "spacing": "2.2km",
+      "coverage": "San Juan Islands region"
+    }
+  },
+  "realDataSources": {
+    "orcaSightings": {
+      "count": 477,
+      "source": "OBIS",
+      "dateRange": "2020-2024",
+      "quality": "verified_observations"
+    },
+    "tidalMeasurements": {
+      "count": 207,
+      "source": "NOAA CO-OPS",
+      "resolution": "6_minutes",
+      "station": "9449880_Friday_Harbor"
+    },
+    "environmentalLayers": {
+      "baseline": 6,
+      "dynamic": 4,
+      "mathematical_operators": ["fourier", "laplacian", "jacobian"],
+      "function_library": 119
+    }
+  }
+} 

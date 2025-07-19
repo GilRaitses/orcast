@@ -1,0 +1,159 @@
+{
+  "deployment_id": "cascadia_2010_k33_test",
+  "analysis_timestamp": "2025-07-17T12:33:23.802402",
+  "methodology": "TagTools-inspired dive detection and behavioral analysis",
+  "data_summary": {
+    "total_samples": 36000,
+    "duration_hours": 0.2,
+    "depth_range": [
+      0.0,
+      80.42400967055927
+    ]
+  },
+  "dive_analysis": {
+    "total_dives": 4,
+    "dive_events": [
+      {
+        "dive_id": 0,
+        "start_time": 160.54,
+        "end_time": 164.22,
+        "duration": 3.7,
+        "max_depth": 45.604216991013146,
+        "descent_rate": 25.62034662416469,
+        "ascent_rate": 23.752196349486013,
+        "bottom_time": 1.36,
+        "dive_type": "deep_travel",
+        "mean_dba": 0.9733513436666784,
+        "acoustic_proportion": 0.5945945945945946,
+        "foraging_indicators": {
+          "click_rate": 59.45945945945946,
+          "buzz_events": 40,
+          "rapid_maneuvers": "0",
+          "depth_variations": 0.6107345017969872,
+          "success_probability": 0.5305367250898494,
+          "foraging_intensity": 5.435435435435436,
+          "prey_pursuit_events": "0"
+        },
+        "energy_cost": 3.4120736565972645,
+        "dive_efficiency": 0.15548806341388718,
+        "behavioral_context": "coordinated_travel"
+      },
+      {
+        "dive_id": 1,
+        "start_time": 320.54,
+        "end_time": 325.38,
+        "duration": 4.86,
+        "max_depth": 60.57378016463619,
+        "descent_rate": 24.825319739604996,
+        "ascent_rate": 25.03048767133727,
+        "bottom_time": 1.72,
+        "dive_type": "deep_travel",
+        "mean_dba": 0.8980612635587499,
+        "acoustic_proportion": 0.588477366255144,
+        "foraging_indicators": {
+          "click_rate": 58.8477366255144,
+          "buzz_events": 63,
+          "rapid_maneuvers": "0",
+          "depth_variations": 0.652038326703316,
+          "success_probability": 0.5326019163351658,
+          "foraging_intensity": 7.98079561042524,
+          "prey_pursuit_events": "0"
+        },
+        "energy_cost": 3.5796321143551584,
+        "dive_efficiency": 0.1487867745401289,
+        "behavioral_context": "coordinated_travel"
+      },
+      {
+        "dive_id": 2,
+        "start_time": 480.54,
+        "end_time": 486.58,
+        "duration": 6.06,
+        "max_depth": 80.42400967055927,
+        "descent_rate": 27.92500335783308,
+        "ascent_rate": 25.290569078792224,
+        "bottom_time": 2.14,
+        "dive_type": "deep_exploration",
+        "mean_dba": 0.9181272938966124,
+        "acoustic_proportion": 0.5907590759075908,
+        "foraging_indicators": {
+          "click_rate": 59.07590759075908,
+          "buzz_events": 78,
+          "rapid_maneuvers": "0",
+          "depth_variations": 0.6836730742903429,
+          "success_probability": 0.5341836537145171,
+          "foraging_intensity": 9.651265126512651,
+          "prey_pursuit_events": "0"
+        },
+        "energy_cost": 4.428889581632054,
+        "dive_efficiency": 0.12061345036235233,
+        "behavioral_context": "exploratory_behavior"
+      },
+      {
+        "dive_id": 3,
+        "start_time": 640.6,
+        "end_time": 644.94,
+        "duration": 4.36,
+        "max_depth": 50.54594238416099,
+        "descent_rate": 22.97542835643681,
+        "ascent_rate": 23.400899251926383,
+        "bottom_time": 1.6,
+        "dive_type": "deep_travel",
+        "mean_dba": 0.9809105074885281,
+        "acoustic_proportion": 0.6146788990825688,
+        "foraging_indicators": {
+          "click_rate": 61.46788990825688,
+          "buzz_events": 44,
+          "rapid_maneuvers": "0",
+          "depth_variations": 0.6114837061911026,
+          "success_probability": 0.5305741853095551,
+          "foraging_intensity": 5.91335372069317,
+          "prey_pursuit_events": "0"
+        },
+        "energy_cost": 3.584335010105168,
+        "dive_efficiency": 0.14802583570278147,
+        "behavioral_context": "coordinated_travel"
+      }
+    ],
+    "dive_types": [
+      "deep_travel",
+      "deep_exploration"
+    ],
+    "foraging_dives": 0
+  },
+  "surface_analysis": {
+    "total_surface_time": 684.62,
+    "surface_periods": 18,
+    "mean_surface_duration": 38.034444444444446,
+    "surface_breathing_rate": 90.0,
+    "surface_activity_level": 0.27690682181287163
+  },
+  "energetic_model": {
+    "total_energy_cost": 24.483727780166056,
+    "energy_per_dive": 6.120931945041514,
+    "foraging_success_rate": 0,
+    "energy_efficiency": 0.0,
+    "behavioral_budget": {
+      "deep_travel": 0.75,
+      "deep_exploration": 0.25
+    },
+    "dive_time_allocation": 0.026975554292211483,
+    "surface_time_allocation": 0.9730244457077886,
+    "optimal_dive_depth": 0,
+    "optimal_dive_duration": 0,
+    "foraging_dive_count": 0,
+    "successful_foraging_dives": 0
+  },
+  "key_insights": [
+    "Most common dive type: deep_travel",
+    "Average dive depth: 59.3m",
+    "Low energy efficiency - challenging foraging conditions",
+    "Dominant behavior: deep_travel (75.0% of dives)",
+    "Analysis powered by TagTools methodology - biologging gold standard"
+  ],
+  "behavioral_patterns": {
+    "most_common_dive_type": "deep_travel",
+    "average_dive_depth": 59.286987302592394,
+    "foraging_success_rate": 0.5319741201122719
+  },
+  "environmental_correlations": {}
+}

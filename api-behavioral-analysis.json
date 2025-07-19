@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "timestamp": "2025-07-18T22:03:00Z",
+  "behavioral_analysis": {
+    "current_behaviors": [
+      {
+        "behavior_type": "foraging",
+        "probability": 0.87,
+        "feeding_strategy": "surface_feeding",
+        "success_rate": 0.65,
+        "duration_minutes": 45,
+        "dive_profile": {
+          "avg_depth_m": 12.5,
+          "max_depth_m": 28.3,
+          "dive_frequency": 4.2
+        }
+      },
+      {
+        "behavior_type": "traveling",
+        "probability": 0.23,
+        "direction_bearing": 127,
+        "speed_kmh": 8.4,
+        "formation": "echelon"
+      }
+    ],
+    "individual_signatures": [
+      {
+        "whale_id": "J35_Tahlequah",
+        "pod": "J",
+        "behavioral_pattern": "deep_forager",
+        "signature_confidence": 0.94,
+        "recent_activity": "maternal_care"
+      },
+      {
+        "whale_id": "K25_Scoter",
+        "pod": "K", 
+        "behavioral_pattern": "surface_specialist",
+        "signature_confidence": 0.89,
+        "recent_activity": "foraging"
+      }
+    ],
+    "tagtools_metrics": {
+      "dive_detection_accuracy": 0.952,
+      "behavioral_classification_accuracy": 0.857,
+      "processing_time_ms": 247,
+      "data_quality": "excellent"
+    }
+  }
+} 

@@ -1,0 +1,95 @@
+{
+  "projects": {
+    "default": "orca-904de"
+  },
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "*.py",
+      "*.md",
+      "docs/**",
+      "data/**",
+      "config/**",
+      "Dockerfile",
+      "requirements*.txt",
+      "deploy*.sh",
+      "*.sql",
+      "test*.html",
+      "wrangler.toml",
+      "package*.json"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/dtag-data",
+        "destination": "/dtag-data.html"
+      },
+      {
+        "source": "/api/predictions",
+        "destination": "/api-predictions.json"
+      },
+      {
+        "source": "/api/behavioral-analysis",
+        "destination": "/api-behavioral-analysis.json"
+      },
+      {
+        "source": "/api/real-time-data",
+        "destination": "/api-real-time-data.json"
+      },
+      {
+        "source": "/api/feeding-zones",
+        "destination": "/api-feeding-zones.json"
+      },
+      {
+        "source": "/api/sightings",
+        "destination": "/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          },
+          {
+            "key": "Pragma",
+            "value": "no-cache"
+          },
+          {
+            "key": "Expires",
+            "value": "0"
+          }
+        ]
+      }
+    ]
+  },
+  "database": {
+    "rules": "config/database.rules.json"
+  },
+  "storage": {
+    "rules": "config/storage.rules"
+  },
+  "emulators": {
+    "hosting": {
+      "port": 5000
+    },
+    "database": {
+      "port": 9000
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    }
+  }
+} 

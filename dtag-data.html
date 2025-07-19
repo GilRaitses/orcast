@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST - DTAG Data</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .nav {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .nav a {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1.1rem;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .data-card h3 {
+            color: #4fc3f7;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .data-value {
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .status.active {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status.completed {
+            background: #2196f3;
+            color: white;
+        }
+
+        .summary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .summary h2 {
+            color: #4fc3f7;
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #4fc3f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ORCAST</h1>
+            <p>DTAG Deployment Data</p>
+        </div>
+
+        <div class="nav">
+            <a href="/">← Back to Map</a>
+            <a href="/api/predictions">Predictions</a>
+            <a href="/api/sightings">Sightings</a>
+            <a href="/api/behavioral-analysis">Analysis</a>
+        </div>
+
+        <div class="summary">
+            <h2>DTAG Research Summary</h2>
+            <p>Digital acoustic recording tags (DTAGs) provide unprecedented insights into orca behavior, diving patterns, and acoustic communication. This data helps improve our understanding of Southern Resident Killer Whale populations in the San Juan Islands.</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading DTAG deployment data...</p>
+        </div>
+
+        <div id="data-container" style="display: none;">
+            <div class="data-grid" id="dataGrid">
+                <!-- Data will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated DTAG data
+        const dtagData = {
+            timestamp: "2025-07-17T20:56:21.983Z",
+            deployments: [
+                {
+                    whale_id: "L87",
+                    deployment_time: "2024-07-15T10:00:00Z",
+                    duration: 8.5,
+                    total_dives: 45,
+                    max_depth: 89.2,
+                    behavioral_events: 23,
+                    status: "completed"
+                },
+                {
+                    whale_id: "J35",
+                    deployment_time: "2024-07-15T14:30:00Z",
+                    duration: 6.2,
+                    total_dives: 38,
+                    max_depth: 76.4,
+                    behavioral_events: 19,
+                    status: "completed"
+                },
+                {
+                    whale_id: "K25",
+                    deployment_time: "2024-07-16T09:15:00Z",
+                    duration: 12.3,
+                    total_dives: 67,
+                    max_depth: 94.8,
+                    behavioral_events: 34,
+                    status: "active"
+                }
+            ]
+        };
+
+        function formatDuration(hours) {
+            const h = Math.floor(hours);
+            const m = Math.floor((hours - h) * 60);
+            return `${h}h ${m}m`;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString() + ' ' + new Date(dateString).toLocaleTimeString();
+        }
+
+        function displayData() {
+            const dataGrid = document.getElementById('dataGrid');
+            
+            dtagData.deployments.forEach(deployment => {
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                
+                card.innerHTML = `
+                    <h3>Whale ${deployment.whale_id}</h3>
+                    <div class="data-item">
+                        <span class="data-label">Status:</span>
+                        <span class="status ${deployment.status}">${deployment.status.toUpperCase()}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Deployment Time:</span>
+                        <span class="data-value">${formatDate(deployment.deployment_time)}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Duration:</span>
+                        <span class="data-value">${formatDuration(deployment.duration)}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Total Dives:</span>
+                        <span class="data-value">${deployment.total_dives}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Max Depth:</span>
+                        <span class="data-value">${deployment.max_depth}m</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Behavioral Events:</span>
+                        <span class="data-value">${deployment.behavioral_events}</span>
+                    </div>
+                `;
+                
+                dataGrid.appendChild(card);
+            });
+        }
+
+        // Simulate loading
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('data-container').style.display = 'block';
+            displayData();
+        }, 1500);
+    </script>
+</body>
+</html> 

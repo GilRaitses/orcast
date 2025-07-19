@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "timestamp": "2025-07-18T22:03:00Z",
+  "environmental_data": {
+    "tidal_conditions": {
+      "station": "Friday_Harbor_9449880",
+      "current_height_ft": 7.6,
+      "trend": "rising",
+      "next_high_tide": "2025-07-19T02:14:00Z",
+      "tidal_range_ft": 11.2,
+      "current_velocity_kts": 2.3
+    },
+    "weather_conditions": {
+      "wind_speed_kts": 8.2,
+      "wind_direction": 230,
+      "air_temp_c": 18.5,
+      "visibility_km": 15.2,
+      "sea_state": "slight",
+      "wave_height_m": 0.8
+    },
+    "oceanographic": {
+      "sea_surface_temp_c": 15.2,
+      "salinity_ppt": 30.8,
+      "dissolved_oxygen_ppm": 8.4,
+      "chlorophyll_mg_m3": 2.1,
+      "turbidity_ntu": 1.8
+    },
+    "acoustic_environment": {
+      "vessel_noise_db": 118,
+      "large_vessel_count": 3,
+      "small_vessel_count": 12,
+      "noise_category": "moderate"
+    },
+    "prey_indicators": {
+      "chinook_salmon_count": 1247,
+      "coho_salmon_count": 892,
+      "herring_density_index": 0.68,
+      "zooplankton_biomass": 0.74
+    },
+    "data_sources": {
+      "noaa_coops": "operational",
+      "open_meteo": "operational", 
+      "ais_vessels": "operational",
+      "dart_fishcounts": "operational"
+    }
+  }
+} 

@@ -1,0 +1,51 @@
+{
+  "status": "success",
+  "timestamp": "2025-07-18T22:03:00Z",
+  "predictions": {
+    "grid_resolution": "50x50",
+    "spatial_extent": {
+      "lat_min": 48.2,
+      "lat_max": 48.8,
+      "lng_min": -123.5,
+      "lng_max": -122.5
+    },
+    "prediction_zones": [
+      {
+        "zone_id": "lime_kiln_point",
+        "center": {"lat": 48.515, "lng": -123.152},
+        "probability": 0.85,
+        "confidence": 0.92,
+        "behavior_prediction": "foraging",
+        "pod_size_estimate": "8-12",
+        "last_sighting": "2 hours ago",
+        "environmental_factors": {
+          "tidal_height": 2.3,
+          "vessel_noise_db": 118,
+          "prey_availability": 0.78,
+          "water_temp_c": 15.2
+        }
+      },
+      {
+        "zone_id": "salmon_bank",
+        "center": {"lat": 48.524, "lng": -123.164},
+        "probability": 0.72,
+        "confidence": 0.88,
+        "behavior_prediction": "traveling",
+        "pod_size_estimate": "6-10",
+        "last_sighting": "4 hours ago",
+        "environmental_factors": {
+          "tidal_height": 2.1,
+          "vessel_noise_db": 125,
+          "prey_availability": 0.65,
+          "water_temp_c": 15.8
+        }
+      }
+    ],
+    "model_metadata": {
+      "algorithm": "SINDy + TagTools",
+      "accuracy": "73% (6-hour forecast)",
+      "last_trained": "2025-07-17T12:00:00Z",
+      "data_sources": ["DTAG", "NOAA", "OBIS", "citizen_science"]
+    }
+  }
+} 

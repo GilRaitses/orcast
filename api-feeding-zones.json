@@ -1,0 +1,63 @@
+{
+  "status": "success",
+  "timestamp": "2025-07-18T22:03:00Z",
+  "feeding_zones": {
+    "active_zones": [
+      {
+        "zone_id": "lime_kiln_point",
+        "zone_name": "Lime Kiln Point",
+        "coordinates": {"lat": 48.515, "lng": -123.152},
+        "productivity_index": 0.87,
+        "success_rate": 0.72,
+        "avg_feeding_duration_min": 45,
+        "prey_species": ["chinook_salmon", "coho_salmon"],
+        "depth_profile": {
+          "min_depth_m": 8,
+          "max_depth_m": 45,
+          "optimal_depth_m": 18
+        },
+        "tidal_dependency": {
+          "optimal_phase": "flood_tide",
+          "correlation": 0.83
+        }
+      },
+      {
+        "zone_id": "salmon_bank", 
+        "zone_name": "Salmon Bank",
+        "coordinates": {"lat": 48.524, "lng": -123.164},
+        "productivity_index": 0.76,
+        "success_rate": 0.68,
+        "avg_feeding_duration_min": 32,
+        "prey_species": ["chinook_salmon", "herring"],
+        "depth_profile": {
+          "min_depth_m": 15,
+          "max_depth_m": 67,
+          "optimal_depth_m": 35
+        },
+        "tidal_dependency": {
+          "optimal_phase": "ebb_tide",
+          "correlation": 0.71
+        }
+      }
+    ],
+    "temporal_patterns": {
+      "peak_feeding_hours": [6, 7, 18, 19],
+      "seasonal_trend": "increasing",
+      "monthly_success_rates": {
+        "june": 0.68,
+        "july": 0.74,
+        "august": 0.71,
+        "september": 0.65
+      }
+    },
+    "ecosystem_health": {
+      "biodiversity_index": 0.82,
+      "food_web_stability": 0.79,
+      "climate_stress_indicators": {
+        "temperature_anomaly_c": 1.2,
+        "ocean_acidification": 0.23,
+        "prey_biomass_trend": "stable"
+      }
+    }
+  }
+} 
