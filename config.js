@@ -5,7 +5,7 @@ window.ORCA_CONFIG = {
         OPENWEATHER: 'cdc69fe11f584fdb9957da45e7a98af4',
         GOOGLE_TRANSLATE: 'YOUR_GOOGLE_TRANSLATE_API_KEY_HERE',
         GOOGLE_PLACES: 'YOUR_GOOGLE_PLACES_API_KEY_HERE',
-        GEMINI: 'YOUR_GEMINI_API_KEY_HERE'
+        GEMINI: 'AIzaSyAwvuL88RoXMjvUP5lJCFDS2mwLrwo6CVs'
     },
     
     // Firebase Configuration
@@ -29,6 +29,14 @@ window.ORCA_CONFIG = {
             east: -122.7,
             west: -123.4
         }
+    },
+    
+    // Google Gemini API Configuration (for Agentic Planning)
+    gemini: {
+        apiKey: 'AIzaSyAwvuL88RoXMjvUP5lJCFDS2mwLrwo6CVs',
+        projectId: 'orca-466204',
+        model: 'gemini-pro',
+        serviceAccountEmail: 'orca-237@orca-466204.iam.gserviceaccount.com'
     }
 };
 
