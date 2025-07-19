@@ -1,0 +1,9 @@
+$ORIGIN orcast.org.
+$TTL 300
+
+; Firebase Hosting Records
+@       300     IN      A       199.36.158.100
+www     300     IN      A       199.36.158.100
+
+; Firebase Verification
+@       300     IN      TXT     "hosting-site=orca-904de" 

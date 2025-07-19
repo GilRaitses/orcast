@@ -1,0 +1,42 @@
+{
+  "name": "San Juan Islands Orca Tracker",
+  "short_name": "Orca Tracker",
+  "description": "Real-time orca behavior prediction and citizen science reporting for the San Juan Islands",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3c72",
+  "theme_color": "#2a5298",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%232a5298'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='40'%3E🐋%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%232a5298'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='40'%3E🐋%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["lifestyle", "education", "utilities"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'%3E%3Crect width='390' height='844' fill='%231e3c72'/%3E%3Ctext x='195' y='100' text-anchor='middle' fill='white' font-size='24'%3EOr ca Tracker%3C/text%3E%3Ctext x='195' y='150' text-anchor='middle' fill='white' font-size='16'%3EReal-time predictions%3C/text%3E%3C/svg%3E",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "permissions": [
+    "camera",
+    "geolocation"
+  ],
+  "features": [
+    "real-time-data",
+    "photo-upload",
+    "gps-reporting",
+    "offline-capable"
+  ]
+} 

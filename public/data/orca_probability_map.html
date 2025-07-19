@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrCast - San Juan Islands Orca Probability Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .map-container {
+            position: relative;
+            height: calc(100vh - 120px);
+            width: 100%;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            min-width: 280px;
+        }
+
+        .control-section {
+            margin-bottom: 1rem;
+        }
+
+        .control-section h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #87CEEB;
+        }
+
+        .layer-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .layer-control label {
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .opacity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .opacity-slider {
+            flex: 1;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .opacity-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #2196F3;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .legend h3 {
+            margin-bottom: 0.5rem;
+            color: #87CEEB;
+            font-size: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            z-index: 2000;
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2196F3;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .home-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(42, 82, 152, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .home-button:hover {
+            background: rgba(42, 82, 152, 1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .control-panel {
+                left: 10px;
+                right: 10px;
+                top: 10px;
+                min-width: auto;
+            }
+            
+            .legend {
+                right: 10px;
+                bottom: 10px;
+            }
+            
+            .status-bar {
+                left: 10px;
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐋 OrCast Probability Map</h1>
+        <p>Real-time Orca Sighting Probability Heatmaps - San Juan Islands</p>
+    </div>
+
+    <div class="map-container">
+        <div id="map"></div>
+        
+        <button class="home-button" onclick="window.location.href='index.html'">
+            🏠 Back to OrCast
+        </button>
+
+        <div class="control-panel">
+            <div class="control-section">
+                <h3>🎯 Probability Layers</h3>
+                
+                <div class="layer-control">
+                    <label for="overallProbability">Overall Probability</label>
+                    <label class="switch">
+                        <input type="checkbox" id="overallProbability" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="opacity-control">
+                    <span>Opacity:</span>
+                    <input type="range" class="opacity-slider" id="overallOpacity" min="0" max="100" value="70">
+                    <span id="overallOpacityValue">70%</span>
+                </div>
+
+                <div class="layer-control">
+                    <label for="feedingZones">Feeding Zones</label>
+                    <label class="switch">
+                        <input type="checkbox" id="feedingZones" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="opacity-control">
+                    <span>Opacity:</span>
+                    <input type="range" class="opacity-slider" id="feedingOpacity" min="0" max="100" value="60">
+                    <span id="feedingOpacityValue">60%</span>
+                </div>
+
+                <div class="layer-control">
+                    <label for="podFormation">Pod Formation</label>
+                    <label class="switch">
+                        <input type="checkbox" id="podFormation">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="opacity-control">
+                    <span>Opacity:</span>
+                    <input type="range" class="opacity-slider" id="podOpacity" min="0" max="100" value="50">
+                    <span id="podOpacityValue">50%</span>
+                </div>
+
+                <div class="layer-control">
+                    <label for="userSightings">User Sightings</label>
+                    <label class="switch">
+                        <input type="checkbox" id="userSightings" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="opacity-control">
+                    <span>Opacity:</span>
+                    <input type="range" class="opacity-slider" id="sightingsOpacity" min="0" max="100" value="80">
+                    <span id="sightingsOpacityValue">80%</span>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>⚙️ Map Settings</h3>
+                <div class="layer-control">
+                    <label for="autoRefresh">Auto Refresh</label>
+                    <label class="switch">
+                        <input type="checkbox" id="autoRefresh" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <button onclick="refreshData()" style="width: 100%; padding: 0.5rem; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>🎨 Probability Legend</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF0000;"></div>
+                <span>Very High (80-100%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF8C00;"></div>
+                <span>High (60-80%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FFD700;"></div>
+                <span>Medium (40-60%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #32CD32;"></div>
+                <span>Low (20-40%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #0000FF;"></div>
+                <span>Very Low (0-20%)</span>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="statusText">🔄 Loading probability data...</span>
+            <span id="lastUpdate" style="margin-left: 1rem;"></span>
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <div>Loading probability data...</div>
+        </div>
+    </div>
+
+    <script>
+        let map;
+        let heatmaps = {};
+        let userSightingMarkers = [];
+        let refreshInterval;
+
+        // San Juan Islands coordinates
+        const SJI_CENTER = { lat: 48.5465, lng: -123.0307 };
+        const SJI_BOUNDS = {
+            north: 48.8,
+            south: 48.3,
+            east: -122.7,
+            west: -123.4
+        };
+
+        // Initialize Google Maps
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 11,
+                center: SJI_CENTER,
+                mapTypeId: 'hybrid',
+                restriction: {
+                    latLngBounds: SJI_BOUNDS,
+                    strictBounds: false
+                },
+                styles: [
+                    {
+                        featureType: 'water',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#193E5C' }]
+                    },
+                    {
+                        featureType: 'landscape',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#2D5A27' }]
+                    }
+                ]
+            });
+
+            // Initialize controls
+            setupControls();
+            
+            // Load initial data
+            loadProbabilityData();
+            
+            // Setup auto-refresh
+            setupAutoRefresh();
+        }
+
+        // Setup control panel event listeners
+        function setupControls() {
+            // Layer toggles
+            document.getElementById('overallProbability').addEventListener('change', updateLayers);
+            document.getElementById('feedingZones').addEventListener('change', updateLayers);
+            document.getElementById('podFormation').addEventListener('change', updateLayers);
+            document.getElementById('userSightings').addEventListener('change', updateLayers);
+
+            // Opacity controls
+            const opacityControls = ['overall', 'feeding', 'pod', 'sightings'];
+            opacityControls.forEach(type => {
+                const slider = document.getElementById(`${type}Opacity`);
+                const valueSpan = document.getElementById(`${type}OpacityValue`);
+                
+                slider.addEventListener('input', () => {
+                    valueSpan.textContent = slider.value + '%';
+                    updateLayerOpacity(type, slider.value / 100);
+                });
+            });
+
+            // Auto-refresh toggle
+            document.getElementById('autoRefresh').addEventListener('change', setupAutoRefresh);
+        }
+
+        // Generate realistic probability data for San Juan Islands
+        function generateProbabilityData() {
+            const data = {
+                overall: [],
+                feeding: [],
+                podFormation: [],
+                userSightings: []
+            };
+
+            // Key locations with higher probability
+            const hotspots = [
+                { lat: 48.5158, lng: -123.1526, name: 'Lime Kiln Point', baseProbability: 0.85 },
+                { lat: 48.5847, lng: -123.0731, name: 'Salmon Bank', baseProbability: 0.92 },
+                { lat: 48.6542, lng: -123.0289, name: 'Hein Bank', baseProbability: 0.78 },
+                { lat: 48.4923, lng: -122.9456, name: 'Cattle Point', baseProbability: 0.65 },
+                { lat: 48.6234, lng: -123.1567, name: 'Spieden Channel', baseProbability: 0.74 },
+                { lat: 48.5789, lng: -122.9876, name: 'Rosario Strait', baseProbability: 0.68 },
+                { lat: 48.6123, lng: -123.0456, name: 'President Channel', baseProbability: 0.71 }
+            ];
+
+            // Generate points around hotspots
+            hotspots.forEach(hotspot => {
+                for (let i = 0; i < 25; i++) {
+                    const radius = Math.random() * 0.02; // ~2km radius
+                    const angle = Math.random() * 2 * Math.PI;
+                    const lat = hotspot.lat + radius * Math.cos(angle);
+                    const lng = hotspot.lng + radius * Math.sin(angle);
+                    
+                    // Ensure within bounds
+                    if (lat >= SJI_BOUNDS.south && lat <= SJI_BOUNDS.north &&
+                        lng >= SJI_BOUNDS.west && lng <= SJI_BOUNDS.east) {
+                        
+                        const distance = Math.sqrt(Math.pow(lat - hotspot.lat, 2) + Math.pow(lng - hotspot.lng, 2));
+                        const probability = Math.max(0.1, hotspot.baseProbability * (1 - distance * 50) * (0.8 + Math.random() * 0.4));
+                        
+                        data.overall.push({
+                            location: new google.maps.LatLng(lat, lng),
+                            weight: probability
+                        });
+
+                        // Feeding zones (higher in known feeding areas)
+                        if (hotspot.name.includes('Bank') || hotspot.name.includes('Point')) {
+                            data.feeding.push({
+                                location: new google.maps.LatLng(lat, lng),
+                                weight: Math.min(1, probability * 1.2)
+                            });
+                        }
+
+                        // Pod formation (varies by location)
+                        if (Math.random() < 0.6) {
+                            data.podFormation.push({
+                                location: new google.maps.LatLng(lat, lng),
+                                weight: probability * 0.8
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Add some random user sightings
+            for (let i = 0; i < 8; i++) {
+                const lat = SJI_BOUNDS.south + Math.random() * (SJI_BOUNDS.north - SJI_BOUNDS.south);
+                const lng = SJI_BOUNDS.west + Math.random() * (SJI_BOUNDS.east - SJI_BOUNDS.west);
+                
+                data.userSightings.push({
+                    lat: lat,
+                    lng: lng,
+                    count: Math.floor(Math.random() * 8) + 1,
+                    time: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toLocaleString(),
+                    confidence: ['high', 'medium', 'low'][Math.floor(Math.random() * 3)]
+                });
+            }
+
+            return data;
+        }
+
+        // Load and display probability data
+        function loadProbabilityData() {
+            showLoading(true);
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                const data = generateProbabilityData();
+                
+                // Create heatmap layers
+                createHeatmapLayers(data);
+                
+                // Create user sighting markers
+                createUserSightingMarkers(data.userSightings);
+                
+                // Update status
+                updateStatus('✅ Data loaded successfully');
+                
+                showLoading(false);
+            }, 1000);
+        }
+
+        // Create heatmap layers
+        function createHeatmapLayers(data) {
+            // Clear existing heatmaps
+            Object.values(heatmaps).forEach(heatmap => {
+                if (heatmap) heatmap.setMap(null);
+            });
+            
+            // Overall probability heatmap
+            heatmaps.overall = new google.maps.visualization.HeatmapLayer({
+                data: data.overall,
+                map: null,
+                radius: 30,
+                opacity: 0.7,
+                gradient: [
+                    'rgba(0, 0, 255, 0)',
+                    'rgba(0, 255, 0, 1)',
+                    'rgba(255, 255, 0, 1)',
+                    'rgba(255, 165, 0, 1)',
+                    'rgba(255, 0, 0, 1)'
+                ]
+            });
+
+            // Feeding zones heatmap
+            heatmaps.feeding = new google.maps.visualization.HeatmapLayer({
+                data: data.feeding,
+                map: null,
+                radius: 25,
+                opacity: 0.6,
+                gradient: [
+                    'rgba(0, 255, 255, 0)',
+                    'rgba(0, 255, 255, 0.5)',
+                    'rgba(0, 128, 255, 0.8)',
+                    'rgba(255, 0, 255, 1)'
+                ]
+            });
+
+            // Pod formation heatmap
+            heatmaps.podFormation = new google.maps.visualization.HeatmapLayer({
+                data: data.podFormation,
+                map: null,
+                radius: 35,
+                opacity: 0.5,
+                gradient: [
+                    'rgba(255, 255, 0, 0)',
+                    'rgba(255, 255, 0, 0.5)',
+                    'rgba(255, 128, 0, 0.8)',
+                    'rgba(255, 0, 0, 1)'
+                ]
+            });
+
+            // Apply current layer visibility
+            updateLayers();
+        }
+
+        // Create user sighting markers
+        function createUserSightingMarkers(sightings) {
+            // Clear existing markers
+            userSightingMarkers.forEach(marker => marker.setMap(null));
+            userSightingMarkers = [];
+
+            sightings.forEach(sighting => {
+                const marker = new google.maps.Marker({
+                    position: { lat: sighting.lat, lng: sighting.lng },
+                    map: null,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8 + sighting.count,
+                        fillColor: getConfidenceColor(sighting.confidence),
+                        fillOpacity: 0.8,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 2
+                    },
+                    title: `${sighting.count} orcas (${sighting.confidence} confidence)`
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div style="color: #000; padding: 0.5rem;">
+                            <strong>🐋 ${sighting.count} orcas spotted</strong><br>
+                            <small>📅 ${sighting.time}</small><br>
+                            <span style="background: ${getConfidenceColor(sighting.confidence)}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">
+                                ${sighting.confidence} confidence
+                            </span>
+                        </div>
+                    `
+                });
+
+                marker.addListener('click', () => {
+                    infoWindow.open(map, marker);
+                });
+
+                userSightingMarkers.push(marker);
+            });
+        }
+
+        // Get color based on confidence level
+        function getConfidenceColor(confidence) {
+            switch (confidence) {
+                case 'high': return '#4CAF50';
+                case 'medium': return '#FFC107';
+                case 'low': return '#F44336';
+                default: return '#2196F3';
+            }
+        }
+
+        // Update layer visibility
+        function updateLayers() {
+            const layers = {
+                overall: document.getElementById('overallProbability').checked,
+                feeding: document.getElementById('feedingZones').checked,
+                podFormation: document.getElementById('podFormation').checked,
+                userSightings: document.getElementById('userSightings').checked
+            };
+
+            // Update heatmap visibility
+            Object.keys(heatmaps).forEach(layerName => {
+                const heatmap = heatmaps[layerName];
+                if (heatmap) {
+                    heatmap.setMap(layers[layerName] ? map : null);
+                }
+            });
+
+            // Update user sighting markers
+            userSightingMarkers.forEach(marker => {
+                marker.setMap(layers.userSightings ? map : null);
+            });
+        }
+
+        // Update layer opacity
+        function updateLayerOpacity(layerType, opacity) {
+            const layerMap = {
+                overall: 'overall',
+                feeding: 'feeding',
+                pod: 'podFormation',
+                sightings: 'userSightings'
+            };
+
+            const layerName = layerMap[layerType];
+            
+            if (layerName === 'userSightings') {
+                // Update marker opacity
+                userSightingMarkers.forEach(marker => {
+                    const icon = marker.getIcon();
+                    if (icon) {
+                        marker.setIcon({
+                            ...icon,
+                            fillOpacity: 0.8 * opacity,
+                            strokeOpacity: opacity
+                        });
+                    }
+                });
+            } else if (heatmaps[layerName]) {
+                // Update heatmap opacity
+                heatmaps[layerName].setOptions({
+                    opacity: opacity * 0.7 // Base opacity factor
+                });
+            }
+        }
+
+        // Setup auto-refresh
+        function setupAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+
+            if (document.getElementById('autoRefresh').checked) {
+                refreshInterval = setInterval(() => {
+                    loadProbabilityData();
+                }, 30000); // Refresh every 30 seconds
+            }
+        }
+
+        // Refresh data manually
+        function refreshData() {
+            loadProbabilityData();
+        }
+
+        // Show/hide loading indicator
+        function showLoading(show) {
+            document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
+        }
+
+        // Update status bar
+        function updateStatus(message) {
+            document.getElementById('statusText').textContent = message;
+            document.getElementById('lastUpdate').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            // Load Google Maps API if not already loaded
+            if (!window.google) {
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&libraries=visualization&callback=initMap';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            } else {
+                initMap();
+            }
+        };
+    </script>
+</body>
+</html> 

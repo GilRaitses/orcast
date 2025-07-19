@@ -1,0 +1,662 @@
+/* OrCast Social UI Styles */
+
+/* === CONTENT FEED STYLES === */
+
+.content-feed {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.content-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.content-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.content-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    gap: 0.8rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-info {
+    flex: 1;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: white;
+    margin-bottom: 0.2rem;
+}
+
+.location {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.1rem;
+}
+
+.timestamp {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.orca-badge {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* === MEDIA STYLES === */
+
+.content-media {
+    position: relative;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.content-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.content-video {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    border-radius: 0;
+}
+
+.media-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px;
+}
+
+.media-gallery .content-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+.media-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+/* === SOCIAL ACTIONS === */
+
+.content-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.content-actions button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.content-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.like-btn.liked {
+    color: #ff6b6b;
+}
+
+.bookmark-btn.bookmarked {
+    color: #ffd93d;
+}
+
+.share-btn:hover {
+    color: #4ecdc4;
+}
+
+.comment-btn:hover {
+    color: #74b9ff;
+}
+
+/* === CONTENT CAPTION === */
+
+.content-caption {
+    padding: 0 1rem 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+}
+
+.content-metadata {
+    padding: 0.5rem 1rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.environmental-data {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.environmental-data span {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+/* === TRIP DOCUMENTATION === */
+
+.trip-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.trip-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.trip-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.trip-stat {
+    text-align: center;
+}
+
+.trip-stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: block;
+}
+
+.trip-stat-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.trip-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.trip-btn {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trip-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.trip-btn.primary {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+}
+
+/* === ENHANCED UPLOAD UI === */
+
+.upload-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.upload-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.upload-header .user-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+.upload-prompt {
+    flex: 1;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 0.8rem 1rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-prompt:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.upload-media-zone {
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.upload-media-zone:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.upload-media-zone.dragover {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.upload-options {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.upload-btn {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.upload-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.upload-btn.video {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+}
+
+.upload-btn.photo {
+    background: linear-gradient(45deg, #74b9ff, #6c5ce7);
+}
+
+/* === MEDIA PREVIEW === */
+
+.media-preview {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+}
+
+.media-preview-item {
+    position: relative;
+    min-width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.media-preview-item img,
+.media-preview-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-preview-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(244, 67, 54, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+/* === LOCATION SHARING === */
+
+.location-sharing {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.location-options {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.location-option {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    background: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.location-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.location-option.selected {
+    background: rgba(76, 175, 80, 0.8);
+    border-color: #4CAF50;
+}
+
+/* === COMMENTS SECTION === */
+
+.comments-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.comment-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.comment-item .user-avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.comment-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 0.8rem;
+}
+
+.comment-author {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.comment-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.comment-actions button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.comment-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.comment-input {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.comment-input .user-avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.comment-input input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 0.6rem 1rem;
+    color: white;
+}
+
+.comment-input input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.comment-submit {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.comment-submit:hover {
+    transform: scale(1.1);
+}
+
+/* === NOTIFICATIONS === */
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* === RESPONSIVE DESIGN === */
+
+@media (max-width: 768px) {
+    .content-feed {
+        padding: 0.5rem;
+    }
+    
+    .content-actions {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .content-actions button {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .upload-options {
+        flex-direction: column;
+    }
+    
+    .environmental-data {
+        flex-direction: column;
+    }
+    
+    .trip-stats {
+        flex-wrap: wrap;
+    }
+    
+    .location-options {
+        flex-wrap: wrap;
+    }
+}
+
+/* === LOADING STATES === */
+
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* === ENHANCED INTERACTIONS === */
+
+.content-item {
+    position: relative;
+    overflow: visible;
+}
+
+.content-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.content-item:hover::before {
+    transform: translateX(100%);
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* === DARK MODE OPTIMIZATIONS === */
+
+@media (prefers-color-scheme: dark) {
+    .content-item {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .upload-container {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .comment-content {
+        background: rgba(255, 255, 255, 0.08);
+    }
+} 
