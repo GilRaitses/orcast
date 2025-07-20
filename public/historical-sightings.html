@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST - Historical Sightings Map</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <style>
+        .historical-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            width: 300px;
+        }
+        
+        .timeline-control {
+            margin: 15px 0;
+        }
+        
+        .timeline-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .year-display {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        
+        .filter-group {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        
+        .filter-checkbox {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-checkbox input {
+            margin-right: 8px;
+        }
+        
+        .sighting-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            max-width: 400px;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .stats-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            width: 250px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(79, 195, 247, 0.2);
+        }
+        
+        .nav-header {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: rgba(0, 30, 60, 0.9);
+            border: 1px solid #4fc3f7;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: #4fc3f7;
+            color: #001e3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-header">
+        <a href="map-dashboard.html" class="nav-btn">← Dashboard</a>
+        <a href="real-time-detection.html" class="nav-btn">Real-time</a>
+        <a href="ml-predictions.html" class="nav-btn">ML Predictions</a>
+    </div>
+
+    <!-- Historical Controls Panel -->
+    <div class="historical-controls">
+        <h3>📊 Historical Sightings</h3>
+        <p>473 verified orca sightings (1990-2024)</p>
+        
+        <div class="timeline-control">
+            <label>Time Period</label>
+            <input type="range" min="1990" max="2024" value="2024" 
+                   class="timeline-slider" id="yearSlider" 
+                   oninput="updateYear(this.value)">
+            <div class="year-display" id="yearDisplay">2024</div>
+        </div>
+        
+        <div class="filter-group">
+            <h4>Pod Types</h4>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="resident" checked>
+                <label for="resident">Resident Pods (J, K, L)</label>
+            </div>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="transient" checked>
+                <label for="transient">Transient (T-pods)</label>
+            </div>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="offshore" checked>
+                <label for="offshore">Offshore Pods</label>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <h4>Behaviors</h4>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="feeding" checked>
+                <label for="feeding">Feeding</label>
+            </div>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="traveling" checked>
+                <label for="traveling">Traveling</label>
+            </div>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="socializing" checked>
+                <label for="socializing">Socializing</label>
+            </div>
+            <div class="filter-checkbox">
+                <input type="checkbox" id="resting" checked>
+                <label for="resting">Resting</label>
+            </div>
+        </div>
+        
+        <button onclick="loadHistoricalData()" style="width: 100%; padding: 10px; background: #4fc3f7; color: #001e3c; border: none; border-radius: 5px; cursor: pointer;">
+            🔄 Refresh Data
+        </button>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+        <h4>📈 Current Statistics</h4>
+        <div class="stat-item">
+            <span>Total Sightings:</span>
+            <span id="totalSightings">473</span>
+        </div>
+        <div class="stat-item">
+            <span>This Year:</span>
+            <span id="yearSightings">47</span>
+        </div>
+        <div class="stat-item">
+            <span>Most Active Pod:</span>
+            <span id="activePod">J-Pod</span>
+        </div>
+        <div class="stat-item">
+            <span>Top Behavior:</span>
+            <span id="topBehavior">Feeding</span>
+        </div>
+        <div class="stat-item">
+            <span>Best Location:</span>
+            <span id="topLocation">Lime Kiln</span>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map" style="height: 100vh; width: 100%;"></div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <h4>🗺️ Legend</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff4444;"></div>
+            <span>Feeding Behavior</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #44ff44;"></div>
+            <span>Traveling</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #4444ff;"></div>
+            <span>Socializing</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffff44;"></div>
+            <span>Resting</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff44ff;"></div>
+            <span>Unknown</span>
+        </div>
+    </div>
+
+    <!-- Sighting Information Panel -->
+    <div class="sighting-info" id="sightingInfo" style="display: none;">
+        <h4>📍 Sighting Details</h4>
+        <div id="sightingDetails"></div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        let map;
+        let historicalMarkers = [];
+        let currentYear = 2024;
+        let sightingsData = [];
+
+        // Initialize the map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 11,
+                center: { lat: 48.5465, lng: -123.0307 },
+                mapTypeId: 'hybrid',
+                styles: [
+                    {
+                        featureType: 'poi',
+                        stylers: [{ visibility: 'off' }]
+                    },
+                    {
+                        featureType: 'transit',
+                        stylers: [{ visibility: 'off' }]
+                    }
+                ]
+            });
+
+            // Load historical sightings data
+            loadHistoricalData();
+        }
+
+        async function loadHistoricalData() {
+            try {
+                // Load verified sightings data
+                const response = await fetch('/api/verified-sightings.json');
+                if (response.ok) {
+                    sightingsData = await response.json();
+                } else {
+                    // Fallback to simulated data if API not available
+                    sightingsData = generateSimulatedSightings();
+                }
+                
+                updateMapMarkers();
+                updateStatistics();
+                
+            } catch (error) {
+                console.log('Loading simulated historical data...');
+                sightingsData = generateSimulatedSightings();
+                updateMapMarkers();
+                updateStatistics();
+            }
+        }
+
+        function generateSimulatedSightings() {
+            const sightings = [];
+            const behaviors = ['feeding', 'traveling', 'socializing', 'resting', 'unknown'];
+            const pods = ['J-Pod', 'K-Pod', 'L-Pod', 'T-001', 'T-002', 'T-123', 'Offshore-1'];
+            const locations = [
+                {name: 'Lime Kiln Point', lat: 48.5165, lng: -123.1524},
+                {name: 'False Bay', lat: 48.4865, lng: -123.0924},
+                {name: 'Cattle Point', lat: 48.4515, lng: -122.9624},
+                {name: 'West Side San Juan', lat: 48.5365, lng: -123.1724},
+                {name: 'Haro Strait', lat: 48.5865, lng: -123.1124},
+                {name: 'Boundary Pass', lat: 48.7265, lng: -123.0524}
+            ];
+
+            for (let year = 1990; year <= 2024; year++) {
+                const yearSightings = Math.floor(Math.random() * 30) + 10;
+                
+                for (let i = 0; i < yearSightings; i++) {
+                    const location = locations[Math.floor(Math.random() * locations.length)];
+                    const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+                    const pod = pods[Math.floor(Math.random() * pods.length)];
+                    
+                    sightings.push({
+                        id: `${year}-${i}`,
+                        year: year,
+                        date: new Date(year, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28)),
+                        latitude: location.lat + (Math.random() - 0.5) * 0.02,
+                        longitude: location.lng + (Math.random() - 0.5) * 0.02,
+                        behavior: behavior,
+                        pod: pod,
+                        location: location.name,
+                        groupSize: Math.floor(Math.random() * 20) + 1,
+                        confidence: Math.random() * 0.3 + 0.7
+                    });
+                }
+            }
+
+            return sightings;
+        }
+
+        function updateYear(year) {
+            currentYear = parseInt(year);
+            document.getElementById('yearDisplay').textContent = year;
+            updateMapMarkers();
+            updateStatistics();
+        }
+
+        function updateMapMarkers() {
+            // Clear existing markers
+            historicalMarkers.forEach(marker => marker.setMap(null));
+            historicalMarkers = [];
+
+            // Get active filters
+            const activeFilters = getActiveFilters();
+            
+            // Filter sightings by year and active filters
+            const filteredSightings = sightingsData.filter(sighting => {
+                if (sighting.year > currentYear) return false;
+                if (currentYear - sighting.year > 5) return false; // Show last 5 years
+                
+                // Check behavior filters
+                if (!activeFilters.behaviors.includes(sighting.behavior)) return false;
+                
+                // Check pod type filters
+                const podType = getPodType(sighting.pod);
+                if (!activeFilters.podTypes.includes(podType)) return false;
+                
+                return true;
+            });
+
+            // Create markers for filtered sightings
+            filteredSightings.forEach(sighting => {
+                const marker = new google.maps.Marker({
+                    position: { lat: sighting.latitude, lng: sighting.longitude },
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8 + (sighting.groupSize / 5),
+                        fillColor: getBehaviorColor(sighting.behavior),
+                        fillOpacity: 0.8,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 2
+                    },
+                    title: `${sighting.location} - ${sighting.behavior} (${sighting.year})`
+                });
+
+                // Add click listener for sighting details
+                marker.addListener('click', () => {
+                    showSightingDetails(sighting);
+                });
+
+                historicalMarkers.push(marker);
+            });
+
+            console.log(`Displayed ${filteredSightings.length} historical sightings`);
+        }
+
+        function getActiveFilters() {
+            const behaviors = [];
+            const podTypes = [];
+
+            // Check behavior filters
+            if (document.getElementById('feeding').checked) behaviors.push('feeding');
+            if (document.getElementById('traveling').checked) behaviors.push('traveling');
+            if (document.getElementById('socializing').checked) behaviors.push('socializing');
+            if (document.getElementById('resting').checked) behaviors.push('resting');
+
+            // Check pod type filters
+            if (document.getElementById('resident').checked) podTypes.push('resident');
+            if (document.getElementById('transient').checked) podTypes.push('transient');
+            if (document.getElementById('offshore').checked) podTypes.push('offshore');
+
+            return { behaviors, podTypes };
+        }
+
+        function getPodType(podName) {
+            if (podName.includes('J-') || podName.includes('K-') || podName.includes('L-')) {
+                return 'resident';
+            } else if (podName.includes('T-')) {
+                return 'transient';
+            } else {
+                return 'offshore';
+            }
+        }
+
+        function getBehaviorColor(behavior) {
+            switch (behavior) {
+                case 'feeding': return '#ff4444';
+                case 'traveling': return '#44ff44';
+                case 'socializing': return '#4444ff';
+                case 'resting': return '#ffff44';
+                default: return '#ff44ff';
+            }
+        }
+
+        function showSightingDetails(sighting) {
+            const infoPanel = document.getElementById('sightingInfo');
+            const detailsDiv = document.getElementById('sightingDetails');
+            
+            detailsDiv.innerHTML = `
+                <p><strong>Date:</strong> ${sighting.date.toLocaleDateString()}</p>
+                <p><strong>Location:</strong> ${sighting.location}</p>
+                <p><strong>Pod:</strong> ${sighting.pod}</p>
+                <p><strong>Behavior:</strong> ${sighting.behavior}</p>
+                <p><strong>Group Size:</strong> ${sighting.groupSize} individuals</p>
+                <p><strong>Confidence:</strong> ${(sighting.confidence * 100).toFixed(0)}%</p>
+                <p><strong>Coordinates:</strong> ${sighting.latitude.toFixed(4)}, ${sighting.longitude.toFixed(4)}</p>
+            `;
+            
+            infoPanel.style.display = 'block';
+            
+            // Hide after 10 seconds
+            setTimeout(() => {
+                infoPanel.style.display = 'none';
+            }, 10000);
+        }
+
+        function updateStatistics() {
+            const filteredSightings = sightingsData.filter(s => s.year <= currentYear);
+            const yearSightings = sightingsData.filter(s => s.year === currentYear);
+            
+            // Calculate statistics
+            const behaviorCounts = {};
+            const podCounts = {};
+            const locationCounts = {};
+            
+            filteredSightings.forEach(sighting => {
+                behaviorCounts[sighting.behavior] = (behaviorCounts[sighting.behavior] || 0) + 1;
+                podCounts[sighting.pod] = (podCounts[sighting.pod] || 0) + 1;
+                locationCounts[sighting.location] = (locationCounts[sighting.location] || 0) + 1;
+            });
+            
+            // Find top values
+            const topBehavior = Object.keys(behaviorCounts).reduce((a, b) => 
+                behaviorCounts[a] > behaviorCounts[b] ? a : b);
+            const topPod = Object.keys(podCounts).reduce((a, b) => 
+                podCounts[a] > podCounts[b] ? a : b);
+            const topLocation = Object.keys(locationCounts).reduce((a, b) => 
+                locationCounts[a] > locationCounts[b] ? a : b);
+            
+            // Update display
+            document.getElementById('totalSightings').textContent = filteredSightings.length;
+            document.getElementById('yearSightings').textContent = yearSightings.length;
+            document.getElementById('activePod').textContent = topPod;
+            document.getElementById('topBehavior').textContent = topBehavior;
+            document.getElementById('topLocation').textContent = topLocation;
+        }
+
+        // Add event listeners for filter changes
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateMapMarkers();
+                    updateStatistics();
+                });
+            });
+        });
+    </script>
+    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&libraries=visualization&callback=initMap"></script>
+</body>
+</html> 

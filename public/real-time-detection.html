@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST - Real-time Detection Map</title>
+    <link rel="stylesheet" href="css/base.css">
+    <style>
+        .realtime-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            width: 320px;
+        }
+        
+        .hydrophone-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .hydrophone-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .hydrophone-item.active {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+        
+        .hydrophone-item.detecting {
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            animation: pulse 2s infinite;
+        }
+        
+        .hydrophone-name {
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+        
+        .hydrophone-status {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .status-online {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .status-offline {
+            background: #f44336;
+            color: white;
+        }
+        
+        .status-detecting {
+            background: #ff4444;
+            color: white;
+            animation: blink 1s infinite;
+        }
+        
+        .detection-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .detection-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .detection-timestamp {
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        
+        .detection-confidence {
+            float: right;
+            color: #4caf50;
+        }
+        
+        .audio-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            width: 400px;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .frequency-display {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 30, 60, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+            width: 300px;
+        }
+        
+        .frequency-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #4fc3f7, #ff4444);
+            margin: 5px 0;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .frequency-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: width 0.1s ease;
+        }
+        
+        .nav-header {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: rgba(0, 30, 60, 0.9);
+            border: 1px solid #4fc3f7;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: #4fc3f7;
+            color: #001e3c;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .detection-wave {
+            position: absolute;
+            border: 2px solid #ff4444;
+            border-radius: 50%;
+            animation: detection-wave 3s infinite;
+        }
+        
+        @keyframes detection-wave {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-header">
+        <a href="map-dashboard.html" class="nav-btn">← Dashboard</a>
+        <a href="historical-sightings.html" class="nav-btn">Historical</a>
+        <a href="ml-predictions.html" class="nav-btn">ML Predictions</a>
+    </div>
+
+    <!-- Real-time Controls Panel -->
+    <div class="realtime-controls">
+        <h3>🎧 Live Hydrophones</h3>
+        <p>Real-time OrcaHello AI Detection</p>
+        
+        <button onclick="refreshHydrophones()" style="width: 100%; padding: 8px; background: #4fc3f7; color: #001e3c; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">
+            🔄 Refresh Feeds
+        </button>
+        
+        <div class="hydrophone-list" id="hydrophoneList">
+            <!-- Hydrophones will be populated here -->
+        </div>
+        
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(79, 195, 247, 0.3);">
+            <h4>🔊 Audio Settings</h4>
+            <label>
+                <input type="checkbox" id="autoPlay" checked> Auto-play detections
+            </label><br>
+            <label>
+                <input type="checkbox" id="notifications" checked> Sound alerts
+            </label><br>
+            <label>
+                <input type="range" min="0" max="100" value="50" id="volumeSlider"> Volume
+            </label>
+        </div>
+    </div>
+
+    <!-- Detection Panel -->
+    <div class="detection-panel">
+        <h3>🚨 Recent Detections</h3>
+        <div id="detectionList">
+            <p style="opacity: 0.7;">Listening for whale calls...</p>
+        </div>
+        
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(79, 195, 247, 0.3);">
+            <h4>📊 Detection Stats (24h)</h4>
+            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                <span>Total Detections:</span>
+                <span id="totalDetections">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                <span>High Confidence:</span>
+                <span id="highConfidenceDetections">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                <span>Most Active:</span>
+                <span id="mostActiveHydrophone">-</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map" style="height: 100vh; width: 100%;"></div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <h4>🔊 Audio Playback</h4>
+        <div id="currentDetection">No active detection</div>
+        <audio id="audioPlayer" class="audio-player" controls>
+            Your browser does not support the audio element.
+        </audio>
+        <div style="font-size: 0.8rem; opacity: 0.7;">
+            Latest whale call will play here automatically
+        </div>
+    </div>
+
+    <!-- Frequency Display -->
+    <div class="frequency-display">
+        <h4>📈 Frequency Analysis</h4>
+        <div>
+            <div>Low Freq (0-1kHz)</div>
+            <div class="frequency-bar">
+                <div class="frequency-indicator" id="lowFreq"></div>
+            </div>
+        </div>
+        <div>
+            <div>Mid Freq (1-5kHz)</div>
+            <div class="frequency-bar">
+                <div class="frequency-indicator" id="midFreq"></div>
+            </div>
+        </div>
+        <div>
+            <div>High Freq (5-20kHz)</div>
+            <div class="frequency-bar">
+                <div class="frequency-indicator" id="highFreq"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        let map;
+        let hydrophoneMarkers = [];
+        let detectionMarkers = [];
+        let hydrophoneData = [];
+        let recentDetections = [];
+        let isListening = false;
+
+        // Initialize the map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: { lat: 48.5465, lng: -123.0307 },
+                mapTypeId: 'hybrid',
+                styles: [
+                    {
+                        featureType: 'poi',
+                        stylers: [{ visibility: 'off' }]
+                    }
+                ]
+            });
+
+            // Load hydrophone data and start listening
+            loadHydrophoneData();
+            startRealtimeListening();
+        }
+
+        async function loadHydrophoneData() {
+            try {
+                // Try to load live hydrophone data
+                const response = await fetch('/api/live-hydrophones');
+                if (response.ok) {
+                    hydrophoneData = await response.json();
+                } else {
+                    // Fallback to simulated data
+                    hydrophoneData = generateSimulatedHydrophones();
+                }
+                
+                updateHydrophoneMap();
+                updateHydrophoneList();
+                
+            } catch (error) {
+                console.log('Loading simulated hydrophone data...');
+                hydrophoneData = generateSimulatedHydrophones();
+                updateHydrophoneMap();
+                updateHydrophoneList();
+            }
+        }
+
+        function generateSimulatedHydrophones() {
+            return [
+                {
+                    id: 'orcasound_lab',
+                    name: 'Orcasound Lab',
+                    location: 'University of Washington',
+                    latitude: 47.6579,
+                    longitude: -122.3182,
+                    status: 'online',
+                    detecting: false,
+                    lastDetection: null,
+                    streamUrl: 'https://live.orcasound.net/orcasound-lab'
+                },
+                {
+                    id: 'bush_point',
+                    name: 'Bush Point',
+                    location: 'Whidbey Island',
+                    latitude: 47.9076,
+                    longitude: -122.6084,
+                    status: 'online',
+                    detecting: false,
+                    lastDetection: new Date(Date.now() - 1000 * 60 * 45),
+                    streamUrl: 'https://live.orcasound.net/bush-point'
+                },
+                {
+                    id: 'port_townsend',
+                    name: 'Port Townsend',
+                    location: 'Olympic Peninsula',
+                    latitude: 48.1173,
+                    longitude: -122.7859,
+                    status: 'online',
+                    detecting: true,
+                    lastDetection: new Date(Date.now() - 1000 * 60 * 2),
+                    streamUrl: 'https://live.orcasound.net/port-townsend'
+                },
+                {
+                    id: 'sunset_bay',
+                    name: 'Sunset Bay',
+                    location: 'San Juan Island',
+                    latitude: 48.4935,
+                    longitude: -123.1424,
+                    status: 'online',
+                    detecting: false,
+                    lastDetection: new Date(Date.now() - 1000 * 60 * 15),
+                    streamUrl: 'https://live.orcasound.net/sunset-bay'
+                },
+                {
+                    id: 'lime_kiln',
+                    name: 'Lime Kiln Point',
+                    location: 'San Juan Island',
+                    latitude: 48.5165,
+                    longitude: -123.1524,
+                    status: 'online',
+                    detecting: false,
+                    lastDetection: new Date(Date.now() - 1000 * 60 * 30),
+                    streamUrl: 'https://live.orcasound.net/lime-kiln'
+                },
+                {
+                    id: 'haro_strait',
+                    name: 'Haro Strait',
+                    location: 'International Waters',
+                    latitude: 48.5865,
+                    longitude: -123.1124,
+                    status: 'offline',
+                    detecting: false,
+                    lastDetection: new Date(Date.now() - 1000 * 60 * 120),
+                    streamUrl: null
+                }
+            ];
+        }
+
+        function updateHydrophoneMap() {
+            // Clear existing markers
+            hydrophoneMarkers.forEach(marker => marker.setMap(null));
+            hydrophoneMarkers = [];
+
+            hydrophoneData.forEach(hydrophone => {
+                const marker = new google.maps.Marker({
+                    position: { lat: hydrophone.latitude, lng: hydrophone.longitude },
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: hydrophone.detecting ? 20 : 15,
+                        fillColor: getHydrophoneColor(hydrophone),
+                        fillOpacity: 0.8,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 2
+                    },
+                    title: `${hydrophone.name} - ${hydrophone.status}`
+                });
+
+                // Add detection animation for active hydrophones
+                if (hydrophone.detecting) {
+                    createDetectionWave(marker.getPosition());
+                }
+
+                // Add click listener
+                marker.addListener('click', () => {
+                    showHydrophoneDetails(hydrophone);
+                });
+
+                hydrophoneMarkers.push(marker);
+            });
+        }
+
+        function getHydrophoneColor(hydrophone) {
+            if (hydrophone.status === 'offline') return '#999999';
+            if (hydrophone.detecting) return '#ff4444';
+            return '#4fc3f7';
+        }
+
+        function createDetectionWave(position) {
+            const wave = new google.maps.Circle({
+                center: position,
+                radius: 100,
+                strokeColor: '#ff4444',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillOpacity: 0,
+                map: map
+            });
+
+            // Animate the wave
+            let radius = 100;
+            const animation = setInterval(() => {
+                radius += 50;
+                wave.setRadius(radius);
+                
+                if (radius > 1000) {
+                    wave.setMap(null);
+                    clearInterval(animation);
+                }
+            }, 100);
+        }
+
+        function updateHydrophoneList() {
+            const listContainer = document.getElementById('hydrophoneList');
+            
+            listContainer.innerHTML = hydrophoneData.map(hydrophone => `
+                <div class="hydrophone-item ${hydrophone.detecting ? 'detecting' : ''}" 
+                     onclick="selectHydrophone('${hydrophone.id}')">
+                    <div>
+                        <div class="hydrophone-name">${hydrophone.name}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8;">${hydrophone.location}</div>
+                        ${hydrophone.lastDetection ? 
+                            `<div style="font-size: 0.7rem; color: #4fc3f7;">
+                                Last: ${getTimeAgo(hydrophone.lastDetection)}
+                            </div>` : ''}
+                    </div>
+                    <div class="hydrophone-status ${hydrophone.status === 'online' ? 'status-online' : 'status-offline'}">
+                        ${hydrophone.detecting ? 'DETECTING' : hydrophone.status.toUpperCase()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getTimeAgo(date) {
+            const minutes = Math.floor((Date.now() - date.getTime()) / (1000 * 60));
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+
+        function selectHydrophone(hydrophoneId) {
+            const hydrophone = hydrophoneData.find(h => h.id === hydrophoneId);
+            if (!hydrophone) return;
+
+            // Center map on hydrophone
+            map.setCenter({ lat: hydrophone.latitude, lng: hydrophone.longitude });
+            map.setZoom(13);
+
+            // Show details
+            showHydrophoneDetails(hydrophone);
+
+            // Highlight in list
+            document.querySelectorAll('.hydrophone-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        function showHydrophoneDetails(hydrophone) {
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <div style="color: #001e3c; min-width: 200px;">
+                        <h3>${hydrophone.name}</h3>
+                        <p><strong>Location:</strong> ${hydrophone.location}</p>
+                        <p><strong>Status:</strong> ${hydrophone.status}</p>
+                        <p><strong>Detecting:</strong> ${hydrophone.detecting ? 'YES' : 'No'}</p>
+                        ${hydrophone.lastDetection ? 
+                            `<p><strong>Last Detection:</strong> ${getTimeAgo(hydrophone.lastDetection)}</p>` : ''}
+                        ${hydrophone.streamUrl ? 
+                            `<button onclick="playHydrophoneStream('${hydrophone.streamUrl}')" 
+                                     style="background: #4fc3f7; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                🔊 Listen Live
+                            </button>` : ''}
+                    </div>
+                `,
+                position: { lat: hydrophone.latitude, lng: hydrophone.longitude }
+            });
+
+            infoWindow.open(map);
+        }
+
+        function playHydrophoneStream(streamUrl) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            document.getElementById('currentDetection').textContent = 'Live hydrophone stream';
+            
+            // In a real implementation, you would connect to the actual stream
+            console.log(`Playing stream: ${streamUrl}`);
+            
+            // Simulate audio feedback
+            simulateFrequencyData();
+        }
+
+        function startRealtimeListening() {
+            isListening = true;
+            console.log('🎧 Starting real-time detection monitoring...');
+            
+            // Simulate real-time detections
+            setInterval(() => {
+                if (Math.random() < 0.1) { // 10% chance every 5 seconds
+                    simulateDetection();
+                }
+            }, 5000);
+
+            // Update frequency display
+            setInterval(() => {
+                if (isListening) {
+                    simulateFrequencyData();
+                }
+            }, 200);
+        }
+
+        function simulateDetection() {
+            const activeHydrophones = hydrophoneData.filter(h => h.status === 'online');
+            if (activeHydrophones.length === 0) return;
+
+            const hydrophone = activeHydrophones[Math.floor(Math.random() * activeHydrophones.length)];
+            const confidence = 0.6 + Math.random() * 0.4;
+            
+            const detection = {
+                id: Date.now(),
+                timestamp: new Date(),
+                hydrophone: hydrophone.name,
+                hydrophoneId: hydrophone.id,
+                confidence: confidence,
+                frequency: 1000 + Math.random() * 4000,
+                duration: 2 + Math.random() * 8,
+                callType: ['resident', 'transient', 'unknown'][Math.floor(Math.random() * 3)]
+            };
+
+            // Update hydrophone status
+            hydrophone.detecting = true;
+            hydrophone.lastDetection = detection.timestamp;
+            
+            // Add to recent detections
+            recentDetections.unshift(detection);
+            if (recentDetections.length > 20) {
+                recentDetections = recentDetections.slice(0, 20);
+            }
+
+            // Update displays
+            updateDetectionList();
+            updateHydrophoneList();
+            updateHydrophoneMap();
+            updateDetectionStats();
+
+            // Create visual effect on map
+            createDetectionWave({ lat: hydrophone.latitude, lng: hydrophone.longitude });
+
+            // Auto-play if enabled
+            if (document.getElementById('autoPlay').checked) {
+                playDetection(detection);
+            }
+
+            // Sound alert if enabled
+            if (document.getElementById('notifications').checked) {
+                playNotificationSound();
+            }
+
+            // Reset detecting status after a few seconds
+            setTimeout(() => {
+                hydrophone.detecting = false;
+                updateHydrophoneList();
+                updateHydrophoneMap();
+            }, 10000);
+
+            console.log(`🐋 Detection at ${hydrophone.name}: ${(confidence * 100).toFixed(1)}% confidence`);
+        }
+
+        function updateDetectionList() {
+            const listContainer = document.getElementById('detectionList');
+            
+            if (recentDetections.length === 0) {
+                listContainer.innerHTML = '<p style="opacity: 0.7;">Listening for whale calls...</p>';
+                return;
+            }
+
+            listContainer.innerHTML = recentDetections.slice(0, 10).map(detection => `
+                <div class="detection-item" onclick="playDetection('${detection.id}')">
+                    <div class="detection-timestamp">
+                        ${detection.timestamp.toLocaleTimeString()}
+                    </div>
+                    <div class="detection-confidence">
+                        ${(detection.confidence * 100).toFixed(1)}%
+                    </div>
+                    <div>
+                        <strong>${detection.hydrophone}</strong><br>
+                        Call type: ${detection.callType}<br>
+                        Frequency: ${detection.frequency.toFixed(0)}Hz<br>
+                        Duration: ${detection.duration.toFixed(1)}s
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function playDetection(detectionId) {
+            const detection = recentDetections.find(d => d.id === detectionId);
+            if (!detection) return;
+
+            const audioPlayer = document.getElementById('audioPlayer');
+            document.getElementById('currentDetection').textContent = 
+                `${detection.hydrophone} - ${detection.callType} call (${(detection.confidence * 100).toFixed(1)}%)`;
+            
+            // In a real implementation, you would load the actual audio file
+            console.log(`Playing detection: ${detection.id}`);
+            
+            // Simulate frequency response for this detection
+            simulateDetectionFrequency(detection);
+        }
+
+        function simulateFrequencyData() {
+            const lowFreq = Math.random() * 30 + 10;
+            const midFreq = Math.random() * 50 + 20;
+            const highFreq = Math.random() * 20 + 5;
+
+            document.getElementById('lowFreq').style.width = `${lowFreq}%`;
+            document.getElementById('midFreq').style.width = `${midFreq}%`;
+            document.getElementById('highFreq').style.width = `${highFreq}%`;
+        }
+
+        function simulateDetectionFrequency(detection) {
+            // Simulate frequency response based on detection frequency
+            const freqRange = detection.frequency;
+            let lowFreq = 0, midFreq = 0, highFreq = 0;
+
+            if (freqRange < 1000) {
+                lowFreq = 80 + Math.random() * 20;
+                midFreq = 20 + Math.random() * 30;
+                highFreq = 5 + Math.random() * 15;
+            } else if (freqRange < 5000) {
+                lowFreq = 10 + Math.random() * 20;
+                midFreq = 70 + Math.random() * 30;
+                highFreq = 15 + Math.random() * 25;
+            } else {
+                lowFreq = 5 + Math.random() * 15;
+                midFreq = 20 + Math.random() * 30;
+                highFreq = 60 + Math.random() * 40;
+            }
+
+            document.getElementById('lowFreq').style.width = `${lowFreq}%`;
+            document.getElementById('midFreq').style.width = `${midFreq}%`;
+            document.getElementById('highFreq').style.width = `${highFreq}%`;
+        }
+
+        function playNotificationSound() {
+            // Create a simple notification sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            oscillator.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.3);
+            
+            gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function updateDetectionStats() {
+            const last24h = recentDetections.filter(d => 
+                Date.now() - d.timestamp.getTime() < 24 * 60 * 60 * 1000
+            );
+            
+            const highConfidence = last24h.filter(d => d.confidence > 0.8);
+            
+            // Find most active hydrophone
+            const hydrophoneCounts = {};
+            last24h.forEach(d => {
+                hydrophoneCounts[d.hydrophone] = (hydrophoneCounts[d.hydrophone] || 0) + 1;
+            });
+            
+            const mostActive = Object.keys(hydrophoneCounts).reduce((a, b) => 
+                hydrophoneCounts[a] > hydrophoneCounts[b] ? a : b, '-');
+
+            document.getElementById('totalDetections').textContent = last24h.length;
+            document.getElementById('highConfidenceDetections').textContent = highConfidence.length;
+            document.getElementById('mostActiveHydrophone').textContent = mostActive;
+        }
+
+        function refreshHydrophones() {
+            console.log('🔄 Refreshing hydrophone data...');
+            loadHydrophoneData();
+        }
+
+        // Volume control
+        document.getElementById('volumeSlider').addEventListener('input', (e) => {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.volume = e.target.value / 100;
+        });
+    </script>
+    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&libraries=visualization&callback=initMap"></script>
+</body>
+</html> 

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST - Map Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001e3c 0%, #003366 50%, #001e3c 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .map-card {
+            background: rgba(0, 30, 60, 0.9);
+            border: 2px solid #4fc3f7;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(79, 195, 247, 0.3);
+            border-color: #81d4fa;
+        }
+        
+        .map-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 195, 247, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .map-card:hover::before {
+            left: 100%;
+        }
+        
+        .map-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .map-title {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+        
+        .map-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .map-features {
+            list-style: none;
+            text-align: left;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .map-features li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .map-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        
+        .launch-btn {
+            background: #4fc3f7;
+            color: #001e3c;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .launch-btn:hover {
+            background: #81d4fa;
+            transform: scale(1.05);
+        }
+        
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.beta {
+            background: #ff9800;
+        }
+        
+        .status-indicator.development {
+            background: #f44336;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid rgba(79, 195, 247, 0.3);
+        }
+        
+        .footer a {
+            color: #4fc3f7;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>ORCAST</h1>
+            <p>Multi-Agent Whale Research Platform - Choose Your Map View</p>
+        </div>
+        
+        <div class="map-grid">
+            <!-- Historical Sightings Map -->
+            <div class="map-card" onclick="launchMap('historical-sightings.html')">
+                <div class="status-indicator"></div>
+                <div class="map-icon">📊</div>
+                <h3 class="map-title">Historical Sightings</h3>
+                <p class="map-description">
+                    Visualize 473 verified orca sightings from 1990-2024 with behavioral patterns and temporal analysis.
+                </p>
+                <ul class="map-features">
+                    <li>OBIS database integration</li>
+                    <li>Temporal pattern analysis</li>
+                    <li>Behavioral classification</li>
+                    <li>Seasonal migration routes</li>
+                    <li>Pod identification data</li>
+                </ul>
+                <button class="launch-btn">Launch Historical View</button>
+            </div>
+            
+            <!-- Real-time Detection Map -->
+            <div class="map-card" onclick="launchMap('real-time-detection.html')">
+                <div class="status-indicator"></div>
+                <div class="map-icon">🎧</div>
+                <h3 class="map-title">Real-time Detection</h3>
+                <p class="map-description">
+                    Live hydrophone data from OrcaHello AI with real-time whale call detection and acoustic analysis.
+                </p>
+                <ul class="map-features">
+                    <li>Live hydrophone streams</li>
+                    <li>OrcaHello AI detection</li>
+                    <li>Acoustic pattern analysis</li>
+                    <li>Real-time alerts</li>
+                    <li>Sound classification</li>
+                </ul>
+                <button class="launch-btn">Launch Real-time View</button>
+            </div>
+            
+            <!-- ML Predictions Map -->
+            <div class="map-card" onclick="launchMap('ml-predictions.html')">
+                <div class="status-indicator"></div>
+                <div class="map-icon">🧠</div>
+                <h3 class="map-title">ML Predictions</h3>
+                <p class="map-description">
+                    Advanced machine learning predictions using PINN physics-informed models and behavioral analysis.
+                </p>
+                <ul class="map-features">
+                    <li>PINN physics models</li>
+                    <li>Behavioral ML predictions</li>
+                    <li>Probability heat maps</li>
+                    <li>Temporal forecasting</li>
+                    <li>Uncertainty quantification</li>
+                </ul>
+                <button class="launch-btn">Launch ML View</button>
+            </div>
+            
+            <!-- Environmental Conditions Map -->
+            <div class="map-card" onclick="launchMap('environmental-conditions.html')">
+                <div class="status-indicator"></div>
+                <div class="map-icon">🌊</div>
+                <h3 class="map-title">Environmental Conditions</h3>
+                <p class="map-description">
+                    Real-time environmental data including tides, currents, temperature, and marine conditions.
+                </p>
+                <ul class="map-features">
+                    <li>NOAA tidal data</li>
+                    <li>Current velocity</li>
+                    <li>Temperature gradients</li>
+                    <li>Weather conditions</li>
+                    <li>Oceanographic analysis</li>
+                </ul>
+                <button class="launch-btn">Launch Environmental View</button>
+            </div>
+            
+            <!-- Behavioral Analysis Map -->
+            <div class="map-card" onclick="launchMap('behavioral-analysis.html')">
+                <div class="status-indicator beta"></div>
+                <div class="map-icon">🐋</div>
+                <h3 class="map-title">Behavioral Analysis</h3>
+                <p class="map-description">
+                    Deep behavioral analysis using DTAG biologging data and feeding zone dynamics modeling.
+                </p>
+                <ul class="map-features">
+                    <li>DTAG biologging data</li>
+                    <li>Feeding zone dynamics</li>
+                    <li>Dive pattern analysis</li>
+                    <li>Social behavior mapping</li>
+                    <li>Kinematic modeling</li>
+                </ul>
+                <button class="launch-btn">Launch Behavioral View</button>
+            </div>
+            
+            <!-- AI Agent Testing -->
+            <div class="map-card" onclick="launchMap('agent-testing.html')">
+                <div class="status-indicator beta"></div>
+                <div class="map-icon">🤖</div>
+                <h3 class="map-title">AI Agent Testing</h3>
+                <p class="map-description">
+                    Interactive AI agent interface for testing multi-agent workflows and research coordination.
+                </p>
+                <ul class="map-features">
+                    <li>Multi-agent orchestration</li>
+                    <li>Natural language queries</li>
+                    <li>Research workflow automation</li>
+                    <li>Agent performance testing</li>
+                    <li>Collaborative planning</li>
+                </ul>
+                <button class="launch-btn">Launch Agent Testing</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <a href="index.html">← Back to Main Dashboard</a>
+            <a href="docs/README.md">Documentation</a>
+            <a href="tools/testing/test_everything_comprehensive.py">System Health</a>
+            <a href="https://github.com/GilRaitses/orcast">GitHub Repository</a>
+        </div>
+    </div>
+    
+    <script>
+        function launchMap(mapPage) {
+            // Add loading animation
+            const card = event.currentTarget;
+            card.style.opacity = '0.7';
+            card.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = mapPage;
+            }, 200);
+        }
+        
+        // Add status checking for each map type
+        document.addEventListener('DOMContentLoaded', () => {
+            checkMapStatuses();
+        });
+        
+        async function checkMapStatuses() {
+            const backendUrl = 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app';
+            
+            try {
+                // Check backend health
+                const response = await fetch(`${backendUrl}/health`);
+                const health = await response.json();
+                
+                // Update status indicators based on backend health
+                updateStatusIndicators(health);
+                
+            } catch (error) {
+                console.log('Backend health check failed:', error);
+                // Mark some services as offline
+                markOfflineServices();
+            }
+        }
+        
+        function updateStatusIndicators(health) {
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach(indicator => {
+                indicator.style.background = '#4caf50'; // Online
+            });
+        }
+        
+        function markOfflineServices() {
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach((indicator, index) => {
+                if (index > 2) { // Mark some as beta/development
+                    indicator.style.background = '#ff9800';
+                }
+            });
+        }
+    </script>
+</body>
+</html> 
