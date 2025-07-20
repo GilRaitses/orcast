@@ -21,23 +21,9 @@ jobs:
         run: cd orcast-angular && npm ci
       - name: Build Angular app
         run: cd orcast-angular && npm run build:prod
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
       - name: Deploy to Firebase Hosting
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ORCA_904DE }}
-        run: |
-          # Create service account file with proper path
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ORCA_904DE }}' > $GITHUB_WORKSPACE/firebase-service-account.json
-          
-          # Set absolute path for credentials
-          export GOOGLE_APPLICATION_CREDENTIALS="$GITHUB_WORKSPACE/firebase-service-account.json"
-          
-          # Verify the build output exists
-          ls -la orcast-angular/dist/orcast-angular/
-          
-          # Deploy from root directory
-          firebase deploy --only hosting --project orca-904de --non-interactive
-          
-          # Clean up credentials
-          rm $GITHUB_WORKSPACE/firebase-service-account.json
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ORCA_904DE }}'
+          projectId: orca-904de
