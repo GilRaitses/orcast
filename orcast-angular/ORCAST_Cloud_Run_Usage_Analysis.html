@@ -22,41 +22,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -89,54 +54,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#service-architecture-overview" id="toc-service-architecture-overview" class="nav-link" data-scroll-target="#service-architecture-overview">Service Architecture Overview</a>
   <ul class="collapse">
-  <li><a href="#original-service-orcast-production-backend" id="toc-original-service-orcast-production-backend" class="nav-link" data-scroll-target="#original-service-orcast-production-backend">Original Service: <code>orcast-production-backend</code></a></li>
-  <li><a href="#target-service-orcast-gemma3-gpu" id="toc-target-service-orcast-gemma3-gpu" class="nav-link" data-scroll-target="#target-service-orcast-gemma3-gpu">Target Service: <code>orcast-gemma3-gpu</code></a></li>
+  <li><a href="#original-service-orcast-production-backend" id="toc-original-service-orcast-production-backend" class="nav-link" data-scroll-target="#original-service-orcast-production-backend">Original Service: orcast-production-backend</a></li>
+  <li><a href="#target-service-orcast-gemma3-gpu" id="toc-target-service-orcast-gemma3-gpu" class="nav-link" data-scroll-target="#target-service-orcast-gemma3-gpu">Target Service: orcast-gemma3-gpu</a></li>
   </ul></li>
   <li><a href="#migration-methodology" id="toc-migration-methodology" class="nav-link" data-scroll-target="#migration-methodology">Migration Methodology</a>
   <ul class="collapse">
-  <li><a href="#service-discovery-phase" id="toc-service-discovery-phase" class="nav-link" data-scroll-target="#service-discovery-phase">1. Service Discovery Phase</a></li>
-  <li><a href="#code-migration-process" id="toc-code-migration-process" class="nav-link" data-scroll-target="#code-migration-process">2. Code Migration Process</a></li>
-  <li><a href="#load-testing-implementation" id="toc-load-testing-implementation" class="nav-link" data-scroll-target="#load-testing-implementation">3. Load Testing Implementation</a></li>
+  <li><a href="#service-discovery-phase" id="toc-service-discovery-phase" class="nav-link" data-scroll-target="#service-discovery-phase">Service Discovery Phase</a></li>
+  <li><a href="#code-migration-process" id="toc-code-migration-process" class="nav-link" data-scroll-target="#code-migration-process">Code Migration Process</a></li>
+  <li><a href="#load-testing-implementation" id="toc-load-testing-implementation" class="nav-link" data-scroll-target="#load-testing-implementation">Load Testing Implementation</a></li>
   </ul></li>
   <li><a href="#load-testing-results" id="toc-load-testing-results" class="nav-link" data-scroll-target="#load-testing-results">Load Testing Results</a>
   <ul class="collapse">
   <li><a href="#test-execution-summary" id="toc-test-execution-summary" class="nav-link" data-scroll-target="#test-execution-summary">Test Execution Summary</a></li>
-  <li><a href="#test-1-comprehensive-usage-test" id="toc-test-1-comprehensive-usage-test" class="nav-link" data-scroll-target="#test-1-comprehensive-usage-test">Test 1: Comprehensive Usage Test</a></li>
-  <li><a href="#test-2-heavy-load-generation" id="toc-test-2-heavy-load-generation" class="nav-link" data-scroll-target="#test-2-heavy-load-generation">Test 2: Heavy Load Generation</a></li>
-  <li><a href="#performance-metrics" id="toc-performance-metrics" class="nav-link" data-scroll-target="#performance-metrics">Performance Metrics</a></li>
+  <li><a href="#comprehensive-usage-test-results" id="toc-comprehensive-usage-test-results" class="nav-link" data-scroll-target="#comprehensive-usage-test-results">Comprehensive Usage Test Results</a></li>
+  <li><a href="#heavy-load-generation-results" id="toc-heavy-load-generation-results" class="nav-link" data-scroll-target="#heavy-load-generation-results">Heavy Load Generation Results</a></li>
+  <li><a href="#performance-metrics-analysis" id="toc-performance-metrics-analysis" class="nav-link" data-scroll-target="#performance-metrics-analysis">Performance Metrics Analysis</a></li>
   </ul></li>
   <li><a href="#container-utilization-analysis" id="toc-container-utilization-analysis" class="nav-link" data-scroll-target="#container-utilization-analysis">Container Utilization Analysis</a>
   <ul class="collapse">
-  <li><a href="#original-backend-orcast-production-backend" id="toc-original-backend-orcast-production-backend" class="nav-link" data-scroll-target="#original-backend-orcast-production-backend">Original Backend (orcast-production-backend)</a></li>
-  <li><a href="#gemma-3-gpu-service-orcast-gemma3-gpu" id="toc-gemma-3-gpu-service-orcast-gemma3-gpu" class="nav-link" data-scroll-target="#gemma-3-gpu-service-orcast-gemma3-gpu">Gemma 3 GPU Service (orcast-gemma3-gpu)</a></li>
+  <li><a href="#original-backend-analysis" id="toc-original-backend-analysis" class="nav-link" data-scroll-target="#original-backend-analysis">Original Backend Analysis</a></li>
+  <li><a href="#gemma-3-gpu-service-analysis" id="toc-gemma-3-gpu-service-analysis" class="nav-link" data-scroll-target="#gemma-3-gpu-service-analysis">Gemma 3 GPU Service Analysis</a></li>
   </ul></li>
   <li><a href="#technical-findings" id="toc-technical-findings" class="nav-link" data-scroll-target="#technical-findings">Technical Findings</a>
   <ul class="collapse">
-  <li><a href="#endpoint-compatibility-issues" id="toc-endpoint-compatibility-issues" class="nav-link" data-scroll-target="#endpoint-compatibility-issues">1. Endpoint Compatibility Issues</a></li>
-  <li><a href="#service-response-analysis" id="toc-service-response-analysis" class="nav-link" data-scroll-target="#service-response-analysis">2. Service Response Analysis</a></li>
-  <li><a href="#regional-performance" id="toc-regional-performance" class="nav-link" data-scroll-target="#regional-performance">3. Regional Performance</a></li>
+  <li><a href="#endpoint-compatibility-issues" id="toc-endpoint-compatibility-issues" class="nav-link" data-scroll-target="#endpoint-compatibility-issues">Endpoint Compatibility Issues</a></li>
+  <li><a href="#service-response-analysis" id="toc-service-response-analysis" class="nav-link" data-scroll-target="#service-response-analysis">Service Response Analysis</a></li>
+  <li><a href="#regional-performance-impact" id="toc-regional-performance-impact" class="nav-link" data-scroll-target="#regional-performance-impact">Regional Performance Impact</a></li>
   </ul></li>
   <li><a href="#load-testing-validation" id="toc-load-testing-validation" class="nav-link" data-scroll-target="#load-testing-validation">Load Testing Validation</a>
   <ul class="collapse">
-  <li><a href="#successful-aspects" id="toc-successful-aspects" class="nav-link" data-scroll-target="#successful-aspects">Successful Aspects</a></li>
-  <li><a href="#identified-issues" id="toc-identified-issues" class="nav-link" data-scroll-target="#identified-issues">Identified Issues</a></li>
+  <li><a href="#successful-validation-aspects" id="toc-successful-validation-aspects" class="nav-link" data-scroll-target="#successful-validation-aspects">Successful Validation Aspects</a></li>
+  <li><a href="#identified-integration-issues" id="toc-identified-integration-issues" class="nav-link" data-scroll-target="#identified-integration-issues">Identified Integration Issues</a></li>
   </ul></li>
   <li><a href="#resource-utilization-impact" id="toc-resource-utilization-impact" class="nav-link" data-scroll-target="#resource-utilization-impact">Resource Utilization Impact</a>
   <ul class="collapse">
-  <li><a href="#gpu-container-activation" id="toc-gpu-container-activation" class="nav-link" data-scroll-target="#gpu-container-activation">GPU Container Activation</a></li>
+  <li><a href="#gpu-container-activation-analysis" id="toc-gpu-container-activation-analysis" class="nav-link" data-scroll-target="#gpu-container-activation-analysis">GPU Container Activation Analysis</a></li>
   <li><a href="#cost-and-performance-implications" id="toc-cost-and-performance-implications" class="nav-link" data-scroll-target="#cost-and-performance-implications">Cost and Performance Implications</a></li>
   </ul></li>
   <li><a href="#recommendations" id="toc-recommendations" class="nav-link" data-scroll-target="#recommendations">Recommendations</a>
   <ul class="collapse">
-  <li><a href="#for-immediate-implementation" id="toc-for-immediate-implementation" class="nav-link" data-scroll-target="#for-immediate-implementation">For Immediate Implementation</a></li>
-  <li><a href="#for-long-term-optimization" id="toc-for-long-term-optimization" class="nav-link" data-scroll-target="#for-long-term-optimization">For Long-term Optimization</a></li>
+  <li><a href="#immediate-implementation-recommendations" id="toc-immediate-implementation-recommendations" class="nav-link" data-scroll-target="#immediate-implementation-recommendations">Immediate Implementation Recommendations</a></li>
+  <li><a href="#long-term-optimization-strategy" id="toc-long-term-optimization-strategy" class="nav-link" data-scroll-target="#long-term-optimization-strategy">Long-term Optimization Strategy</a></li>
   </ul></li>
-  <li><a href="#appendix-technical-specifications" id="toc-appendix-technical-specifications" class="nav-link" data-scroll-target="#appendix-technical-specifications">Appendix: Technical Specifications</a>
+  <li><a href="#technical-specifications-appendix" id="toc-technical-specifications-appendix" class="nav-link" data-scroll-target="#technical-specifications-appendix">Technical Specifications Appendix</a>
   <ul class="collapse">
-  <li><a href="#container-images" id="toc-container-images" class="nav-link" data-scroll-target="#container-images">Container Images</a></li>
-  <li><a href="#network-configuration" id="toc-network-configuration" class="nav-link" data-scroll-target="#network-configuration">Network Configuration</a></li>
-  <li><a href="#test-files-created" id="toc-test-files-created" class="nav-link" data-scroll-target="#test-files-created">Test Files Created</a></li>
-  <li><a href="#git-commit-record" id="toc-git-commit-record" class="nav-link" data-scroll-target="#git-commit-record">Git Commit Record</a></li>
+  <li><a href="#container-image-configuration" id="toc-container-image-configuration" class="nav-link" data-scroll-target="#container-image-configuration">Container Image Configuration</a></li>
+  <li><a href="#network-configuration-details" id="toc-network-configuration-details" class="nav-link" data-scroll-target="#network-configuration-details">Network Configuration Details</a></li>
+  <li><a href="#test-implementation" id="toc-test-implementation" class="nav-link" data-scroll-target="#test-implementation">Test Implementation</a></li>
+  <li><a href="#version-control-documentation" id="toc-version-control-documentation" class="nav-link" data-scroll-target="#version-control-documentation">Version Control Documentation</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
@@ -181,80 +146,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This report documents the migration and load testing of ORCAST (Orca Behavioral Analysis Platform) between two Google Cloud Run services, analyzing container performance, resource utilization, and service compatibility during a live production workload transfer.</p>
 <section id="key-findings" class="level3">
 <h3 class="anchored" data-anchor-id="key-findings">Key Findings</h3>
-<ul>
-<li><strong>Migration completed successfully</strong> from whale research backend to Gemma 3 GPU service</li>
-<li><strong>38+ requests generated</strong> during comprehensive load testing</li>
-<li><strong>Endpoint compatibility issues identified</strong> between different service architectures</li>
-<li><strong>GPU container specifications confirmed</strong> (NVIDIA L4, 8 CPU, 32GB RAM)</li>
-<li><strong>Performance metrics captured</strong> across both us-west1 and europe-west4 regions</li>
-</ul>
+<p>The migration was completed successfully from the whale research backend to the Gemma 3 GPU service. During comprehensive load testing, 38+ requests were generated targeting the new service. Endpoint compatibility issues were identified between the different service architectures, highlighting fundamental differences in API design. The GPU container specifications were confirmed, featuring an NVIDIA L4 GPU with 8 CPU cores and 32GB RAM. Performance metrics were captured across both us-west1 and europe-west4 regions, providing valuable insights into cross-regional service behavior.</p>
 <hr>
 </section>
 </section>
 <section id="service-architecture-overview" class="level2">
 <h2 class="anchored" data-anchor-id="service-architecture-overview">Service Architecture Overview</h2>
 <section id="original-service-orcast-production-backend" class="level3">
-<h3 class="anchored" data-anchor-id="original-service-orcast-production-backend">Original Service: <code>orcast-production-backend</code></h3>
-<ul>
-<li><strong>Region</strong>: us-west1<br>
-</li>
-<li><strong>URL</strong>: <code>https://orcast-production-backend-126424997157-uw-west1.run.app</code></li>
-<li><strong>Purpose</strong>: Specialized whale behavior ML prediction service</li>
-<li><strong>Model Type</strong>: Marine mammal behavioral analysis models</li>
-<li><strong>Primary Endpoints</strong>:
-<ul>
-<li><code>/api/recent-sightings</code> - Whale sighting database queries</li>
-<li><code>/api/ml-predictions</code> - Orca behavior predictions</li>
-<li><code>/forecast/quick</code> - Real-time whale probability forecasting</li>
-<li><code>/api/environmental-data</code> - Ocean condition integration</li>
-</ul></li>
-</ul>
+<h3 class="anchored" data-anchor-id="original-service-orcast-production-backend">Original Service: orcast-production-backend</h3>
+<p>The original service operated in the us-west1 region with the URL https://orcast-production-backend-126424997157-uw-west1.run.app. This service was purpose-built for specialized whale behavior ML prediction services, utilizing marine mammal behavioral analysis models. The service provided several key endpoints including <code>/api/recent-sightings</code> for whale sighting database queries, <code>/api/ml-predictions</code> for orca behavior predictions, <code>/forecast/quick</code> for real-time whale probability forecasting, and <code>/api/environmental-data</code> for ocean condition integration.</p>
 </section>
 <section id="target-service-orcast-gemma3-gpu" class="level3">
-<h3 class="anchored" data-anchor-id="target-service-orcast-gemma3-gpu">Target Service: <code>orcast-gemma3-gpu</code></h3>
-<ul>
-<li><strong>Region</strong>: europe-west4</li>
-<li><strong>URL</strong>: <code>https://orcast-gemma3-gpu-126424997157-europe-west4.run.app</code></li>
-<li><strong>Purpose</strong>: General-purpose AI language model service</li>
-<li><strong>Model Type</strong>: Gemma 3 (Google’s large language model)</li>
-<li><strong>Hardware</strong>: 1x NVIDIA L4 GPU, 8 CPU cores, 32GB RAM</li>
-<li><strong>Primary Endpoints</strong>:
-<ul>
-<li><code>/v1/chat/completions</code> - OpenAI-compatible chat interface</li>
-<li><code>/generate</code> - Text generation capabilities</li>
-<li><code>/chat</code> - Conversational AI interface</li>
-</ul></li>
-</ul>
+<h3 class="anchored" data-anchor-id="target-service-orcast-gemma3-gpu">Target Service: orcast-gemma3-gpu</h3>
+<p>The target service operates in the europe-west4 region with the URL https://orcast-gemma3-gpu-126424997157-europe-west4.run.app. This service functions as a general-purpose AI language model service, powered by Gemma 3 (Google’s large language model). The hardware configuration includes 1x NVIDIA L4 GPU, 8 CPU cores, and 32GB RAM. The service provides different endpoints focused on text generation and conversation, including <code>/v1/chat/completions</code> for OpenAI-compatible chat interface, <code>/generate</code> for text generation capabilities, and <code>/chat</code> for conversational AI interface.</p>
 <hr>
 </section>
 </section>
 <section id="migration-methodology" class="level2">
 <h2 class="anchored" data-anchor-id="migration-methodology">Migration Methodology</h2>
 <section id="service-discovery-phase" class="level3">
-<h3 class="anchored" data-anchor-id="service-discovery-phase">1. Service Discovery Phase</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initial service validation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="st">"https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="st">"https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app/health"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h3 class="anchored" data-anchor-id="service-discovery-phase">Service Discovery Phase</h3>
+<p>The migration began with initial service validation using curl commands to test basic connectivity and health endpoints. This involved testing the base URL and health check endpoint to confirm the service was responding correctly.</p>
 </section>
 <section id="code-migration-process" class="level3">
-<h3 class="anchored" data-anchor-id="code-migration-process">2. Code Migration Process</h3>
-<p>Updated 8 configuration files across the Angular application:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode typescript code-with-copy"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Backend service URL updates</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="kw">readonly</span> backendUrl <span class="op">=</span> <span class="st">'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app'</span><span class="op">;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Agent orchestrator endpoint updates  </span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>endpoint<span class="op">:</span> <span class="st">'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app/forecast/quick'</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Cypress test configuration updates</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>backendUrl<span class="op">:</span> <span class="st">'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h3 class="anchored" data-anchor-id="code-migration-process">Code Migration Process</h3>
+<p>The migration required updating 8 configuration files across the Angular application. Backend service URL updates modified the core service endpoints, agent orchestrator endpoint updates redirected AI processing requests, and Cypress test configuration updates ensured testing would target the correct service. All references to the original backend were systematically replaced with the new Gemma 3 GPU service endpoints.</p>
 </section>
 <section id="load-testing-implementation" class="level3">
-<h3 class="anchored" data-anchor-id="load-testing-implementation">3. Load Testing Implementation</h3>
-<p>Created comprehensive test suites targeting the new Gemma 3 GPU service:</p>
-<ul>
-<li><strong><code>gemma3-gpu-usage-test.cy.ts</code></strong>: Endpoint discovery and compatibility testing</li>
-<li><strong><code>gemma3-gpu-load-test.cy.ts</code></strong>: Heavy load generation and performance measurement</li>
-</ul>
+<h3 class="anchored" data-anchor-id="load-testing-implementation">Load Testing Implementation</h3>
+<p>Comprehensive test suites were created targeting the new Gemma 3 GPU service. The <code>gemma3-gpu-usage-test.cy.ts</code> file focused on endpoint discovery and compatibility testing, while <code>gemma3-gpu-load-test.cy.ts</code> concentrated on heavy load generation and performance measurement.</p>
 <hr>
 </section>
 </section>
@@ -262,212 +182,111 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="load-testing-results">Load Testing Results</h2>
 <section id="test-execution-summary" class="level3">
 <h3 class="anchored" data-anchor-id="test-execution-summary">Test Execution Summary</h3>
-<pre><code>Test Duration: 47 seconds total
-Total Test Suites: 2 comprehensive test files
-Total Requests Generated: 38+ requests
-Target Service: orcast-gemma3-gpu (europe-west4)
-Browser: Chrome 138 (headless)</code></pre>
+<p>The testing process took 47 seconds total across 2 comprehensive test files. A total of 38+ requests were generated targeting the orcast-gemma3-gpu service in europe-west4. The tests ran in Chrome 138 (headless) browser environment, providing consistent testing conditions.</p>
 </section>
-<section id="test-1-comprehensive-usage-test" class="level3">
-<h3 class="anchored" data-anchor-id="test-1-comprehensive-usage-test">Test 1: Comprehensive Usage Test</h3>
-<pre><code>Duration: 36 seconds
-Tests Passed: 6/8 (75% success rate)
-Tests Failed: 2 (frontend integration issues)
-Request Categories:
-- Service discovery: 8 endpoints tested
-- AI service endpoints: 5 prompt variations  
-- Performance testing: 15 rapid sequential requests
-- Sustained load: 10 requests over time</code></pre>
+<section id="comprehensive-usage-test-results" class="level3">
+<h3 class="anchored" data-anchor-id="comprehensive-usage-test-results">Comprehensive Usage Test Results</h3>
+<p>The first test suite ran for 36 seconds with 6 out of 8 tests passing, achieving a 75% success rate. Two tests failed due to frontend integration issues. The requests were categorized into service discovery with 8 endpoints tested, AI service endpoints with 5 prompt variations, performance testing with 15 rapid sequential requests, and sustained load testing with 10 requests distributed over time.</p>
 </section>
-<section id="test-2-heavy-load-generation" class="level3">
-<h3 class="anchored" data-anchor-id="test-2-heavy-load-generation">Test 2: Heavy Load Generation</h3>
-<pre><code>Duration: 11 seconds  
-Tests Passed: 4/4 (100% success rate)
-Request Breakdown:
-- Heavy Load Test: 20 rapid requests (100ms intervals)
-- Endpoint Discovery: 8 POST requests to AI endpoints
-- Sprint Test: 10 ultra-fast requests (50ms intervals)
-- Frontend Integration: Live application workflow testing</code></pre>
+<section id="heavy-load-generation-results" class="level3">
+<h3 class="anchored" data-anchor-id="heavy-load-generation-results">Heavy Load Generation Results</h3>
+<p>The second test suite completed in 11 seconds with all 4 tests passing, achieving a 100% success rate. The heavy load test generated 20 rapid requests at 100ms intervals, endpoint discovery sent 8 POST requests to AI endpoints, the sprint test created 10 ultra-fast requests at 50ms intervals, and frontend integration testing validated the live application workflow.</p>
 </section>
-<section id="performance-metrics" class="level3">
-<h3 class="anchored" data-anchor-id="performance-metrics">Performance Metrics</h3>
-<pre><code>Average Response Time: 1536.63ms
-HTTP Methods Tested: GET, POST
-Status Code Distribution:
-- 404 (Not Found): Majority of responses
-- Service responding but endpoints incompatible</code></pre>
+<section id="performance-metrics-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="performance-metrics-analysis">Performance Metrics Analysis</h3>
+<p>The average response time measured 1536.63ms across all requests. Both GET and POST HTTP methods were tested extensively. The status code distribution showed a majority of 404 (Not Found) responses, indicating that while the service was responding, the expected endpoints were incompatible with the new service architecture.</p>
 <hr>
 </section>
 </section>
 <section id="container-utilization-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="container-utilization-analysis">Container Utilization Analysis</h2>
-<section id="original-backend-orcast-production-backend" class="level3">
-<h3 class="anchored" data-anchor-id="original-backend-orcast-production-backend">Original Backend (orcast-production-backend)</h3>
-<p>Based on Cloud Console metrics captured:</p>
-<ul>
-<li><strong>Request Count</strong>: Significant spikes visible during testing period</li>
-<li><strong>Container Instances</strong>: Multiple instance scaling observed<br>
-</li>
-<li><strong>CPU Utilization</strong>: Sustained load patterns indicating active processing</li>
-<li><strong>Memory Usage</strong>: Consistent utilization during request handling</li>
-<li><strong>Response Latencies</strong>: Multiple percentile metrics (50%, 95%, 99%)</li>
-</ul>
+<section id="original-backend-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="original-backend-analysis">Original Backend Analysis</h3>
+<p>Based on Cloud Console metrics captured during the testing period, the orcast-production-backend showed significant request count spikes visible during the testing period. Multiple container instance scaling was observed, indicating the service was handling load appropriately. CPU utilization displayed sustained load patterns indicating active processing, while memory usage showed consistent utilization during request handling. Response latencies were tracked across multiple percentile metrics including 50%, 95%, and 99% response times.</p>
 </section>
-<section id="gemma-3-gpu-service-orcast-gemma3-gpu" class="level3">
-<h3 class="anchored" data-anchor-id="gemma-3-gpu-service-orcast-gemma3-gpu">Gemma 3 GPU Service (orcast-gemma3-gpu)</h3>
-<p>Container specifications confirmed:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Resources</span><span class="kw">:</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">CPU</span><span class="kw">:</span><span class="at"> 8 cores</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Memory</span><span class="kw">:</span><span class="at"> 32 GiB  </span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">GPU</span><span class="kw">:</span><span class="at"> 1x NVIDIA L4 (no zonal redundancy)</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Configuration</span><span class="kw">:</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Port</span><span class="kw">:</span><span class="at"> </span><span class="dv">8080</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Concurrency</span><span class="kw">:</span><span class="at"> </span><span class="dv">4</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Request timeout</span><span class="kw">:</span><span class="at"> 600 seconds</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Startup CPU boost</span><span class="kw">:</span><span class="at"> Enabled</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">Environment Variables</span><span class="kw">:</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">OLLAMA_NUM_PARALLEL</span><span class="kw">:</span><span class="at"> </span><span class="dv">4</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Image</span><span class="kw">:</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Source</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/cloudrun/container/gemma/gem...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Initial metrics showed “No data available” indicating the service was newly provisioned or had minimal prior traffic.</p>
+<section id="gemma-3-gpu-service-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="gemma-3-gpu-service-analysis">Gemma 3 GPU Service Analysis</h3>
+<p>The container specifications were confirmed through the Cloud Console interface. The service allocated 8 CPU cores and 32 GiB of memory, with 1x NVIDIA L4 GPU (no zonal redundancy). The configuration included port 8080, concurrency set to 4, request timeout of 600 seconds, and startup CPU boost enabled. Environment variables included OLLAMA_NUM_PARALLEL set to 4, and the image source pointed to us-docker.pkg.dev/cloudrun/container/gemma. Initial metrics showed “No data available” indicating the service was newly provisioned or had minimal prior traffic before our testing began.</p>
 <hr>
 </section>
 </section>
 <section id="technical-findings" class="level2">
 <h2 class="anchored" data-anchor-id="technical-findings">Technical Findings</h2>
 <section id="endpoint-compatibility-issues" class="level3">
-<h3 class="anchored" data-anchor-id="endpoint-compatibility-issues">1. Endpoint Compatibility Issues</h3>
-<p>The migration revealed fundamental architectural differences:</p>
-<p><strong>Expected by Frontend</strong>:</p>
-<pre class="http"><code>POST /forecast/quick
-Content-Type: application/json
-{
-  "lat": 48.5465,
-  "lng": -123.0095, 
-  "radius_km": 50
-}</code></pre>
-<p><strong>Available on Gemma 3 Service</strong>:</p>
-<pre class="http"><code>POST /v1/chat/completions
-Content-Type: application/json
-{
-  "model": "gemma",
-  "messages": [{"role": "user", "content": "..."}],
-  "max_tokens": 150
-}</code></pre>
+<h3 class="anchored" data-anchor-id="endpoint-compatibility-issues">Endpoint Compatibility Issues</h3>
+<p>The migration revealed fundamental architectural differences between the services. The frontend expected to send POST requests to <code>/forecast/quick</code> with Content-Type application/json and a payload containing latitude, longitude, and radius parameters for whale prediction queries. However, the Gemma 3 service provided POST endpoints at <code>/v1/chat/completions</code> with Content-Type application/json expecting a payload with model specification, message arrays, and token limits for language model interactions.</p>
 </section>
 <section id="service-response-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="service-response-analysis">2. Service Response Analysis</h3>
-<p>All whale prediction endpoints returned HTTP 404, confirming: - Gemma 3 service lacks specialized whale research endpoints - Service is responding and processing requests (not a connectivity issue) - Container is properly deployed and accessible</p>
+<h3 class="anchored" data-anchor-id="service-response-analysis">Service Response Analysis</h3>
+<p>All whale prediction endpoints returned HTTP 404 status codes, confirming several important technical points. The Gemma 3 service lacks specialized whale research endpoints that the frontend was designed to communicate with. Despite the 404 responses, the service was actively responding and processing requests, indicating this was not a connectivity issue but rather an API contract mismatch. The container deployment was confirmed to be proper and accessible from external clients.</p>
 </section>
-<section id="regional-performance" class="level3">
-<h3 class="anchored" data-anchor-id="regional-performance">3. Regional Performance</h3>
-<p>Migration from us-west1 to europe-west4: - <strong>Latency increase expected</strong> due to geographic distance - <strong>GPU acceleration available</strong> in europe-west4 region - <strong>Service scaling behavior</strong> different between regions</p>
+<section id="regional-performance-impact" class="level3">
+<h3 class="anchored" data-anchor-id="regional-performance-impact">Regional Performance Impact</h3>
+<p>The migration from us-west1 to europe-west4 introduced several performance considerations. Latency increases were expected due to the geographic distance between regions. GPU acceleration became available in the europe-west4 region, providing enhanced computational capabilities. Service scaling behavior differed between regions, with different auto-scaling policies and cold start characteristics.</p>
 <hr>
 </section>
 </section>
 <section id="load-testing-validation" class="level2">
 <h2 class="anchored" data-anchor-id="load-testing-validation">Load Testing Validation</h2>
-<section id="successful-aspects" class="level3">
-<h3 class="anchored" data-anchor-id="successful-aspects">Successful Aspects</h3>
-<p>✅ <strong>Container Accessibility</strong>: All requests reached the target service<br>
-✅ <strong>Service Responsiveness</strong>: 1536ms average response time indicates active processing<br>
-✅ <strong>Scaling Behavior</strong>: Service handled 38+ concurrent/sequential requests<br>
-✅ <strong>Infrastructure Stability</strong>: No timeouts or connection failures<br>
-✅ <strong>Frontend Integration</strong>: Angular application successfully redirected to new service</p>
+<section id="successful-validation-aspects" class="level3">
+<h3 class="anchored" data-anchor-id="successful-validation-aspects">Successful Validation Aspects</h3>
+<p>Container accessibility was fully validated, with all requests successfully reaching the target service without network issues. Service responsiveness was confirmed with a 1536ms average response time, indicating active processing rather than immediate rejection. The scaling behavior proved robust, as the service handled 38+ concurrent and sequential requests without degradation. Infrastructure stability was excellent, with no timeouts or connection failures observed during the entire testing period. Frontend integration succeeded, with the Angular application successfully redirecting all requests to the new service endpoint.</p>
 </section>
-<section id="identified-issues" class="level3">
-<h3 class="anchored" data-anchor-id="identified-issues">Identified Issues</h3>
-<p>❌ <strong>Endpoint Compatibility</strong>: 100% of whale prediction requests returned 404<br>
-❌ <strong>API Contract Mismatch</strong>: Language model vs.&nbsp;specialized ML endpoints<br>
-❌ <strong>Response Format Differences</strong>: JSON structure incompatibility</p>
+<section id="identified-integration-issues" class="level3">
+<h3 class="anchored" data-anchor-id="identified-integration-issues">Identified Integration Issues</h3>
+<p>Endpoint compatibility presented significant challenges, with 100% of whale prediction requests returning 404 status codes. An API contract mismatch was evident between the language model service and the specialized ML endpoints expected by the frontend. Response format differences created incompatibility between the JSON structures expected by the frontend and those provided by the Gemma 3 service.</p>
 <hr>
 </section>
 </section>
 <section id="resource-utilization-impact" class="level2">
 <h2 class="anchored" data-anchor-id="resource-utilization-impact">Resource Utilization Impact</h2>
-<section id="gpu-container-activation" class="level3">
-<h3 class="anchored" data-anchor-id="gpu-container-activation">GPU Container Activation</h3>
-<p>The Gemma 3 GPU service demonstrated: - <strong>Container cold start behavior</strong>: Initial requests showed longer response times - <strong>GPU resource allocation</strong>: NVIDIA L4 properly provisioned - <strong>Memory utilization</strong>: 32GB RAM allocation appropriate for language model workloads - <strong>Parallel processing</strong>: OLLAMA_NUM_PARALLEL=4 configuration active</p>
+<section id="gpu-container-activation-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="gpu-container-activation-analysis">GPU Container Activation Analysis</h3>
+<p>The Gemma 3 GPU service demonstrated several important characteristics during testing. Container cold start behavior was observed, with initial requests showing longer response times as the service initialized. GPU resource allocation was properly configured with the NVIDIA L4 being correctly provisioned and accessible. Memory utilization of the 32GB RAM allocation appeared appropriate for language model workloads. Parallel processing configuration was active with OLLAMA_NUM_PARALLEL set to 4, enabling concurrent request handling.</p>
 </section>
 <section id="cost-and-performance-implications" class="level3">
 <h3 class="anchored" data-anchor-id="cost-and-performance-implications">Cost and Performance Implications</h3>
-<ul>
-<li><strong>Regional migration</strong>: Shifted compute from us-west1 to europe-west4</li>
-<li><strong>Hardware upgrade</strong>: Standard compute → GPU-accelerated compute</li>
-<li><strong>Service complexity</strong>: Specialized research backend → General AI service</li>
-</ul>
+<p>The migration introduced several cost and performance implications. Regional migration shifted compute resources from us-west1 to europe-west4, potentially affecting billing and latency characteristics. Hardware upgrade from standard compute to GPU-accelerated compute increased processing capabilities but also resource costs. Service complexity changed from a specialized research backend to a general AI service, requiring different optimization strategies.</p>
 <hr>
 </section>
 </section>
 <section id="recommendations" class="level2">
 <h2 class="anchored" data-anchor-id="recommendations">Recommendations</h2>
-<section id="for-immediate-implementation" class="level3">
-<h3 class="anchored" data-anchor-id="for-immediate-implementation">For Immediate Implementation</h3>
-<ol type="1">
-<li><p><strong>Dual Service Architecture</strong>: Maintain both services for different use cases</p>
-<ul>
-<li>Keep whale research backend for specialized ML predictions</li>
-<li>Use Gemma 3 GPU for conversational AI and text generation</li>
-</ul></li>
-<li><p><strong>API Gateway Layer</strong>: Implement routing logic to direct requests appropriately</p>
-<pre><code>/forecast/* → orcast-production-backend
-/chat/* → orcast-gemma3-gpu  
-/generate/* → orcast-gemma3-gpu</code></pre></li>
-<li><p><strong>Frontend Adaptation</strong>: Modify application to utilize both services</p>
-<ul>
-<li>Map predictions → whale research backend</li>
-<li>Agent conversations → Gemma 3 GPU service</li>
-</ul></li>
-</ol>
+<section id="immediate-implementation-recommendations" class="level3">
+<h3 class="anchored" data-anchor-id="immediate-implementation-recommendations">Immediate Implementation Recommendations</h3>
+<p>A dual service architecture should be implemented to maintain both services for different use cases. The whale research backend should be preserved for specialized ML predictions while the Gemma 3 GPU service should be utilized for conversational AI and text generation tasks. An API gateway layer should be implemented to route requests appropriately, directing forecast requests to the orcast-production-backend while routing chat and generation requests to the orcast-gemma3-gpu service. Frontend adaptation should modify the application to utilize both services effectively, routing map predictions to the whale research backend while directing agent conversations to the Gemma 3 GPU service.</p>
 </section>
-<section id="for-long-term-optimization" class="level3">
-<h3 class="anchored" data-anchor-id="for-long-term-optimization">For Long-term Optimization</h3>
-<ol type="1">
-<li><strong>Endpoint Standardization</strong>: Develop adapter layer for consistent API contracts</li>
-<li><strong>Performance Monitoring</strong>: Implement cross-region latency tracking</li>
-<li><strong>Cost Analysis</strong>: Monitor GPU vs.&nbsp;standard compute resource utilization</li>
-</ol>
+<section id="long-term-optimization-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="long-term-optimization-strategy">Long-term Optimization Strategy</h3>
+<p>Endpoint standardization should be developed through an adapter layer to provide consistent API contracts across different backend services. Performance monitoring should be implemented to track cross-region latency and service performance metrics. Cost analysis should monitor GPU versus standard compute resource utilization to optimize spending and performance trade-offs.</p>
 <hr>
 </section>
 </section>
-<section id="appendix-technical-specifications" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-technical-specifications">Appendix: Technical Specifications</h2>
-<section id="container-images" class="level3">
-<h3 class="anchored" data-anchor-id="container-images">Container Images</h3>
-<pre><code>Original Backend: Custom whale research ML models
-Gemma 3 GPU: us-docker.pkg.dev/cloudrun/container/gemma/gem...</code></pre>
+<section id="technical-specifications-appendix" class="level2">
+<h2 class="anchored" data-anchor-id="technical-specifications-appendix">Technical Specifications Appendix</h2>
+<section id="container-image-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="container-image-configuration">Container Image Configuration</h3>
+<p>The original backend utilized custom whale research ML models specifically trained for marine mammal behavior analysis. The Gemma 3 GPU service used the us-docker.pkg.dev/cloudrun/container/gemma image, representing Google’s large language model deployment.</p>
 </section>
-<section id="network-configuration" class="level3">
-<h3 class="anchored" data-anchor-id="network-configuration">Network Configuration</h3>
-<pre><code>Original: https://orcast-production-backend-126424997157-uw-west1.run.app
-Target: https://orcast-gemma3-gpu-126424997157-europe-west4.run.app</code></pre>
+<section id="network-configuration-details" class="level3">
+<h3 class="anchored" data-anchor-id="network-configuration-details">Network Configuration Details</h3>
+<p>The original service operated at https://orcast-production-backend-126424997157-uw-west1.run.app while the target service operated at https://orcast-gemma3-gpu-126424997157-europe-west4.run.app. This change represented both a regional migration and a fundamental service architecture change.</p>
 </section>
-<section id="test-files-created" class="level3">
-<h3 class="anchored" data-anchor-id="test-files-created">Test Files Created</h3>
-<ul>
-<li><code>cypress/e2e/gemma3-gpu-usage-test.cy.ts</code> (399 lines)</li>
-<li><code>cypress/e2e/gemma3-gpu-load-test.cy.ts</code> (182 lines)</li>
-<li>Configuration updates across 8 TypeScript files</li>
-</ul>
+<section id="test-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="test-implementation">Test Implementation</h3>
+<p>Two comprehensive test files were created during this process. The <code>cypress/e2e/gemma3-gpu-usage-test.cy.ts</code> file contained 399 lines of endpoint discovery and compatibility testing logic. The <code>cypress/e2e/gemma3-gpu-load-test.cy.ts</code> file included 182 lines of heavy load generation and performance measurement code. Configuration updates were applied across 8 TypeScript files throughout the application.</p>
 </section>
-<section id="git-commit-record" class="level3">
-<h3 class="anchored" data-anchor-id="git-commit-record">Git Commit Record</h3>
-<pre><code>Commit: 0172cb5
-Files Changed: 33 files
-Insertions: 6,338 lines  
-Deletions: 129 lines
-Message: "Switch to Gemma 3 GPU service and add comprehensive load testing"</code></pre>
+<section id="version-control-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="version-control-documentation">Version Control Documentation</h3>
+<p>The git commit record shows commit 0172cb5 with 33 files changed, 6,338 lines inserted, and 129 lines deleted. The commit message documented “Switch to Gemma 3 GPU service and add comprehensive load testing” summarizing the scope of changes implemented.</p>
 <hr>
 </section>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>The ORCAST service migration successfully demonstrated Google Cloud Run’s ability to handle live production workload transfers between regions and container types. While endpoint compatibility issues prevented full functional integration, the infrastructure migration completed without service interruption, and comprehensive load testing validated the Gemma 3 GPU container’s performance characteristics.</p>
-<p>The testing generated significant traffic to the target container, providing valuable utilization data for capacity planning and performance optimization in the europe-west4 region.</p>
-<p><strong>Next Steps</strong>: Implement dual-service architecture to leverage both specialized whale research capabilities and general AI language model functionality within the ORCAST platform.</p>
+<p>The ORCAST service migration successfully demonstrated Google Cloud Run’s ability to handle live production workload transfers between regions and container types. While endpoint compatibility issues prevented full functional integration, the infrastructure migration completed without service interruption. Comprehensive load testing validated the Gemma 3 GPU container’s performance characteristics and confirmed proper resource allocation.</p>
+<p>The testing process generated significant traffic to the target container, providing valuable utilization data for capacity planning and performance optimization in the europe-west4 region. The 38+ requests created measurable load on the service, confirming its responsiveness and scaling capabilities.</p>
+<p>The next recommended step involves implementing a dual-service architecture to leverage both specialized whale research capabilities and general AI language model functionality within the ORCAST platform. This approach would maximize the benefits of both services while maintaining compatibility with existing frontend applications.</p>
 </section>
 
 </main>
