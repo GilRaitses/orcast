@@ -21,6 +21,18 @@ firebase-debug.*.log*
 *firebase-adminsdk*.json
 config/*firebase-adminsdk*.json
 
+# Google Cloud service account credentials (security sensitive)
+config/*-*.json
+config/orca-*.json
+*.serviceaccount.json
+*-service-account*.json
+
+# Other sensitive config files
+config/*.env
+config/*credentials*
+config/*secret*
+config/*key*
+
 # Runtime data
 pids
 *.pid
