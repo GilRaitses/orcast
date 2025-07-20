@@ -12,6 +12,12 @@ export default defineConfig({
     responseTimeout: 15000,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      on('task', {
+        log(message) {
+          console.log(message);
+          return null;
+        }
+      });
     },
     env: {
       backendUrl: 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app',

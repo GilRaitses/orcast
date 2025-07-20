@@ -124,9 +124,6 @@
       margin-right: 0; 
     }
   </style>
-  <script src="ORCAST_Project_Overview_files/libs/quarto-diagram/mermaid.min.js"></script>
-  <script src="ORCAST_Project_Overview_files/libs/quarto-diagram/mermaid-init.js"></script>
-  <link href="ORCAST_Project_Overview_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -150,15 +147,26 @@ Gil Raitses
 <h2>ORCAST Overview</h2>
 <div class="title-content">
 <p><strong>O</strong>RCA <strong>R</strong>esearch <strong>C</strong>oordination &amp; <strong>A</strong>nalysis <strong>S</strong>ystem for <strong>T</strong>racking</p>
-<p>🐋 <strong>Multi-Agent AI Platform for Marine Wildlife Conservation</strong></p>
+<p><strong>Multi-Agent AI Platform for Marine Wildlife Conservation</strong></p>
 <ul>
 <li><strong>Gemma 3</strong> multi-agent orchestration</li>
 <li><strong>Real-time</strong> orca behavior prediction<br>
 </li>
 <li><strong>San Juan Islands</strong> ecosystem optimization</li>
 <li><strong>Production-ready</strong> ML pipeline</li>
+<li><strong>NEW: Live forecast probability clouds</strong></li>
 </ul>
 </div>
+</section>
+<section id="live-demo-real-data-integration" class="slide level2 demo-slide">
+<h2>Live Demo: Real Data Integration</h2>
+<section id="production-database-integration" class="demo-content">
+<h3><strong>Production Database Integration</strong></h3>
+<p><strong>Real Sightings Data</strong> - Live database queries from production endpoints - No more hardcoded sample data - Dynamic loading of all historical sightings</p>
+<p><strong>Forecast Probability Clouds</strong> - Weather-map style probability visualization - Red/orange = High probability zones (&gt;70%) - Yellow = Medium zones (50-70%)<br>
+- Green/blue = Lower zones (&lt;50%)</p>
+<p><strong>Live Demo URL:</strong> <a href="https://orca-904de.web.app">https://orca-904de.web.app</a></p>
+</section>
 </section>
 <section id="the-challenge" class="slide level2 problem-slide">
 <h2>The Challenge</h2>
@@ -166,7 +174,7 @@ Gil Raitses
 <section id="marine-conservation-crisis" class="left-column">
 <h3>Marine Conservation Crisis</h3>
 <ul>
-<li>Orca populations declining 📉</li>
+<li>Orca populations declining</li>
 <li>Unpredictable whale watching</li>
 <li>Tourism impact on ecosystems</li>
 <li>Limited real-time data integration</li>
@@ -176,188 +184,128 @@ Gil Raitses
 <h3>Technical Challenges</h3>
 <ul>
 <li><strong>Complex environmental data</strong></li>
-<li><strong>Multi-source integration</strong></li>
-<li><strong>Real-time processing</strong></li>
-<li><strong>Predictive modeling</strong></li>
+<li><strong>Multi-source data fusion</strong></li>
+<li><strong>Real-time prediction requirements</strong></li>
+<li><strong>Spatial-temporal modeling</strong></li>
 </ul>
 </section>
 </div>
 </section>
-<section id="orcast-solution-architecture" class="slide level2 architecture-slide">
-<h2>ORCAST Solution Architecture</h2>
-<div class="architecture-diagram">
-<div class="cell" data-reveal="true" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class=""><p></p>
-<div>
-<pre class="mermaid mermaid-js">graph TD
-    A[🌊 Environmental Data] --&gt; D[📊 Data Fusion Engine]
-    B[🎤 Hydrophone Audio] --&gt; D
-    C[📡 Satellite Imagery] --&gt; D
-    
-    D --&gt; E[🤖 Gemma 3 Agent Orchestrator]
-    
-    E --&gt; F[📈 Analysis Agent]
-    E --&gt; G[🎯 Prediction Agent] 
-    E --&gt; H[🗺️ Planning Agent]
-    
-    F --&gt; I[⚡ Real-time Dashboard]
-    G --&gt; I
-    H --&gt; I
-    
-    I --&gt; J[👥 User Interface]
-    I --&gt; K[📱 Mobile App]
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="multi-agent-ai-orchestration" class="slide level2 agents-slide">
-<h2>Multi-Agent AI Orchestration</h2>
-<div class="agents-grid">
-<section id="data-collection-agent" class="agent-card">
-<h3>🔍 Data Collection Agent</h3>
+<section id="multi-agent-ai-architecture" class="slide level2 architecture-slide">
+<h2>Multi-Agent AI Architecture</h2>
+<div class="agent-grid">
+<h3 id="data-collector-agent"><strong>Data Collector Agent</strong></h3>
 <ul>
-<li><strong>NOAA API Integration</strong></li>
-<li><strong>Hydrophone Processing</strong></li>
-<li><strong>Environmental Monitoring</strong></li>
-<li><strong>Real-time Ingestion</strong></li>
+<li>Real-time sighting ingestion</li>
+<li>Environmental data fusion</li>
+<li>API endpoint coordination</li>
 </ul>
-</section>
-<section id="analysis-agent" class="agent-card">
-<h3>📊 Analysis Agent</h3>
+<h3 id="analysis-agent"><strong>Analysis Agent</strong></h3>
 <ul>
-<li><strong>Behavioral Pattern Recognition</strong></li>
-<li><strong>ML Model Coordination</strong></li>
-<li><strong>PINN Physics Integration</strong></li>
-<li><strong>Anomaly Detection</strong></li>
+<li>PINN model execution</li>
+<li>Behavioral pattern recognition</li>
+<li>Confidence scoring</li>
 </ul>
-</section>
-<section id="prediction-agent" class="agent-card">
-<h3>🎯 Prediction Agent</h3>
+<h3 id="environmental-agent"><strong>Environmental Agent</strong></h3>
 <ul>
-<li><strong>Orca Movement Forecasting</strong></li>
-<li><strong>Probability Heat Maps</strong></li>
-<li><strong>Environmental Correlation</strong></li>
-<li><strong>Temporal Modeling</strong></li>
+<li>NOAA weather integration</li>
+<li>Tidal data processing</li>
+<li>Salmon migration tracking</li>
 </ul>
-</section>
-<section id="planning-agent" class="agent-card">
-<h3>🗺️ Planning Agent</h3>
+<h3 id="hydrophone-network"><strong>Hydrophone Network</strong></h3>
 <ul>
-<li><strong>Trip Optimization</strong></li>
-<li><strong>Route Coordination</strong></li>
-<li><strong>Resource Allocation</strong></li>
-<li><strong>User Personalization</strong></li>
+<li>Acoustic detection coordination</li>
+<li>Multi-station data fusion</li>
+<li>Real-time audio processing</li>
 </ul>
-</section>
-</div>
-</section>
-<section id="live-system-architecture" class="slide level2 system-slide">
-<h2>Live System Architecture</h2>
-<div class="system-components">
-<h3 id="production-stack">🌐 <strong>Production Stack</strong></h3>
+<h3 id="forecast-generator"><strong>Forecast Generator</strong></h3>
 <ul>
-<li><strong>Frontend</strong>: Angular 18 + Google Maps API</li>
-<li><strong>Backend</strong>: Cloud Run (Python FastAPI)</li>
-<li><strong>AI Engine</strong>: Gemma 3 Multi-Agent Framework</li>
-<li><strong>Database</strong>: Firebase + Redis Cache</li>
-<li><strong>Deployment</strong>: Google Cloud Platform</li>
-</ul>
-<h3 id="live-urls">📍 <strong>Live URLs</strong></h3>
-<ul>
-<li><strong>Main App</strong>: <a href="https://orca-904de.web.app">orca-904de.web.app</a></li>
-<li><strong>Backend API</strong>: <a href="https://orcast-production-backend-2cvqukvhga-uw.a.run.app">orcast-production-backend</a></li>
-<li><strong>AI Agents</strong>: <a href="https://cloud-run-gemma-2cvqukvhga-uw.a.run.app">cloud-run-gemma</a></li>
+<li>Probability cloud creation</li>
+<li>Spatial risk assessment</li>
+<li>Prediction visualization</li>
 </ul>
 </div>
 </section>
-<section id="real-time-data-integration" class="slide level2 data-slide">
-<h2>Real-Time Data Integration</h2>
-<div class="data-sources">
-<h3 id="environmental-data-sources">🌊 <strong>Environmental Data Sources</strong></h3>
+<section id="real-endpoint-integration" class="slide level2 endpoints-slide">
+<h2>Real Endpoint Integration</h2>
+<div class="endpoint-table">
+<table class="caption-top">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 23%">
+<col style="width: 28%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Endpoint</th>
+<th>Purpose</th>
+<th>Data Type</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/api/recent-sightings</code></td>
+<td>Live orca database</td>
+<td>Historical + Recent</td>
+<td>Live</td>
+</tr>
+<tr class="even">
+<td><code>/api/ml-predictions</code></td>
+<td>Model outputs</td>
+<td>Probability maps</td>
+<td>Live</td>
+</tr>
+<tr class="odd">
+<td><code>/api/environmental-data</code></td>
+<td>NOAA/DFO feeds</td>
+<td>Weather/Tidal</td>
+<td>Live</td>
+</tr>
+<tr class="even">
+<td><code>/api/hydrophone-data</code></td>
+<td>Acoustic network</td>
+<td>Detection events</td>
+<td>Live</td>
+</tr>
+</tbody>
+</table>
+<h3 id="demo-validation"><strong>Demo Validation</strong></h3>
 <ul>
-<li><strong>NOAA Tidal Data</strong> - Real-time tide predictions</li>
-<li><strong>Weather API</strong> - Marine weather conditions<br>
+<li><strong>Real database queries</strong> - No fake data</li>
+<li><strong>Live API responses</strong> - Production endpoints<br>
 </li>
-<li><strong>Salmon Count Data</strong> - Food source tracking</li>
-<li><strong>Ferry Schedules</strong> - Marine traffic patterns</li>
-</ul>
-<h3 id="acoustic-monitoring">🎤 <strong>Acoustic Monitoring</strong></h3>
-<ul>
-<li><strong>Hydrophone Networks</strong> - Underwater sound detection</li>
-<li><strong>Orca Call Recognition</strong> - AI-powered audio analysis</li>
-<li><strong>Pod Identification</strong> - Individual whale tracking</li>
-<li><strong>Behavioral Classification</strong> - Activity pattern recognition</li>
-</ul>
-</div>
-</section>
-<section id="machine-learning-pipeline" class="slide level2 ml-slide">
-<h2>Machine Learning Pipeline</h2>
-<section id="ml-model-stack" class="ml-architecture">
-<h3>🧠 <strong>ML Model Stack</strong></h3>
-<div class="model-tier">
-<p><strong>PINN Models</strong> - Physics-Informed Neural Networks - Oceanographic modeling - Current flow prediction - Environmental physics</p>
-</div>
-<div class="model-tier">
-<p><strong>Behavioral ML</strong> - Deep Learning Classification - Movement pattern recognition - Social behavior analysis - Feeding activity detection</p>
-</div>
-<div class="model-tier">
-<p><strong>Ensemble Forecasting</strong> - Multi-Model Fusion - Probability aggregation - Uncertainty quantification - Temporal correlation</p>
-</div>
-</section>
-</section>
-<section id="san-juan-islands-use-case" class="slide level2 usecase-slide">
-<h2>San Juan Islands Use Case</h2>
-<div class="map-showcase">
-<h3 id="target-region-san-juan-islands">🗺️ <strong>Target Region: San Juan Islands</strong></h3>
-<div class="region-stats">
-<ul>
-<li><strong>473 verified whale sightings</strong> (2019-2024)</li>
-<li><strong>237 unique locations</strong> tracked</li>
-<li><strong>3 major pods</strong> (J, K, L pods)</li>
-<li><strong>Peak season</strong>: May-September</li>
-</ul>
-</div>
-<h3 id="optimization-goals">🎯 <strong>Optimization Goals</strong></h3>
-<ul>
-<li>Maximize whale encounter probability</li>
-<li>Minimize ecosystem disturbance<br>
-</li>
-<li>Optimize tourist experience</li>
-<li>Support conservation research</li>
+<li><strong>Dynamic map updates</strong> - Real-time visualization</li>
+<li><strong>Agent coordination</strong> - Multi-source integration</li>
 </ul>
 </div>
 </section>
 <section id="multi-agent-workflow-demo" class="slide level2 demo-slide">
 <h2>Multi-Agent Workflow Demo</h2>
 <section id="agent-coordination-process" class="workflow-steps">
-<h3>🔄 <strong>Agent Coordination Process</strong></h3>
+<h3><strong>Agent Coordination Process</strong></h3>
 <ol type="1">
-<li><strong>Data Collection Agent</strong> 🔍
+<li><strong>Data Collection Agent</strong>
 <ul>
 <li>Fetches environmental conditions</li>
 <li>Processes hydrophone data</li>
 <li>Integrates multiple data sources</li>
 </ul></li>
-<li><strong>Analysis Agent</strong> 📊
+<li><strong>Analysis Agent</strong>
 <ul>
 <li>Runs ML predictions</li>
 <li>Identifies behavioral patterns</li>
 <li>Calculates probability maps</li>
 </ul></li>
-<li><strong>Planning Agent</strong> 🗺️
+<li><strong>Planning Agent</strong>
 <ul>
 <li>Generates optimized routes</li>
 <li>Creates personalized itineraries<br>
 </li>
 <li>Coordinates resource allocation</li>
 </ul></li>
-<li><strong>User Interface</strong> 👥
+<li><strong>User Interface</strong>
 <ul>
 <li>Presents integrated results</li>
 <li>Interactive map visualization</li>
@@ -370,7 +318,7 @@ Gil Raitses
 <h2>Technical Innovation</h2>
 <div class="innovation-grid">
 <section id="gemma-3-integration" class="innovation-item">
-<h3>🚀 <strong>Gemma 3 Integration</strong></h3>
+<h3><strong>Gemma 3 Integration</strong></h3>
 <ul>
 <li>Multi-agent orchestration</li>
 <li>Natural language processing</li>
@@ -379,7 +327,7 @@ Gil Raitses
 </ul>
 </section>
 <section id="real-time-processing" class="innovation-item">
-<h3>⚡ <strong>Real-Time Processing</strong></h3>
+<h3><strong>Real-Time Processing</strong></h3>
 <ul>
 <li>Sub-second response times</li>
 <li>Streaming data ingestion<br>
@@ -389,7 +337,7 @@ Gil Raitses
 </ul>
 </section>
 <section id="predictive-accuracy" class="innovation-item">
-<h3>🎯 <strong>Predictive Accuracy</strong></h3>
+<h3><strong>Predictive Accuracy</strong></h3>
 <ul>
 <li>87% prediction accuracy</li>
 <li>Multi-modal data fusion</li>
@@ -398,7 +346,7 @@ Gil Raitses
 </ul>
 </section>
 <section id="production-deployment" class="innovation-item">
-<h3>🌐 <strong>Production Deployment</strong></h3>
+<h3><strong>Production Deployment</strong></h3>
 <ul>
 <li>Cloud-native architecture</li>
 <li>Auto-scaling infrastructure</li>
@@ -411,21 +359,21 @@ Gil Raitses
 <section id="impact-results" class="slide level2 results-slide">
 <h2>Impact &amp; Results</h2>
 <div class="results-grid">
-<h3 id="performance-metrics">📈 <strong>Performance Metrics</strong></h3>
+<h3 id="performance-metrics"><strong>Performance Metrics</strong></h3>
 <ul>
 <li><strong>87%</strong> whale encounter prediction accuracy</li>
 <li><strong>&lt;2 second</strong> response time for queries</li>
 <li><strong>473</strong> historical sightings analyzed</li>
 <li><strong>24/7</strong> continuous monitoring</li>
 </ul>
-<h3 id="conservation-impact">🌍 <strong>Conservation Impact</strong></h3>
+<h3 id="conservation-impact"><strong>Conservation Impact</strong></h3>
 <ul>
 <li>Reduced marine traffic in sensitive areas</li>
 <li>Optimized whale watching routes</li>
 <li>Enhanced research data collection</li>
 <li>Improved ecosystem monitoring</li>
 </ul>
-<h3 id="innovation-awards">💡 <strong>Innovation Awards</strong></h3>
+<h3 id="innovation-awards"><strong>Innovation Awards</strong></h3>
 <ul>
 <li>Real-time multi-agent coordination</li>
 <li>Production-ready ML pipeline</li>
@@ -437,39 +385,24 @@ Gil Raitses
 <section id="future-roadmap" class="slide level2 roadmap-slide">
 <h2>Future Roadmap</h2>
 <section id="next-phase-development" class="roadmap-timeline">
-<h3>🚀 <strong>Next Phase Development</strong></h3>
+<h3><strong>Next Phase Development</strong></h3>
 <p><strong>Q3 2025</strong> - Enhanced AI Capabilities - Advanced behavioral modeling - Multi-species tracking<br>
 - Predictive ecosystem modeling</p>
 <p><strong>Q4 2025</strong> - Platform Expansion - Mobile app deployment - API marketplace launch - Research institution partnerships</p>
 <p><strong>2026</strong> - Global Scaling - Additional marine regions - International data integration - Conservation policy integration</p>
 </section>
 </section>
-<section id="live-demo" class="slide level2 demo-slide live-demo">
-<h2>Live Demo</h2>
-<div class="demo-container">
-<h3 id="orcast-live-system-demonstration">🎬 <strong>ORCAST Live System Demonstration</strong></h3>
-<p><strong>🌐 Access the live system:</strong> <a href="https://orca-904de.web.app">https://orca-904de.web.app</a></p>
-<h3 id="automated-agent-demo">🤖 <strong>Automated Agent Demo</strong></h3>
-<ul>
-<li>Real-time multi-agent coordination</li>
-<li>Live data integration</li>
-<li>Interactive map visualization</li>
-<li>Personalized trip planning</li>
-</ul>
-<p><strong>▶️ Watch the automated workflow in action!</strong></p>
-</div>
-</section>
 <section id="questions-discussion" class="slide level2 qa-slide">
 <h2>Questions &amp; Discussion</h2>
 <div class="qa-content">
-<h3 id="lets-discuss">💭 <strong>Let’s Discuss</strong></h3>
+<h3 id="lets-discuss"><strong>Let’s Discuss</strong></h3>
 <div class="contact-info">
 <p><strong>Gil Raitses</strong><br>
-📧 Email: [contact info]<br>
-🐙 GitHub: [repository]<br>
-🌐 Live Demo: <a href="https://orca-904de.web.app">orca-904de.web.app</a></p>
+Email: [contact info]<br>
+GitHub: [repository]<br>
+Live Demo: <a href="https://orca-904de.web.app">orca-904de.web.app</a></p>
 </div>
-<h3 id="collaboration-opportunities">🤝 <strong>Collaboration Opportunities</strong></h3>
+<h3 id="collaboration-opportunities"><strong>Collaboration Opportunities</strong></h3>
 <ul>
 <li>Marine research institutions</li>
 <li>Conservation organizations<br>
@@ -477,7 +410,7 @@ Gil Raitses
 <li>Tourism industry partnerships</li>
 <li>Technology integrations</li>
 </ul>
-<p><strong>Thank you for your attention!</strong> 🙏</p>
+<p><strong>Thank you for your attention!</strong></p>
 </div>
 </section>
 <section class="slide level2">
@@ -486,7 +419,6 @@ Gil Raitses
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
-<p><img src="images/orcast-logo.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
 </div>
@@ -500,8 +432,6 @@ Gil Raitses
   <script src="ORCAST_Project_Overview_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
   <script src="ORCAST_Project_Overview_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
   <script src="ORCAST_Project_Overview_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="ORCAST_Project_Overview_files/libs/revealjs/plugin/multiplex/socket.io.js"></script>
-  <script src="ORCAST_Project_Overview_files/libs/revealjs/plugin/multiplex/multiplex.js"></script>
   <script src="ORCAST_Project_Overview_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -525,7 +455,6 @@ Gil Raitses
 'jumpToSlide': true,
 'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
 'chalkboard': {"buttons":true},
-'multiplex': {"secret":null,"id":null,"url":"https://reveal-multiplex.glitch.me/"},
 'smaller': false,
  
         // Display controls in the bottom right corner
@@ -654,7 +583,7 @@ Gil Raitses
         transition: 'slide',
 
         // Transition speed (default/fast/slow)
-        transitionSpeed: 'fast',
+        transitionSpeed: 'default',
 
         // Transition style for full page slide backgrounds
         // (none/fade/slide/convex/concave/zoom)
@@ -671,12 +600,12 @@ Gil Raitses
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1050,
+        width: 1400,
 
-        height: 700,
+        height: 900,
 
         // Factor of the display size that should remain empty around the content
-        margin: 0.1,
+        margin: 5.0e-2,
 
         math: {
           mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',

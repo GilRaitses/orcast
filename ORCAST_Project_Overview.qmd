@@ -7,15 +7,21 @@ format:
   revealjs:
     theme: dark
     transition: slide
-    transition-speed: fast
+    transition-speed: default
     background-transition: fade
     highlight-style: github
     code-line-numbers: true
     slide-number: true
     chalkboard: true
-    multiplex: true
     controls: true
-    logo: "images/orcast-logo.png"
+    width: 1400
+    height: 900
+    margin: 0.05
+    navigation-mode: linear
+    hash: true
+    keyboard: true
+    overview: true
+    center: false
     css: "orcast-slides.css"
 ---
 
@@ -24,34 +30,34 @@ format:
 ::: {.title-content}
 **O**RCA **R**esearch **C**oordination & **A**nalysis **S**ystem for **T**racking
 
-🐋 **Multi-Agent AI Platform for Marine Wildlife Conservation**
+**Multi-Agent AI Platform for Marine Wildlife Conservation**
 
 - **Gemma 3** multi-agent orchestration
 - **Real-time** orca behavior prediction  
 - **San Juan Islands** ecosystem optimization
 - **Production-ready** ML pipeline
-- **🆕 Live forecast probability clouds**
+- **NEW: Live forecast probability clouds**
 :::
 
 ---
 
-## 🎬 Live Demo: Real Data Integration {.demo-slide}
+## Live Demo: Real Data Integration {.demo-slide}
 
 ::: {.demo-content}
-### **NEW: Production Database Integration**
+### **Production Database Integration**
 
-🔍 **Real Sightings Data**
+**Real Sightings Data**
 - Live database queries from production endpoints
 - No more hardcoded sample data
 - Dynamic loading of all historical sightings
 
-🌩️ **Forecast Probability Clouds**
+**Forecast Probability Clouds**
 - Weather-map style probability visualization
 - Red/orange = High probability zones (>70%)
 - Yellow = Medium zones (50-70%)  
 - Green/blue = Lower zones (<50%)
 
-🎯 **Live Demo URL:** [https://orca-904de.web.app](https://orca-904de.web.app)
+**Live Demo URL:** [https://orca-904de.web.app](https://orca-904de.web.app)
 :::
 
 ---
@@ -61,7 +67,7 @@ format:
 ::: {.two-column}
 ::: {.left-column}
 ### Marine Conservation Crisis
-- Orca populations declining 📉
+- Orca populations declining
 - Unpredictable whale watching
 - Tourism impact on ecosystems
 - Limited real-time data integration
@@ -81,27 +87,27 @@ format:
 ## Multi-Agent AI Architecture {.architecture-slide}
 
 ::: {.agent-grid}
-### 🔍 **Data Collector Agent**
+### **Data Collector Agent**
 - Real-time sighting ingestion
 - Environmental data fusion
 - API endpoint coordination
 
-### 🧠 **Analysis Agent** 
+### **Analysis Agent** 
 - PINN model execution
 - Behavioral pattern recognition
 - Confidence scoring
 
-### 🌊 **Environmental Agent**
+### **Environmental Agent**
 - NOAA weather integration
 - Tidal data processing
 - Salmon migration tracking
 
-### 🎤 **Hydrophone Network**
+### **Hydrophone Network**
 - Acoustic detection coordination
 - Multi-station data fusion
 - Real-time audio processing
 
-### 🎯 **Forecast Generator**
+### **Forecast Generator**
 - Probability cloud creation
 - Spatial risk assessment
 - Prediction visualization
@@ -114,10 +120,10 @@ format:
 ::: {.endpoint-table}
 | Endpoint | Purpose | Data Type | Status |
 |----------|---------|-----------|--------|
-| `/api/recent-sightings` | Live orca database | Historical + Recent | ✅ Live |
-| `/api/ml-predictions` | Model outputs | Probability maps | ✅ Live |
-| `/api/environmental-data` | NOAA/DFO feeds | Weather/Tidal | ✅ Live |
-| `/api/hydrophone-data` | Acoustic network | Detection events | ✅ Live |
+| `/api/recent-sightings` | Live orca database | Historical + Recent | Live |
+| `/api/ml-predictions` | Model outputs | Probability maps | Live |
+| `/api/environmental-data` | NOAA/DFO feeds | Weather/Tidal | Live |
+| `/api/hydrophone-data` | Acoustic network | Detection events | Live |
 
 ### **Demo Validation**
 - **Real database queries** - No fake data
@@ -131,24 +137,24 @@ format:
 ## Multi-Agent Workflow Demo {.demo-slide}
 
 ::: {.workflow-steps}
-### 🔄 **Agent Coordination Process**
+### **Agent Coordination Process**
 
-1. **Data Collection Agent** 🔍
+1. **Data Collection Agent**
    - Fetches environmental conditions
    - Processes hydrophone data
    - Integrates multiple data sources
 
-2. **Analysis Agent** 📊  
+2. **Analysis Agent**  
    - Runs ML predictions
    - Identifies behavioral patterns
    - Calculates probability maps
 
-3. **Planning Agent** 🗺️
+3. **Planning Agent**
    - Generates optimized routes
    - Creates personalized itineraries  
    - Coordinates resource allocation
 
-4. **User Interface** 👥
+4. **User Interface**
    - Presents integrated results
    - Interactive map visualization
    - Real-time updates
@@ -160,7 +166,7 @@ format:
 
 ::: {.innovation-grid}
 ::: {.innovation-item}
-### 🚀 **Gemma 3 Integration**
+### **Gemma 3 Integration**
 - Multi-agent orchestration
 - Natural language processing
 - Dynamic workflow coordination
@@ -168,7 +174,7 @@ format:
 :::
 
 ::: {.innovation-item}
-### ⚡ **Real-Time Processing**
+### **Real-Time Processing**
 - Sub-second response times
 - Streaming data ingestion  
 - Live probability updates
@@ -176,7 +182,7 @@ format:
 :::
 
 ::: {.innovation-item}
-### 🎯 **Predictive Accuracy**
+### **Predictive Accuracy**
 - 87% prediction accuracy
 - Multi-modal data fusion
 - Physics-informed modeling
@@ -184,7 +190,7 @@ format:
 :::
 
 ::: {.innovation-item}
-### 🌐 **Production Deployment**
+### **Production Deployment**
 - Cloud-native architecture
 - Auto-scaling infrastructure
 - 99.9% uptime SLA
@@ -197,19 +203,19 @@ format:
 ## Impact & Results {.results-slide}
 
 ::: {.results-grid}
-### 📈 **Performance Metrics**
+### **Performance Metrics**
 - **87%** whale encounter prediction accuracy
 - **<2 second** response time for queries
 - **473** historical sightings analyzed
 - **24/7** continuous monitoring
 
-### 🌍 **Conservation Impact**  
+### **Conservation Impact**  
 - Reduced marine traffic in sensitive areas
 - Optimized whale watching routes
 - Enhanced research data collection
 - Improved ecosystem monitoring
 
-### 💡 **Innovation Awards**
+### **Innovation Awards**
 - Real-time multi-agent coordination
 - Production-ready ML pipeline
 - Comprehensive system integration
@@ -221,7 +227,7 @@ format:
 ## Future Roadmap {.roadmap-slide}
 
 ::: {.roadmap-timeline}
-### 🚀 **Next Phase Development**
+### **Next Phase Development**
 
 **Q3 2025** - Enhanced AI Capabilities
 - Advanced behavioral modeling
@@ -244,22 +250,22 @@ format:
 ## Questions & Discussion {.qa-slide}
 
 ::: {.qa-content}
-### 💭 **Let's Discuss**
+### **Let's Discuss**
 
 ::: {.contact-info}
 **Gil Raitses**  
-📧 Email: [contact info]  
-🐙 GitHub: [repository]  
-🌐 Live Demo: [orca-904de.web.app](https://orca-904de.web.app)
+Email: [contact info]  
+GitHub: [repository]  
+Live Demo: [orca-904de.web.app](https://orca-904de.web.app)
 :::
 
-### 🤝 **Collaboration Opportunities**
+### **Collaboration Opportunities**
 - Marine research institutions
 - Conservation organizations  
 - Tourism industry partnerships
 - Technology integrations
 
-**Thank you for your attention!** 🙏
+**Thank you for your attention!**
 :::
 
 --- 
