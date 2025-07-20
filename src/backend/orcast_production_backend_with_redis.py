@@ -492,7 +492,7 @@ def root():
     redis_status = "connected" if redis_cache and redis_cache.connected else "not available"
     return jsonify({
         'service': 'ORCAST Production Backend with Redis',
-        'version': '2.0',
+        'version': 'v3.0',
         'status': 'operational',
         'redis_status': redis_status,
         'features': [
@@ -724,7 +724,7 @@ def clear_cache():
 def api_status():
     """API status with Redis information"""
     return jsonify({
-        'api_version': '2.0',
+        'api_version': 'v3.0',
         'redis_enabled': redis_cache is not None and redis_cache.connected,
         'cache_status': 'active' if redis_cache and redis_cache.connected else 'disabled',
         'features': {
