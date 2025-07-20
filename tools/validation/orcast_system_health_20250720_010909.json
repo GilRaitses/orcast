@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-07-20T01:09:09.914995",
+  "system_architecture": {
+    "frontend": {
+      "platform": "Firebase Hosting",
+      "project": "orca-904de",
+      "urls": {
+        "firebase": "https://orca-904de.web.app",
+        "custom_domain": "https://orcast.org"
+      },
+      "description": "Static frontend - HTML, CSS, JavaScript, images",
+      "technologies": [
+        "HTML5",
+        "JavaScript",
+        "CSS3",
+        "Google Maps API",
+        "Firebase SDK"
+      ],
+      "files": [
+        "index.html",
+        "js/",
+        "css/",
+        "api/",
+        "data/"
+      ]
+    },
+    "backend": {
+      "platform": "Google Cloud Run",
+      "project": "orca-466204",
+      "urls": {
+        "primary": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app"
+      },
+      "description": "REST API backend - ML predictions, data processing",
+      "technologies": [
+        "Python",
+        "Flask",
+        "FastAPI",
+        "Machine Learning",
+        "BigQuery"
+      ],
+      "endpoints_count": 46
+    },
+    "data_storage": {
+      "firebase_firestore": {
+        "project": "orca-904de",
+        "description": "Real-time whale detection data",
+        "collections": [
+          "whale_detections",
+          "ml_analysis",
+          "user_sessions"
+        ]
+      },
+      "bigquery": {
+        "project": "orca-466204",
+        "description": "Data warehouse for analytics",
+        "datasets": [
+          "whale_data",
+          "ml_analysis",
+          "orcast_results"
+        ]
+      }
+    },
+    "external_services": {
+      "orcahello_ai": "https://aifororcas.azurewebsites.net/api",
+      "noaa_tides": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+      "google_maps": "https://maps.googleapis.com/maps/api/js"
+    }
+  },
+  "health_results": {
+    "frontend": [
+      {
+        "test": "Firebase Hosting",
+        "url": "https://orca-904de.web.app",
+        "status": 200,
+        "success": true,
+        "details": "ORCAST content: True, Dashboard: False"
+      },
+      {
+        "test": "Custom Domain (orcast.org)",
+        "url": "https://orcast.org",
+        "status": 200,
+        "success": true,
+        "details": "Domain resolution and SSL working"
+      }
+    ],
+    "backend": [
+      {
+        "test": "Backend Root",
+        "method": "GET",
+        "url": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app/",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 115.48495292663574,
+        "details": "Response time: 115ms, Data keys: 7"
+      },
+      {
+        "test": "Health Check",
+        "method": "GET",
+        "url": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app/health",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 98.49905967712402,
+        "details": "Response time: 98ms, Data keys: 4"
+      },
+      {
+        "test": "Current Forecast",
+        "method": "GET",
+        "url": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app/forecast/current",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 92.36407279968262,
+        "details": "Response time: 92ms, Data keys: 3"
+      },
+      {
+        "test": "Quick Forecast",
+        "method": "POST",
+        "url": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app/forecast/quick",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 113.7690544128418,
+        "details": "Response time: 114ms, ML prediction successful"
+      },
+      {
+        "test": "ML Prediction",
+        "method": "POST",
+        "url": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app/api/ml/predict",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 97.89109230041504,
+        "details": "Response time: 98ms, ML prediction successful"
+      },
+      {
+        "test": "API Status",
+        "method": "GET",
+        "url": "https://orcast-production-backend-2cvqukvhga-uw.a.run.app/api/status",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 76.83682441711426,
+        "details": "Response time: 77ms, Data keys: 6"
+      }
+    ],
+    "data_storage": [
+      {
+        "test": "BigQuery Project Access",
+        "success": true,
+        "details": "Project orca-466204 accessible"
+      },
+      {
+        "test": "Firebase Project Access",
+        "success": true,
+        "details": "Project orca-904de found"
+      }
+    ],
+    "external_services": [
+      {
+        "test": "Orcahello Ai",
+        "url": "https://aifororcas.azurewebsites.net/api",
+        "status": 200,
+        "success": true,
+        "details": "Response size: 2,636 chars"
+      },
+      {
+        "test": "Noaa Tides",
+        "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+        "status": 200,
+        "success": true,
+        "details": "Response size: 172 chars"
+      },
+      {
+        "test": "Google Maps",
+        "url": "https://maps.googleapis.com/maps/api/js",
+        "status": 200,
+        "success": true,
+        "details": "Response size: 268,982 chars"
+      }
+    ],
+    "connectivity": [
+      {
+        "test": "Frontend \u2192 Backend URL Configuration",
+        "success": true,
+        "details": "Backend URL found in frontend config.js"
+      },
+      {
+        "test": "CORS (Cross-Origin Requests)",
+        "success": true,
+        "details": "CORS enabled for frontend domain"
+      }
+    ]
+  },
+  "summary": {
+    "total_tests": 15,
+    "passed_tests": 15
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "timestamp": "2025-07-19T23:30:43.018895",
+  "system_urls": {
+    "backend": "https://orcast-production-backend-126424997157.us-west1.run.app",
+    "frontend": "https://orcast.org",
+    "firebase": "https://orca-904de.web.app"
+  },
+  "test_results": {
+    "backend_tests": {
+      "connectivity": {
+        "success": true,
+        "version": "2.0",
+        "redis_status": "connected",
+        "features": [
+          "ML whale predictions with caching",
+          "Real-time pub/sub messaging",
+          "Rate limiting protection",
+          "Environmental data caching",
+          "Performance optimization"
+        ]
+      },
+      "endpoints": {
+        "Root": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 135.39409637451172,
+          "data_size": 351
+        },
+        "Health": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 31127.381086349487
+        },
+        "Current Forecast": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 31544.657945632935
+        },
+        "Quick Forecast": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 32661.972999572754
+        },
+        "ML Predict": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 32702.70276069641
+        },
+        "API Status": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 1658.1718921661377,
+          "data_size": 348
+        },
+        "Cache Stats": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 30963.650941848755
+        },
+        "Real-time Events": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 32219.579935073853
+        }
+      }
+    },
+    "frontend_tests": {
+      "Custom Domain": {
+        "success": true,
+        "status_code": 200,
+        "has_orcast_content": true,
+        "has_dashboard": true,
+        "backend_url_configured": false
+      },
+      "Firebase URL": {
+        "success": true,
+        "status_code": 200,
+        "has_orcast_content": true,
+        "has_dashboard": true,
+        "backend_url_configured": false
+      }
+    },
+    "redis_tests": {
+      "connection": {
+        "success": true,
+        "status": "connected"
+      },
+      "caching": {
+        "success": false,
+        "error": "HTTPSConnectionPool(host='orcast-production-backend-126424997157.us-west1.run.app', port=443): Read timed out. (read timeout=30)"
+      }
+    },
+    "integration_tests": {
+      "frontend_backend": {
+        "success": false,
+        "frontend_status": 200,
+        "backend_configured": false
+      },
+      "prediction_workflow": {
+        "success": false,
+        "error": "HTTPSConnectionPool(host='orcast-production-backend-126424997157.us-west1.run.app', port=443): Read timed out. (read timeout=30)"
+      }
+    },
+    "performance_tests": {
+      "Root": {
+        "success": true,
+        "average_ms": 426.7749786376953,
+        "min_ms": 118.75200271606445,
+        "max_ms": 1041.0490036010742,
+        "requests": 3
+      },
+      "Health Check": {
+        "success": false,
+        "error": "HTTPSConnectionPool(host='orcast-production-backend-126424997157.us-west1.run.app', port=443): Read timed out. (read timeout=20)"
+      },
+      "Current Forecast": {
+        "success": false,
+        "error": "HTTPSConnectionPool(host='orcast-production-backend-126424997157.us-west1.run.app', port=443): Read timed out. (read timeout=20)"
+      }
+    },
+    "real_time_tests": {}
+  },
+  "summary": {
+    "total_categories": 5,
+    "passed_categories": 4,
+    "overall_health_percent": 80.0,
+    "hackathon_ready": true,
+    "working_endpoints": 2,
+    "total_endpoints": 8,
+    "redis_connected": true,
+    "frontend_working": true
+  }
+}

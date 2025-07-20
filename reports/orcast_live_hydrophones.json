@@ -1,0 +1,85 @@
+{
+  "timestamp": "2025-07-19T19:48:14.585533",
+  "source": "live.orcasound.net",
+  "hydrophone_count": 5,
+  "coverage_area": {
+    "area_km2": 6325.0,
+    "bounds": {
+      "north": 48.591294,
+      "south": 47.86497296593844,
+      "east": -122.33393605795372,
+      "west": -123.1735774
+    },
+    "dimensions_km": {
+      "lat": 80.6,
+      "lng": 78.5
+    }
+  },
+  "hydrophones": [
+    {
+      "id": "rpi_north_sjc",
+      "name": "North San Juan Channel",
+      "coordinates": {
+        "lat": 48.591294,
+        "lng": -123.058779
+      },
+      "status": "active",
+      "description": "This an ideal location for hearing sounds made by orcas, humpbacks, and other marine life -- including fish. Bigg's killer whales frequent this location year round, and Southern Resident killer whales...",
+      "region": "San Juan Islands",
+      "marker_type": "live_hydrophone",
+      "info_window": "\n        <div class=\"hydrophone-info\">\n            <h4>\ud83d\udfe2 North San Juan Channel</h4>\n            <p><strong>Status:</strong> Live</p>\n            <p><strong>Location:</strong> 48.5913, -123.0588</p>\n            <p><strong>Region:</strong> San Juan Islands</p>\n            <p><strong>Description:</strong> This an ideal location for hearing sounds made by orcas, humpbacks, and other marine life -- includi...</p>\n            <div class=\"hydrophone-actions\">\n                <button onclick=\"focusHydrophone('rpi_north_sjc')\" class=\"btn-small\">\n                    Focus Location\n                </button>\n                <button onclick=\"checkHydrophoneActivity('rpi_north_sjc')\" class=\"btn-small\">\n                    Check Activity\n                </button>\n            </div>\n        </div>\n        "
+    },
+    {
+      "id": "rpi_sunset_bay",
+      "name": "Beach Camp at Sunset Bay",
+      "coordinates": {
+        "lat": 47.86497296593844,
+        "lng": -122.33393605795372
+      },
+      "status": "active",
+      "description": "Located halfway between Edmonds and Mukilteo, this is a good place to listen to central Puget Sound. You may hear sounds from marine life like killer whales, seals, and possibly humpback or gray whale...",
+      "region": "Central Puget Sound",
+      "marker_type": "live_hydrophone",
+      "info_window": "\n        <div class=\"hydrophone-info\">\n            <h4>\ud83d\udfe2 Beach Camp at Sunset Bay</h4>\n            <p><strong>Status:</strong> Live</p>\n            <p><strong>Location:</strong> 47.8650, -122.3339</p>\n            <p><strong>Region:</strong> Central Puget Sound</p>\n            <p><strong>Description:</strong> Located halfway between Edmonds and Mukilteo, this is a good place to listen to central Puget Sound....</p>\n            <div class=\"hydrophone-actions\">\n                <button onclick=\"focusHydrophone('rpi_sunset_bay')\" class=\"btn-small\">\n                    Focus Location\n                </button>\n                <button onclick=\"checkHydrophoneActivity('rpi_sunset_bay')\" class=\"btn-small\">\n                    Check Activity\n                </button>\n            </div>\n        </div>\n        "
+    },
+    {
+      "id": "rpi_port_townsend",
+      "name": "Port Townsend",
+      "coordinates": {
+        "lat": 48.135743,
+        "lng": -122.760614
+      },
+      "status": "active",
+      "description": "This is a great location to hear the Southern Resident killer whales as they pass through Admiralty Inlet in search of salmon. This can happen any time of year, but is more common in the fall when coh...",
+      "region": "Central Puget Sound",
+      "marker_type": "live_hydrophone",
+      "info_window": "\n        <div class=\"hydrophone-info\">\n            <h4>\ud83d\udfe2 Port Townsend</h4>\n            <p><strong>Status:</strong> Live</p>\n            <p><strong>Location:</strong> 48.1357, -122.7606</p>\n            <p><strong>Region:</strong> Central Puget Sound</p>\n            <p><strong>Description:</strong> This is a great location to hear the Southern Resident killer whales as they pass through Admiralty ...</p>\n            <div class=\"hydrophone-actions\">\n                <button onclick=\"focusHydrophone('rpi_port_townsend')\" class=\"btn-small\">\n                    Focus Location\n                </button>\n                <button onclick=\"checkHydrophoneActivity('rpi_port_townsend')\" class=\"btn-small\">\n                    Check Activity\n                </button>\n            </div>\n        </div>\n        "
+    },
+    {
+      "id": "rpi_orcasound_lab",
+      "name": "Orcasound Lab",
+      "coordinates": {
+        "lat": 48.5583362,
+        "lng": -123.1735774
+      },
+      "status": "active",
+      "description": "Centered with in the summertime habitat of the endangered Southern Resident killer whales, Orcasound Lab is a good place to listen for orcas, as well as ships passing through Haro Strait and boats tra...",
+      "region": "San Juan Islands",
+      "marker_type": "live_hydrophone",
+      "info_window": "\n        <div class=\"hydrophone-info\">\n            <h4>\ud83d\udfe2 Orcasound Lab</h4>\n            <p><strong>Status:</strong> Live</p>\n            <p><strong>Location:</strong> 48.5583, -123.1736</p>\n            <p><strong>Region:</strong> San Juan Islands</p>\n            <p><strong>Description:</strong> Centered with in the summertime habitat of the endangered Southern Resident killer whales, Orcasound...</p>\n            <div class=\"hydrophone-actions\">\n                <button onclick=\"focusHydrophone('rpi_orcasound_lab')\" class=\"btn-small\">\n                    Focus Location\n                </button>\n                <button onclick=\"checkHydrophoneActivity('rpi_orcasound_lab')\" class=\"btn-small\">\n                    Check Activity\n                </button>\n            </div>\n        </div>\n        "
+    },
+    {
+      "id": "rpi_bush_point",
+      "name": "Bush Point",
+      "coordinates": {
+        "lat": 48.0336664,
+        "lng": -122.6040035
+      },
+      "status": "active",
+      "description": "This is a great place to listen for the Southern Resident killer whales who pass through Admiralty Inlet about once a month in search of salmon. Other common sounds here come from ships heading to and...",
+      "region": "Central Puget Sound",
+      "marker_type": "live_hydrophone",
+      "info_window": "\n        <div class=\"hydrophone-info\">\n            <h4>\ud83d\udfe2 Bush Point</h4>\n            <p><strong>Status:</strong> Live</p>\n            <p><strong>Location:</strong> 48.0337, -122.6040</p>\n            <p><strong>Region:</strong> Central Puget Sound</p>\n            <p><strong>Description:</strong> This is a great place to listen for the Southern Resident killer whales who pass through Admiralty I...</p>\n            <div class=\"hydrophone-actions\">\n                <button onclick=\"focusHydrophone('rpi_bush_point')\" class=\"btn-small\">\n                    Focus Location\n                </button>\n                <button onclick=\"checkHydrophoneActivity('rpi_bush_point')\" class=\"btn-small\">\n                    Check Activity\n                </button>\n            </div>\n        </div>\n        "
+    }
+  ]
+}

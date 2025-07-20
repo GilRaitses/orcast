@@ -56,7 +56,7 @@ curl -X POST http://localhost:8080/predict \
 ```bash
 # Run comprehensive test suite
 source venv/bin/activate
-python3 test_ml_service.py
+python3 tools/testing/test_ml_service.py
 ```
 
 ## **☁️ Cloud Run Deployment**
@@ -116,7 +116,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code and models
-COPY deploy_behavioral_ml_service.py .
+COPY tools/deployment/deploy_behavioral_ml_service.py .
 COPY models/ ./models/
 
 # Set environment variables

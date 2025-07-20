@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-07-19T23:21:36.301312",
+  "backend_url": "https://orcast-production-backend-126424997157.us-west1.run.app",
+  "test_results": {
+    "backend_status": {
+      "success": true,
+      "redis_connected": true,
+      "version": "2.0",
+      "features": [
+        "ML whale predictions with caching",
+        "Real-time pub/sub messaging",
+        "Rate limiting protection",
+        "Environmental data caching",
+        "Performance optimization"
+      ]
+    },
+    "prediction_caching": {
+      "success": false,
+      "error": "HTTPSConnectionPool(host='orcast-production-backend-126424997157.us-west1.run.app', port=443): Read timed out. (read timeout=15)"
+    },
+    "multiple_endpoints": {
+      "success": false,
+      "passed": 0,
+      "total": 3
+    },
+    "rate_limiting": {
+      "success": false,
+      "error": "HTTPSConnectionPool(host='orcast-production-backend-126424997157.us-west1.run.app', port=443): Read timed out. (read timeout=5)"
+    }
+  },
+  "summary": {
+    "total_tests": 4,
+    "passed_tests": 1,
+    "success_rate": 25.0
+  }
+}

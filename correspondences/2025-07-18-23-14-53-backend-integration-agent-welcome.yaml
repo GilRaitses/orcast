@@ -83,11 +83,11 @@ message: |
   
   # Run data processing
   cd scripts/data_processing
-  python realtime_data_collector.py
+  python scripts/data_processing/realtime_data_collector.py
   
   # Run ML services
   cd ../ml_services
-  python behavioral_ml_service.py
+  python scripts/ml_services/behavioral_ml_service.py
   ```
   
   **Data Processing Focus:**

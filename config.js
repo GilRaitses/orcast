@@ -40,6 +40,19 @@ window.ORCA_CONFIG = {
         serviceAccountEmail: 'orca-237@orca-466204.iam.gserviceaccount.com'
     },
     
+    // Backend API Configuration (Google Cloud Run)
+    backend: {
+        baseUrl: 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app',
+        endpoints: {
+            health: '/health',
+            forecast: '/forecast/current',
+            quickForecast: '/forecast/quick',
+            mlPredict: '/api/ml/predict',
+            status: '/api/status',
+            realTimeEvents: '/api/real-time/events'
+        }
+    },
+    
     // Gemma 3 Cloud Run GPU Service (for Hackathon)
     gemmaService: {
         baseUrl: 'https://orcast-gemma3-gpu-RANDOM.run.app', // Will be updated after deployment

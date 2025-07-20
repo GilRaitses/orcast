@@ -1,0 +1,43 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "orcast-backend",
+    "annotations": {
+      "run.googleapis.com/ingress": "all"
+    }
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "autoscaling.knative.dev/maxScale": "10",
+          "run.googleapis.com/memory": "2Gi",
+          "run.googleapis.com/cpu": "1000m"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "image": "gcr.io/orca-466204/orcast-backend",
+            "ports": [
+              {
+                "containerPort": 8080
+              }
+            ],
+            "env": [
+              {
+                "name": "GOOGLE_CLOUD_PROJECT",
+                "value": "orca-466204"
+              },
+              {
+                "name": "ENVIRONMENT",
+                "value": "production"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

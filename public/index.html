@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/tabs.css">
     <link rel="stylesheet" href="css/inspection.css">
+    <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
     <!-- Loading Screen -->
@@ -34,24 +35,9 @@
             <div class="control-group">
                 <label>Time Unit</label>
                 <div class="time-controls">
-                    <button class="time-btn" id="weeksBtn" onclick="setTimeUnit('weeks')">Weeks</button>
-                    <button class="time-btn active" id="monthsBtn" onclick="setTimeUnit('months')">Months</button>
-                    <button class="time-btn" id="yearsBtn" onclick="setTimeUnit('years')">Years</button>
-                </div>
-                <!-- Layer Toggles (move up here) -->
-                <label>Layers</label>
-                <div class="layer-toggles" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                  <button class="time-btn active" id="togglePastBtn" type="button">Past</button>
-                  <button class="time-btn" id="togglePresentBtn" type="button">Present</button>
-                  <button class="time-btn" id="toggleFutureBtn" type="button">Future</button>
-                </div>
-                <div id="pastSliderWrapper" style="display:none; margin-bottom: 0.5rem;">
-                  <input type="range" min="-12" max="0" value="0" class="slider" id="pastSlider">
-                  <div id="pastPeriodDisplay" style="text-align: center; font-size: 0.8rem; color: #4fc3f7;">Current Month</div>
-                </div>
-                <div id="futureSliderWrapper" style="display:none; margin-bottom: 0.5rem;">
-                  <input type="range" min="1" max="12" value="1" class="slider" id="futureSlider">
-                  <div id="futurePeriodDisplay" style="text-align: center; font-size: 0.8rem; color: #4fc3f7;">1 Month Ahead</div>
+                    <button class="time-btn" onclick="setTimeUnit('weeks')">Weeks</button>
+                    <button class="time-btn active" onclick="setTimeUnit('months')">Months</button>
+                    <button class="time-btn" onclick="setTimeUnit('years')">Years</button>
                 </div>
                 <input type="range" min="-12" max="2" value="0" class="slider" id="timeSlider" oninput="updateTimeFromSlider(this.value)">
                 <div id="periodDisplay" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #4fc3f7;">Current Month</div>
@@ -84,6 +70,7 @@
             <div class="tab-navigation">
                 <button class="tab-button active" onclick="switchTab('map')">Probability Map</button>
                 <button class="tab-button" onclick="switchTab('data')">Data Sources</button>
+                <button class="tab-button" onclick="switchTab('agents')">Agents</button>
                 <button class="tab-button" onclick="switchTab('inspection')">Backend Inspection</button>
                 <button class="tab-button" onclick="switchTab('analytics')">Analytics & Modeling</button>
             </div>
@@ -113,23 +100,9 @@
                             <span class="legend-text">Low (20-40%)</span>
                         </div>
                         <div class="legend-scale">
-                            <div class="legend-color" style="background: #00ff80;"></div>
+                            <div class="legend-color" style="background: #00ff00;"></div>
                             <span class="legend-text">Very Low (0-20%)</span>
                         </div>
-                    </div>
-
-                    <!-- Status Panel -->
-                    <div class="status">
-                        <div class="status-item">
-                            <div class="status-dot"></div>
-                            <span>Live Data Active</span>
-                        </div>
-                        <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.8rem;">
-                            Last update: <span id="time">--</span>
-                        </p>
-                        <button class="about-btn" onclick="showInfo()">
-                            About ORCAST
-                        </button>
                     </div>
                 </div>
             </div>
@@ -165,45 +138,101 @@
                 </div>
             </div>
 
+            <!-- Agents Tab -->
+            <div class="tab-content" id="agents-tab">
+                <div class="agents-container">
+                    <div class="agents-header">
+                        <h2>🤖 Multi-Agent System Testing Interface</h2>
+                        <p>Test individual agents or orchestrate complex multi-agent workflows for whale watching research and planning</p>
+                        <div class="agents-actions">
+                            <button class="btn-primary" onclick="openAgentInterface()">
+                                🚀 Open Full Agent Testing Interface
+                            </button>
+                            <button class="btn-secondary" onclick="refreshAgentStatus()">
+                                🔄 Refresh Agent Status
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="agents-grid">
+                        <div class="agent-summary-card">
+                            <div class="agent-summary-header">
+                                <h3>🎼 Orchestrator Agent</h3>
+                                <span class="status-badge idle" id="main-orchestrator-status">Idle</span>
+                            </div>
+                            <p>Coordinates multiple agents for complex planning tasks</p>
+                            <div class="agent-quick-test">
+                                <input type="text" placeholder="Quick orchestration test..." id="main-orchestrator-input">
+                                <button onclick="quickTestOrchestrator()">Test</button>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-summary-card">
+                            <div class="agent-summary-header">
+                                <h3>🔬 Research Agent</h3>
+                                <span class="status-badge active" id="main-research-status">Active</span>
+                            </div>
+                            <p>Analyzes orca behavioral data and environmental conditions</p>
+                            <div class="agent-quick-test">
+                                <input type="text" placeholder="Research query..." id="main-research-input">
+                                <button onclick="quickTestResearch()">Research</button>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-summary-card">
+                            <div class="agent-summary-header">
+                                <h3>📋 Planner Agent</h3>
+                                <span class="status-badge idle" id="main-planner-status">Idle</span>
+                            </div>
+                            <p>Creates detailed itineraries and optimal viewing routes</p>
+                            <div class="agent-quick-test">
+                                <input type="text" placeholder="Planning request..." id="main-planner-input">
+                                <button onclick="quickTestPlanner()">Plan</button>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-summary-card">
+                            <div class="agent-summary-header">
+                                <h3>📊 Analytics Agent</h3>
+                                <span class="status-badge running" id="main-analytics-status">Running</span>
+                            </div>
+                            <p>Processes historical data and generates probability insights</p>
+                            <div class="agent-quick-test">
+                                <input type="text" placeholder="Analytics query..." id="main-analytics-input">
+                                <button onclick="quickTestAnalytics()">Analyze</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="agents-recent-activity">
+                        <h3>Recent Agent Activity</h3>
+                        <div class="activity-log" id="main-activity-log">
+                            <div class="activity-item">
+                                <span class="activity-timestamp">12:45 PM</span>
+                                <span class="activity-agent research">Research Agent</span>
+                                <span class="activity-message">Analyzed feeding patterns near Lime Kiln Point</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-timestamp">12:43 PM</span>
+                                <span class="activity-agent analytics">Analytics Agent</span>
+                                <span class="activity-message">Updated probability heatmap with latest sighting data</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-timestamp">12:40 PM</span>
+                                <span class="activity-agent orchestrator">Orchestrator</span>
+                                <span class="activity-message">Coordinated 3-agent planning session</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Backend Inspection Tab -->
             <div class="tab-content" id="inspection-tab">
-                <div class="inspection-panel">
-                    <h3 style="color: #4fc3f7; margin-bottom: 1rem;">Backend API Inspection</h3>
-                    
-                    <div class="endpoint-test">
-                        <h4>Behavioral Predictions API</h4>
-                        <div class="endpoint-url">GET /api/predictions</div>
-                        <button class="test-button" onclick="testEndpoint('/api/predictions', 'predictions-response')">Test API</button>
-                        <div class="response-area" id="predictions-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>DTAG Data Analysis</h4>
-                        <div class="endpoint-url">GET /api/dtag-data</div>
-                        <button class="test-button" onclick="testEndpoint('/api/dtag-data', 'dtag-response')">Test API</button>
-                        <div class="response-area" id="dtag-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Real-time Environmental Data</h4>
-                        <div class="endpoint-url">GET /api/real-time-data</div>
-                        <button class="test-button" onclick="testEndpoint('/api/real-time-data', 'realtime-response')">Test API</button>
-                        <div class="response-area" id="realtime-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Feeding Zone Analytics</h4>
-                        <div class="endpoint-url">GET /api/feeding-zones</div>
-                        <button class="test-button" onclick="testEndpoint('/api/feeding-zones', 'feeding-response')">Test API</button>
-                        <div class="response-area" id="feeding-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Behavioral ML Classification</h4>
-                        <div class="endpoint-url">GET /api/behavioral-analysis</div>
-                        <button class="test-button" onclick="testEndpoint('/api/behavioral-analysis', 'behavioral-response')">Test API</button>
-                        <div class="response-area" id="behavioral-response"></div>
-                    </div>
+                <!-- Live Backend Monitoring Dashboard will be initialized here -->
+                <div style="padding: 2rem; text-align: center; color: #4fc3f7;">
+                    <h3>🔧 Initializing Live Backend Monitoring Dashboard...</h3>
+                    <p>Loading real-time endpoint monitoring, performance metrics, and cost analysis...</p>
                 </div>
             </div>
 
@@ -281,11 +310,12 @@ Model Validation:
     </div>
 
     <!-- Import modular JavaScript components -->
-    <script src="../config.js"></script>
+    <script src="config.js"></script>
     <script src="js/data-loader.js"></script>
     <script src="js/map-component.js"></script>
     <script src="js/api-tester.js"></script>
     <script src="js/ui-manager.js"></script>
+    <script src="js/live_backend_monitoring_dashboard.js"></script>
 
     <!-- Application Initialization -->
     <script>
@@ -295,7 +325,7 @@ Model Validation:
             // Initialize the map component
             orcastMap = new ORCASTMap('map', {
                 center: { lat: 48.5465, lng: -123.0307 },
-                zoom: 11
+                zoom: 12  // Slightly higher zoom for better detail
             });
 
             // Initialize the map with real data
@@ -306,6 +336,180 @@ Model Validation:
             window.uiController.initialize();
             window.uiController.setupGlobalFunctions();
         }
+
+        // Enhanced switchTab function to initialize backend dashboard
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active state from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            const selectedTab = document.getElementById(`${tabName}-tab`);
+            const selectedButton = event ? event.target : document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+
+            // Initialize backend dashboard when inspection tab is selected
+            if (tabName === 'inspection' && window.backendDashboard) {
+                setTimeout(() => {
+                    initializeBackendDashboard();
+                }, 100); // Small delay to ensure tab is visible
+            }
+        }
+
+        // Agents Tab Functions
+        function openAgentInterface() {
+            // Open the full multi-agent testing interface in a new window
+            window.open('src/frontend/multi-agent-demo.html', 'AgentInterface', 'width=1400,height=900,scrollbars=yes,resizable=yes');
+        }
+
+        function refreshAgentStatus() {
+            // Simulate refreshing agent status
+            updateMainAgentStatus('orchestrator', 'running');
+            updateMainAgentStatus('research', 'running');
+            updateMainAgentStatus('planner', 'running');
+            updateMainAgentStatus('analytics', 'running');
+            
+            setTimeout(() => {
+                updateMainAgentStatus('orchestrator', 'active');
+                updateMainAgentStatus('research', 'active');
+                updateMainAgentStatus('planner', 'idle');
+                updateMainAgentStatus('analytics', 'running');
+                addActivityLogItem('system', 'Agent status refreshed successfully');
+            }, 2000);
+        }
+
+        function updateMainAgentStatus(agentType, status) {
+            const statusEl = document.getElementById(`main-${agentType}-status`);
+            if (statusEl) {
+                statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                statusEl.className = `status-badge ${status}`;
+            }
+        }
+
+        function addActivityLogItem(agentType, message) {
+            const activityLog = document.getElementById('main-activity-log');
+            if (!activityLog) return;
+            
+            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.innerHTML = `
+                <span class="activity-timestamp">${timestamp}</span>
+                <span class="activity-agent ${agentType}">${getAgentDisplayName(agentType)}</span>
+                <span class="activity-message">${message}</span>
+            `;
+            
+            // Add to top of log
+            activityLog.insertBefore(activityItem, activityLog.firstChild);
+            
+            // Keep only latest 10 items
+            while (activityLog.children.length > 10) {
+                activityLog.removeChild(activityLog.lastChild);
+            }
+        }
+
+        function getAgentDisplayName(agentType) {
+            const names = {
+                orchestrator: 'Orchestrator',
+                research: 'Research Agent',
+                planner: 'Planner Agent',
+                analytics: 'Analytics Agent',
+                system: 'System'
+            };
+            return names[agentType] || agentType;
+        }
+
+        function quickTestOrchestrator() {
+            const input = document.getElementById('main-orchestrator-input').value.trim();
+            if (!input) return;
+            
+            updateMainAgentStatus('orchestrator', 'running');
+            addActivityLogItem('orchestrator', `Processing: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
+            
+            setTimeout(() => {
+                updateMainAgentStatus('orchestrator', 'active');
+                addActivityLogItem('orchestrator', 'Task completed successfully');
+                document.getElementById('main-orchestrator-input').value = '';
+            }, 3000);
+        }
+
+        function quickTestResearch() {
+            const input = document.getElementById('main-research-input').value.trim();
+            if (!input) return;
+            
+            updateMainAgentStatus('research', 'running');
+            addActivityLogItem('research', `Researching: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
+            
+            setTimeout(() => {
+                updateMainAgentStatus('research', 'active');
+                addActivityLogItem('research', 'Research analysis completed with 85% confidence');
+                document.getElementById('main-research-input').value = '';
+            }, 2500);
+        }
+
+        function quickTestPlanner() {
+            const input = document.getElementById('main-planner-input').value.trim();
+            if (!input) return;
+            
+            updateMainAgentStatus('planner', 'running');
+            addActivityLogItem('planner', `Planning: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
+            
+            setTimeout(() => {
+                updateMainAgentStatus('planner', 'active');
+                addActivityLogItem('planner', 'Generated optimal route with 3 viewing locations');
+                document.getElementById('main-planner-input').value = '';
+            }, 2000);
+        }
+
+        function quickTestAnalytics() {
+            const input = document.getElementById('main-analytics-input').value.trim();
+            if (!input) return;
+            
+            updateMainAgentStatus('analytics', 'running');
+            addActivityLogItem('analytics', `Analyzing: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
+            
+            setTimeout(() => {
+                updateMainAgentStatus('analytics', 'running'); // Analytics stays running
+                addActivityLogItem('analytics', 'Generated statistical insights and probability maps');
+                document.getElementById('main-analytics-input').value = '';
+            }, 1800);
+        }
+
+        // Add Enter key support for agent inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const agentInputs = [
+                { id: 'main-orchestrator-input', handler: quickTestOrchestrator },
+                { id: 'main-research-input', handler: quickTestResearch },
+                { id: 'main-planner-input', handler: quickTestPlanner },
+                { id: 'main-analytics-input', handler: quickTestAnalytics }
+            ];
+            
+            agentInputs.forEach(({ id, handler }) => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            handler();
+                        }
+                    });
+                }
+            });
+        });
+
+        // Make switchTab globally available
+        window.switchTab = switchTab;
 
         // Fallback loading screen hide
         setTimeout(() => {

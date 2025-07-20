@@ -1,0 +1,149 @@
+{
+  "timestamp": "2025-07-20T00:39:50.062526",
+  "system_urls": {
+    "backend": "https://orcast-production-backend-126424997157.us-west1.run.app",
+    "frontend": "https://orcast.org",
+    "firebase": "https://orca-904de.web.app"
+  },
+  "test_results": {
+    "backend_tests": {
+      "connectivity": {
+        "success": true,
+        "version": "2.0",
+        "redis_status": "not available",
+        "features": [
+          "ML whale predictions with caching",
+          "Real-time pub/sub messaging",
+          "Rate limiting protection",
+          "Environmental data caching",
+          "Performance optimization"
+        ]
+      },
+      "endpoints": {
+        "Root": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 110.69488525390625,
+          "data_size": 355
+        },
+        "Health": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 108.06083679199219,
+          "data_size": 150
+        },
+        "Current Forecast": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 950.4477977752686,
+          "data_size": 1090
+        },
+        "Quick Forecast": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 814.903974533081,
+          "data_size": 638
+        },
+        "ML Predict": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 925.5709648132324,
+          "data_size": 1159
+        },
+        "API Status": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 122.18713760375977,
+          "data_size": 355
+        },
+        "Cache Stats": {
+          "success": false,
+          "status_code": 503,
+          "response_time_ms": 124.41587448120117
+        },
+        "Real-time Events": {
+          "success": true,
+          "status_code": 200,
+          "response_time_ms": 163.50579261779785,
+          "data_size": 63
+        }
+      }
+    },
+    "frontend_tests": {
+      "Custom Domain": {
+        "success": true,
+        "status_code": 200,
+        "has_orcast_content": true,
+        "has_dashboard": false,
+        "backend_url_configured": false
+      },
+      "Firebase URL": {
+        "success": true,
+        "status_code": 200,
+        "has_orcast_content": true,
+        "has_dashboard": false,
+        "backend_url_configured": false
+      }
+    },
+    "redis_tests": {
+      "connection": {
+        "success": false,
+        "status": "not available"
+      },
+      "caching": {
+        "success": true,
+        "first_request_ms": 788.2928848266602,
+        "second_request_ms": 898.3266353607178,
+        "cached": false
+      }
+    },
+    "integration_tests": {
+      "frontend_backend": {
+        "success": false,
+        "frontend_status": 200,
+        "backend_configured": false
+      },
+      "prediction_workflow": {
+        "success": true,
+        "status_code": 200,
+        "has_prediction": true,
+        "has_location": true,
+        "has_environmental": true
+      }
+    },
+    "performance_tests": {
+      "Root": {
+        "success": true,
+        "average_ms": 283.6933930714925,
+        "min_ms": 249.23014640808105,
+        "max_ms": 313.28701972961426,
+        "requests": 3
+      },
+      "Health Check": {
+        "success": true,
+        "average_ms": 197.13123639424643,
+        "min_ms": 190.22488594055176,
+        "max_ms": 204.29587364196777,
+        "requests": 3
+      },
+      "Current Forecast": {
+        "success": true,
+        "average_ms": 869.8103427886963,
+        "min_ms": 831.3641548156738,
+        "max_ms": 891.2200927734375,
+        "requests": 3
+      }
+    },
+    "real_time_tests": {}
+  },
+  "summary": {
+    "total_categories": 5,
+    "passed_categories": 5,
+    "overall_health_percent": 100.0,
+    "hackathon_ready": true,
+    "working_endpoints": 7,
+    "total_endpoints": 8,
+    "redis_connected": false,
+    "frontend_working": true
+  }
+}

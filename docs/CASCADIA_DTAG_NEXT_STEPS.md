@@ -16,7 +16,7 @@
 gcloud run deploy dtag-analyzer --source . --platform managed --region us-west1
 
 # Set up BigQuery production tables
-python3 create_dtag_tables.py
+python3 scripts/database/create_dtag_tables.py
 
 # Configure Redis caching for production
 # Set up monitoring and alerting

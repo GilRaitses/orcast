@@ -1,0 +1,20 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/verified-sightings",
+        "destination": "/api/verified-sightings.json"
+      },
+      {
+        "source": "/api/**",
+        "destination": "/api/index.html"
+      }
+    ]
+  }
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST Live Backend Monitoring Dashboard - Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(0,0,0,0.8);
+            border-bottom: 2px solid #4fc3f7;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #4fc3f7;
+            margin: 0;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            color: #999;
+        }
+        
+        .container {
+            padding: 2rem;
+            max-width: 100%;
+        }
+        
+        .status-bar {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+        }
+        
+        .status-label {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 0.25rem;
+        }
+        
+        .status-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+        
+        .init-button {
+            background: linear-gradient(45deg, #4fc3f7, #26a69a);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.3);
+            margin: 2rem auto;
+            display: block;
+        }
+        
+        .init-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
+        }
+        
+        .init-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #inspection-tab {
+            min-height: 60vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 ORCAST Live Backend Monitoring Dashboard</h1>
+        <p>Real-time monitoring of ALL system endpoints with performance metrics and cost analysis</p>
+    </div>
+    
+    <div class="container">
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-label">Dashboard Status</div>
+                <div class="status-value" id="dashboard-status">Ready</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">Total Endpoints</div>
+                <div class="status-value" id="endpoint-count">46</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">Live Testing</div>
+                <div class="status-value" id="live-status">Stopped</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">Est. Daily Cost</div>
+                <div class="status-value" id="cost-estimate">$0.00</div>
+            </div>
+        </div>
+        
+        <button class="init-button" onclick="initializeDashboard()" id="init-btn">
+            🚀 Initialize Live Backend Monitoring
+        </button>
+        
+        <!-- Dashboard Container -->
+        <div id="inspection-tab">
+            <div style="padding: 2rem; text-align: center; color: #4fc3f7;">
+                <h3>🔧 Ready to Initialize Live Backend Monitoring Dashboard</h3>
+                <p>Click the button above to start monitoring all ORCAST endpoints in real-time</p>
+                <div style="margin-top: 2rem; font-size: 0.9rem; color: #999;">
+                    <h4>What this dashboard monitors:</h4>
+                    <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+                        <li><strong>ML Services:</strong> Behavioral prediction, physics modeling, feature analysis</li>
+                        <li><strong>Firestore Integration:</strong> Spatial forecasts, quick predictions, data storage</li>
+                        <li><strong>Real-time Streaming:</strong> SSE events, live status, health monitoring</li>
+                        <li><strong>OrcaHello AI:</strong> Whale detections, hydrophone status, live audio processing</li>
+                        <li><strong>BigQuery Analytics:</strong> Recent detections, active hotspots, route analysis</li>
+                        <li><strong>Environmental Data:</strong> NOAA weather, tidal data, marine conditions</li>
+                        <li><strong>Route Optimization:</strong> Google Maps integration, recommendations</li>
+                        <li><strong>System Health:</strong> Firebase status, resource usage, performance metrics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import the live backend monitoring dashboard -->
+    <script src="js/live_backend_monitoring_dashboard.js"></script>
+    
+    <script>
+        let dashboardInitialized = false;
+        
+        function initializeDashboard() {
+            const button = document.getElementById('init-btn');
+            const statusEl = document.getElementById('dashboard-status');
+            const liveStatusEl = document.getElementById('live-status');
+            
+            if (dashboardInitialized) {
+                alert('Dashboard is already running!');
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = '⏳ Initializing...';
+            statusEl.textContent = 'Initializing';
+            
+            try {
+                // Initialize the dashboard
+                if (window.backendDashboard) {
+                    window.backendDashboard.initialize().then(() => {
+                        dashboardInitialized = true;
+                        button.textContent = '✅ Dashboard Active';
+                        button.style.background = '#66bb6a';
+                        statusEl.textContent = 'Active';
+                        liveStatusEl.textContent = 'Monitoring';
+                        
+                        // Update cost estimate periodically
+                        setInterval(updateCostEstimate, 10000);
+                        
+                        console.log('🎉 Live Backend Monitoring Dashboard is now active!');
+                    }).catch(error => {
+                        console.error('Dashboard initialization failed:', error);
+                        button.disabled = false;
+                        button.textContent = '❌ Initialization Failed - Retry';
+                        button.style.background = '#ef5350';
+                        statusEl.textContent = 'Error';
+                    });
+                } else {
+                    throw new Error('Backend dashboard not found');
+                }
+            } catch (error) {
+                console.error('Failed to initialize dashboard:', error);
+                button.disabled = false;
+                button.textContent = '❌ Error - Retry';
+                button.style.background = '#ef5350';
+                statusEl.textContent = 'Error';
+            }
+        }
+        
+        function updateCostEstimate() {
+            if (window.backendDashboard && dashboardInitialized) {
+                const totalCost = window.backendDashboard.costTracker.getTotalCost();
+                document.getElementById('cost-estimate').textContent = `$${totalCost.toFixed(2)}`;
+            }
+        }
+        
+        // Auto-initialize after 2 seconds
+        setTimeout(() => {
+            console.log('🔧 ORCAST Backend Monitoring Test Page Ready');
+            console.log('Available endpoints:', Object.keys(window.backendDashboard.endpoints).length);
+        }, 1000);
+        
+        // Add some helpful console commands
+        window.testAllEndpoints = function() {
+            if (window.backendDashboard) {
+                window.backendDashboard.runFullSystemTest();
+            } else {
+                console.log('Dashboard not initialized yet');
+            }
+        };
+        
+        window.getCostBreakdown = function() {
+            if (window.backendDashboard) {
+                return window.backendDashboard.costTracker.getCostByCategory();
+            } else {
+                console.log('Dashboard not initialized yet');
+            }
+        };
+        
+        console.log('💡 Console commands available:');
+        console.log('  testAllEndpoints() - Test all endpoints immediately');
+        console.log('  getCostBreakdown() - Get cost breakdown by category');
+    </script>
+</body>
+</html> 

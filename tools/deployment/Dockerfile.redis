@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY orcast_production_backend_with_redis.py .
+COPY redis_cache.py .
+
+# Expose port
+EXPOSE 8080
+
+# Run with gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "orcast_production_backend_with_redis:app"] 

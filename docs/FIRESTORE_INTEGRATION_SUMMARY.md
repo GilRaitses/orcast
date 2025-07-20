@@ -153,7 +153,7 @@ export GOOGLE_CLOUD_PROJECT="orca-466204"
 
 # Start the integrated service
 source venv/bin/activate
-python3 orcast_firestore_ml_service.py
+python3 src/backend/orcast_firestore_ml_service.py
 ```
 
 ## **📈 Performance Metrics:**

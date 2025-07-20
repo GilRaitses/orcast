@@ -1,0 +1,20 @@
+{
+  "project_id": "orca-466204",
+  "datasets": {
+    "whale_data": "orca-466204.whale_data",
+    "ml_analysis": "orca-466204.ml_analysis",
+    "orcast_results": "orca-466204.orcast_results"
+  },
+  "tables": {
+    "orcahello_detections": "orca-466204.whale_data.orcahello_detections",
+    "behavioral_features": "orca-466204.ml_analysis.behavioral_features",
+    "route_recommendations": "orca-466204.orcast_results.route_recommendations"
+  },
+  "views": {
+    "recent_detections": "orca-466204.whale_data.recent_detections",
+    "active_hotspots": "orca-466204.orcast_results.active_hotspots",
+    "top_routes": "orca-466204.orcast_results.top_routes"
+  },
+  "setup_completed": true,
+  "setup_timestamp": "2025-07-19T19:00:00Z"
+}

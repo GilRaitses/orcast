@@ -35,7 +35,7 @@ echo "   echo 'export WORLDWEATHERONLINE_API_KEY=\"your_key_here\"' >> ~/.zshrc"
 echo
 
 echo "✅ To test if keys are working, run:"
-echo "   python production_data_pipeline.py"
+echo "   python scripts/data_processing/production_data_pipeline.py"
 echo
 
 echo "🚀 The pipeline works fine without these keys using only free APIs!"

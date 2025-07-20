@@ -99,23 +99,9 @@
                             <span class="legend-text">Low (20-40%)</span>
                         </div>
                         <div class="legend-scale">
-                            <div class="legend-color" style="background: #00ff80;"></div>
+                            <div class="legend-color" style="background: #00ff00;"></div>
                             <span class="legend-text">Very Low (0-20%)</span>
                         </div>
-                    </div>
-
-                    <!-- Status Panel -->
-                    <div class="status">
-                        <div class="status-item">
-                            <div class="status-dot"></div>
-                            <span>Live Data Active</span>
-                        </div>
-                        <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.8rem;">
-                            Last update: <span id="time">--</span>
-                        </p>
-                        <button class="about-btn" onclick="showInfo()">
-                            About ORCAST
-                        </button>
                     </div>
                 </div>
             </div>
@@ -153,43 +139,10 @@
 
             <!-- Backend Inspection Tab -->
             <div class="tab-content" id="inspection-tab">
-                <div class="inspection-panel">
-                    <h3 style="color: #4fc3f7; margin-bottom: 1rem;">Backend API Inspection</h3>
-                    
-                    <div class="endpoint-test">
-                        <h4>Behavioral Predictions API</h4>
-                        <div class="endpoint-url">GET /api/predictions</div>
-                        <button class="test-button" onclick="testEndpoint('/api/predictions', 'predictions-response')">Test API</button>
-                        <div class="response-area" id="predictions-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>DTAG Data Analysis</h4>
-                        <div class="endpoint-url">GET /api/dtag-data</div>
-                        <button class="test-button" onclick="testEndpoint('/api/dtag-data', 'dtag-response')">Test API</button>
-                        <div class="response-area" id="dtag-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Real-time Environmental Data</h4>
-                        <div class="endpoint-url">GET /api/real-time-data</div>
-                        <button class="test-button" onclick="testEndpoint('/api/real-time-data', 'realtime-response')">Test API</button>
-                        <div class="response-area" id="realtime-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Feeding Zone Analytics</h4>
-                        <div class="endpoint-url">GET /api/feeding-zones</div>
-                        <button class="test-button" onclick="testEndpoint('/api/feeding-zones', 'feeding-response')">Test API</button>
-                        <div class="response-area" id="feeding-response"></div>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Behavioral ML Classification</h4>
-                        <div class="endpoint-url">GET /api/behavioral-analysis</div>
-                        <button class="test-button" onclick="testEndpoint('/api/behavioral-analysis', 'behavioral-response')">Test API</button>
-                        <div class="response-area" id="behavioral-response"></div>
-                    </div>
+                <!-- Live Backend Monitoring Dashboard will be initialized here -->
+                <div style="padding: 2rem; text-align: center; color: #4fc3f7;">
+                    <h3>🔧 Initializing Live Backend Monitoring Dashboard...</h3>
+                    <p>Loading real-time endpoint monitoring, performance metrics, and cost analysis...</p>
                 </div>
             </div>
 
@@ -272,6 +225,7 @@ Model Validation:
     <script src="js/map-component.js"></script>
     <script src="js/api-tester.js"></script>
     <script src="js/ui-manager.js"></script>
+    <script src="js/live_backend_monitoring_dashboard.js"></script>
 
     <!-- Application Initialization -->
     <script>
@@ -292,6 +246,40 @@ Model Validation:
             window.uiController.initialize();
             window.uiController.setupGlobalFunctions();
         }
+
+        // Enhanced switchTab function to initialize backend dashboard
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active state from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            const selectedTab = document.getElementById(`${tabName}-tab`);
+            const selectedButton = event ? event.target : document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+
+            // Initialize backend dashboard when inspection tab is selected
+            if (tabName === 'inspection' && window.backendDashboard) {
+                setTimeout(() => {
+                    initializeBackendDashboard();
+                }, 100); // Small delay to ensure tab is visible
+            }
+        }
+
+        // Make switchTab globally available
+        window.switchTab = switchTab;
 
         // Fallback loading screen hide
         setTimeout(() => {

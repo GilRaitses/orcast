@@ -28,12 +28,92 @@ class ORCASTMap {
         this.map = new google.maps.Map(document.getElementById(this.containerId), {
             zoom: this.zoom,
             center: this.center,
-            mapTypeId: 'satellite',
+            mapTypeId: 'hybrid', // Changed from 'satellite' for better balance
+            restriction: {
+                latLngBounds: {
+                    north: 48.8,
+                    south: 48.3,
+                    east: -122.7,
+                    west: -123.4
+                },
+                strictBounds: false
+            },
             styles: [
+                // Hide all points of interest and business labels
+                {
+                    featureType: 'poi',
+                    stylers: [{ visibility: 'off' }]
+                },
+                {
+                    featureType: 'poi.business',
+                    stylers: [{ visibility: 'off' }]
+                },
+                {
+                    featureType: 'poi.park',
+                    stylers: [{ visibility: 'simplified' }]
+                },
+                // Clean up road labeling
+                {
+                    featureType: 'road',
+                    elementType: 'labels',
+                    stylers: [{ visibility: 'off' }]
+                },
+                {
+                    featureType: 'road.highway',
+                    elementType: 'labels',
+                    stylers: [{ visibility: 'simplified' }]
+                },
+                // Hide transit stations and other clutter
+                {
+                    featureType: 'transit',
+                    stylers: [{ visibility: 'off' }]
+                },
+                // Simplify administrative labels
+                {
+                    featureType: 'administrative.locality',
+                    elementType: 'labels.text',
+                    stylers: [{ visibility: 'simplified' }]
+                },
+                {
+                    featureType: 'administrative.land_parcel',
+                    stylers: [{ visibility: 'off' }]
+                },
+                // Style water areas
                 {
                     featureType: 'water',
                     elementType: 'geometry',
-                    stylers: [{ color: '#263D5B' }]
+                    stylers: [{ color: '#193E5C' }]
+                },
+                {
+                    featureType: 'water',
+                    elementType: 'labels.text',
+                    stylers: [{ 
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: 'normal'
+                    }]
+                },
+                // Style landscape/islands
+                {
+                    featureType: 'landscape',
+                    elementType: 'geometry',
+                    stylers: [{ color: '#2D5A27' }]
+                },
+                {
+                    featureType: 'landscape.natural',
+                    elementType: 'geometry',
+                    stylers: [{ color: '#2D5A27' }]
+                },
+                // Keep only major place names visible
+                {
+                    featureType: 'administrative.country',
+                    elementType: 'labels.text',
+                    stylers: [{ visibility: 'simplified' }]
+                },
+                {
+                    featureType: 'administrative.province',
+                    elementType: 'labels.text',
+                    stylers: [{ visibility: 'simplified' }]
                 }
             ]
         });

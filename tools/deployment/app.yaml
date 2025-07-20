@@ -1,0 +1,15 @@
+runtime: python39
+service: default
+
+env_variables:
+  GOOGLE_CLOUD_PROJECT: "orca-466204"
+  ENVIRONMENT: "production"
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+
+resources:
+  cpu: 1
+  memory_gb: 2 

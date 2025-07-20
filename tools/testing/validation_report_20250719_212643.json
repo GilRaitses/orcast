@@ -1,0 +1,417 @@
+{
+  "timestamp": "2025-07-19T21:26:43.655928",
+  "duration_seconds": 0.8472409248352051,
+  "summary": {
+    "total_checks": 26,
+    "passed_checks": 13,
+    "failed_checks": 13,
+    "success_rate": 50.0
+  },
+  "detailed_results": {
+    "file_structure": {
+      "js/live_backend_monitoring_dashboard.js": {
+        "exists": true,
+        "size_bytes": 43349,
+        "status": "PASS"
+      },
+      "index.html": {
+        "exists": true,
+        "size_bytes": 14856,
+        "status": "PASS"
+      },
+      "config.js": {
+        "exists": true,
+        "size_bytes": 2569,
+        "status": "PASS"
+      },
+      "bigquery_config.json": {
+        "exists": true,
+        "size_bytes": 729,
+        "status": "PASS"
+      },
+      "requirements.txt": {
+        "exists": true,
+        "size_bytes": 183,
+        "status": "PASS"
+      },
+      "models/": {
+        "exists": true,
+        "is_directory": true,
+        "file_count": 5,
+        "status": "PASS"
+      },
+      "venv/": {
+        "exists": true,
+        "is_directory": true,
+        "file_count": 6,
+        "status": "PASS"
+      }
+    },
+    "environment": {
+      "GOOGLE_CLOUD_PROJECT": {
+        "exists": false,
+        "value_length": 0,
+        "status": "FAIL"
+      },
+      "GOOGLE_APPLICATION_CREDENTIALS": {
+        "exists": false,
+        "value_length": 0,
+        "status": "FAIL"
+      },
+      "google_cloud_libs": {
+        "available": true,
+        "status": "PASS"
+      },
+      "bigquery_config": {
+        "exists": true,
+        "status": "PASS"
+      }
+    },
+    "services": {
+      "http_server": {
+        "url": "http://localhost:8000",
+        "reachable": true,
+        "response_time_ms": 1.1262893676757812,
+        "response_data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ORCAST - San Juan Islands Orca Probability Map<",
+        "status": "PASS"
+      },
+      "ml_service": {
+        "url": "http://localhost:8081",
+        "reachable": true,
+        "response_time_ms": 1.9800662994384766,
+        "response_data": "{'service': 'ORCAST Firestore ML Service', 'version': '3.0.0', 'status': 'healthy', 'firebase_connected': True, 'models_loaded': True, 'capabilities': ['behavioral_prediction', 'spatial_forecasting', ",
+        "status": "PASS"
+      },
+      "firestore_ml": {
+        "url": "http://localhost:8080",
+        "reachable": true,
+        "response_time_ms": 8.881092071533203,
+        "response_data": "{'status': 'healthy', 'models': {'behavior_model': True, 'success_model': True, 'scaler': True, 'encoder': True}, 'classes': ['feeding', 'resting', 'socializing', 'traveling', 'unknown'], 'metadata': ",
+        "status": "PASS"
+      }
+    },
+    "endpoints": {
+      "ml_services": {
+        "/api/ml/predict": {
+          "method": "POST",
+          "full_url": "http://localhost:8081/api/ml/predict",
+          "status_code": 404,
+          "response_time_ms": 2.5069713592529297,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/ml/predict/physics": {
+          "method": "POST",
+          "full_url": "http://localhost:8081/api/ml/predict/physics",
+          "status_code": 404,
+          "response_time_ms": 0.9510517120361328,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/ml/model/status": {
+          "method": "GET",
+          "full_url": "http://localhost:8081/api/ml/model/status",
+          "status_code": 404,
+          "response_time_ms": 1.1870861053466797,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/ml/features/importance": {
+          "method": "GET",
+          "full_url": "http://localhost:8081/api/ml/features/importance",
+          "status_code": 404,
+          "response_time_ms": 1.6100406646728516,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "firestore_integration": {
+        "/forecast/spatial": {
+          "method": "POST",
+          "full_url": "http://localhost:8080/forecast/spatial",
+          "status_code": 404,
+          "response_time_ms": 16.038179397583008,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/forecast/quick": {
+          "method": "POST",
+          "full_url": "http://localhost:8080/forecast/quick",
+          "status_code": 404,
+          "response_time_ms": 2.440214157104492,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/forecast/current": {
+          "method": "GET",
+          "full_url": "http://localhost:8080/forecast/current",
+          "status_code": 404,
+          "response_time_ms": 1.0597705841064453,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/forecast/status": {
+          "method": "GET",
+          "full_url": "http://localhost:8080/forecast/status",
+          "status_code": 404,
+          "response_time_ms": 1.0449886322021484,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/predict/store": {
+          "method": "POST",
+          "full_url": "http://localhost:8080/predict/store",
+          "status_code": 404,
+          "response_time_ms": 1.7821788787841797,
+          "response_size": 23,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "realtime_streaming": {
+        "/api/realtime/events": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/realtime/events",
+          "status_code": 404,
+          "response_time_ms": 2.844095230102539,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/realtime/status": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/realtime/status",
+          "status_code": 404,
+          "response_time_ms": 2.262115478515625,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/realtime/health": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/realtime/health",
+          "status_code": 404,
+          "response_time_ms": 3.9060115814208984,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "orcahello_integration": {
+        "/api/orcahello/detections": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/orcahello/detections",
+          "status_code": 404,
+          "response_time_ms": 1.6560554504394531,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/orcahello/status": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/orcahello/status",
+          "status_code": 404,
+          "response_time_ms": 2.0568370819091797,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/orcahello/hydrophones": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/orcahello/hydrophones",
+          "status_code": 404,
+          "response_time_ms": 1.2242794036865234,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "bigquery_analytics": {
+        "/api/bigquery/recent_detections": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/bigquery/recent_detections",
+          "status_code": 404,
+          "response_time_ms": 2.4187564849853516,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/bigquery/active_hotspots": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/bigquery/active_hotspots",
+          "status_code": 404,
+          "response_time_ms": 3.323078155517578,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/bigquery/top_routes": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/bigquery/top_routes",
+          "status_code": 404,
+          "response_time_ms": 2.1789073944091797,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "environmental_data": {
+        "/api/environmental": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/environmental",
+          "status_code": 404,
+          "response_time_ms": 1.5158653259277344,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/environmental/noaa/weather": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/environmental/noaa/weather",
+          "status_code": 404,
+          "response_time_ms": 1.5058517456054688,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/environmental/noaa/tides": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/environmental/noaa/tides",
+          "status_code": 404,
+          "response_time_ms": 1.7163753509521484,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "route_optimization": {
+        "/api/routes/recommendations": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/routes/recommendations",
+          "status_code": 404,
+          "response_time_ms": 2.274036407470703,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/api/routes/google": {
+          "method": "POST",
+          "full_url": "http://localhost:8000/api/routes/google",
+          "status_code": 501,
+          "response_time_ms": 3.7622451782226562,
+          "response_size": 357,
+          "success": false,
+          "status": "FAIL"
+        }
+      },
+      "system_health": {
+        "/api/status": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/status",
+          "status_code": 404,
+          "response_time_ms": 1.4369487762451172,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        },
+        "/health": {
+          "method": "GET",
+          "full_url": "http://localhost:8080/health",
+          "status_code": 200,
+          "response_time_ms": 1.767873764038086,
+          "response_size": 461,
+          "success": true,
+          "status": "PASS"
+        },
+        "/api/firebase/status": {
+          "method": "GET",
+          "full_url": "http://localhost:8000/api/firebase/status",
+          "status_code": 404,
+          "response_time_ms": 2.9370784759521484,
+          "response_size": 335,
+          "success": false,
+          "status": "FAIL"
+        }
+      }
+    },
+    "dashboard_dependencies": {
+      "javascript_files": {
+        "js/live_backend_monitoring_dashboard.js": {
+          "exists": true,
+          "size": 43289,
+          "has_dashboard_class": true,
+          "has_init_function": true,
+          "status": "PASS"
+        },
+        "js/data-loader.js": {
+          "exists": true,
+          "size": 4789,
+          "has_dashboard_class": false,
+          "has_init_function": false,
+          "status": "WARN"
+        },
+        "js/map-component.js": {
+          "exists": true,
+          "size": 8242,
+          "has_dashboard_class": false,
+          "has_init_function": true,
+          "status": "PASS"
+        },
+        "js/api-tester.js": {
+          "exists": true,
+          "size": 2428,
+          "has_dashboard_class": false,
+          "has_init_function": false,
+          "status": "WARN"
+        },
+        "js/ui-manager.js": {
+          "exists": true,
+          "size": 3616,
+          "has_dashboard_class": false,
+          "has_init_function": true,
+          "status": "PASS"
+        }
+      },
+      "css_files": {
+        "css/base.css": {
+          "exists": true,
+          "status": "PASS"
+        },
+        "css/sidebar.css": {
+          "exists": true,
+          "status": "PASS"
+        },
+        "css/tabs.css": {
+          "exists": true,
+          "status": "PASS"
+        },
+        "css/inspection.css": {
+          "exists": true,
+          "status": "PASS"
+        }
+      }
+    },
+    "data_flows": {
+      "ml_prediction_flow": {
+        "success": false,
+        "status_code": 404,
+        "status": "FAIL"
+      },
+      "dashboard_initialization": {
+        "js_file_exists": true,
+        "has_endpoints": true,
+        "has_cost_tracking": true,
+        "has_initialization": true,
+        "status": "PASS"
+      }
+    }
+  }
+}

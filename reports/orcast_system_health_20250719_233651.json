@@ -1,0 +1,173 @@
+{
+  "timestamp": "2025-07-19T23:36:51.271575",
+  "system_architecture": {
+    "frontend": {
+      "platform": "Firebase Hosting",
+      "project": "orca-904de",
+      "urls": {
+        "firebase": "https://orca-904de.web.app",
+        "custom_domain": "https://orcast.org"
+      },
+      "description": "Static frontend - HTML, CSS, JavaScript, images",
+      "technologies": [
+        "HTML5",
+        "JavaScript",
+        "CSS3",
+        "Google Maps API",
+        "Firebase SDK"
+      ],
+      "files": [
+        "index.html",
+        "js/",
+        "css/",
+        "api/",
+        "data/"
+      ]
+    },
+    "backend": {
+      "platform": "Google Cloud Run",
+      "project": "orca-466204",
+      "urls": {
+        "primary": "https://orcast-production-backend-126424997157.us-west1.run.app"
+      },
+      "description": "REST API backend - ML predictions, data processing",
+      "technologies": [
+        "Python",
+        "Flask",
+        "FastAPI",
+        "Machine Learning",
+        "BigQuery"
+      ],
+      "endpoints_count": 46
+    },
+    "data_storage": {
+      "firebase_firestore": {
+        "project": "orca-904de",
+        "description": "Real-time whale detection data",
+        "collections": [
+          "whale_detections",
+          "ml_analysis",
+          "user_sessions"
+        ]
+      },
+      "bigquery": {
+        "project": "orca-466204",
+        "description": "Data warehouse for analytics",
+        "datasets": [
+          "whale_data",
+          "ml_analysis",
+          "orcast_results"
+        ]
+      }
+    },
+    "external_services": {
+      "orcasound": "https://live.orcasound.net/api/json/feeds",
+      "noaa_tides": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+      "google_maps": "https://maps.googleapis.com/maps/api/js"
+    }
+  },
+  "health_results": {
+    "frontend": [
+      {
+        "test": "Firebase Hosting",
+        "url": "https://orca-904de.web.app",
+        "status": 200,
+        "success": true,
+        "details": "ORCAST content: True, Dashboard: True"
+      },
+      {
+        "test": "Custom Domain (orcast.org)",
+        "url": "https://orcast.org",
+        "status": 200,
+        "success": true,
+        "details": "Domain resolution and SSL working"
+      }
+    ],
+    "backend": [
+      {
+        "test": "Backend Root",
+        "method": "GET",
+        "url": "https://orcast-production-backend-126424997157.us-west1.run.app/",
+        "status": 200,
+        "success": true,
+        "response_time_ms": 921.7028617858887,
+        "details": "Response time: 922ms, Data keys: 7"
+      },
+      {
+        "test": "Health Check",
+        "method": "GET",
+        "success": false,
+        "details": "Error: "
+      },
+      {
+        "test": "Current Forecast",
+        "method": "GET",
+        "success": false,
+        "details": "Error: "
+      },
+      {
+        "test": "Quick Forecast",
+        "method": "POST",
+        "success": false,
+        "details": "Error: "
+      },
+      {
+        "test": "ML Prediction",
+        "method": "POST",
+        "success": false,
+        "details": "Error: Cannot connect to host orcast-production-backend-126424997157.us-west1.run.app:443 ssl:default [nodename nor servname provided, or not known]"
+      },
+      {
+        "test": "API Status",
+        "method": "GET",
+        "success": false,
+        "details": "Error: Cannot connect to host orcast-production-backend-126424997157.us-west1.run.app:443 ssl:default [nodename nor servname provided, or not known]"
+      }
+    ],
+    "data_storage": [
+      {
+        "test": "BigQuery Project Access",
+        "success": false,
+        "details": "Project orca-466204 not accessible"
+      },
+      {
+        "test": "Firebase Project Access",
+        "success": false,
+        "details": "Project orca-904de not found"
+      }
+    ],
+    "external_services": [
+      {
+        "test": "Orcasound",
+        "success": false,
+        "details": "Error: Cannot connect to host live.orcasound.net:443 ssl:default [nodename nor servname provided, or not known]"
+      },
+      {
+        "test": "Noaa Tides",
+        "success": false,
+        "details": "Error: Cannot connect to host api.tidesandcurrents.noaa.gov:443 ssl:default [nodename nor servname provided, or not known]"
+      },
+      {
+        "test": "Google Maps",
+        "success": false,
+        "details": "Error: Cannot connect to host maps.googleapis.com:443 ssl:default [nodename nor servname provided, or not known]"
+      }
+    ],
+    "connectivity": [
+      {
+        "test": "Frontend \u2192 Backend URL Configuration",
+        "success": false,
+        "details": "Error: Cannot connect to host orca-904de.web.app:443 ssl:default [nodename nor servname provided, or not known]"
+      },
+      {
+        "test": "CORS (Cross-Origin Requests)",
+        "success": false,
+        "details": "Error: Cannot connect to host orcast-production-backend-126424997157.us-west1.run.app:443 ssl:default [nodename nor servname provided, or not known]"
+      }
+    ]
+  },
+  "summary": {
+    "total_tests": 15,
+    "passed_tests": 3
+  }
+}

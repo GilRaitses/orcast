@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST Multi-Agent Testing Interface</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Sidebar with agent controls */
+        .agent-sidebar {
+            width: 400px;
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sidebar-header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        /* Agent Cards */
+        .agent-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .agent-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .agent-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .agent-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .agent-status.active {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .agent-status.idle {
+            background: #fbbf24;
+            color: #1f2937;
+        }
+        
+        .agent-status.running {
+            background: #3b82f6;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .agent-status.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .agent-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .agent-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .agent-input:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .agent-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .agent-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .agent-btn.primary {
+            background: #4fc3f7;
+            color: white;
+        }
+        
+        .agent-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .agent-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+        
+        .agent-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .agent-description {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+        
+        /* Orchestrator Section */
+        .orchestrator-section {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .orchestrator-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .orchestrator-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .orchestrator-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Conversation Log */
+        .conversation-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .conversation-log {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .message {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .message.orchestrator {
+            border-left-color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .message.research {
+            border-left-color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+        }
+        
+        .message.planner {
+            border-left-color: #9c27b0;
+            background: rgba(156, 39, 176, 0.1);
+        }
+        
+        .message.analytics {
+            border-left-color: #f44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+        
+        .message.user {
+            border-left-color: #2196f3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .message-timestamp {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .message-content {
+            line-height: 1.5;
+        }
+        
+        /* Control buttons */
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Quick Test Scenarios */
+        .quick-tests {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .quick-tests h3 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .test-scenario {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
+        }
+        
+        .test-scenario:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .empty-state {
+            text-align: center;
+            opacity: 0.6;
+            padding: 40px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Agent Control Sidebar -->
+        <div class="agent-sidebar">
+            <div class="sidebar-header">
+                <h1>ORCAST</h1>
+                <p>Multi-Agent Testing Interface</p>
+            </div>
+            
+            <!-- Orchestrator Section -->
+            <div class="orchestrator-section">
+                <h3>🎼 Principal Orchestrator</h3>
+                <textarea 
+                    class="orchestrator-input" 
+                    id="orchestrator-input"
+                    placeholder="Enter a complex request that requires multiple agents to coordinate...&#10;&#10;Example: 'Plan a 3-day orca watching trip for 4 people with boat tours, land viewing, and research activities. Budget is $2000, departing this weekend.'"
+                ></textarea>
+                <button class="orchestrator-btn" id="orchestrate-btn">
+                    🚀 Orchestrate Multi-Agent Planning
+                </button>
+            </div>
+            
+            <!-- Individual Agent Cards -->
+            <div class="agent-card">
+                <div class="agent-header">
+                    <span class="agent-name">🤖 Orchestrator Agent</span>
+                    <span class="agent-status idle" id="orchestrator-status">Idle</span>
+                </div>
+                <input 
+                    type="text" 
+                    class="agent-input" 
+                    id="orchestrator-direct-input"
+                    placeholder="Test orchestrator directly..."
+                >
+                <div class="agent-buttons">
+                    <button class="agent-btn primary" onclick="testAgent('orchestrator')">Test</button>
+                    <button class="agent-btn secondary" onclick="pingAgent('orchestrator')">Ping</button>
+                </div>
+                <div class="agent-description">Coordinates all other agents and manages the overall planning workflow</div>
+            </div>
+            
+            <div class="agent-card">
+                <div class="agent-header">
+                    <span class="agent-name">🔬 Research Agent</span>
+                    <span class="agent-status idle" id="research-status">Idle</span>
+                </div>
+                <input 
+                    type="text" 
+                    class="agent-input" 
+                    id="research-input"
+                    placeholder="Research orca behavior patterns..."
+                >
+                <div class="agent-buttons">
+                    <button class="agent-btn primary" onclick="testAgent('research')">Research</button>
+                    <button class="agent-btn secondary" onclick="pingAgent('research')">Ping</button>
+                </div>
+                <div class="agent-description">Analyzes orca behavioral data, environmental conditions, and scientific research</div>
+            </div>
+            
+            <div class="agent-card">
+                <div class="agent-header">
+                    <span class="agent-name">📋 Planner Agent</span>
+                    <span class="agent-status idle" id="planner-status">Idle</span>
+                </div>
+                <input 
+                    type="text" 
+                    class="agent-input" 
+                    id="planner-input"
+                    placeholder="Plan optimal viewing routes..."
+                >
+                <div class="agent-buttons">
+                    <button class="agent-btn primary" onclick="testAgent('planner')">Plan</button>
+                    <button class="agent-btn secondary" onclick="pingAgent('planner')">Ping</button>
+                </div>
+                <div class="agent-description">Creates detailed itineraries, routes, and scheduling for whale watching activities</div>
+            </div>
+            
+            <div class="agent-card">
+                <div class="agent-header">
+                    <span class="agent-name">📊 Analytics Agent</span>
+                    <span class="agent-status running" id="analytics-status">Running</span>
+                </div>
+                <input 
+                    type="text" 
+                    class="agent-input" 
+                    id="analytics-input"
+                    placeholder="Analyze sighting probabilities..."
+                >
+                <div class="agent-buttons">
+                    <button class="agent-btn primary" onclick="testAgent('analytics')">Analyze</button>
+                    <button class="agent-btn secondary" onclick="pingAgent('analytics')">Ping</button>
+                </div>
+                <div class="agent-description">Processes historical data, generates probability maps, and provides statistical insights</div>
+            </div>
+            
+            <!-- Quick Test Scenarios -->
+            <div class="quick-tests">
+                <h3>⚡ Quick Test Scenarios</h3>
+                <div class="test-scenario" onclick="loadScenario('weekend-trip')">
+                    Weekend Family Trip (2 agents)
+                </div>
+                <div class="test-scenario" onclick="loadScenario('research-expedition')">
+                    Research Expedition (4 agents)
+                </div>
+                <div class="test-scenario" onclick="loadScenario('photography-tour')">
+                    Photography Tour (3 agents)
+                </div>
+                <div class="test-scenario" onclick="loadScenario('emergency-rescue')">
+                    Emergency Response (all agents)
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Conversation Area -->
+        <div class="main-content">
+            <div class="conversation-header">
+                <h2>🗨️ Agent Conversation Log</h2>
+                <div class="control-buttons">
+                    <button class="control-btn" onclick="clearConversation()">Clear Log</button>
+                    <button class="control-btn" onclick="exportConversation()">Export</button>
+                    <button class="control-btn" onclick="toggleAutoScroll()" id="autoscroll-btn">Auto-scroll: ON</button>
+                </div>
+            </div>
+            
+            <div class="conversation-log" id="conversation-log">
+                <div class="empty-state">
+                    <h3>Ready for Multi-Agent Testing</h3>
+                    <p>Use the orchestrator to test complex scenarios requiring multiple agents,<br>
+                    or test individual agents using their dedicated input fields.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Dependencies -->
+    <script src="../js/agentic/gemini-integration.js"></script>
+    <script src="../js/agentic/trip-hierarchy-model.js"></script>
+    <script src="../js/agentic/analytics-dashboard.js"></script>
+    <script src="../js/agentic/multi-agent-orchestrator.js"></script>
+    <script src="../js/agentic/orcast-multi-agent-integration.js"></script>
+    <script src="../js/agentic/whale-watching-research-agent.js"></script>
+    <script src="../js/agentic/whale-watching-planner-agent.js"></script>
+
+    <script>
+        // Multi-Agent Testing Interface
+        class MultiAgentTestInterface {
+            constructor() {
+                this.agents = {};
+                this.conversations = [];
+                this.autoScroll = true;
+                this.sessionId = this.generateSessionId();
+                
+                this.initialize();
+            }
+            
+            async initialize() {
+                console.log('🚀 Initializing Multi-Agent Test Interface...');
+                
+                try {
+                    // Initialize the ORCAST Multi-Agent System
+                    if (typeof ORCASTMultiAgentSystem !== 'undefined') {
+                        this.orcastSystem = new ORCASTMultiAgentSystem({
+                            // Use actual configuration here
+                            firebaseConfig: {
+                                apiKey: "AIzaSyCqHFjW-FQVFGqZj5K8GZj8xJZP3r8jdRI",
+                                authDomain: "orca-904de.firebaseapp.com",
+                                projectId: "orca-904de"
+                            },
+                            enableAnalytics: true,
+                            enableVectorSpace: true,
+                            enableRealtimeUpdates: true
+                        });
+                        
+                        this.logMessage('system', 'Multi-Agent System initialized successfully');
+                        this.updateAgentStatus('orchestrator', 'active');
+                        this.updateAgentStatus('analytics', 'active');
+                    } else {
+                        this.logMessage('system', 'Multi-Agent System not available - running in demo mode');
+                    }
+                    
+                    this.setupEventListeners();
+                    this.simulateAgentActivity();
+                    
+                } catch (error) {
+                    console.error('Initialization failed:', error);
+                    this.logMessage('system', `Initialization failed: ${error.message}`);
+                }
+            }
+            
+            setupEventListeners() {
+                // Orchestrator button
+                document.getElementById('orchestrate-btn').addEventListener('click', () => {
+                    this.orchestrateAgents();
+                });
+                
+                // Enter key listeners for inputs
+                document.getElementById('orchestrator-input').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        this.orchestrateAgents();
+                    }
+                });
+                
+                // Individual agent inputs
+                ['orchestrator-direct-input', 'research-input', 'planner-input', 'analytics-input'].forEach(inputId => {
+                    document.getElementById(inputId).addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            const agentType = inputId.split('-')[0];
+                            this.testAgent(agentType);
+                        }
+                    });
+                });
+            }
+            
+            async orchestrateAgents() {
+                const input = document.getElementById('orchestrator-input').value.trim();
+                if (!input) {
+                    this.logMessage('user', 'Please enter a request for orchestration');
+                    return;
+                }
+                
+                this.logMessage('user', input);
+                this.updateAgentStatus('orchestrator', 'running');
+                
+                try {
+                    // Simulate orchestration process
+                    this.logMessage('orchestrator', 'Analyzing request and determining required agents...');
+                    
+                    await this.delay(1000);
+                    
+                    // Determine which agents are needed
+                    const requiredAgents = this.analyzeRequiredAgents(input);
+                    this.logMessage('orchestrator', `Coordinating ${requiredAgents.length} agents: ${requiredAgents.join(', ')}`);
+                    
+                    // Execute agents in sequence
+                    for (const agentType of requiredAgents) {
+                        await this.executeAgent(agentType, input);
+                    }
+                    
+                    // Final orchestration
+                    this.logMessage('orchestrator', 'Synthesizing results from all agents...');
+                    await this.delay(1500);
+                    
+                    const result = this.generateOrchestrationResult(input, requiredAgents);
+                    this.logMessage('orchestrator', result);
+                    
+                    this.updateAgentStatus('orchestrator', 'active');
+                    
+                } catch (error) {
+                    this.logMessage('orchestrator', `Orchestration failed: ${error.message}`);
+                    this.updateAgentStatus('orchestrator', 'error');
+                }
+            }
+            
+            analyzeRequiredAgents(input) {
+                const agents = [];
+                const inputLower = input.toLowerCase();
+                
+                if (inputLower.includes('research') || inputLower.includes('behavior') || inputLower.includes('data')) {
+                    agents.push('research');
+                }
+                if (inputLower.includes('plan') || inputLower.includes('route') || inputLower.includes('itinerary')) {
+                    agents.push('planner');
+                }
+                if (inputLower.includes('analyze') || inputLower.includes('probability') || inputLower.includes('statistics')) {
+                    agents.push('analytics');
+                }
+                
+                // Always include at least research and planner for trip planning
+                if (agents.length === 0) {
+                    agents.push('research', 'planner', 'analytics');
+                }
+                
+                return [...new Set(agents)];
+            }
+            
+            async executeAgent(agentType, input) {
+                this.updateAgentStatus(agentType, 'running');
+                
+                const responses = {
+                    research: [
+                        'Analyzing current orca behavioral patterns...',
+                        'Found 3 active feeding zones in the San Juan Islands',
+                        'Recent J-Pod activity indicates high probability near Lime Kiln Point',
+                        'Environmental conditions favor socializing behavior this weekend'
+                    ],
+                    planner: [
+                        'Planning optimal viewing routes...',
+                        'Calculating travel times between viewing locations',
+                        'Identifying accommodation options near high-probability zones',
+                        'Generated 3-day itinerary with 85% success probability'
+                    ],
+                    analytics: [
+                        'Processing historical sighting data...',
+                        'Probability analysis shows 73% chance of orca encounters',
+                        'Best viewing times: 10:00-14:00 and 16:00-18:00',
+                        'Generated heatmap with 500 grid points across San Juan Islands'
+                    ]
+                };
+                
+                const agentResponses = responses[agentType] || ['Processing request...', 'Task completed'];
+                
+                for (const response of agentResponses) {
+                    await this.delay(800);
+                    this.logMessage(agentType, response);
+                }
+                
+                this.updateAgentStatus(agentType, 'active');
+            }
+            
+            generateOrchestrationResult(input, agents) {
+                const results = [
+                    `✅ Successfully coordinated ${agents.length} agents for your request`,
+                    `📊 Generated comprehensive analysis with 85% confidence`,
+                    `🗺️ Created detailed itinerary with optimal viewing locations`,
+                    `⏱️ Processing completed in ${Math.floor(Math.random() * 10 + 5)}s`,
+                    `📁 Session ID: ${this.sessionId}`
+                ];
+                
+                return results.join('\n');
+            }
+            
+            logMessage(sender, content) {
+                const timestamp = new Date().toLocaleTimeString();
+                const message = {
+                    sender,
+                    content,
+                    timestamp,
+                    id: Date.now()
+                };
+                
+                this.conversations.push(message);
+                this.renderMessage(message);
+                
+                if (this.autoScroll) {
+                    this.scrollToBottom();
+                }
+            }
+            
+            renderMessage(message) {
+                const logEl = document.getElementById('conversation-log');
+                
+                // Remove empty state if it exists
+                const emptyState = logEl.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.remove();
+                }
+                
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${message.sender}`;
+                messageEl.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-sender">${this.getSenderName(message.sender)}</span>
+                        <span class="message-timestamp">${message.timestamp}</span>
+                    </div>
+                    <div class="message-content">${message.content}</div>
+                `;
+                
+                logEl.appendChild(messageEl);
+            }
+            
+            getSenderName(sender) {
+                const names = {
+                    orchestrator: '🤖 Orchestrator Agent',
+                    research: '🔬 Research Agent',
+                    planner: '📋 Planner Agent',
+                    analytics: '📊 Analytics Agent',
+                    user: '👤 User',
+                    system: '⚙️ System'
+                };
+                return names[sender] || sender;
+            }
+            
+            updateAgentStatus(agentType, status) {
+                const statusEl = document.getElementById(`${agentType}-status`);
+                if (statusEl) {
+                    statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                    statusEl.className = `agent-status ${status}`;
+                }
+            }
+            
+            scrollToBottom() {
+                const logEl = document.getElementById('conversation-log');
+                logEl.scrollTop = logEl.scrollHeight;
+            }
+            
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            
+            generateSessionId() {
+                return 'session_' + Math.random().toString(36).substr(2, 9);
+            }
+            
+            simulateAgentActivity() {
+                // Simulate some background agent activity
+                setInterval(() => {
+                    const agents = ['research', 'planner', 'analytics'];
+                    const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+                    
+                    // Randomly update agent status to show activity
+                    if (Math.random() < 0.1) { // 10% chance every interval
+                        this.updateAgentStatus(randomAgent, 'running');
+                        setTimeout(() => {
+                            this.updateAgentStatus(randomAgent, 'active');
+                        }, 2000);
+                    }
+                }, 5000);
+            }
+        }
+        
+        // Global functions for button interactions
+        async function testAgent(agentType) {
+            const inputEl = document.getElementById(`${agentType === 'orchestrator' ? 'orchestrator-direct-' : ''}${agentType}-input`);
+            const input = inputEl.value.trim();
+            
+            if (!input) {
+                window.testInterface.logMessage('user', `Please enter a request for the ${agentType} agent`);
+                return;
+            }
+            
+            window.testInterface.logMessage('user', `Direct test: ${input}`);
+            await window.testInterface.executeAgent(agentType, input);
+            inputEl.value = '';
+        }
+        
+        async function pingAgent(agentType) {
+            window.testInterface.updateAgentStatus(agentType, 'running');
+            await window.testInterface.delay(500);
+            window.testInterface.logMessage(agentType, `Ping successful - ${agentType} agent is responsive`);
+            window.testInterface.updateAgentStatus(agentType, 'active');
+        }
+        
+        function loadScenario(scenarioType) {
+            const scenarios = {
+                'weekend-trip': 'Plan a weekend family orca watching trip for 4 people with kids, budget $800, staying on San Juan Island',
+                'research-expedition': 'Organize a 5-day scientific research expedition to study orca feeding behavior with underwater recordings',
+                'photography-tour': 'Design a 3-day photography tour for professional whale photographers with optimal lighting conditions',
+                'emergency-rescue': 'Emergency response: distressed orca pod spotted near shipping lanes, coordinate rescue and research efforts'
+            };
+            
+            document.getElementById('orchestrator-input').value = scenarios[scenarioType];
+            window.testInterface.logMessage('system', `Loaded test scenario: ${scenarioType}`);
+        }
+        
+        function clearConversation() {
+            const logEl = document.getElementById('conversation-log');
+            logEl.innerHTML = '<div class="empty-state"><h3>Conversation Cleared</h3><p>Ready for new multi-agent interactions</p></div>';
+            window.testInterface.conversations = [];
+        }
+        
+        function exportConversation() {
+            const data = JSON.stringify(window.testInterface.conversations, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `orcast-conversation-${window.testInterface.sessionId}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function toggleAutoScroll() {
+            window.testInterface.autoScroll = !window.testInterface.autoScroll;
+            document.getElementById('autoscroll-btn').textContent = 
+                `Auto-scroll: ${window.testInterface.autoScroll ? 'ON' : 'OFF'}`;
+        }
+        
+        // Initialize the interface when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.testInterface = new MultiAgentTestInterface();
+        });
+    </script>
+</body>
+</html> 

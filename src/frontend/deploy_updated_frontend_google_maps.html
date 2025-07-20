@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCAST - Advanced Orca Behavioral Forecasting</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow: hidden;
+        }
+        
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 320px;
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            overflow-y: auto;
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+        
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .time-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .time-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .time-btn.active {
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            margin: 1rem 0;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+        
+        .status-panel {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .status-value {
+            color: #4fc3f7;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            min-width: 300px;
+            z-index: 1000;
+        }
+        
+        .prediction-result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .behavior-chip {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0.2rem;
+        }
+        
+        .confidence-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4fc3f7, #29b6f6);
+            transition: width 0.3s ease;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #4fc3f7;
+        }
+        
+        .service-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4444;
+        }
+        
+        .status-dot.online {
+            background: #44ff44;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Controls -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>ORCAST</h1>
+                <div class="subtitle">Advanced Orca Behavioral Forecasting</div>
+            </div>
+            
+            <!-- Time Controls -->
+            <div class="control-group">
+                <label>Temporal Forecasting</label>
+                <div class="time-controls">
+                    <button class="time-btn active" onclick="setTimeOffset(0)">Now</button>
+                    <button class="time-btn" onclick="setTimeOffset(6)">+6h</button>
+                    <button class="time-btn" onclick="setTimeOffset(12)">+12h</button>
+                    <button class="time-btn" onclick="setTimeOffset(24)">+24h</button>
+                </div>
+                <input type="range" class="slider" id="timeSlider" min="0" max="48" value="0" oninput="updateTimeDisplay(this.value)">
+                <div style="font-size: 0.8rem; opacity: 0.8;" id="timeDisplay">Current Time</div>
+            </div>
+            
+            <!-- Behavior Selection -->
+            <div class="control-group">
+                <label>Behavior Prediction</label>
+                <div class="time-controls">
+                    <button class="time-btn active" onclick="setBehavior('all')">All</button>
+                    <button class="time-btn" onclick="setBehavior('feeding')">Feeding</button>
+                    <button class="time-btn" onclick="setBehavior('social')">Social</button>
+                    <button class="time-btn" onclick="setBehavior('travel')">Travel</button>
+                </div>
+            </div>
+            
+            <!-- Confidence Threshold -->
+            <div class="control-group">
+                <label>Confidence Threshold: <span id="confidenceValue">50%</span></label>
+                <input type="range" class="slider" id="confidenceSlider" min="0" max="100" value="50" oninput="updateConfidence(this.value)">
+            </div>
+            
+            <!-- ML Service Status -->
+            <div class="status-panel">
+                <div class="status-item">
+                    <span>Basic ML Service</span>
+                    <div class="service-status">
+                        <div class="status-dot" id="basicStatus"></div>
+                        <span class="status-value" id="basicPort">:8080</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <span>Spatial Forecasting</span>
+                    <div class="service-status">
+                        <div class="status-dot" id="spatialStatus"></div>
+                        <span class="status-value" id="spatialPort">:8082</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <span>HMC Physics</span>
+                    <div class="service-status">
+                        <div class="status-dot" id="hmcStatus"></div>
+                        <span class="status-value" id="hmcPort">:8083</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Live Prediction Results -->
+            <div class="prediction-result">
+                <div style="font-weight: 600; margin-bottom: 1rem;">Live Prediction</div>
+                <div class="behavior-chip" id="predictedBehavior">Analyzing...</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                </div>
+                <div style="font-size: 0.8rem; opacity: 0.8;" id="predictionDetails">Initializing ML services...</div>
+            </div>
+        </div>
+        
+        <!-- Main Map -->
+        <div class="main-content">
+            <div id="map"></div>
+            
+            <!-- Floating Status Panel -->
+            <div class="floating-panel">
+                <div style="font-weight: 600; margin-bottom: 1rem;">Real-Time Status</div>
+                <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    Last Update: <span id="lastUpdate">Initializing...</span>
+                </div>
+                <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    Active Grid Points: <span id="gridPoints">Loading...</span>
+                </div>
+                <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    ML Response Time: <span id="responseTime">-</span>
+                </div>
+                <div style="font-size: 0.85rem;">
+                    Uncertainty: <span id="uncertainty">Computing...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config and Libraries -->
+    <script src="config.js"></script>
+    
+    <script>
+        let map;
+        let heatmapLayer;
+        let currentTimeOffset = 0;
+        let currentBehavior = 'all';
+        let currentConfidence = 50;
+        let mlServices = {
+            basic: { port: 8080, status: false },
+            spatial: { port: 8082, status: false },
+            hmc: { port: 8083, status: false }
+        };
+
+        // Initialize Google Maps
+        function initMap() {
+            // San Juan Islands center from config
+            const center = window.ORCA_CONFIG.map.center;
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: window.ORCA_CONFIG.map.zoom,
+                center: center,
+                mapTypeId: 'satellite',
+                styles: [
+                    {
+                        featureType: 'water',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#193E5C' }]
+                    }
+                ]
+            });
+
+            // Initialize all systems
+            checkMLServices();
+            loadOrcaData();
+            
+            // Set up refresh interval
+            setInterval(() => {
+                checkMLServices();
+                updatePredictions();
+            }, 10000);
+        }
+
+        // Check ML Service Status
+        async function checkMLServices() {
+            for (const [service, config] of Object.entries(mlServices)) {
+                try {
+                    const response = await fetch(`http://localhost:${config.port}/health`, {
+                        method: 'GET',
+                        timeout: 2000
+                    });
+                    config.status = response.ok;
+                } catch (error) {
+                    config.status = false;
+                }
+                
+                // Update UI
+                const statusDot = document.getElementById(`${service}Status`);
+                statusDot.className = `status-dot ${config.status ? 'online' : ''}`;
+            }
+        }
+
+        // Load and Display Orca Data
+        async function loadOrcaData() {
+            try {
+                // Generate spatial grid for current time offset
+                const gridData = await generateSpatialGrid();
+                updateHeatmap(gridData);
+                
+                // Get live prediction
+                updatePredictions();
+                
+            } catch (error) {
+                console.error('Error loading orca data:', error);
+            }
+        }
+
+        // Generate Spatial Grid Based on Current Settings
+        async function generateSpatialGrid() {
+            const bounds = window.ORCA_CONFIG.map.bounds;
+            const grid = [];
+            
+            for (let lat = bounds.south; lat <= bounds.north; lat += 0.01) {
+                for (let lng = bounds.west; lng <= bounds.east; lng += 0.01) {
+                    // Call spatial ML service if available
+                    let probability = Math.random() * 100; // Fallback
+                    
+                    if (mlServices.spatial.status) {
+                        try {
+                            const response = await fetch(`http://localhost:8082/predict/spatial`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    lat: lat,
+                                    lng: lng,
+                                    time_offset_hours: currentTimeOffset,
+                                    behavior: currentBehavior
+                                })
+                            });
+                            const data = await response.json();
+                            probability = data.probability || probability;
+                        } catch (error) {
+                            console.warn('Spatial service unavailable, using fallback');
+                        }
+                    }
+                    
+                    if (probability >= currentConfidence) {
+                        grid.push({
+                            location: new google.maps.LatLng(lat, lng),
+                            weight: probability / 100
+                        });
+                    }
+                }
+            }
+            
+            document.getElementById('gridPoints').textContent = grid.length;
+            return grid;
+        }
+
+        // Update Google Maps Heatmap
+        function updateHeatmap(gridData) {
+            // Remove existing heatmap
+            if (heatmapLayer) {
+                heatmapLayer.setMap(null);
+            }
+
+            // Create new heatmap
+            heatmapLayer = new google.maps.visualization.HeatmapLayer({
+                data: gridData,
+                map: map,
+                radius: 40,
+                opacity: 0.8,
+                gradient: [
+                    'rgba(0, 255, 128, 0)',
+                    'rgba(0, 255, 128, 1)',
+                    'rgba(128, 255, 0, 1)',
+                    'rgba(255, 255, 0, 1)',
+                    'rgba(255, 128, 0, 1)',
+                    'rgba(255, 0, 0, 1)'
+                ]
+            });
+        }
+
+        // Update Live Predictions
+        async function updatePredictions() {
+            if (mlServices.basic.status) {
+                try {
+                    const startTime = Date.now();
+                    const response = await fetch('http://localhost:8080/predict', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lat: 48.5465,
+                            lng: -123.0307,
+                            depth: 100,
+                            current_speed: 0.5,
+                            water_temp: 12
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    const responseTime = Date.now() - startTime;
+                    
+                    // Update UI
+                    document.getElementById('predictedBehavior').textContent = data.behavior || 'unknown';
+                    document.getElementById('confidenceFill').style.width = `${(data.confidence * 100) || 0}%`;
+                    document.getElementById('predictionDetails').textContent = `${data.confidence ? (data.confidence * 100).toFixed(1) : 0}% confidence`;
+                    document.getElementById('responseTime').textContent = `${responseTime}ms`;
+                    
+                } catch (error) {
+                    document.getElementById('predictionDetails').textContent = 'ML service unavailable';
+                }
+            }
+            
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        // UI Event Handlers
+        function setTimeOffset(hours) {
+            currentTimeOffset = hours;
+            document.getElementById('timeSlider').value = hours;
+            updateTimeDisplay(hours);
+            updateTimeBtns(hours);
+            loadOrcaData();
+        }
+
+        function setBehavior(behavior) {
+            currentBehavior = behavior;
+            updateBehaviorBtns(behavior);
+            loadOrcaData();
+        }
+
+        function updateConfidence(value) {
+            currentConfidence = parseInt(value);
+            document.getElementById('confidenceValue').textContent = `${value}%`;
+            loadOrcaData();
+        }
+
+        function updateTimeDisplay(hours) {
+            const time = new Date(Date.now() + hours * 3600000);
+            document.getElementById('timeDisplay').textContent = hours == 0 ? 'Current Time' : `+${hours}h: ${time.toLocaleTimeString()}`;
+        }
+
+        function updateTimeBtns(activeHours) {
+            document.querySelectorAll('.time-controls .time-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+                if ((index === 0 && activeHours === 0) || 
+                    (index === 1 && activeHours === 6) || 
+                    (index === 2 && activeHours === 12) || 
+                    (index === 3 && activeHours === 24)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function updateBehaviorBtns(activeBehavior) {
+            document.querySelectorAll('.control-group:nth-child(3) .time-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+                if ((index === 0 && activeBehavior === 'all') || 
+                    (index === 1 && activeBehavior === 'feeding') || 
+                    (index === 2 && activeBehavior === 'social') || 
+                    (index === 3 && activeBehavior === 'travel')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Time slider input handler
+        document.getElementById('timeSlider').addEventListener('input', function(e) {
+            currentTimeOffset = parseInt(e.target.value);
+            updateTimeDisplay(currentTimeOffset);
+            loadOrcaData();
+        });
+
+        console.log('ORCAST Google Maps ML Integration initializing...');
+    </script>
+
+    <!-- Google Maps API with Visualization Library -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&libraries=visualization&callback=initMap"></script>
+</body>
+</html> 

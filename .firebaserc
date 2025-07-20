@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "orca-904de"
-  }
+  },
+  "targets": {
+    "orca-904de": {
+      "hosting": {
+        "orcast-org": [
+          "orcast-org"
+        ],
+        "default": [
+          "orca-904de"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
