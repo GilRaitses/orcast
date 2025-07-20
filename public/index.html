@@ -15,6 +15,94 @@
     <link rel="stylesheet" href="css/tabs.css">
     <link rel="stylesheet" href="css/inspection.css">
     <link rel="stylesheet" href="css/mobile.css">
+
+    <!-- ML and Agent Visualization Styles -->
+    <style>
+        .agent-interface {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: rgba(0, 30, 60, 0.95);
+            border: 1px solid #4fc3f7;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            padding: 15px;
+            display: none;
+        }
+        
+        .heat-map-controls {
+            background: rgba(0, 30, 60, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .agent-chat {
+            height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        
+        .agent-input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #4fc3f7;
+            color: white;
+            border-radius: 4px;
+        }
+        
+        .forecast-layers {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 30, 60, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4fc3f7;
+            color: white;
+            z-index: 1000;
+        }
+        
+        .layer-toggle {
+            display: block;
+            margin: 5px 0;
+            padding: 5px 10px;
+            background: rgba(79, 195, 247, 0.2);
+            border: 1px solid #4fc3f7;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .layer-toggle.active {
+            background: #4fc3f7;
+            color: #001e3c;
+        }
+        
+        .hotspot-indicator {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ff4444;
+            border: 2px solid white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -79,6 +167,67 @@
             <div class="tab-content active" id="map-tab">
                 <div class="map-container">
                     <div id="map"></div>
+                    
+                    <!-- Agent Interface -->
+                    <div id="agent-interface" class="agent-interface">
+                        <div class="agent-header">
+                            <h3>🤖 AI Agent Assistant</h3>
+                            <button onclick="toggleAgentInterface()" style="float: right; background: none; border: none; color: white; font-size: 16px;">×</button>
+                        </div>
+                        
+                        <div class="heat-map-controls">
+                            <label>🔥 Heat Map Layers</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
+                                <button class="layer-toggle" onclick="toggleHeatMapLayer('ml-predictions')" id="ml-predictions-toggle">
+                                    ML Predictions
+                                </button>
+                                <button class="layer-toggle" onclick="toggleHeatMapLayer('pinn-forecast')" id="pinn-forecast-toggle">
+                                    PINN Forecast
+                                </button>
+                                <button class="layer-toggle" onclick="toggleHeatMapLayer('environmental')" id="environmental-toggle">
+                                    Environmental
+                                </button>
+                                <button class="layer-toggle" onclick="toggleHeatMapLayer('behavioral')" id="behavioral-toggle">
+                                    Behavioral
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-chat" id="agent-chat">
+                            <div style="color: #4fc3f7; font-weight: bold;">🐋 ORCAST Agent Ready</div>
+                            <div>Ask me to identify hotspots, generate focused forecasts, or analyze patterns!</div>
+                        </div>
+                        
+                        <input type="text" class="agent-input" id="agent-input" 
+                               placeholder="Ask: 'Find best whale watching spots for tomorrow' or 'Show high-probability areas'"
+                               onkeypress="handleAgentInput(event)">
+                        
+                        <div style="margin-top: 10px; display: flex; gap: 5px;">
+                            <button class="layer-toggle" onclick="findHotspots()" style="flex: 1;">
+                                🎯 Find Hotspots
+                            </button>
+                            <button class="layer-toggle" onclick="generateFocusedForecast()" style="flex: 1;">
+                                📊 Focused Forecast
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Forecast Layers Control -->
+                    <div class="forecast-layers">
+                        <h4>🌊 Forecast Layers</h4>
+                        <button class="layer-toggle" onclick="toggleTimeResolution()" id="time-resolution-toggle">
+                            ⏰ High Temporal Resolution
+                        </button>
+                        <button class="layer-toggle" onclick="toggleSpatialResolution()" id="spatial-resolution-toggle">
+                            🔍 High Spatial Resolution
+                        </button>
+                        <button class="layer-toggle" onclick="showOverviewForecast()" id="overview-forecast-toggle">
+                            🗺️ Overview Forecast
+                        </button>
+                        <button class="layer-toggle active" onclick="toggleAgentInterface()" id="agent-toggle">
+                            🤖 AI Assistant
+                        </button>
+                    </div>
                     
                     <!-- Probability Scale Legend -->
                     <div class="legend">
@@ -316,6 +465,15 @@ Model Validation:
     <script src="js/api-tester.js"></script>
     <script src="js/ui-manager.js"></script>
     <script src="js/live_backend_monitoring_dashboard.js"></script>
+    
+    <!-- ML and Agent Integration -->
+    <script src="js/behavioral_ml_integration.js"></script>
+    <script src="js/internal-agent-api.js"></script>
+    <script src="js/hmc_frontend_integration.js"></script>
+    <script src="js/feeding_zone_dynamics.js"></script>
+    <script src="js/forecast_transparency.js"></script>
+    <script src="js/realtime_ui.js"></script>
+    <script src="js/ml_heatmap_agent_integration.js"></script>
 
     <!-- Application Initialization -->
     <script>
