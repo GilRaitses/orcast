@@ -287,7 +287,7 @@ export class MapService {
       ]
     };
 
-    return gradients[modelType] || gradients.ensemble;
+    return gradients[modelType] || gradients['ensemble'];
   }
 
   private createDetectionWave(position: google.maps.LatLng, map: google.maps.Map): void {

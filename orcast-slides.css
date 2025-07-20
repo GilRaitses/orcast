@@ -1,0 +1,443 @@
+/* ORCAST Slideshow Custom Styling */
+
+:root {
+  --orcast-blue: #4fc3f7;
+  --orcast-dark: #001122;
+  --orcast-navy: #001f3f;
+  --orcast-cyan: #00bcd4;
+  --orcast-accent: #81d4fa;
+  --whale-gray: #37474f;
+  --ocean-green: #004d40;
+}
+
+/* Global Slide Styling */
+.reveal {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(135deg, var(--orcast-dark) 0%, var(--orcast-navy) 100%);
+}
+
+.reveal .slides section {
+  background: rgba(0, 30, 60, 0.8);
+  border: 1px solid var(--orcast-blue);
+  border-radius: 12px;
+  padding: 40px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(79, 195, 247, 0.2);
+}
+
+/* Title Slide */
+.title-slide {
+  text-align: center;
+  background: radial-gradient(circle at center, var(--orcast-navy) 0%, var(--orcast-dark) 100%);
+}
+
+.title-content {
+  background: rgba(79, 195, 247, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  border: 2px solid var(--orcast-blue);
+}
+
+.title-slide h1 {
+  color: var(--orcast-blue);
+  font-size: 3.5rem;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(79, 195, 247, 0.5);
+  margin-bottom: 20px;
+}
+
+.title-slide h2 {
+  color: var(--orcast-accent);
+  font-size: 1.8rem;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+/* Problem Slide */
+.problem-slide {
+  background: linear-gradient(45deg, var(--orcast-dark) 0%, #ff1744 100%);
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.left-column, .right-column {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 25px;
+  border-radius: 10px;
+  border-left: 4px solid var(--orcast-blue);
+}
+
+/* Architecture Slide */
+.architecture-slide .architecture-diagram {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid var(--orcast-cyan);
+}
+
+/* Agents Grid */
+.agents-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.agent-card {
+  background: linear-gradient(135deg, var(--orcast-navy) 0%, var(--whale-gray) 100%);
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid var(--orcast-cyan);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.agent-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(79, 195, 247, 0.3);
+}
+
+.agent-card h3 {
+  color: var(--orcast-blue);
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agent-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.agent-card li {
+  color: var(--orcast-accent);
+  margin: 8px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.agent-card li::before {
+  content: "▸";
+  color: var(--orcast-cyan);
+  position: absolute;
+  left: 0;
+}
+
+/* System Components */
+.system-components {
+  background: rgba(0, 77, 64, 0.2);
+  padding: 30px;
+  border-radius: 15px;
+  border: 2px solid var(--ocean-green);
+}
+
+.system-components h3 {
+  color: var(--orcast-cyan);
+  margin-bottom: 20px;
+}
+
+/* Data Sources */
+.data-sources {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.data-sources > div {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 25px;
+  border-radius: 12px;
+  border-top: 4px solid var(--orcast-blue);
+}
+
+/* ML Architecture */
+.ml-architecture {
+  text-align: center;
+}
+
+.model-tier {
+  background: linear-gradient(90deg, var(--orcast-navy) 0%, var(--whale-gray) 100%);
+  margin: 15px 0;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 5px solid var(--orcast-cyan);
+  transition: all 0.3s ease;
+}
+
+.model-tier:hover {
+  transform: translateX(10px);
+  box-shadow: 0 5px 15px rgba(79, 195, 247, 0.3);
+}
+
+/* Use Case Slide */
+.usecase-slide {
+  background: linear-gradient(45deg, var(--ocean-green) 0%, var(--orcast-navy) 100%);
+}
+
+.map-showcase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.region-stats {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid var(--orcast-cyan);
+}
+
+.region-stats li {
+  color: var(--orcast-accent);
+  font-size: 1.2rem;
+  margin: 12px 0;
+  font-weight: 500;
+}
+
+/* Workflow Steps */
+.workflow-steps {
+  counter-reset: step-counter;
+}
+
+.workflow-steps ol {
+  list-style: none;
+  padding: 0;
+}
+
+.workflow-steps li {
+  counter-increment: step-counter;
+  background: linear-gradient(90deg, var(--orcast-navy) 0%, var(--whale-gray) 100%);
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 5px solid var(--orcast-blue);
+  position: relative;
+}
+
+.workflow-steps li::before {
+  content: counter(step-counter);
+  background: var(--orcast-blue);
+  color: var(--orcast-dark);
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Innovation Grid */
+.innovation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.innovation-item {
+  background: rgba(0, 188, 212, 0.1);
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid var(--orcast-cyan);
+  text-align: center;
+}
+
+.innovation-item h3 {
+  color: var(--orcast-blue);
+  margin-bottom: 15px;
+}
+
+/* Results Grid */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.results-grid > div {
+  background: rgba(76, 175, 80, 0.1);
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid #4caf50;
+}
+
+.results-grid h3 {
+  color: #81c784;
+  margin-bottom: 20px;
+}
+
+/* Roadmap Timeline */
+.roadmap-timeline {
+  position: relative;
+  padding-left: 40px;
+}
+
+.roadmap-timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--orcast-blue), var(--orcast-cyan));
+}
+
+.roadmap-timeline > div {
+  background: rgba(0, 0, 0, 0.4);
+  margin: 25px 0;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid var(--orcast-blue);
+  position: relative;
+}
+
+.roadmap-timeline > div::before {
+  content: '';
+  width: 15px;
+  height: 15px;
+  background: var(--orcast-blue);
+  border-radius: 50%;
+  position: absolute;
+  left: -32px;
+  top: 25px;
+  box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+}
+
+/* Live Demo Slide */
+.live-demo {
+  background: radial-gradient(circle at center, var(--orcast-navy) 0%, var(--orcast-dark) 100%);
+  text-align: center;
+}
+
+.demo-container {
+  background: rgba(79, 195, 247, 0.1);
+  padding: 40px;
+  border-radius: 20px;
+  border: 3px solid var(--orcast-blue);
+}
+
+.demo-container a {
+  color: var(--orcast-cyan);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(79, 195, 247, 0.2);
+  padding: 15px 30px;
+  border-radius: 25px;
+  border: 2px solid var(--orcast-blue);
+  display: inline-block;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+}
+
+.demo-container a:hover {
+  background: var(--orcast-blue);
+  color: var(--orcast-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(79, 195, 247, 0.4);
+}
+
+/* Q&A Slide */
+.qa-slide {
+  background: linear-gradient(135deg, var(--whale-gray) 0%, var(--orcast-navy) 100%);
+}
+
+.qa-content {
+  text-align: center;
+}
+
+.contact-info {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 25px;
+  border-radius: 15px;
+  border: 2px solid var(--orcast-accent);
+  margin: 30px 0;
+}
+
+/* Typography */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  color: var(--orcast-blue);
+  font-weight: 600;
+}
+
+.reveal p {
+  color: var(--orcast-accent);
+  line-height: 1.6;
+}
+
+.reveal strong {
+  color: var(--orcast-cyan);
+  font-weight: 700;
+}
+
+.reveal em {
+  color: var(--orcast-blue);
+  font-style: italic;
+}
+
+/* Code blocks */
+.reveal pre {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--orcast-blue);
+  border-radius: 8px;
+}
+
+.reveal code {
+  color: var(--orcast-cyan);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Slide numbers */
+.reveal .slide-number {
+  background: rgba(79, 195, 247, 0.2);
+  color: var(--orcast-blue);
+  border: 1px solid var(--orcast-blue);
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+/* Progress bar */
+.reveal .progress {
+  background: rgba(79, 195, 247, 0.2);
+}
+
+.reveal .progress span {
+  background: var(--orcast-blue);
+  box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .two-column,
+  .agents-grid,
+  .data-sources,
+  .innovation-grid,
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .map-showcase {
+    grid-template-columns: 1fr;
+  }
+  
+  .reveal .slides section {
+    padding: 20px;
+  }
+} 

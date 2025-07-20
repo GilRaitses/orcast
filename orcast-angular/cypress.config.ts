@@ -2,19 +2,20 @@ import { defineConfig } from 'cypress'
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:4200',
+    baseUrl: 'https://orca-904de.web.app',
     viewportWidth: 1280,
     viewportHeight: 720,
     video: true,
     screenshotOnRunFailure: true,
-    defaultCommandTimeout: 10000,
-    requestTimeout: 10000,
-    responseTimeout: 10000,
+    defaultCommandTimeout: 15000,
+    requestTimeout: 15000,
+    responseTimeout: 15000,
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
     env: {
-      backendUrl: 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app'
+      backendUrl: 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app',
+      gemmaUrl: 'https://cloud-run-gemma-2cvqukvhga-uw.a.run.app'
     },
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'cypress/support/e2e.ts'

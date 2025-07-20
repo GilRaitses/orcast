@@ -67,3 +67,11 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Cypress video files (too large for git)
+**/cypress/videos/*.mp4
+cypress/videos/
+orcast-angular/cypress/videos/
+# Cypress video files (too large for git)
+**/cypress/videos/*.mp4
+cypress/videos/

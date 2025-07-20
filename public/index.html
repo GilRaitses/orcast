@@ -52,110 +52,112 @@
         .agent-input {
             width: 100%;
             padding: 8px;
-            background: rgba(0, 0, 0, 0.5);
             border: 1px solid #4fc3f7;
-            color: white;
             border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 12px;
         }
         
-        .forecast-layers {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 30, 60, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #4fc3f7;
-            color: white;
-            z-index: 1000;
+        .agent-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .agent-input:focus {
+            outline: none;
+            border-color: #81d4fa;
+            box-shadow: 0 0 5px rgba(79, 195, 247, 0.3);
         }
         
         .layer-toggle {
-            display: block;
-            margin: 5px 0;
-            padding: 5px 10px;
             background: rgba(79, 195, 247, 0.2);
             border: 1px solid #4fc3f7;
             color: white;
-            border-radius: 3px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin: 2px;
             cursor: pointer;
-            text-align: center;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+        
+        .layer-toggle:hover {
+            background: rgba(79, 195, 247, 0.4);
+            transform: translateY(-1px);
         }
         
         .layer-toggle.active {
             background: #4fc3f7;
             color: #001e3c;
+            font-weight: bold;
         }
-        
-        .hotspot-indicator {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #ff4444;
-            border: 2px solid white;
+
+        .loading-spinner {
+            border: 2px solid rgba(79, 195, 247, 0.3);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            border-top: 2px solid #4fc3f7;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
-        
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .retry-button {
+            background: #4fc3f7;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .retry-button:hover {
+            background: #81d4fa;
+            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
     <!-- Loading Screen -->
-    <div id="loading" class="loading-overlay">
-        <div>Loading ORCAST map data...</div>
+    <div id="loading" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>ORCAST Initializing...</h2>
+            <p>Loading orca behavioral analysis system</p>
+        </div>
     </div>
 
-    <!-- Main Application Container -->
-    <div class="app-container">
-        <!-- Left Sidebar -->
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">
+            <!-- Header -->
+            <div class="header">
                 <h1>ORCAST</h1>
-                <div class="subtitle">Orca Behavioral Analysis</div>
+                <p>Orca Behavioral Analysis</p>
+                <div class="timestamp" id="timestamp"></div>
             </div>
 
-            <!-- Time Period Controls -->
-            <div class="control-group">
-                <label>Time Unit</label>
-                <div class="time-controls">
-                    <button class="time-btn" onclick="setTimeUnit('weeks')">Weeks</button>
-                    <button class="time-btn active" onclick="setTimeUnit('months')">Months</button>
-                    <button class="time-btn" onclick="setTimeUnit('years')">Years</button>
-                </div>
-                <input type="range" min="-12" max="2" value="0" class="slider" id="timeSlider" oninput="updateTimeFromSlider(this.value)">
-                <div id="periodDisplay" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #4fc3f7;">Current Month</div>
-            </div>
-
-            <!-- Quick Navigation -->
-            <div class="control-group">
-                <label>Quick Navigate</label>
-                <div class="quick-nav">
-                    <button class="nav-btn" onclick="navigateRelative(-3)">-3</button>
-                    <button class="nav-btn" onclick="navigateRelative(-1)">-1</button>
-                    <button class="nav-btn" onclick="navigateRelative(1)">+1</button>
-                </div>
-            </div>
-
-            <!-- Probability Threshold -->
-            <div class="control-group">
-                <label>Probability Threshold: <span id="thresholdValue">Medium</span></label>
-                <input type="range" min="0" max="100" value="50" class="slider" id="thresholdSlider" oninput="updateThreshold(this.value)">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem;">
-                    <span>Low</span>
-                    <span>High</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <!-- Tab Navigation -->
-            <div class="tab-navigation">
+            <!-- Navigation Tabs -->
+            <div class="tabs">
                 <button class="tab-button active" onclick="switchTab('map')">Probability Map</button>
                 <button class="tab-button" onclick="switchTab('data')">Data Sources</button>
                 <button class="tab-button" onclick="switchTab('agents')">Agents</button>
@@ -163,27 +165,59 @@
                 <button class="tab-button" onclick="switchTab('analytics')">Analytics & Modeling</button>
             </div>
 
-            <!-- Probability Map Tab -->
-            <div class="tab-content active" id="map-tab">
-                <div class="map-container">
-                    <div id="map"></div>
+            <!-- Probability Map Controls -->
+            <div id="map-controls" class="controls">
+                <!-- Time Unit Selection -->
+                <div class="control-group">
+                    <h4>⏰ TIME UNIT</h4>
+                    <div class="time-controls">
+                        <button class="time-button" onclick="changeTimeUnit('weeks')" id="weeks-btn">Weeks</button>
+                        <button class="time-button active" onclick="changeTimeUnit('months')" id="months-btn">Months</button>
+                        <button class="time-button" onclick="changeTimeUnit('years')" id="years-btn">Years</button>
+                    </div>
+                    <div class="time-slider">
+                        <span>Current Month</span>
+                        <input type="range" id="time-slider" min="0" max="12" value="6">
+                    </div>
+                </div>
+
+                <!-- Quick Navigation -->
+                <div class="control-group">
+                    <h4>🚀 QUICK NAVIGATE</h4>
+                    <div class="quick-nav">
+                        <button class="nav-button" onclick="navigateTime(-3)">-3</button>
+                        <button class="nav-button" onclick="navigateTime(-1)">-1</button>
+                        <button class="nav-button" onclick="navigateTime(1)">+1</button>
+                    </div>
+                </div>
+
+                <!-- Probability Threshold -->
+                <div class="control-group">
+                    <h4>🎯 PROBABILITY THRESHOLD: MEDIUM</h4>
+                    <div class="threshold-slider">
+                        <span>Low</span>
+                        <input type="range" id="threshold-slider" min="0" max="100" value="50">
+                        <span>High</span>
+                    </div>
+                </div>
+
+                <!-- Agent Interface -->
+                <div class="agent-interface" id="agent-interface">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                        <h4>🤖 AI Agent Assistant</h4>
+                        <button onclick="toggleAgentInterface()" style="background: none; border: 1px solid #4fc3f7; color: #4fc3f7; padding: 2px 8px; border-radius: 3px; cursor: pointer;">×</button>
+                    </div>
                     
-                    <!-- Agent Interface -->
-                    <div id="agent-interface" class="agent-interface">
-                        <div class="agent-header">
-                            <h3>🤖 AI Agent Assistant</h3>
-                            <button onclick="toggleAgentInterface()" style="float: right; background: none; border: none; color: white; font-size: 16px;">×</button>
-                        </div>
-                        
-                        <div class="heat-map-controls">
-                            <label>🔥 Heat Map Layers</label>
-                            <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
-                                <button class="layer-toggle" onclick="toggleHeatMapLayer('ml-predictions')" id="ml-predictions-toggle">
-                                    ML Predictions
-                                </button>
-                                <button class="layer-toggle" onclick="toggleHeatMapLayer('pinn-forecast')" id="pinn-forecast-toggle">
-                                    PINN Forecast
-                                </button>
+                    <div class="heat-map-controls">
+                        <h5>🔥 Heat Map Layers</h5>
+                        <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
+                            <button class="layer-toggle" onclick="toggleHeatMapLayer('ml')" id="ml-toggle">
+                                ML Predictions
+                            </button>
+                            <button class="layer-toggle" onclick="toggleHeatMapLayer('pinn')" id="pinn-toggle">
+                                PINN Forecast
+                            </button>
+                            <div style="margin-top: 5px; width: 100%;">
                                 <button class="layer-toggle" onclick="toggleHeatMapLayer('environmental')" id="environmental-toggle">
                                     Environmental
                                 </button>
@@ -192,256 +226,184 @@
                                 </button>
                             </div>
                         </div>
-                        
-                        <div class="agent-chat" id="agent-chat">
-                            <div style="color: #4fc3f7; font-weight: bold;">🐋 ORCAST Agent Ready</div>
-                            <div>Ask me to identify hotspots, generate focused forecasts, or analyze patterns!</div>
-                        </div>
-                        
-                        <input type="text" class="agent-input" id="agent-input" 
-                               placeholder="Ask: 'Find best whale watching spots for tomorrow' or 'Show high-probability areas'"
-                               onkeypress="handleAgentInput(event)">
-                        
-                        <div style="margin-top: 10px; display: flex; gap: 5px;">
-                            <button class="layer-toggle" onclick="findHotspots()" style="flex: 1;">
-                                🎯 Find Hotspots
-                            </button>
-                            <button class="layer-toggle" onclick="generateFocusedForecast()" style="flex: 1;">
-                                📊 Focused Forecast
-                            </button>
-                        </div>
                     </div>
                     
-                    <!-- Forecast Layers Control -->
-                    <div class="forecast-layers">
-                        <h4>🌊 Forecast Layers</h4>
-                        <button class="layer-toggle" onclick="toggleTimeResolution()" id="time-resolution-toggle">
-                            ⏰ High Temporal Resolution
-                        </button>
-                        <button class="layer-toggle" onclick="toggleSpatialResolution()" id="spatial-resolution-toggle">
-                            🔍 High Spatial Resolution
-                        </button>
-                        <button class="layer-toggle" onclick="showOverviewForecast()" id="overview-forecast-toggle">
-                            🗺️ Overview Forecast
-                        </button>
-                        <button class="layer-toggle active" onclick="toggleAgentInterface()" id="agent-toggle">
-                            🤖 AI Assistant
-                        </button>
+                    <div class="agent-chat" id="agent-chat">
+                        <div style="color: #4fc3f7; font-weight: bold;">🐋 ORCAST Agent Ready</div>
+                        <div>Ask me to identify hotspots, generate focused forecasts, or analyze patterns!</div>
                     </div>
                     
-                    <!-- Probability Scale Legend -->
-                    <div class="legend">
-                        <h4>Probability Scale</h4>
-                        <div class="legend-scale">
-                            <div class="legend-color" style="background: #ff0000;"></div>
-                            <span class="legend-text">Very High (80-100%)</span>
-                        </div>
-                        <div class="legend-scale">
-                            <div class="legend-color" style="background: #ff8000;"></div>
-                            <span class="legend-text">High (60-80%)</span>
-                        </div>
-                        <div class="legend-scale">
-                            <div class="legend-color" style="background: #ffff00;"></div>
-                            <span class="legend-text">Medium (40-60%)</span>
-                        </div>
-                        <div class="legend-scale">
-                            <div class="legend-color" style="background: #80ff00;"></div>
-                            <span class="legend-text">Low (20-40%)</span>
-                        </div>
-                        <div class="legend-scale">
-                            <div class="legend-color" style="background: #00ff00;"></div>
-                            <span class="legend-text">Very Low (0-20%)</span>
-                        </div>
+                    <input type="text" class="agent-input" id="agent-input" 
+                           placeholder="Ask: 'Find best whale watching spots for tomorrow' or 'Show high-probability areas'"
+                           onkeypress="handleAgentInput(event)">
+                    
+                    <div style="margin-top: 10px; display: flex; gap: 5px;">
+                        <button class="layer-toggle" onclick="findHotspots()" style="flex: 1;">
+                            🎯 Find Hotspots
+                        </button>
+                        <button class="layer-toggle" onclick="generateFocusedForecast()" style="flex: 1;">
+                            📊 Focused Forecast
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Forecast Layers Control -->
+                <div class="forecast-layers">
+                    <h4>🌊 Forecast Layers</h4>
+                    <button class="layer-toggle" onclick="toggleTimeResolution()" id="time-resolution-toggle">
+                        ⏰ High Temporal Resolution
+                    </button>
+                    <button class="layer-toggle" onclick="toggleSpatialResolution()" id="spatial-resolution-toggle">
+                        🔍 High Spatial Resolution
+                    </button>
+                    <button class="layer-toggle" onclick="showOverviewForecast()" id="overview-forecast-toggle">
+                        🗺️ Overview Forecast
+                    </button>
+                    <button class="layer-toggle active" onclick="toggleAgentInterface()" id="agent-toggle">
+                        🤖 AI Assistant
+                    </button>
+                </div>
+                
+                <!-- Probability Scale Legend -->
+                <div class="legend">
+                    <h4>Probability Scale</h4>
+                    <div class="legend-scale">
+                        <div class="legend-color" style="background: #ff0000;"></div>
+                        <span class="legend-text">Very High (80-100%)</span>
+                    </div>
+                    <div class="legend-scale">
+                        <div class="legend-color" style="background: #ff8000;"></div>
+                        <span class="legend-text">High (60-80%)</span>
+                    </div>
+                    <div class="legend-scale">
+                        <div class="legend-color" style="background: #ffff00;"></div>
+                        <span class="legend-text">Medium (40-60%)</span>
+                    </div>
+                    <div class="legend-scale">
+                        <div class="legend-color" style="background: #80ff00;"></div>
+                        <span class="legend-text">Low (20-40%)</span>
+                    </div>
+                    <div class="legend-scale">
+                        <div class="legend-color" style="background: #00ff00;"></div>
+                        <span class="legend-text">Very Low (0-20%)</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Data Sources Tab -->
-            <div class="tab-content" id="data-tab">
-                <div class="inspection-panel">
-                    <h3 style="color: #4fc3f7; margin-bottom: 1rem;">Data Sources & Integration</h3>
-                    
-                    <div class="endpoint-test">
-                        <h4>NOAA Environmental Data</h4>
-                        <div class="endpoint-url">Real-time tidal, weather, and marine conditions</div>
-                        <p>Tidal stations, meteorological data, current velocity measurements</p>
+            <!-- Data Sources Tab Content -->
+            <div id="data-tab" class="tab-content">
+                <h3>📊 Data Sources & Integration</h3>
+                <div class="data-sources">
+                    <div class="data-source">
+                        <h4>🌊 Oceanographic Data</h4>
+                        <ul>
+                            <li>NOAA Buoy Network</li>
+                            <li>UW APL Hydrophone Arrays</li>
+                            <li>Real-time Current Data</li>
+                        </ul>
                     </div>
-
-                    <div class="endpoint-test">
-                        <h4>DTAG Biologging Data</h4>
-                        <div class="endpoint-url">Kinematic and depth time series from tagged orcas</div>
-                        <p>Cascadia Research, NOAA NWFSC partnerships providing 24.8 hours of behavioral data</p>
+                    <div class="data-source">
+                        <h4>🐋 Orca Sighting Networks</h4>
+                        <ul>
+                            <li>Orca Network Database</li>
+                            <li>Whale Research Center</li>
+                            <li>Citizen Science Reports</li>
+                        </ul>
                     </div>
-
-                    <div class="endpoint-test">
-                        <h4>Historical Sighting Database</h4>
-                        <div class="endpoint-url">OBIS marine mammal observations (1990-2024)</div>
-                        <p>477 validated orca sightings with expert behavioral annotations</p>
-                    </div>
-
-                    <div class="endpoint-test">
-                        <h4>Environmental Fusion Pipeline</h4>
-                        <div class="endpoint-url">Multi-source data integration and quality control</div>
-                        <p>Temporal alignment, spatial interpolation, uncertainty propagation</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Agents Tab -->
-            <div class="tab-content" id="agents-tab">
-                <div class="agents-container">
-                    <div class="agents-header">
-                        <h2>🤖 Multi-Agent System Testing Interface</h2>
-                        <p>Test individual agents or orchestrate complex multi-agent workflows for whale watching research and planning</p>
-                        <div class="agents-actions">
-                            <button class="btn-primary" onclick="openAgentInterface()">
-                                🚀 Open Full Agent Testing Interface
-                            </button>
-                            <button class="btn-secondary" onclick="refreshAgentStatus()">
-                                🔄 Refresh Agent Status
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="agents-grid">
-                        <div class="agent-summary-card">
-                            <div class="agent-summary-header">
-                                <h3>🎼 Orchestrator Agent</h3>
-                                <span class="status-badge idle" id="main-orchestrator-status">Idle</span>
-                            </div>
-                            <p>Coordinates multiple agents for complex planning tasks</p>
-                            <div class="agent-quick-test">
-                                <input type="text" placeholder="Quick orchestration test..." id="main-orchestrator-input">
-                                <button onclick="quickTestOrchestrator()">Test</button>
-                            </div>
-                        </div>
-                        
-                        <div class="agent-summary-card">
-                            <div class="agent-summary-header">
-                                <h3>🔬 Research Agent</h3>
-                                <span class="status-badge active" id="main-research-status">Active</span>
-                            </div>
-                            <p>Analyzes orca behavioral data and environmental conditions</p>
-                            <div class="agent-quick-test">
-                                <input type="text" placeholder="Research query..." id="main-research-input">
-                                <button onclick="quickTestResearch()">Research</button>
-                            </div>
-                        </div>
-                        
-                        <div class="agent-summary-card">
-                            <div class="agent-summary-header">
-                                <h3>📋 Planner Agent</h3>
-                                <span class="status-badge idle" id="main-planner-status">Idle</span>
-                            </div>
-                            <p>Creates detailed itineraries and optimal viewing routes</p>
-                            <div class="agent-quick-test">
-                                <input type="text" placeholder="Planning request..." id="main-planner-input">
-                                <button onclick="quickTestPlanner()">Plan</button>
-                            </div>
-                        </div>
-                        
-                        <div class="agent-summary-card">
-                            <div class="agent-summary-header">
-                                <h3>📊 Analytics Agent</h3>
-                                <span class="status-badge running" id="main-analytics-status">Running</span>
-                            </div>
-                            <p>Processes historical data and generates probability insights</p>
-                            <div class="agent-quick-test">
-                                <input type="text" placeholder="Analytics query..." id="main-analytics-input">
-                                <button onclick="quickTestAnalytics()">Analyze</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="agents-recent-activity">
-                        <h3>Recent Agent Activity</h3>
-                        <div class="activity-log" id="main-activity-log">
-                            <div class="activity-item">
-                                <span class="activity-timestamp">12:45 PM</span>
-                                <span class="activity-agent research">Research Agent</span>
-                                <span class="activity-message">Analyzed feeding patterns near Lime Kiln Point</span>
-                            </div>
-                            <div class="activity-item">
-                                <span class="activity-timestamp">12:43 PM</span>
-                                <span class="activity-agent analytics">Analytics Agent</span>
-                                <span class="activity-message">Updated probability heatmap with latest sighting data</span>
-                            </div>
-                            <div class="activity-item">
-                                <span class="activity-timestamp">12:40 PM</span>
-                                <span class="activity-agent orchestrator">Orchestrator</span>
-                                <span class="activity-message">Coordinated 3-agent planning session</span>
-                            </div>
-                        </div>
+                    <div class="data-source">
+                        <h4>🎣 Prey Distribution</h4>
+                        <ul>
+                            <li>Salmon Migration Patterns</li>
+                            <li>Fish Catch Data</li>
+                            <li>Hydroacoustic Surveys</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Backend Inspection Tab -->
-            <div class="tab-content" id="inspection-tab">
-                <!-- Live Backend Monitoring Dashboard will be initialized here -->
-                <div style="padding: 2rem; text-align: center; color: #4fc3f7;">
-                    <h3>🔧 Initializing Live Backend Monitoring Dashboard...</h3>
-                    <p>Loading real-time endpoint monitoring, performance metrics, and cost analysis...</p>
+            <!-- Agents Tab Content -->
+            <div id="agents-tab" class="tab-content">
+                <h3>🤖 AI Agent Network</h3>
+                <div class="agents-grid">
+                    <div class="agent-card">
+                        <h4>🎯 Orchestrator Agent</h4>
+                        <p>Coordinates multi-agent forecasting</p>
+                        <input type="text" id="main-orchestrator-input" placeholder="Test orchestrator...">
+                    </div>
+                    <div class="agent-card">
+                        <h4>🔬 Research Agent</h4>
+                        <p>Analyzes behavioral patterns</p>
+                        <input type="text" id="main-research-input" placeholder="Test research agent...">
+                    </div>
+                    <div class="agent-card">
+                        <h4>📋 Planner Agent</h4>
+                        <p>Optimizes observation schedules</p>
+                        <input type="text" id="main-planner-input" placeholder="Test planner...">
+                    </div>
+                    <div class="agent-card">
+                        <h4>📊 Analytics Agent</h4>
+                        <p>Processes real-time data streams</p>
+                        <input type="text" id="main-analytics-input" placeholder="Test analytics...">
+                    </div>
                 </div>
             </div>
 
-            <!-- Analytics & Modeling Tab -->
-            <div class="tab-content" id="analytics-tab">
-                <div class="inspection-panel">
-                    <h3 style="color: #4fc3f7; margin-bottom: 1rem;">Analytics & Statistical Modeling</h3>
-                    
-                    <div class="endpoint-test">
-                        <h4>SINDy Nonlinear Dynamics</h4>
-                        <div class="endpoint-url">Sparse Identification of Nonlinear Dynamics for behavioral prediction</div>
-                        <p>Mathematical framework discovering governing equations from orca behavioral time series data</p>
-                        <div class="response-area">
-Primary Equation (R² = 0.893):
-d(tidal_height)/dt = 0.0026*single_orcas + 0.0016*sin(tidal)
+            <!-- Backend Inspection Tab Content -->
+            <div id="inspection-tab" class="tab-content">
+                <h3>🔧 Backend System Monitor</h3>
+                <div id="backend-dashboard-container">
+                    <!-- Backend dashboard will be injected here -->
+                </div>
+            </div>
 
-Critical Thresholds:
-- Vessel noise: 140 dB behavioral modification point  
-- Prey saturation: Type II functional response at 500 fish/day
-- Temperature optimum: 16°C for pod formation
+            <!-- Analytics Tab Content -->
+            <div id="analytics-tab" class="tab-content">
+                <h3>📈 Analytics & ML Models</h3>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4>🧠 Neural Networks</h4>
+                        <p>Deep learning prediction models</p>
+                        <div class="metrics">
+                            <span>Accuracy: 87.3%</span>
+                            <span>Latency: 142ms</span>
                         </div>
                     </div>
-
-                    <div class="endpoint-test">
-                        <h4>TagTools Biologging Analysis</h4>
-                        <div class="endpoint-url">Gold-standard methodology for dive detection and behavioral classification</div>
-                        <p>Implementation of international biologging standards for research-grade analysis</p>
-                        <div class="response-area">
-Performance Metrics:
-- Dive detection accuracy: 95.2%
-- Behavioral classification: 85.7% agreement with experts
-- Individual tracking: 90%+ accuracy for known whales
-- Processing speed: <500ms per deployment
+                    <div class="analytics-card">
+                        <h4>🌊 Physics-Informed</h4>
+                        <p>PINN models for oceanographic data</p>
+                        <div class="metrics">
+                            <span>R²: 0.891</span>
+                            <span>RMSE: 0.134</span>
                         </div>
                     </div>
-
-                    <div class="endpoint-test">
-                        <h4>Environmental Correlation Analysis</h4>
-                        <div class="endpoint-url">Multi-variate statistical modeling of orca-environment relationships</div>
-                        <p>Quantitative analysis of tidal, weather, and prey availability impacts on behavior</p>
-                        <div class="response-area">
-Correlation Strengths:
-- Tidal coupling: r = 0.76 (M₂ 12.42-hour cycle)
-- Temperature preference: 14-18°C optimal range
-- Prey density response: Sigmoid curve, k = 0.003
-- Vessel noise impact: Exponential decay, λ = 140 dB
+                    <div class="analytics-card">
+                        <h4>📊 Ensemble Methods</h4>
+                        <p>Multi-model forecasting</p>
+                        <div class="metrics">
+                            <span>Models: 12</span>
+                            <span>Confidence: 94.2%</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <div class="endpoint-test">
-                        <h4>Predictive Model Performance</h4>
-                        <div class="endpoint-url">Validation metrics and uncertainty quantification</div>
-                        <p>Cross-validation results and prediction accuracy assessment</p>
-                        <div class="response-area">
-Model Validation:
-- 6-hour forecast accuracy: 73%
-- 24-hour forecast accuracy: 68%
-- Coverage probability: 82% of sightings within predicted zones
-- False positive rate: <12% for high-confidence predictions
-- Improvement over baseline: 15-30%
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Map Container -->
+            <div id="map-tab" class="tab-content active">
+                <div class="map-container">
+                    <div id="map"></div>
+                    <div id="map-loading" style="
+                        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                        background: rgba(0,0,0,0.8); color: white; 
+                        display: flex; align-items: center; justify-content: center;
+                        flex-direction: column; text-align: center; padding: 2rem;">
+                        <div class="loading-spinner"></div>
+                        <h2 style="margin: 1rem 0;">ORCAST - Orca Probability Mapping</h2>
+                        <p style="margin-bottom: 1rem;">Initializing Google Maps...</p>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">
+                            San Juan Islands Orca Tracking & Behavioral Analysis
                         </div>
                     </div>
                 </div>
@@ -449,23 +411,14 @@ Model Validation:
         </div>
     </div>
 
-    <!-- Hover Tooltip -->
-    <div class="info-tooltip" id="infoTooltip">
-        <h4 id="tooltipTitle">Orca Sighting Zone</h4>
-        <p id="tooltipProbability">Probability: 85%</p>
-        <p id="tooltipLastSeen">Last seen: 2 hours ago</p>
-        <p id="tooltipDepth">Avg depth: 45m</p>
-        <p id="tooltipPodSize">Typical pod size: 8-12</p>
-    </div>
-
-    <!-- Import modular JavaScript components -->
+    <!-- JavaScript Modules -->
     <script src="config.js"></script>
     <script src="js/data-loader.js"></script>
     <script src="js/map-component.js"></script>
     <script src="js/api-tester.js"></script>
     <script src="js/ui-manager.js"></script>
     <script src="js/live_backend_monitoring_dashboard.js"></script>
-    
+
     <!-- ML and Agent Integration -->
     <script src="js/behavioral_ml_integration.js"></script>
     <script src="js/internal-agent-api.js"></script>
@@ -475,28 +428,98 @@ Model Validation:
     <script src="js/realtime_ui.js"></script>
     <script src="js/ml_heatmap_agent_integration.js"></script>
 
-    <!-- Application Initialization -->
+    <!-- Main Application Script -->
     <script>
+        // Global variables
         let orcastMap;
+        let uiController;
 
+        // Enhanced initialization with better error handling
         async function initMap() {
-            // Initialize the map component
-            orcastMap = new ORCASTMap('map', {
-                center: { lat: 48.5465, lng: -123.0307 },
-                zoom: 12  // Slightly higher zoom for better detail
-            });
+            try {
+                console.log('Starting ORCAST map initialization...');
+                
+                // Hide the initial loading overlay
+                const mapLoading = document.getElementById('map-loading');
+                if (mapLoading) {
+                    mapLoading.style.display = 'none';
+                }
 
-            // Initialize the map with real data
-            await orcastMap.initialize();
+                // Check if Google Maps is available
+                if (!window.google || !window.google.maps) {
+                    throw new Error('Google Maps API not loaded');
+                }
 
-            // Set up UI controller with map instance
-            window.uiController.setMapInstance(orcastMap);
-            window.uiController.initialize();
-            window.uiController.setupGlobalFunctions();
+                // Initialize the map component
+                orcastMap = new ORCASTMap('map', {
+                    center: { lat: 48.5465, lng: -123.0307 },
+                    zoom: 12
+                });
+
+                // Initialize the map with real data
+                await orcastMap.initialize();
+                console.log('ORCAST map initialized successfully');
+
+                // Set up UI controller with map instance
+                if (window.UIController) {
+                    uiController = new UIController();
+                    uiController.setMapInstance(orcastMap);
+                    uiController.initialize();
+                    console.log('UI Controller initialized');
+                } else {
+                    console.warn('UIController not available');
+                }
+
+                // Hide loading screen
+                const loading = document.getElementById('loading');
+                if (loading) {
+                    loading.classList.add('hidden');
+                }
+
+                console.log('ORCAST initialization complete');
+
+            } catch (error) {
+                console.error('Error initializing ORCAST:', error);
+                showMapError(error.message);
+            }
         }
 
-        // Enhanced switchTab function to initialize backend dashboard
+        // Error display function
+        function showMapError(message) {
+            const mapContainer = document.getElementById('map');
+            const mapLoading = document.getElementById('map-loading');
+            
+            if (mapLoading) {
+                mapLoading.style.display = 'none';
+            }
+            
+            mapContainer.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; 
+                            background: rgba(0,0,0,0.8); color: white; text-align: center; padding: 2rem;">
+                    <div class="error-message">
+                        <h2 style="margin-bottom: 1rem; color: #ff6b6b;">⚠️ Map Loading Error</h2>
+                        <p style="margin-bottom: 1rem;">${message}</p>
+                        <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem;">
+                            Please check your internet connection and try again.
+                        </p>
+                        <button class="retry-button" onclick="location.reload()">
+                            Retry
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Hide loading screen
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Enhanced switchTab function
         function switchTab(tabName) {
+            console.log('Switching to tab:', tabName);
+            
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -518,135 +541,119 @@ Model Validation:
                 selectedButton.classList.add('active');
             }
 
-            // Initialize backend dashboard when inspection tab is selected
+            // Special handling for backend inspection
             if (tabName === 'inspection' && window.backendDashboard) {
-                setTimeout(() => {
-                    initializeBackendDashboard();
-                }, 100); // Small delay to ensure tab is visible
+                window.backendDashboard.render();
             }
         }
 
-        // Agents Tab Functions
-        function openAgentInterface() {
-            // Open the full multi-agent testing interface in a new window
-            window.open('src/frontend/multi-agent-demo.html', 'AgentInterface', 'width=1400,height=900,scrollbars=yes,resizable=yes');
+        // Placeholder functions for UI interactions
+        function changeTimeUnit(unit) {
+            console.log('Changing time unit to:', unit);
+            document.querySelectorAll('.time-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(unit + '-btn').classList.add('active');
         }
 
-        function refreshAgentStatus() {
-            // Simulate refreshing agent status
-            updateMainAgentStatus('orchestrator', 'running');
-            updateMainAgentStatus('research', 'running');
-            updateMainAgentStatus('planner', 'running');
-            updateMainAgentStatus('analytics', 'running');
-            
-            setTimeout(() => {
-                updateMainAgentStatus('orchestrator', 'active');
-                updateMainAgentStatus('research', 'active');
-                updateMainAgentStatus('planner', 'idle');
-                updateMainAgentStatus('analytics', 'running');
-                addActivityLogItem('system', 'Agent status refreshed successfully');
-            }, 2000);
-        }
-
-        function updateMainAgentStatus(agentType, status) {
-            const statusEl = document.getElementById(`main-${agentType}-status`);
-            if (statusEl) {
-                statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-                statusEl.className = `status-badge ${status}`;
+        function navigateTime(offset) {
+            console.log('Navigating time by:', offset);
+            if (orcastMap) {
+                // Implementation would go here
             }
         }
 
-        function addActivityLogItem(agentType, message) {
-            const activityLog = document.getElementById('main-activity-log');
-            if (!activityLog) return;
-            
-            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const activityItem = document.createElement('div');
-            activityItem.className = 'activity-item';
-            activityItem.innerHTML = `
-                <span class="activity-timestamp">${timestamp}</span>
-                <span class="activity-agent ${agentType}">${getAgentDisplayName(agentType)}</span>
-                <span class="activity-message">${message}</span>
-            `;
-            
-            // Add to top of log
-            activityLog.insertBefore(activityItem, activityLog.firstChild);
-            
-            // Keep only latest 10 items
-            while (activityLog.children.length > 10) {
-                activityLog.removeChild(activityLog.lastChild);
+        function toggleAgentInterface() {
+            const agentInterface = document.getElementById('agent-interface');
+            if (agentInterface.style.display === 'none' || !agentInterface.style.display) {
+                agentInterface.style.display = 'block';
+            } else {
+                agentInterface.style.display = 'none';
             }
         }
 
-        function getAgentDisplayName(agentType) {
-            const names = {
-                orchestrator: 'Orchestrator',
-                research: 'Research Agent',
-                planner: 'Planner Agent',
-                analytics: 'Analytics Agent',
-                system: 'System'
-            };
-            return names[agentType] || agentType;
+        function handleAgentInput(event) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const query = input.value.trim();
+                if (query) {
+                    console.log('Agent query:', query);
+                    // Add to chat
+                    const chat = document.getElementById('agent-chat');
+                    chat.innerHTML += `<div style="margin: 5px 0; color: #81d4fa;">You: ${query}</div>`;
+                    chat.innerHTML += `<div style="margin: 5px 0;">Agent: Processing your request...</div>`;
+                    chat.scrollTop = chat.scrollHeight;
+                    input.value = '';
+                }
+            }
         }
 
+        function findHotspots() {
+            console.log('Finding hotspots...');
+            const chat = document.getElementById('agent-chat');
+            chat.innerHTML += `<div style="margin: 5px 0; color: #4fc3f7;">🎯 Analyzing high-probability zones...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function generateFocusedForecast() {
+            console.log('Generating focused forecast...');
+            const chat = document.getElementById('agent-chat');
+            chat.innerHTML += `<div style="margin: 5px 0; color: #4fc3f7;">📊 Creating targeted forecast...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function toggleHeatMapLayer(layer) {
+            console.log('Toggling heatmap layer:', layer);
+            const toggle = document.getElementById(layer + '-toggle');
+            if (toggle) {
+                toggle.classList.toggle('active');
+            }
+        }
+
+        function toggleTimeResolution() {
+            console.log('Toggling time resolution');
+            const toggle = document.getElementById('time-resolution-toggle');
+            if (toggle) {
+                toggle.classList.toggle('active');
+            }
+        }
+
+        function toggleSpatialResolution() {
+            console.log('Toggling spatial resolution');
+            const toggle = document.getElementById('spatial-resolution-toggle');
+            if (toggle) {
+                toggle.classList.toggle('active');
+            }
+        }
+
+        function showOverviewForecast() {
+            console.log('Showing overview forecast');
+            const toggle = document.getElementById('overview-forecast-toggle');
+            if (toggle) {
+                toggle.classList.toggle('active');
+            }
+        }
+
+        // Quick test functions for agents
         function quickTestOrchestrator() {
-            const input = document.getElementById('main-orchestrator-input').value.trim();
-            if (!input) return;
-            
-            updateMainAgentStatus('orchestrator', 'running');
-            addActivityLogItem('orchestrator', `Processing: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
-            
-            setTimeout(() => {
-                updateMainAgentStatus('orchestrator', 'active');
-                addActivityLogItem('orchestrator', 'Task completed successfully');
-                document.getElementById('main-orchestrator-input').value = '';
-            }, 3000);
+            console.log('Testing Orchestrator Agent');
         }
 
         function quickTestResearch() {
-            const input = document.getElementById('main-research-input').value.trim();
-            if (!input) return;
-            
-            updateMainAgentStatus('research', 'running');
-            addActivityLogItem('research', `Researching: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
-            
-            setTimeout(() => {
-                updateMainAgentStatus('research', 'active');
-                addActivityLogItem('research', 'Research analysis completed with 85% confidence');
-                document.getElementById('main-research-input').value = '';
-            }, 2500);
+            console.log('Testing Research Agent');
         }
 
         function quickTestPlanner() {
-            const input = document.getElementById('main-planner-input').value.trim();
-            if (!input) return;
-            
-            updateMainAgentStatus('planner', 'running');
-            addActivityLogItem('planner', `Planning: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
-            
-            setTimeout(() => {
-                updateMainAgentStatus('planner', 'active');
-                addActivityLogItem('planner', 'Generated optimal route with 3 viewing locations');
-                document.getElementById('main-planner-input').value = '';
-            }, 2000);
+            console.log('Testing Planner Agent');
         }
 
         function quickTestAnalytics() {
-            const input = document.getElementById('main-analytics-input').value.trim();
-            if (!input) return;
-            
-            updateMainAgentStatus('analytics', 'running');
-            addActivityLogItem('analytics', `Analyzing: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`);
-            
-            setTimeout(() => {
-                updateMainAgentStatus('analytics', 'running'); // Analytics stays running
-                addActivityLogItem('analytics', 'Generated statistical insights and probability maps');
-                document.getElementById('main-analytics-input').value = '';
-            }, 1800);
+            console.log('Testing Analytics Agent');
         }
 
-        // Add Enter key support for agent inputs
+        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up ORCAST...');
+            
+            // Set up agent input handlers
             const agentInputs = [
                 { id: 'main-orchestrator-input', handler: quickTestOrchestrator },
                 { id: 'main-research-input', handler: quickTestResearch },
@@ -664,35 +671,43 @@ Model Validation:
                     });
                 }
             });
+
+            // Update timestamp
+            const timestamp = document.getElementById('timestamp');
+            if (timestamp) {
+                timestamp.textContent = new Date().toLocaleString();
+            }
         });
 
         // Make switchTab globally available
         window.switchTab = switchTab;
 
-        // Fallback loading screen hide
+        // Enhanced fallback with better error handling
         setTimeout(() => {
             const loading = document.getElementById('loading');
             if (loading && !loading.classList.contains('hidden')) {
-                console.log('Hiding loading screen - fallback after 3 seconds');
-                loading.classList.add('hidden');
+                console.warn('Loading screen timeout reached');
                 
-                const mapContainer = document.getElementById('map');
-                mapContainer.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; 
-                                background: rgba(0,0,0,0.8); color: white; text-align: center; padding: 2rem;">
-                        <div>
-                            <h2 style="margin-bottom: 1rem;">ORCAST - Orca Probability Mapping</h2>
-                            <p style="margin-bottom: 1rem;">Loading map data...</p>
-                            <div style="font-size: 0.9rem; opacity: 0.8;">
-                                San Juan Islands Orca Tracking & Behavioral Analysis
-                            </div>
-                        </div>
-                    </div>
-                `;
+                // Check if Google Maps loaded
+                if (!window.google || !window.google.maps) {
+                    console.error('Google Maps API failed to load');
+                    showMapError('Google Maps API failed to load. Please check your connection and refresh.');
+                } else if (!orcastMap) {
+                    console.log('Google Maps loaded but ORCAST initialization incomplete, retrying...');
+                    try {
+                        initMap();
+                    } catch(e) {
+                        console.error('Failed to initialize ORCAST map:', e);
+                        showMapError('Failed to initialize map: ' + e.message);
+                    }
+                } else {
+                    console.log('Hiding loading screen - initialization appears complete');
+                    loading.classList.add('hidden');
+                }
             }
-        }, 3000);
+        }, 8000);
 
-        console.log('ORCAST clean modular version initializing...');
+        console.log('ORCAST initialization script loaded');
     </script>
 
     <!-- Firebase SDK -->

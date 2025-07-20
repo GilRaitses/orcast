@@ -3,8 +3,15 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
+    loadComponent: () => import('./components/live-ai-demo/live-ai-demo.component').then(c => c.LiveAIDemoComponent)
+  },
+  {
+    path: 'live-demo',
+    loadComponent: () => import('./components/live-ai-demo/live-ai-demo.component').then(c => c.LiveAIDemoComponent)
+  },
+  {
+    path: 'main-map',
+    loadComponent: () => import('./components/main-map/main-map.component').then(c => c.MainMapComponent)
   },
   {
     path: 'dashboard',
@@ -14,21 +21,12 @@ export const routes: Routes = [
     path: 'agent-demo',
     loadComponent: () => import('./components/agent-demo/agent-demo.component').then(c => c.AgentDemoComponent)
   },
-  // TODO: Uncomment when components are created
-  // {
-  //   path: 'historical',
-  //   loadComponent: () => import('./components/historical-sightings/historical-sightings.component').then(c => c.HistoricalSightingsComponent)
-  // },
-  // {
-  //   path: 'realtime',
-  //   loadComponent: () => import('./components/realtime-detection/realtime-detection.component').then(c => c.RealtimeDetectionComponent)
-  // },
-  // {
-  //   path: 'ml-predictions',
-  //   loadComponent: () => import('./components/ml-predictions/ml-predictions.component').then(c => c.MLPredictionsComponent)
-  // },
+  {
+    path: 'automated-demo',
+    loadComponent: () => import('./components/automated-demo/automated-demo.component').then(c => c.AutomatedDemoComponent)
+  },
   {
     path: '**',
-    redirectTo: '/dashboard'
+    redirectTo: '/'
   }
 ];

@@ -1,6 +1,32 @@
-# OrcastAngular
+# ORCAST Angular - Live AI Demo Platform
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.1.
+🐋 **Real-time orca probability mapping with multi-agent AI coordination**
+
+**Live Demo:** [https://orca-904de.web.app](https://orca-904de.web.app)  
+**Demo Video:** [YouTube Recording](https://youtu.be/y5YW2WoxRYs)  
+**Website:** [orcast.org](https://orcast.org) - *Press the "Live Demo" button for real-time AI demo*
+
+## ✨ **New Features - Real Data Integration**
+
+### 🌩️ **Forecast Probability Clouds**
+Weather-map style probability visualization overlaid on San Juan Islands:
+- **Red/Orange clouds** = High probability zones (>70%)
+- **Yellow clouds** = Medium probability zones (50-70%)  
+- **Green/Blue clouds** = Lower probability zones (<50%)
+- **Cloud size** scales with prediction confidence
+
+### 🔍 **Live Database Integration**
+- **Real sightings** from production database (not hardcoded)
+- **Dynamic loading** of all historical orca data
+- **Live API responses** from backend endpoints
+- **Multi-agent coordination** with real-time transcripts
+
+### 🎯 **Live AI Demo Component**
+Located in: `src/app/components/live-ai-demo/`
+- **Map-centered interface** with San Juan Islands focus
+- **Real-time agent transcripts** showing coordination
+- **Production endpoint integration** 
+- **Forecast cloud generation** like weather radar
 
 ## Development server
 
@@ -11,6 +37,28 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Production Build & Deploy
+
+```bash
+# Build for production
+npm run build:prod
+
+# Deploy to Firebase (from parent directory)
+cd .. && firebase deploy --only hosting
+```
+
+## Live Demo Testing
+
+Run automated Cypress tests with video recording:
+
+```bash
+# Run full demo test with video
+npx cypress run --spec "cypress/e2e/live-demo-recording.cy.ts" --headed --browser chrome
+
+# Check video output
+ls -la cypress/videos/
+```
 
 ## Code scaffolding
 
@@ -26,34 +74,31 @@ For a complete list of available schematics (such as `components`, `directives`,
 ng generate --help
 ```
 
-## Building
+## Real API Endpoints
 
-To build the project run:
+The live demo integrates with these production endpoints:
 
-```bash
-ng build
-```
+| Endpoint | Purpose | Component Integration |
+|----------|---------|----------------------|
+| `/api/recent-sightings` | Real orca database | `fetchRecentSightings()` |
+| `/api/ml-predictions` | ML model outputs | `fetchMLPredictions()` + `createForecastClouds()` |
+| `/api/environmental-data` | NOAA/DFO data | `fetchEnvironmentalData()` |
+| `/api/hydrophone-data` | Acoustic monitoring | `fetchHydrophoneData()` |
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Map Configuration
 
-## Running unit tests
+- **Bounds locked** to San Juan Islands region
+- **No recentering** on mode switches  
+- **Dynamic overlays** for all data types
+- **Probability clouds** generated via HTML5 Canvas
+- **Real-time updates** from agent coordination
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Agent Transcript System
 
-```bash
-ng test
-```
+Live agent messages show:
+- **Endpoint responses** with data counts
+- **ML model status** and prediction confidence  
+- **Environmental conditions** from real APIs
+- **Forecast generation** with probability zones
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Perfect for demonstrating that all backend services are functional!
