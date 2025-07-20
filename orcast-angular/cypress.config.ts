@@ -16,11 +16,34 @@ export default defineConfig({
         log(message) {
           console.log(message);
           return null;
+        },
+        copyScreenshot({ from, to }: { from: string; to: string }) {
+          const fs = require('fs');
+          const path = require('path');
+          
+          const sourcePath = path.resolve(from);
+          const destPath = path.resolve(to);
+          
+          try {
+            // Ensure destination directory exists
+            const destDir = path.dirname(destPath);
+            if (!fs.existsSync(destDir)) {
+              fs.mkdirSync(destDir, { recursive: true });
+            }
+            
+            // Copy file
+            fs.copyFileSync(sourcePath, destPath);
+            console.log(`Screenshot copied: ${from} -> ${to}`);
+            return null;
+          } catch (error) {
+            console.error('Failed to copy screenshot:', error);
+            return null;
+          }
         }
       });
     },
     env: {
-      backendUrl: 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app',
+      backendUrl: 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app',
       gemmaUrl: 'https://cloud-run-gemma-2cvqukvhga-uw.a.run.app'
     },
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',

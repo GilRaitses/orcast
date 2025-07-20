@@ -6,7 +6,7 @@ import { OrcaSighting, HydrophoneData, MLPredictionData } from '../models/orca-s
 describe('BackendService', () => {
   let service: BackendService;
   let httpMock: HttpTestingController;
-  const backendUrl = 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app';
+  const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
 
   beforeEach(() => {
     TestBed.configureTestingModule({

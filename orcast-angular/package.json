@@ -52,6 +52,13 @@
     "@angular/router": "^18.0.0",
     "chart.js": "^4.4.0",
     "ng2-charts": "^6.0.1",
+    "plotly.js-dist-min": "^2.32.0",
+    "angular-plotly.js": "^5.0.0",
+    "@swimlane/ngx-charts": "^20.1.0",
+    "d3": "^7.8.5",
+    "@types/d3": "^7.4.3",
+    "echarts": "^5.5.0",
+    "ngx-echarts": "^15.0.3",
     "rxjs": "^7.8.0",
     "tslib": "^2.8.1",
     "zone.js": "~0.14.0"

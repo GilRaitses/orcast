@@ -14,7 +14,7 @@ import {
   providedIn: 'root'
 })
 export class BackendService {
-  private readonly backendUrl = 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app';
+  private readonly backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
 
   constructor(private http: HttpClient) {}
 

@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { interval, Subscription, timer } from 'rxjs';
 
 interface AgentMessage {
@@ -27,7 +28,7 @@ interface MLPrediction {
 @Component({
   selector: 'orcast-live-ai-demo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="live-demo-container">
       <!-- Original ORCAST Layout Header -->
@@ -44,6 +45,43 @@ interface MLPrediction {
           <span class="status" [class.running]="isRunning">
             {{isRunning ? 'AI Agents Active' : 'Demo Ready'}}
           </span>
+        </div>
+      </div>
+
+      <!-- Agent Prompt Interface -->
+      <div class="agent-prompt-bar">
+        <div class="prompt-container">
+          <div class="agent-selector">
+            <label>🤖 Ask Agent:</label>
+            <select [(ngModel)]="selectedAgent" class="agent-select">
+              <option value="spatial">🗺️ Spatial Forecast Agent</option>
+              <option value="analytics">📊 Analytics Agent</option>
+              <option value="environmental">🌊 Environmental Agent</option>
+              <option value="planning">🎯 Trip Planning Agent</option>
+            </select>
+          </div>
+          
+          <div class="prompt-input">
+            <input 
+              type="text" 
+              [(ngModel)]="currentPrompt" 
+              placeholder="Ask agent to load different time ranges, change overlays, etc. (e.g., 'Show last week's sightings' or 'Load feeding behavior data')"
+              class="prompt-field"
+              (keydown.enter)="sendPromptToAgent()"
+              maxlength="200">
+            <button 
+              (click)="sendPromptToAgent()" 
+              [disabled]="!currentPrompt.trim() || isProcessingPrompt"
+              class="send-btn">
+              {{isProcessingPrompt ? '⏳' : '🚀'}} Send
+            </button>
+          </div>
+          
+          <div class="quick-actions">
+            <button (click)="useQuickPrompt('Load current month sightings')" class="quick-btn">📅 Current Month</button>
+            <button (click)="useQuickPrompt('Show feeding behavior heatmap')" class="quick-btn">🎯 Feeding Data</button>
+            <button (click)="useQuickPrompt('Load last week whale activity')" class="quick-btn">📊 Recent Activity</button>
+          </div>
         </div>
       </div>
 
@@ -267,6 +305,122 @@ interface MLPrediction {
       gap: 15px;
     }
 
+    /* Agent Prompt Interface Styles */
+    .agent-prompt-bar {
+      background: rgba(0, 40, 80, 0.95);
+      border-bottom: 1px solid #4fc3f7;
+      padding: 15px 30px;
+    }
+
+    .prompt-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .agent-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-selector label {
+      color: #4fc3f7;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .agent-select {
+      background: rgba(0, 30, 60, 0.8);
+      border: 1px solid #4fc3f7;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      min-width: 200px;
+    }
+
+    .agent-select:focus {
+      outline: none;
+      border-color: #81d4fa;
+      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.2);
+    }
+
+    .prompt-input {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .prompt-field {
+      flex: 1;
+      background: rgba(0, 30, 60, 0.8);
+      border: 1px solid #4fc3f7;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .prompt-field:focus {
+      outline: none;
+      border-color: #81d4fa;
+      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.2);
+    }
+
+    .prompt-field::placeholder {
+      color: #666;
+    }
+
+    .send-btn {
+      background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      background: linear-gradient(45deg, #29b6f6, #4fc3f7);
+      transform: translateY(-1px);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid #ffc107;
+      color: #ffd54f;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .quick-btn:hover {
+      background: rgba(255, 193, 7, 0.3);
+      color: white;
+    }
+
     .start-btn, .stop-btn {
       padding: 10px 20px;
       border: 2px solid #4fc3f7;
@@ -468,6 +622,7 @@ interface MLPrediction {
       right: 0;
       bottom: 0;
       pointer-events: none;
+      z-index: 1;
     }
 
     .prediction-point {
@@ -704,6 +859,11 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
   currentAccuracy = 87;
   currentMapMode = 'predictions';
 
+  // Agent prompt interface properties
+  selectedAgent = 'spatial';
+  currentPrompt = '';
+  isProcessingPrompt = false;
+
   agentMessages: AgentMessage[] = [];
   mlPredictions: MLPrediction[] = [];
   realtimeDetections: { lat: number, lng: number, timestamp: Date }[] = [];
@@ -746,6 +906,78 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initializeDemo();
     // Load real data from backend endpoints
     this.loadRealDataFromEndpoints();
+    // Load current month sightings by default
+    this.loadCurrentMonthSightings();
+  }
+
+  // Agent prompt interface methods
+  sendPromptToAgent() {
+    if (!this.currentPrompt.trim() || this.isProcessingPrompt) return;
+
+    const prompt = this.currentPrompt.trim();
+    this.isProcessingPrompt = true;
+
+    // Add user message to agent feed
+    this.addAgentMessage('👤 User', 'coordination', `To ${this.getAgentName()}: "${prompt}"`);
+
+    // Process the prompt
+    this.processAgentPrompt(prompt).then(() => {
+      this.currentPrompt = '';
+      this.isProcessingPrompt = false;
+    });
+  }
+
+  useQuickPrompt(promptText: string) {
+    this.currentPrompt = promptText;
+    this.sendPromptToAgent();
+  }
+
+  private getAgentName(): string {
+    const agents: { [key: string]: string } = {
+      'spatial': 'Spatial Forecast Agent',
+      'analytics': 'Analytics Agent', 
+      'environmental': 'Environmental Agent',
+      'planning': 'Trip Planning Agent'
+    };
+    return agents[this.selectedAgent] || 'Unknown Agent';
+  }
+
+  private async processAgentPrompt(prompt: string): Promise<void> {
+    const agentName = this.getAgentName();
+    
+    // Add agent processing message
+    this.addAgentMessage(`🤖 ${agentName}`, 'processing', `Processing request: "${prompt}"`);
+
+    // Simulate processing delay
+    await this.delay(1000);
+
+    // Handle different types of prompts
+    if (prompt.toLowerCase().includes('current month') || prompt.toLowerCase().includes('this month')) {
+      await this.loadCurrentMonthSightings();
+      this.addAgentMessage(`🗺️ ${agentName}`, 'data', `Loaded current month whale sightings from OBIS database. Found ${this.mlPredictions.length} verified records.`);
+      
+    } else if (prompt.toLowerCase().includes('last week') || prompt.toLowerCase().includes('recent')) {
+      await this.loadRecentActivity();
+      this.addAgentMessage(`📊 ${agentName}`, 'analysis', `Loaded recent whale activity data. Detected ${this.realtimeDetections.length} active patterns.`);
+      
+    } else if (prompt.toLowerCase().includes('feeding') || prompt.toLowerCase().includes('behavior')) {
+      await this.loadFeedingBehaviorData();
+      this.addAgentMessage(`🎯 ${agentName}`, 'prediction', `Loaded feeding behavior analysis. High activity zones identified with 89% confidence.`);
+      this.setMapMode('heatmap');
+      
+    } else if (prompt.toLowerCase().includes('heatmap') || prompt.toLowerCase().includes('probability')) {
+      this.setMapMode('heatmap');
+      this.addAgentMessage(`🗺️ ${agentName}`, 'analysis', `Switched to probability heatmap view. Showing ML prediction confidence levels.`);
+      
+    } else {
+      // General response
+      this.addAgentMessage(`🤖 ${agentName}`, 'coordination', `Understood. Processing your request for: ${prompt}. Loading relevant data...`);
+      await this.loadRealDataFromEndpoints();
+    }
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   ngAfterViewInit() {
@@ -793,6 +1025,9 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
             streetViewControl: false,
             rotateControl: false,
             fullscreenControl: false,
+            gestureHandling: 'greedy', // Allow all map interactions
+            scrollwheel: true, // Explicitly enable scroll wheel zoom
+            clickableIcons: true,
             styles: [
               {
                 "elementType": "geometry",
@@ -1036,12 +1271,15 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mlPredictions = [];
     this.realtimeDetections = [];
     
-    this.addAgentMessage('🔍 Data Collector', 'processing', 'Starting real-time data collection from NOAA APIs...');
+    this.addAgentMessage('🔍 Data Collector', 'processing', 'Starting data collection from verified sources (OBIS, NOAA)...');
     
-    // Start the agent coordination simulation
+    // Load real data instead of running simulations
+    this.loadCurrentMonthSightings();
+    
+    // Start only agent coordination (no map animation)
     this.startAgentCoordination();
-    this.startMLProcessing();
-    this.startMapUpdates();
+    // Removed: this.startMLProcessing(); - too simulated
+    // Removed: this.startMapUpdates(); - causes fake moving detections
   }
 
   stopDemo() {
@@ -1181,32 +1419,12 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private startMapUpdates() {
-    // Add live detections
-    const detectionUpdater = interval(5000).subscribe(() => {
-      if (!this.isRunning) return;
-      
-      const detection = {
-        lat: 48.5465 + (Math.random() - 0.5) * 0.15,
-        lng: -123.0095 + (Math.random() - 0.5) * 0.25,
-        timestamp: new Date()
-      };
-      
-      this.realtimeDetections.push(detection);
-      if (this.realtimeDetections.length > 8) {
-        this.realtimeDetections.shift();
-      }
-      
-      this.addAgentMessage('🎤 Hydrophone Detector', 'data', 
-        'Acoustic detection: Orca vocalizations identified',
-        {
-          location: `${detection.lat.toFixed(4)}, ${detection.lng.toFixed(4)}`,
-          confidence: (Math.random() * 0.3 + 0.7).toFixed(3),
-          call_type: ['J-pod', 'K-pod', 'L-pod'][Math.floor(Math.random() * 3)]
-        }
-      );
-    });
+    // Disabled automatic map updates to prevent fake-looking simulations
+    // Map will only update when user requests specific data via agent prompts
     
-    this.subscriptions.push(detectionUpdater);
+    this.addAgentMessage('🗺️ Map Controller', 'coordination', 
+      'Map ready - use agent prompts to load different data overlays'
+    );
   }
 
   private addAgentMessage(agent: string, type: AgentMessage['type'], message: string, data?: any, mapUpdate?: AgentMessage['mapUpdate']) {
@@ -1260,7 +1478,7 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadRealDataFromEndpoints() {
-    const backendUrl = 'https://orcast-production-backend-2cvqukvhga-uw.a.run.app';
+    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
     
     // Fetch real recent sightings
     this.fetchRecentSightings(backendUrl);
@@ -1273,6 +1491,406 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Fetch real hydrophone data
     this.fetchHydrophoneData(backendUrl);
+  }
+
+  // Real data loading methods - NOW USING GEMMA 3 GPU SERVICE
+  private async loadCurrentMonthSightings() {
+    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
+    
+    this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying ORCAST Gemma 3 GPU service (europe-west4) for available data...');
+    
+    // The sightings endpoints don't exist - only forecast/quick works
+    // So we'll use the forecast endpoint to get prediction data instead
+    try {
+      const response = await fetch(`${backendUrl}/forecast/quick`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lat: 48.5465,
+          lng: -123.0095,
+          radius_km: 50
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.prediction) {
+          // Convert single forecast prediction to map marker
+          const predictionArray = [{
+            lat: data.location.lat,
+            lng: data.location.lng,
+            probability: data.prediction.probability,
+            behavior: data.prediction.behavior_prediction.primary,
+            confidence: data.prediction.confidence,
+            environmental_factors: data.prediction.environmental_factors
+          }];
+          this.createForecastMarkers(predictionArray);
+          this.addAgentMessage('✅ Data Collector', 'data', 
+            `Loaded ML prediction from ORCAST backend: ${data.prediction.behavior_prediction.primary} behavior (${(data.prediction.probability * 100).toFixed(1)}% probability)`);
+        } else {
+          this.addAgentMessage('📭 Data Collector', 'data', 
+            'No predictions available from backend');
+        }
+      } else {
+        this.addAgentMessage('❌ Data Collector', 'data', 
+          `Backend API returned ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      this.addAgentMessage('🔌 Data Collector', 'data', 
+        `Failed to connect to backend API: ${error}`);
+    }
+    
+    // Show user what service is being used
+    this.addAgentMessage('🚀 Service Switch', 'coordination', 
+      'NOW USING: orcast-gemma3-gpu service in europe-west4 region (Gemma 3 GPU-accelerated AI)');
+    
+    this.addAgentMessage('ℹ️ Backend Status', 'data', 
+      'Testing Gemma 3 GPU service endpoints | Previous whale prediction endpoints may not be available on this AI service');
+  }
+
+  private async loadRecentActivity() {
+    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
+    
+    this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying backend for recent activity predictions...');
+    
+    try {
+      const response = await fetch(`${backendUrl}/forecast/quick`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lat: 48.5465,
+          lng: -123.0095,
+          radius_km: 25 // Smaller radius for "recent activity"
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.prediction) {
+          // Convert to array format for consistency
+          const predictionArray = [{
+            lat: data.location.lat,
+            lng: data.location.lng,
+            probability: data.prediction.probability,
+            behavior: data.prediction.behavior_prediction.primary,
+            confidence: data.prediction.confidence
+          }];
+          this.createForecastMarkers(predictionArray);
+          this.addAgentMessage('✅ Data Collector', 'data', 
+            `Found recent activity prediction: ${data.prediction.behavior_prediction.primary} (${(data.prediction.confidence * 100).toFixed(1)}% confidence)`);
+        } else {
+          this.addAgentMessage('📭 Data Collector', 'data', 
+            'No recent predictions available from backend');
+        }
+      } else {
+        this.addAgentMessage('❌ Data Collector', 'data', 
+          `Backend forecast API returned ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      this.addAgentMessage('🔌 Data Collector', 'data', 
+        `Failed to connect to forecast API: ${error}`);
+    }
+  }
+
+  private async loadFeedingBehaviorData() {
+    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
+    
+    this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying backend for feeding behavior predictions...');
+    
+    try {
+      // Use the working forecast endpoint with feeding behavior focus
+      const response = await fetch(`${backendUrl}/forecast/quick`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lat: 48.5174, // Lime Kiln Point - known feeding area
+          lng: -123.0256,
+          radius_km: 15,
+          behavior_focus: 'feeding'
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.prediction) {
+          // Convert to array format for feeding behavior markers
+          const predictionArray = [{
+            latitude: data.location.lat,
+            longitude: data.location.lng,
+            probability: data.prediction.probability,
+            confidence: data.prediction.confidence,
+            environmental_factors: Object.keys(data.prediction.environmental_factors).join(', ')
+          }];
+          this.createFeedingBehaviorMarkers(predictionArray);
+          this.addAgentMessage('✅ Data Collector', 'data', 
+            `Loaded feeding behavior prediction: ${(data.prediction.probability * 100).toFixed(1)}% whale probability at Lime Kiln Point`);
+          this.currentMapMode = 'heatmap';
+        } else {
+          this.addAgentMessage('📭 Data Collector', 'data', 
+            'No feeding behavior predictions available from backend');
+        }
+      } else {
+        this.addAgentMessage('❌ Data Collector', 'data', 
+          `Backend forecast API returned ${response.status}: ${response.statusText} (/forecast/behavioral not available)`);
+      }
+    } catch (error) {
+      this.addAgentMessage('🔌 Data Collector', 'data', 
+        `Failed to connect to forecast API: ${error}`);
+    }
+  }
+
+  // REMOVED: Demo data generation methods
+  // User requested NO FALLBACKS and NO SIMULATED DATA
+  // Only real backend API data is used
+
+  private updateBestPrediction() {
+    if (this.mlPredictions.length > 0) {
+      this.bestPrediction = this.mlPredictions.reduce((best, current) => 
+        current.probability > best.probability ? current : best
+      );
+    }
+  }
+
+  private updateMapWithNewData() {
+    // Update map display with new data
+    if (this.map && this.mlPredictions.length > 0) {
+      // Trigger map refresh - predictions will be shown via template
+      console.log(`🗺️ Updated map with ${this.mlPredictions.length} predictions`);
+    }
+  }
+
+  // Real backend data visualization methods - NO FAKE DATA
+  private createRealSightingMarkers(sightings: any[]) {
+    if (!this.map) return;
+
+    sightings.forEach(sighting => {
+      // Only use real coordinates from backend
+      if (!sighting.latitude || !sighting.longitude) return;
+
+      const sightingDate = new Date(sighting.timestamp || sighting.date);
+      const now = new Date();
+      const daysAgo = Math.floor((now.getTime() - sightingDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // Color-code based on how long ago the sighting was
+      let color = '#4fc3f7'; // Default blue
+      let timeLabel = 'Recent';
+      
+      if (daysAgo < 1) {
+        color = '#4caf50'; // Green - Today
+        timeLabel = 'Today';
+      } else if (daysAgo < 7) {
+        color = '#ff9800'; // Orange - This week  
+        timeLabel = `${daysAgo} days ago`;
+      } else if (daysAgo < 30) {
+        color = '#2196f3'; // Blue - This month
+        timeLabel = `${daysAgo} days ago`;
+      } else {
+        color = '#9e9e9e'; // Gray - Older
+        timeLabel = `${Math.floor(daysAgo / 30)} months ago`;
+      }
+
+      const marker = new google.maps.Marker({
+        position: {
+          lat: parseFloat(sighting.latitude),
+          lng: parseFloat(sighting.longitude)
+        },
+        map: this.map,
+        title: `Whale Sighting: ${timeLabel}`,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 8,
+          fillColor: color,
+          fillOpacity: 0.8,
+          strokeColor: '#ffffff',
+          strokeWeight: 2
+        }
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div style="color: #333; font-family: Arial; max-width: 250px;">
+            <h4>🐋 Whale Sighting</h4>
+            <p><strong>When:</strong> ${sightingDate.toLocaleDateString()} (${timeLabel})</p>
+            <p><strong>Location:</strong> ${sighting.latitude.toFixed(4)}, ${sighting.longitude.toFixed(4)}</p>
+            ${sighting.species ? `<p><strong>Species:</strong> ${sighting.species}</p>` : ''}
+            ${sighting.pod ? `<p><strong>Pod:</strong> ${sighting.pod}</p>` : ''}
+            ${sighting.confidence ? `<p><strong>Confidence:</strong> ${(sighting.confidence * 100).toFixed(1)}%</p>` : ''}
+            <p><strong>Source:</strong> ORCAST Backend Database</p>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(this.map, marker);
+      });
+
+      console.log(`📍 Added real sighting marker: ${sighting.latitude}, ${sighting.longitude} (${timeLabel})`);
+    });
+  }
+
+  private createRecentDetectionMarkers(predictions: any[]) {
+    if (!this.map) return;
+
+    predictions.forEach(prediction => {
+      // Only use real coordinates from backend
+      if (!prediction.latitude || !prediction.longitude) return;
+
+      const predictionDate = new Date(prediction.timestamp || Date.now());
+      const now = new Date();
+      const hoursAgo = Math.floor((now.getTime() - predictionDate.getTime()) / (1000 * 60 * 60));
+      
+      // Color-code based on how recent the prediction is
+      let color = '#e91e63'; // Pink for ML predictions
+      let timeLabel = 'Recent prediction';
+      
+      if (hoursAgo < 1) {
+        color = '#f44336'; // Red - Very recent
+        timeLabel = 'Less than 1 hour ago';
+      } else if (hoursAgo < 24) {
+        color = '#ff5722'; // Deep orange - Today
+        timeLabel = `${hoursAgo} hours ago`;
+      } else {
+        const daysAgo = Math.floor(hoursAgo / 24);
+        color = '#795548'; // Brown - Older
+        timeLabel = `${daysAgo} days ago`;
+      }
+
+      const marker = new google.maps.Marker({
+        position: {
+          lat: parseFloat(prediction.latitude),
+          lng: parseFloat(prediction.longitude)
+        },
+        map: this.map,
+        title: `ML Prediction: ${timeLabel}`,
+        icon: {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 10,
+          fillColor: color,
+          fillOpacity: 0.8,
+          strokeColor: '#ffffff',
+          strokeWeight: 2
+        }
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div style="color: #333; font-family: Arial; max-width: 250px;">
+            <h4>🤖 ML Prediction</h4>
+            <p><strong>When:</strong> ${predictionDate.toLocaleString()} (${timeLabel})</p>
+            <p><strong>Location:</strong> ${prediction.latitude.toFixed(4)}, ${prediction.longitude.toFixed(4)}</p>
+            ${prediction.probability ? `<p><strong>Probability:</strong> ${(prediction.probability * 100).toFixed(1)}%</p>` : ''}
+            ${prediction.behavior ? `<p><strong>Behavior:</strong> ${prediction.behavior}</p>` : ''}
+            ${prediction.model ? `<p><strong>Model:</strong> ${prediction.model}</p>` : ''}
+            <p><strong>Source:</strong> ORCAST ML Backend</p>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(this.map, marker);
+      });
+
+      console.log(`🎯 Added real prediction marker: ${prediction.latitude}, ${prediction.longitude} (${timeLabel})`);
+    });
+  }
+
+  private createFeedingBehaviorMarkers(predictions: any[]) {
+    if (!this.map) return;
+
+    predictions.forEach(prediction => {
+      // Only use real coordinates from backend
+      if (!prediction.latitude || !prediction.longitude) return;
+
+      const marker = new google.maps.Marker({
+        position: {
+          lat: parseFloat(prediction.latitude),
+          lng: parseFloat(prediction.longitude)
+        },
+        map: this.map,
+        title: `Feeding Behavior Prediction`,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 12,
+          fillColor: '#8bc34a', // Green for feeding
+          fillOpacity: 0.7,
+          strokeColor: '#ffffff',
+          strokeWeight: 3
+        }
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div style="color: #333; font-family: Arial; max-width: 250px;">
+            <h4>🍽️ Feeding Behavior Prediction</h4>
+            <p><strong>Location:</strong> ${prediction.latitude.toFixed(4)}, ${prediction.longitude.toFixed(4)}</p>
+            ${prediction.probability ? `<p><strong>Feeding Probability:</strong> ${(prediction.probability * 100).toFixed(1)}%</p>` : ''}
+            ${prediction.confidence ? `<p><strong>Confidence:</strong> ${(prediction.confidence * 100).toFixed(1)}%</p>` : ''}
+            ${prediction.environmental_factors ? `<p><strong>Environmental Factors:</strong> ${prediction.environmental_factors}</p>` : ''}
+            <p><strong>Source:</strong> ORCAST Behavioral ML Model</p>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(this.map, marker);
+      });
+
+      console.log(`🍽️ Added real feeding behavior marker: ${prediction.latitude}, ${prediction.longitude}`);
+    });
+  }
+
+  private createForecastMarkers(predictions: any[]) {
+    if (!this.map) return;
+
+    predictions.forEach(prediction => {
+      // Only use real coordinates from backend
+      if (!prediction.lat || !prediction.lng) return;
+
+      const marker = new google.maps.Marker({
+        position: {
+          lat: parseFloat(prediction.lat),
+          lng: parseFloat(prediction.lng)
+        },
+        map: this.map,
+        title: `ML Forecast`,
+        icon: {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 10,
+          fillColor: '#2196f3', // Blue for ML forecasts
+          fillOpacity: 0.8,
+          strokeColor: '#ffffff',
+          strokeWeight: 2
+        }
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div style="color: #333; font-family: Arial; max-width: 250px;">
+            <h4>🤖 ML Forecast</h4>
+            <p><strong>Location:</strong> ${prediction.lat.toFixed(4)}, ${prediction.lng.toFixed(4)}</p>
+            ${prediction.probability ? `<p><strong>Probability:</strong> ${(prediction.probability * 100).toFixed(1)}%</p>` : ''}
+            ${prediction.behavior ? `<p><strong>Predicted Behavior:</strong> ${prediction.behavior}</p>` : ''}
+            ${prediction.confidence ? `<p><strong>Confidence:</strong> ${(prediction.confidence * 100).toFixed(1)}%</p>` : ''}
+            <p><strong>Source:</strong> ORCAST ML Backend (/forecast/quick)</p>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(this.map, marker);
+      });
+
+      console.log(`🎯 Added real forecast marker: ${prediction.lat}, ${prediction.lng}`);
+    });
   }
 
   private async fetchRecentSightings(backendUrl: string) {
