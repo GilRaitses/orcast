@@ -11,17 +11,22 @@ export const routes: Routes = [
     loadComponent: () => import('./components/map-dashboard/map-dashboard.component').then(c => c.MapDashboardComponent)
   },
   {
-    path: 'historical',
-    loadComponent: () => import('./components/historical-sightings/historical-sightings.component').then(c => c.HistoricalSightingsComponent)
+    path: 'agent-demo',
+    loadComponent: () => import('./components/agent-demo/agent-demo.component').then(c => c.AgentDemoComponent)
   },
-  {
-    path: 'realtime',
-    loadComponent: () => import('./components/realtime-detection/realtime-detection.component').then(c => c.RealtimeDetectionComponent)
-  },
-  {
-    path: 'ml-predictions',
-    loadComponent: () => import('./components/ml-predictions/ml-predictions.component').then(c => c.MLPredictionsComponent)
-  },
+  // TODO: Uncomment when components are created
+  // {
+  //   path: 'historical',
+  //   loadComponent: () => import('./components/historical-sightings/historical-sightings.component').then(c => c.HistoricalSightingsComponent)
+  // },
+  // {
+  //   path: 'realtime',
+  //   loadComponent: () => import('./components/realtime-detection/realtime-detection.component').then(c => c.RealtimeDetectionComponent)
+  // },
+  // {
+  //   path: 'ml-predictions',
+  //   loadComponent: () => import('./components/ml-predictions/ml-predictions.component').then(c => c.MLPredictionsComponent)
+  // },
   {
     path: '**',
     redirectTo: '/dashboard'

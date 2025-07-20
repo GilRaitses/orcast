@@ -320,6 +320,20 @@ export class MapDashboardComponent implements OnInit {
         'Uncertainty quantification'
       ],
       status: 'online'
+    },
+    {
+      route: '/agent-demo',
+      icon: '🤖',
+      title: 'AI Agent Demo',
+      description: 'Gemma 3 multi-agent orchestration for personalized San Juan Islands trip planning with orca optimization.',
+      features: [
+        'Natural language trip planning',
+        'Multi-agent workflow coordination',
+        'Personalized itinerary generation',
+        'User profile & trip history',
+        'Intelligent orca timing optimization'
+      ],
+      status: 'beta'
     }
   ];
 
