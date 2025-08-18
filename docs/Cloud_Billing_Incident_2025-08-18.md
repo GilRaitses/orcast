@@ -123,6 +123,20 @@ Actions completed on 2025-08-18 (UTC):
 
 ## Appendix
 
+### Post‑Incident Updates (Notifications and Export)
+
+- Email notification channel created for budget alerts:
+  - `projects/orca-466204/notificationChannels/16159749288106136205`
+  - Attached to budget `billingAccounts/01EA83-AD2B99-EEEBC1/budgets/de9ef4e5-a06b-46a4-b25e-832f09db1226` (alerts at 50%, 90%, 100%).
+- BigQuery dataset created for billing export: `orca-466204.billing_export` (region: US).
+- Action required: Enable Billing Export to BigQuery in Console (Billing Admin permission):
+  1) Open Cloud Console → Billing → Your billing account `01EA83-AD2B99-EEEBC1`.
+  2) In left nav, choose “Billing export”.
+  3) Under “BigQuery export”, click “Edit settings”.
+  4) Select project `orca-466204`, dataset `billing_export`.
+  5) Enable both “Detailed usage cost data” and “Pricing data” (recommended).
+  6) Save. Data will start flowing within ~24 hours.
+
 ### Projects and Billing Accounts
 
 - Project `orca-466204` → Billing Account `01EA83-AD2B99-EEEBC1` (billing enabled)
