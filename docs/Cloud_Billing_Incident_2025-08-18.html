@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2025-08-18">
+
+<title>ORCAST Cloud Billing Incident Report</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/popper.min.js"></script>
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Cloud_Billing_Incident_2025-08-18_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Cloud_Billing_Incident_2025-08-18_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Cloud_Billing_Incident_2025-08-18_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Cloud_Billing_Incident_2025-08-18_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ORCAST Cloud Billing Incident Report</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Gil Raitses </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 18, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="executive-summary" class="level2">
+<h2 class="anchored" data-anchor-id="executive-summary">Executive Summary</h2>
+<p>On 2025-08-18, unexpected Google Cloud charges (~$500) were observed. Investigation identified the primary cost driver as a Cloud Run GPU service (<code>orcast-gemma3-gpu</code>) in project <code>orca-466204</code> running on an NVIDIA L4 GPU (8 vCPU, 32 GiB RAM). The service was publicly invokable and experienced repeated worker timeouts/restarts, keeping the GPU active and accruing costs. Additionally, the production backend (<code>orcast-production-backend</code>) had <code>minScale=1</code>, maintaining an always-on instance and contributing baseline cost. BigQuery usage was minimal and not a significant cost source.</p>
+<p>Immediate remediation steps locked down and then removed the GPU service, and scaled the production backend to zero when idle. A budget and billing export dataset were set up to prevent recurrence and improve visibility.</p>
+</section>
+<section id="impact" class="level2">
+<h2 class="anchored" data-anchor-id="impact">Impact</h2>
+<ul>
+<li>Billing impact: Approximately $500 in charges on the attached billing account for project <code>orca-466204</code>.</li>
+<li>Affected resources:
+<ul>
+<li>Cloud Run GPU: <code>orcast-gemma3-gpu</code> (region: <code>europe-west4</code>)</li>
+<li>Cloud Run backend: <code>orcast-production-backend</code> (region: <code>us-west1</code>, previously <code>minScale=1</code>)</li>
+<li>BigQuery: sporadic short queries, not material to cost</li>
+</ul></li>
+</ul>
+</section>
+<section id="detection" class="level2">
+<h2 class="anchored" data-anchor-id="detection">Detection</h2>
+<ul>
+<li>User-reported unexpected charges prompted investigation.</li>
+<li>Verified active services and configurations using <code>gcloud</code> and examined Cloud Run logs for the GPU service.</li>
+</ul>
+</section>
+<section id="timeline-utc" class="level2">
+<h2 class="anchored" data-anchor-id="timeline-utc">Timeline (UTC)</h2>
+<ul>
+<li>2025-08-18 03:27–03:54: Cloud Run logs show repeated worker timeouts and restarts on <code>orcast-gemma3-gpu</code>, keeping the GPU active.</li>
+<li>2025-08-18 ~03:55: Services enumerated; GPU service resources confirmed (1× L4 GPU, 8 vCPU, 32 GiB RAM, timeout 600s, concurrency 4).</li>
+<li>2025-08-18 ~03:58: Attempt to enable CPU throttling rejected (GPU requires throttling off by design).</li>
+<li>2025-08-18 ~04:00: Public access removed from GPU service and ingress restricted; production backend set to <code>minScale=0</code>.</li>
+<li>2025-08-18 ~04:02: Budget API enabled; BigQuery dataset <code>billing_export</code> created for billing export; budget created for <code>orca-466204</code>.</li>
+<li>2025-08-18 ~04:05: GPU service deleted to fully stop GPU spend.</li>
+</ul>
+</section>
+<section id="root-cause-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="root-cause-analysis">Root Cause Analysis</h2>
+<ul>
+<li>Primary: Cloud Run GPU service (<code>orcast-gemma3-gpu</code>) publicly reachable with GPU resources provisioned; repeated timeouts/restarts and test traffic kept the service warm and billable.</li>
+<li>Contributing:
+<ul>
+<li><code>orcast-production-backend</code> configured with <code>minScale=1</code>, creating a steady baseline cost.</li>
+<li>No budget alert configured prior to incident.</li>
+<li>Public invoker (<code>allUsers</code>) allowed on the GPU service and ingress not restricted.</li>
+</ul></li>
+</ul>
+</section>
+<section id="corrective-and-preventive-actions" class="level2">
+<h2 class="anchored" data-anchor-id="corrective-and-preventive-actions">Corrective and Preventive Actions</h2>
+<p>Actions completed on 2025-08-18 (UTC):</p>
+<ol type="1">
+<li><p>Cloud Run GPU service access hardened (then removed):</p>
+<ul>
+<li><p>Removed public invocation:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> run services remove-iam-policy-binding orcast-gemma3-gpu <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>europe-west4 <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"allUsers"</span> <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/run.invoker"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Restricted ingress to internal/LB only:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> run services update orcast-gemma3-gpu <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>europe-west4 <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--ingress</span><span class="op">=</span>internal-and-cloud-load-balancing</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Deleted the GPU service to fully stop spend:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> run services delete orcast-gemma3-gpu <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>europe-west4 <span class="at">--quiet</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul></li>
+<li><p>Scaled production backend to zero when idle:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> run services update orcast-production-backend <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>us-west1 <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--min-instances</span><span class="op">=</span>0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Cost visibility and guardrails:</p>
+<ul>
+<li><p>Enabled Budgets API:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> services enable billingbudgets.googleapis.com <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--project</span><span class="op">=</span>orca-466204</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Created budget (alerts at 50%, 90%, 100%) for <code>orca-466204</code> under billing account <code>01EA83-AD2B99-EEEBC1</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> beta billing budgets create <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--billing-account</span><span class="op">=</span>01EA83-AD2B99-EEEBC1 <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--display-name</span><span class="op">=</span><span class="st">"ORCAST Budget - orca-466204"</span> <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--budget-amount</span><span class="op">=</span>400USD <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--threshold-rule</span><span class="op">=</span>percent=0.5 <span class="dt">\</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--threshold-rule</span><span class="op">=</span>percent=0.9 <span class="dt">\</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--threshold-rule</span><span class="op">=</span>percent=1.0 <span class="dt">\</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--filter-projects</span><span class="op">=</span>projects/orca-466204</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Created BigQuery dataset for billing export:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bq</span> <span class="at">--project_id</span><span class="op">=</span>orca-466204 <span class="at">--location</span><span class="op">=</span>US mk <span class="at">-d</span> billing_export</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note: Enabling the actual Billing Export to BigQuery is performed at the billing account level in the Cloud Console (requires Billing Admin). Point export to <code>orca-466204.billing_export</code> once approved.</p></li>
+</ul></li>
+<li><p>Known constraint documented:</p>
+<ul>
+<li>CPU throttling cannot be enabled on GPU Cloud Run services. Attempt to set <code>--cpu-throttling</code> was rejected as expected; mitigation was to restrict/disable access and then delete the service.</li>
+</ul></li>
+</ol>
+</section>
+<section id="verification" class="level2">
+<h2 class="anchored" data-anchor-id="verification">Verification</h2>
+<ul>
+<li><p>GPU service deleted:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> run services list <span class="at">--platform</span><span class="op">=</span>managed <span class="at">--region</span><span class="op">=</span>europe-west4</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># orcast-gemma3-gpu no longer listed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Production backend autoscaling:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcloud</span> run services describe orcast-production-backend <span class="dt">\</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>us-west1 <span class="at">--format</span><span class="op">=</span><span class="st">"yaml(spec.template.metadata.annotations)"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm no autoscaling.knative.dev/minScale annotation (defaults to 0)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Logs show no new GPU service activity after deletion.</p></li>
+</ul>
+</section>
+<section id="recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="recommendations">Recommendations</h2>
+<ul>
+<li>Keep GPU services disabled unless actively needed; when needed, gate access via IAM and internal ingress, and remove public invokers.</li>
+<li>Maintain <code>minScale=0</code> for services that do not require warm capacity.</li>
+<li>Keep budgets and alerts in place; enable Billing Export to BigQuery for ongoing monitoring and retrospective analysis.</li>
+<li>Introduce a pre-deploy checklist/runbook for high-cost resources (GPU) including cost flags, IAM, and ingress review.</li>
+</ul>
+</section>
+<section id="appendix" class="level2">
+<h2 class="anchored" data-anchor-id="appendix">Appendix</h2>
+<section id="postincident-updates-notifications-and-export" class="level3">
+<h3 class="anchored" data-anchor-id="postincident-updates-notifications-and-export">Post‑Incident Updates (Notifications and Export)</h3>
+<ul>
+<li>Email notification channel created for budget alerts:
+<ul>
+<li><code>projects/orca-466204/notificationChannels/16159749288106136205</code></li>
+<li>Attached to budget <code>billingAccounts/01EA83-AD2B99-EEEBC1/budgets/de9ef4e5-a06b-46a4-b25e-832f09db1226</code> (alerts at 50%, 90%, 100%).</li>
+</ul></li>
+<li>BigQuery dataset created for billing export: <code>orca-466204.billing_export</code> (region: US).</li>
+<li>Action required: Enable Billing Export to BigQuery in Console (Billing Admin permission):
+<ol type="1">
+<li>Open Cloud Console → Billing → Your billing account <code>01EA83-AD2B99-EEEBC1</code>.</li>
+<li>In left nav, choose “Billing export”.</li>
+<li>Under “BigQuery export”, click “Edit settings”.</li>
+<li>Select project <code>orca-466204</code>, dataset <code>billing_export</code>.</li>
+<li>Enable both “Detailed usage cost data” and “Pricing data” (recommended).</li>
+<li>Save. Data will start flowing within ~24 hours.</li>
+</ol></li>
+</ul>
+</section>
+<section id="projects-and-billing-accounts" class="level3">
+<h3 class="anchored" data-anchor-id="projects-and-billing-accounts">Projects and Billing Accounts</h3>
+<ul>
+<li>Project <code>orca-466204</code> → Billing Account <code>01EA83-AD2B99-EEEBC1</code> (billing enabled)</li>
+<li>Project <code>orca-904de</code> → Billing Account <code>01F108-29CA32-AFFF6C</code> (billing enabled)</li>
+</ul>
+</section>
+<section id="gpu-service-configuration-prior-to-deletion" class="level3">
+<h3 class="anchored" data-anchor-id="gpu-service-configuration-prior-to-deletion">GPU Service Configuration (prior to deletion)</h3>
+<pre><code>Service: orcast-gemma3-gpu (region: europe-west4)
+Resources: nvidia.com/gpu=1 (L4), cpu=8, memory=32Gi, concurrency=4, timeout=600s
+Annotations: run.googleapis.com/cpu-throttling=false, autoscaling.knative.dev/maxScale=1</code></pre>
+</section>
+<section id="excerpts-from-cloud-run-logs-utc" class="level3">
+<h3 class="anchored" data-anchor-id="excerpts-from-cloud-run-logs-utc">Excerpts from Cloud Run Logs (UTC)</h3>
+<p>Repeated worker timeouts and SIGKILL events (2025-08-18 03:27–03:54), indicating restarts and sustained activation of the GPU instance.</p>
+<pre><code>2025-08-18 03:27:36 [INFO] Booting worker ...
+2025-08-18 03:28:03 [CRITICAL] WORKER TIMEOUT ...
+2025-08-18 03:28:05 [ERROR] Worker ... sent SIGKILL! Perhaps out of memory?
+...
+2025-08-18 03:54:16 [CRITICAL] WORKER TIMEOUT ...</code></pre>
+</section>
+<section id="bigquery-activity-snapshot" class="level3">
+<h3 class="anchored" data-anchor-id="bigquery-activity-snapshot">BigQuery Activity Snapshot</h3>
+<p>Short-lived queries on 2025-07-19 with minimal durations; not a significant contributor to the incident cost.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
