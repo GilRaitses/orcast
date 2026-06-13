@@ -29,9 +29,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install backend dependencies
-        run: python -m pip install --upgrade pip && python -m pip install fastapi uvicorn pytest boto3 httpx requests
+        run: python -m pip install --upgrade pip && python -m pip install fastapi uvicorn pytest boto3 httpx requests cfn-lint
       - name: Compile AWS backend
         run: python -m compileall -q src/aws_backend tests/aws_backend
       - name: Run AWS backend tests
         run: python -m pytest tests/aws_backend -q
+      - name: Lint CloudFormation template
+        run: cfn-lint infra/aws/template.yaml
 
