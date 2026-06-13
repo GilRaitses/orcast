@@ -57,6 +57,36 @@ export interface MLPredictionData {
   };
 }
 
+export interface ProbabilityHotspot {
+  hotspot_id: string;
+  name: string;
+  center_latitude: number;
+  center_longitude: number;
+  radius_km: number;
+  probability: number;
+  confidence: number;
+  detection_count: number;
+  validated_detection_count: number;
+  source_count: number;
+  behavior_distribution: Record<string, number>;
+  environmental_factors: Record<string, unknown>;
+  reason_codes: string[];
+  evidence_sighting_ids: string[];
+}
+
+export interface ProbabilityReportResponse {
+  report_id: string;
+  generated_at: string;
+  region: string;
+  summary: string;
+  hotspots: ProbabilityHotspot[];
+  cross_validation_summary: Record<string, unknown>;
+  environmental_summary: Record<string, unknown>;
+  data_quality_warnings: string[];
+  model_version: string;
+  storage_uri?: string | null;
+}
+
 export interface MapMarker {
   id: string;
   position: google.maps.LatLngLiteral;

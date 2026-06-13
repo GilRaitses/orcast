@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BehaviorType, PodType } from '../models/orca-sighting.model';
 
 export interface MapFilters {
@@ -59,23 +60,23 @@ export class StateService {
   }
 
   get currentView$(): Observable<string> {
-    return new BehaviorSubject(this.stateSubject.value.currentView).asObservable();
+    return this.stateSubject.asObservable().pipe(map(state => state.currentView));
   }
 
   get mapFilters$(): Observable<MapFilters> {
-    return new BehaviorSubject(this.stateSubject.value.mapFilters).asObservable();
+    return this.stateSubject.asObservable().pipe(map(state => state.mapFilters));
   }
 
   get mlSettings$(): Observable<MLSettings> {
-    return new BehaviorSubject(this.stateSubject.value.mlSettings).asObservable();
+    return this.stateSubject.asObservable().pipe(map(state => state.mlSettings));
   }
 
   get isLoading$(): Observable<boolean> {
-    return new BehaviorSubject(this.stateSubject.value.isLoading).asObservable();
+    return this.stateSubject.asObservable().pipe(map(state => state.isLoading));
   }
 
   get errors$(): Observable<string[]> {
-    return new BehaviorSubject(this.stateSubject.value.errors).asObservable();
+    return this.stateSubject.asObservable().pipe(map(state => state.errors));
   }
 
   // State updates

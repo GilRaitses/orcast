@@ -1,0 +1,218 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ORCAST AWS backend infrastructure for sightings, hotspot probability reports, and web source ingestion.
+
+Parameters:
+  ServiceName:
+    Type: String
+    Default: orcast-aws-backend
+  ContainerImage:
+    Type: String
+    Description: Fully qualified ECR image URI for the ORCAST AWS backend container.
+  EnvironmentName:
+    Type: String
+    Default: production
+  EnableLiveINaturalist:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+  EnableOrcaHello:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+
+Resources:
+  SightingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-sightings'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  HotspotsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-hotspots'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  ReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-reports'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  IngestionRunsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-ingestion-runs'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: '${AWS::AccountId}-${AWS::Region}-${ServiceName}-reports'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  RawPayloadBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: '${AWS::AccountId}-${AWS::Region}-${ServiceName}-raw-payloads'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  AppRunnerInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: tasks.apprunner.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: orcast-backend-data-access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Scan
+                Resource:
+                  - Fn::GetAtt: [SightingsTable, Arn]
+                  - Fn::GetAtt: [HotspotsTable, Arn]
+                  - Fn::GetAtt: [ReportsTable, Arn]
+                  - Fn::GetAtt: [IngestionRunsTable, Arn]
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource:
+                  - Fn::Sub: '${ReportsBucket.Arn}/*'
+                  - Fn::Sub: '${RawPayloadBucket.Arn}/*'
+
+  AppRunnerAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: build.apprunner.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess
+
+  AppRunnerService:
+    Type: AWS::AppRunner::Service
+    Properties:
+      ServiceName:
+        Ref: ServiceName
+      SourceConfiguration:
+        AuthenticationConfiguration:
+          AccessRoleArn:
+            Fn::GetAtt: [AppRunnerAccessRole, Arn]
+        AutoDeploymentsEnabled: true
+        ImageRepository:
+          ImageIdentifier:
+            Ref: ContainerImage
+          ImageRepositoryType: ECR
+          ImageConfiguration:
+            Port: '8080'
+            RuntimeEnvironmentVariables:
+              - Name: ORCAST_ENV
+                Value:
+                  Ref: EnvironmentName
+              - Name: ORCAST_STORAGE_BACKEND
+                Value: aws
+              - Name: AWS_REGION
+                Value:
+                  Ref: AWS::Region
+              - Name: ORCAST_SIGHTINGS_TABLE
+                Value:
+                  Ref: SightingsTable
+              - Name: ORCAST_HOTSPOTS_TABLE
+                Value:
+                  Ref: HotspotsTable
+              - Name: ORCAST_REPORTS_TABLE
+                Value:
+                  Ref: ReportsTable
+              - Name: ORCAST_INGESTION_RUNS_TABLE
+                Value:
+                  Ref: IngestionRunsTable
+              - Name: ORCAST_REPORTS_BUCKET
+                Value:
+                  Ref: ReportsBucket
+              - Name: ORCAST_RAW_PAYLOAD_BUCKET
+                Value:
+                  Ref: RawPayloadBucket
+              - Name: ORCAST_ENABLE_LIVE_INATURALIST
+                Value:
+                  Ref: EnableLiveINaturalist
+              - Name: ORCAST_ENABLE_ORCAHELLO
+                Value:
+                  Ref: EnableOrcaHello
+      InstanceConfiguration:
+        Cpu: 1024
+        Memory: 2048
+        InstanceRoleArn:
+          Fn::GetAtt: [AppRunnerInstanceRole, Arn]
+      HealthCheckConfiguration:
+        Protocol: HTTP
+        Path: /health
+        Interval: 10
+        Timeout: 5
+        HealthyThreshold: 1
+        UnhealthyThreshold: 5
+
+Outputs:
+  BackendUrl:
+    Description: App Runner backend URL.
+    Value:
+      Fn::GetAtt: [AppRunnerService, ServiceUrl]
+  SightingsTableName:
+    Value:
+      Ref: SightingsTable
+  ReportsBucketName:
+    Value:
+      Ref: ReportsBucket
+
