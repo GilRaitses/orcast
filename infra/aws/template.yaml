@@ -95,6 +95,17 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: '${AWS::AccountId}-${AWS::Region}-${ServiceName}-frontend'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
   AppRunnerInstanceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -222,6 +233,68 @@ Resources:
       ScheduleExpression: rate(1 hour)
       State: DISABLED
 
+  FrontendOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name:
+          Fn::Sub: '${ServiceName}-frontend-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  FrontendDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment:
+          Fn::Sub: '${ServiceName} Angular frontend'
+        DefaultRootObject: index.html
+        Origins:
+          - Id: FrontendS3Origin
+            DomainName:
+              Fn::GetAtt: [FrontendBucket, RegionalDomainName]
+            OriginAccessControlId:
+              Ref: FrontendOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          TargetOriginId: FrontendS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        PriceClass: PriceClass_100
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource:
+              Fn::Sub: '${FrontendBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn:
+                  Fn::Sub: 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${FrontendDistribution}'
+
 Outputs:
   BackendUrl:
     Description: App Runner backend URL.
@@ -233,4 +306,13 @@ Outputs:
   ReportsBucketName:
     Value:
       Ref: ReportsBucket
+  FrontendBucketName:
+    Value:
+      Ref: FrontendBucket
+  FrontendDistributionId:
+    Value:
+      Ref: FrontendDistribution
+  FrontendDistributionDomainName:
+    Value:
+      Fn::GetAtt: [FrontendDistribution, DomainName]
 

@@ -5,6 +5,7 @@ This directory contains the first AWS-native deployment path for ORCAST. The bac
 ## Services created
 
 - AWS App Runner service for `src.aws_backend.main:app`
+- CloudFront distribution and private S3 bucket for the Angular frontend
 - DynamoDB tables:
   - sightings
   - hotspots
@@ -85,7 +86,48 @@ aws cloudformation describe-stacks \
   --output text
 ```
 
+## Deploy the Angular frontend to S3 and CloudFront
+
 Set `orcast-angular/src/environments/environment.prod.ts` `apiBaseUrl` to the App Runner URL before building the production frontend.
+
+Build the Angular app:
+
+```bash
+cd orcast-angular
+npm ci
+npm run build -- --configuration=production
+cd ..
+```
+
+Get the frontend bucket and CloudFront distribution ID from the stack:
+
+```bash
+export FRONTEND_BUCKET=$(aws cloudformation describe-stacks \
+  --stack-name orcast-aws-backend \
+  --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" \
+  --output text)
+
+export FRONTEND_DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+  --stack-name orcast-aws-backend \
+  --query "Stacks[0].Outputs[?OutputKey=='FrontendDistributionId'].OutputValue" \
+  --output text)
+```
+
+Upload and invalidate:
+
+```bash
+aws s3 sync orcast-angular/dist/orcast-angular "s3://$FRONTEND_BUCKET" --delete
+aws cloudfront create-invalidation --distribution-id "$FRONTEND_DISTRIBUTION_ID" --paths '/*'
+```
+
+Get the frontend URL:
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name orcast-aws-backend \
+  --query "Stacks[0].Outputs[?OutputKey=='FrontendDistributionDomainName'].OutputValue" \
+  --output text
+```
 
 ## Runtime configuration
 
