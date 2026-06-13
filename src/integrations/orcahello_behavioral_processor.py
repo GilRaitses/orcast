@@ -429,9 +429,11 @@ class OrcaHelloBehavioralProcessor:
             loc_data['avg_foraging_prob'] = (
                 (loc_data['avg_foraging_prob'] * (loc_data['detection_count'] - 1) + 
                  feature.foraging_probability) / loc_data['detection_count']
+            )
             loc_data['avg_social_score'] = (
                 (loc_data['avg_social_score'] * (loc_data['detection_count'] - 1) + 
                  feature.social_activity_score) / loc_data['detection_count']
+            )
         
         # Sort by activity level
         hotspots = [

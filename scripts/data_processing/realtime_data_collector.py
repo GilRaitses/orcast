@@ -19,20 +19,19 @@ class RealTimeDataCollector:
         try:
             # Friday Harbor, WA - Station 9449880
             url = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
-            
-                                      # Get latest water level data
-             now = datetime.now()
-             params = {
-                 "station": "9449880",
-                 "product": "water_level",
-                 "datum": "MLLW",
-                 "format": "json",
-                 "units": "english",
-                 "time_zone": "lst_ldt",
-                 "application": "orca_tracker",
-                 "begin_date": (now - timedelta(minutes=30)).strftime("%Y%m%d %H:%M"),
-                 "end_date": now.strftime("%Y%m%d %H:%M")
-             }
+            # Get latest water level data
+            now = datetime.now()
+            params = {
+                "station": "9449880",
+                "product": "water_level",
+                "datum": "MLLW",
+                "format": "json",
+                "units": "english",
+                "time_zone": "lst_ldt",
+                "application": "orca_tracker",
+                "begin_date": (now - timedelta(minutes=30)).strftime("%Y%m%d %H:%M"),
+                "end_date": now.strftime("%Y%m%d %H:%M")
+            }
             
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
@@ -121,14 +120,13 @@ class RealTimeDataCollector:
             }
             
             estimated_count = seasonal_estimates.get(current_month, 200)
-            
-                         return {
-                 "salmonCount": estimated_count,
-                 "timestamp": datetime.utcnow().isoformat() + "Z",
-                 "quality": "estimated",
-                 "source": "DART Columbia River (seasonal estimate)",
-                 "note": "Based on typical monthly patterns"
-             }
+            return {
+                "salmonCount": estimated_count,
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "quality": "estimated",
+                "source": "DART Columbia River (seasonal estimate)",
+                "note": "Based on typical monthly patterns"
+            }
             
         except Exception as e:
             print(f"Error fetching salmon data: {e}")

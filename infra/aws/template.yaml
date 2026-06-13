@@ -1,0 +1,318 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ORCAST AWS backend infrastructure for sightings, hotspot probability reports, and web source ingestion.
+
+Parameters:
+  ServiceName:
+    Type: String
+    Default: orcast-aws-backend
+  ContainerImage:
+    Type: String
+    Description: Fully qualified ECR image URI for the ORCAST AWS backend container.
+  EnvironmentName:
+    Type: String
+    Default: production
+  EnableLiveINaturalist:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+  EnableOrcaHello:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+
+Resources:
+  SightingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-sightings'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  HotspotsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-hotspots'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  ReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-reports'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  IngestionRunsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-ingestion-runs'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: '${AWS::AccountId}-${AWS::Region}-${ServiceName}-reports'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  RawPayloadBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: '${AWS::AccountId}-${AWS::Region}-${ServiceName}-raw-payloads'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: '${AWS::AccountId}-${AWS::Region}-${ServiceName}-frontend'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  AppRunnerInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: tasks.apprunner.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: orcast-backend-data-access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Scan
+                Resource:
+                  - Fn::GetAtt: [SightingsTable, Arn]
+                  - Fn::GetAtt: [HotspotsTable, Arn]
+                  - Fn::GetAtt: [ReportsTable, Arn]
+                  - Fn::GetAtt: [IngestionRunsTable, Arn]
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource:
+                  - Fn::Sub: '${ReportsBucket.Arn}/*'
+                  - Fn::Sub: '${RawPayloadBucket.Arn}/*'
+
+  AppRunnerAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: build.apprunner.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess
+
+  AppRunnerService:
+    Type: AWS::AppRunner::Service
+    Properties:
+      ServiceName:
+        Ref: ServiceName
+      SourceConfiguration:
+        AuthenticationConfiguration:
+          AccessRoleArn:
+            Fn::GetAtt: [AppRunnerAccessRole, Arn]
+        AutoDeploymentsEnabled: true
+        ImageRepository:
+          ImageIdentifier:
+            Ref: ContainerImage
+          ImageRepositoryType: ECR
+          ImageConfiguration:
+            Port: '8080'
+            RuntimeEnvironmentVariables:
+              - Name: ORCAST_ENV
+                Value:
+                  Ref: EnvironmentName
+              - Name: ORCAST_STORAGE_BACKEND
+                Value: aws
+              - Name: AWS_REGION
+                Value:
+                  Ref: AWS::Region
+              - Name: ORCAST_SIGHTINGS_TABLE
+                Value:
+                  Ref: SightingsTable
+              - Name: ORCAST_HOTSPOTS_TABLE
+                Value:
+                  Ref: HotspotsTable
+              - Name: ORCAST_REPORTS_TABLE
+                Value:
+                  Ref: ReportsTable
+              - Name: ORCAST_INGESTION_RUNS_TABLE
+                Value:
+                  Ref: IngestionRunsTable
+              - Name: ORCAST_REPORTS_BUCKET
+                Value:
+                  Ref: ReportsBucket
+              - Name: ORCAST_RAW_PAYLOAD_BUCKET
+                Value:
+                  Ref: RawPayloadBucket
+              - Name: ORCAST_ENABLE_LIVE_INATURALIST
+                Value:
+                  Ref: EnableLiveINaturalist
+              - Name: ORCAST_ENABLE_ORCAHELLO
+                Value:
+                  Ref: EnableOrcaHello
+      InstanceConfiguration:
+        Cpu: 1024
+        Memory: 2048
+        InstanceRoleArn:
+          Fn::GetAtt: [AppRunnerInstanceRole, Arn]
+      HealthCheckConfiguration:
+        Protocol: HTTP
+        Path: /health
+        Interval: 10
+        Timeout: 5
+        HealthyThreshold: 1
+        UnhealthyThreshold: 5
+
+  ScheduledIngestionPlaceholder:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Sub: '${ServiceName}-scheduled-ingestion-placeholder'
+      Description: Placeholder schedule for future SQS/Lambda ingestion trigger.
+      ScheduleExpression: rate(30 minutes)
+      State: DISABLED
+
+  ScheduledReportPlaceholder:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Sub: '${ServiceName}-scheduled-report-placeholder'
+      Description: Placeholder schedule for future hotspot and probability report refresh trigger.
+      ScheduleExpression: rate(1 hour)
+      State: DISABLED
+
+  FrontendOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name:
+          Fn::Sub: '${ServiceName}-frontend-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  FrontendDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment:
+          Fn::Sub: '${ServiceName} Angular frontend'
+        DefaultRootObject: index.html
+        Origins:
+          - Id: FrontendS3Origin
+            DomainName:
+              Fn::GetAtt: [FrontendBucket, RegionalDomainName]
+            OriginAccessControlId:
+              Ref: FrontendOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          TargetOriginId: FrontendS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        PriceClass: PriceClass_100
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource:
+              Fn::Sub: '${FrontendBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn:
+                  Fn::Sub: 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${FrontendDistribution}'
+
+Outputs:
+  BackendUrl:
+    Description: App Runner backend URL.
+    Value:
+      Fn::GetAtt: [AppRunnerService, ServiceUrl]
+  SightingsTableName:
+    Value:
+      Ref: SightingsTable
+  ReportsBucketName:
+    Value:
+      Ref: ReportsBucket
+  FrontendBucketName:
+    Value:
+      Ref: FrontendBucket
+  FrontendDistributionId:
+    Value:
+      Ref: FrontendDistribution
+  FrontendDistributionDomainName:
+    Value:
+      Fn::GetAtt: [FrontendDistribution, DomainName]
+

@@ -255,6 +255,8 @@ describe('StateService', () => {
       localStorage.setItem('orcast-state', JSON.stringify(testState));
       
       // Create new service instance to trigger loading
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
       const newService = TestBed.inject(StateService);
       const state = newService.getCurrentState();
       
@@ -268,6 +270,8 @@ describe('StateService', () => {
       localStorage.setItem('orcast-state', 'corrupted json data');
       
       // Should not crash and use default state
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
       const newService = TestBed.inject(StateService);
       const state = newService.getCurrentState();
       

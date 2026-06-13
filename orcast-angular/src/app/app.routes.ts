@@ -18,6 +18,22 @@ export const routes: Routes = [
     loadComponent: () => import('./components/main-map/main-map.component').then(c => c.MainMapComponent)
   },
   {
+    path: 'historical',
+    loadComponent: () => import('./components/historical-sightings/historical-sightings.component').then(c => c.HistoricalSightingsComponent)
+  },
+  {
+    path: 'realtime',
+    loadComponent: () => import('./components/realtime-detection/realtime-detection.component').then(c => c.RealtimeDetectionComponent)
+  },
+  {
+    path: 'ml-predictions',
+    loadComponent: () => import('./components/ml-predictions/ml-predictions.component').then(c => c.MLPredictionsComponent)
+  },
+  {
+    path: 'reports',
+    loadComponent: () => import('./components/probability-report/probability-report.component').then(c => c.ProbabilityReportComponent)
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./components/map-dashboard/map-dashboard.component').then(c => c.MapDashboardComponent)
   },
