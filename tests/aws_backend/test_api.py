@@ -4,7 +4,8 @@ from src.aws_backend.main import app, run_ingestion
 
 
 def test_health_and_seeded_sightings():
-    run_ingestion(include_live=False)
+    run = run_ingestion(include_live=False)
+    assert run.statuses[0].record_count > 0
     client = TestClient(app)
 
     health = client.get("/health")
@@ -17,6 +18,8 @@ def test_health_and_seeded_sightings():
     body = sightings.json()
     assert body["total_count"] > 0
     assert "validation_status" in body["sightings"][0]
+    full_sightings = client.get("/api/sightings").json()["sightings"]
+    assert full_sightings[0]["evidence"][0]["raw_payload_ref"].startswith("memory://raw/")
 
 
 def test_hotspots_forecast_and_probability_report():
@@ -42,4 +45,8 @@ def test_hotspots_forecast_and_probability_report():
     retrieved = client.get(f"/api/reports/{report_body['report_id']}")
     assert retrieved.status_code == 200
     assert retrieved.json()["report"]["report_id"] == report_body["report_id"]
+
+    csv = client.get(f"/api/reports/{report_body['report_id']}.csv")
+    assert csv.status_code == 200
+    assert "hotspot_id,name,center_latitude" in csv.text
 

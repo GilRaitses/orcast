@@ -204,6 +204,24 @@ Resources:
         HealthyThreshold: 1
         UnhealthyThreshold: 5
 
+  ScheduledIngestionPlaceholder:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Sub: '${ServiceName}-scheduled-ingestion-placeholder'
+      Description: Placeholder schedule for future SQS/Lambda ingestion trigger.
+      ScheduleExpression: rate(30 minutes)
+      State: DISABLED
+
+  ScheduledReportPlaceholder:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Sub: '${ServiceName}-scheduled-report-placeholder'
+      Description: Placeholder schedule for future hotspot and probability report refresh trigger.
+      ScheduleExpression: rate(1 hour)
+      State: DISABLED
+
 Outputs:
   BackendUrl:
     Description: App Runner backend URL.

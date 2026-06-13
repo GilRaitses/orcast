@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
+from uuid import uuid4
 
 from .config import Settings, settings
 from .models import Hotspot, IngestionRun, NormalizedSighting, ProbabilityReport
@@ -63,6 +64,10 @@ class StorageBackend(ABC):
     def put_ingestion_run(self, run: IngestionRun) -> None:
         ...
 
+    @abstractmethod
+    def put_raw_payload(self, source: str, payload: Any, run_id: str) -> str:
+        ...
+
 
 class MemoryStorage(StorageBackend):
     def __init__(self) -> None:
@@ -70,6 +75,7 @@ class MemoryStorage(StorageBackend):
         self.hotspots: Dict[str, Hotspot] = {}
         self.reports: Dict[str, ProbabilityReport] = {}
         self.ingestion_runs: Dict[str, IngestionRun] = {}
+        self.raw_payloads: Dict[str, Any] = {}
 
     def put_sightings(self, sightings: List[NormalizedSighting]) -> None:
         for sighting in sightings:
@@ -92,6 +98,11 @@ class MemoryStorage(StorageBackend):
 
     def put_ingestion_run(self, run: IngestionRun) -> None:
         self.ingestion_runs[run.run_id] = run
+
+    def put_raw_payload(self, source: str, payload: Any, run_id: str) -> str:
+        ref = f"memory://raw/{run_id}/{source}/{uuid4().hex[:12]}.json"
+        self.raw_payloads[ref] = payload
+        return ref
 
 
 class AwsStorage(StorageBackend):
@@ -150,6 +161,12 @@ class AwsStorage(StorageBackend):
         item = _decimalize(model_to_dict(run))
         item["pk"] = run.run_id
         self.ingestion_runs_table.put_item(Item=item)
+
+    def put_raw_payload(self, source: str, payload: Any, run_id: str) -> str:
+        key = f"raw/{run_id}/{source}/{uuid4().hex[:12]}.json"
+        body = json.dumps(payload, default=_json_default, indent=2)
+        self.s3.put_object(Bucket=self.cfg.raw_payload_bucket, Key=key, Body=body, ContentType="application/json")
+        return f"s3://{self.cfg.raw_payload_bucket}/{key}"
 
 
 def build_storage(cfg: Settings = settings) -> StorageBackend:

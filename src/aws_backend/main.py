@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
@@ -259,6 +260,38 @@ def probability_report(request: ProbabilityReportRequest) -> Dict[str, Any]:
     return {"status": "success", "report": model_to_dict(report)}
 
 
+@app.get("/api/reports/{report_id}.csv")
+def get_report_csv(report_id: str) -> Response:
+    report = storage.get_report(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    rows = [
+        "hotspot_id,name,center_latitude,center_longitude,radius_km,probability,confidence,detection_count,validated_detection_count,source_count"
+    ]
+    for hotspot in report.hotspots:
+        rows.append(
+            ",".join(
+                [
+                    hotspot.hotspot_id,
+                    _csv_escape(hotspot.name),
+                    str(hotspot.center_latitude),
+                    str(hotspot.center_longitude),
+                    str(hotspot.radius_km),
+                    str(hotspot.probability),
+                    str(hotspot.confidence),
+                    str(hotspot.detection_count),
+                    str(hotspot.validated_detection_count),
+                    str(hotspot.source_count),
+                ]
+            )
+        )
+    return Response(
+        "\n".join(rows) + "\n",
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={report_id}.csv"},
+    )
+
+
 @app.get("/api/reports/{report_id}")
 def get_report(report_id: str) -> Dict[str, Any]:
     report = storage.get_report(report_id)
@@ -289,7 +322,14 @@ def run_ingestion(include_live: bool = True) -> IngestionRun:
     statuses: List[SourceStatus] = []
     for adapter in adapters:
         result = adapter.fetch()
+        raw_payload_ref = None
+        if result.raw is not None:
+            raw_payload_ref = storage.put_raw_payload(adapter.source_name, result.raw, run.run_id)
         normalized = adapter.normalize(result)
+        if raw_payload_ref:
+            for sighting in normalized:
+                for evidence in sighting.evidence:
+                    evidence.raw_payload_ref = raw_payload_ref
         statuses.append(adapter.status(result, len(normalized)))
         all_sightings.extend(normalized)
         if result.error:
@@ -308,4 +348,10 @@ def run_ingestion(include_live: bool = True) -> IngestionRun:
     storage.put_ingestion_run(run)
     latest_ingestion_run = run
     return run
+
+
+def _csv_escape(value: str) -> str:
+    if any(char in value for char in [",", '"', "\n"]):
+        return '"' + value.replace('"', '""') + '"'
+    return value
 

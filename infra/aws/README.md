@@ -14,6 +14,7 @@ This directory contains the first AWS-native deployment path for ORCAST. The bac
   - probability report JSON exports
   - raw source payload snapshots
 - IAM roles for App Runner image pull and runtime data access
+- Disabled EventBridge placeholder rules for scheduled ingestion and scheduled report refresh. Wire these to SQS or Lambda when an async worker is added.
 
 ## Local run
 
@@ -29,6 +30,7 @@ curl http://localhost:8080/health
 curl http://localhost:8080/api/sightings
 curl http://localhost:8080/api/hotspots
 curl -X POST http://localhost:8080/api/reports/probability -H 'Content-Type: application/json' -d '{"min_confidence":0}'
+curl http://localhost:8080/api/reports/<report-id>.csv
 ```
 
 ## Build and push image
@@ -106,5 +108,6 @@ The backend reads these environment variables:
 
 - The local backend starts with the verified OBIS snapshot so it can generate hotspots and reports without AWS credentials.
 - The OrcaHello adapter rejects non-JSON responses. This prevents HTML status pages from being treated as sightings.
+- Raw source payloads are captured as `memory://raw/...` references during local runs and as `s3://...` references during AWS runs.
 - The first probability model is deterministic and transparent. It can be replaced by trained model artifacts after the AWS storage path is stable.
 
