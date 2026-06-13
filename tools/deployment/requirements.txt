@@ -21,5 +21,8 @@ google-cloud-core==2.4.1
 # Redis caching and pub/sub
 redis==5.0.1
 
+# AWS backend services
+boto3==1.43.29
+
 # HTTP requests
 requests==2.31.0 
