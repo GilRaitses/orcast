@@ -162,9 +162,9 @@ class BehavioralMLModel:
         
         try:
             client = get_bq_client()
-        if client is None:
-            return pd.DataFrame()
-        df = client.query(query).to_dataframe()
+            if client is None:
+                raise HTTPException(status_code=503, detail="BigQuery client is not available")
+            df = client.query(query).to_dataframe()
             
             # Process features
             features = []
