@@ -30,6 +30,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/ml-predictions/ml-predictions.component').then(c => c.MLPredictionsComponent)
   },
   {
+    path: 'reports',
+    loadComponent: () => import('./components/probability-report/probability-report.component').then(c => c.ProbabilityReportComponent)
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./components/map-dashboard/map-dashboard.component').then(c => c.MapDashboardComponent)
   },

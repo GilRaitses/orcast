@@ -20,6 +20,9 @@ import { CommonModule } from '@angular/common';
       <a routerLink="/ml-predictions" class="nav-btn" [class.active]="currentPage === 'ml-predictions'">
         ML Predictions
       </a>
+      <a routerLink="/reports" class="nav-btn" [class.active]="currentPage === 'reports'">
+        Reports
+      </a>
     </div>
   `,
   styles: [`
