@@ -97,7 +97,7 @@ class INaturalistAdapter(SourceAdapter):
                     timestamp=_parse_time(observed_at),
                     latitude=latitude,
                     longitude=longitude,
-                    common_name=obs.get("species_guess", "Killer Whale"),
+                    common_name=obs.get("species_guess") or "Killer Whale",
                     behavior="unknown",
                     confidence=reliability,
                     source_reliability=reliability,
