@@ -1,8 +1,10 @@
 import { defineConfig } from 'cypress'
 
+const backendUrl = process.env.CYPRESS_BACKEND_URL || 'http://localhost:8080'
+
 export default defineConfig({
   e2e: {
-    baseUrl: 'https://orca-904de.web.app',
+    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:4200',
     viewportWidth: 1280,
     viewportHeight: 720,
     video: true,
@@ -11,7 +13,6 @@ export default defineConfig({
     requestTimeout: 15000,
     responseTimeout: 15000,
     setupNodeEvents(on, config) {
-      // implement node event listeners here
       on('task', {
         log(message) {
           console.log(message);
@@ -20,18 +21,15 @@ export default defineConfig({
         copyScreenshot({ from, to }: { from: string; to: string }) {
           const fs = require('fs');
           const path = require('path');
-          
+
           const sourcePath = path.resolve(from);
           const destPath = path.resolve(to);
-          
+
           try {
-            // Ensure destination directory exists
             const destDir = path.dirname(destPath);
             if (!fs.existsSync(destDir)) {
               fs.mkdirSync(destDir, { recursive: true });
             }
-            
-            // Copy file
             fs.copyFileSync(sourcePath, destPath);
             console.log(`Screenshot copied: ${from} -> ${to}`);
             return null;
@@ -43,10 +41,11 @@ export default defineConfig({
       });
     },
     env: {
-      backendUrl: 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app',
+      backendUrl,
       gemmaUrl: 'https://cloud-run-gemma-2cvqukvhga-uw.a.run.app'
     },
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
+    excludeSpecPattern: 'cypress/e2e/legacy/**',
     supportFile: 'cypress/support/e2e.ts'
   },
   component: {
@@ -57,4 +56,4 @@ export default defineConfig({
     specPattern: '**/*.cy.ts',
     supportFile: 'cypress/support/component.ts'
   }
-}) 
+})

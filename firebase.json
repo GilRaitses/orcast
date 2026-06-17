@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "orca-904de",
     "public": "orcast-angular/dist/orcast-angular",
     "ignore": [
       "firebase.json",

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom, catchError, of } from 'rxjs';
 import { MapConfigurationService, MapConfigRequest } from './map-configuration.service';
 import { BackendService } from './backend.service';
+import { environment } from '../../environments/environment';
 
 export interface AgentMessage {
   id: string;
@@ -249,7 +250,14 @@ export class AgentOrchestratorService {
         );
 
         // Use the backend service to get REAL ML predictions
-        const predictionResponse = await this.backendService.generateMLPredictions('ensemble', 24, 0.5).toPromise();
+        const predictionResponse = await firstValueFrom(
+          this.backendService.generateMLPredictions('ensemble', 24, 0.5).pipe(
+            catchError(error => {
+              console.warn('ML prediction failed for location:', location, error);
+              return of(null);
+            })
+          )
+        );
         
         if (predictionResponse && predictionResponse.predictions) {
           // Convert API response to our spatial forecast format
@@ -270,7 +278,14 @@ export class AgentOrchestratorService {
 
         // Also try the spatial forecast endpoint
         try {
-          const spatialResponse = await this.backendService.getHistoricalSightings().toPromise();
+          const spatialResponse = await firstValueFrom(
+            this.backendService.getHistoricalSightings().pipe(
+              catchError(error => {
+                console.warn('Historical sightings failed for location:', location, error);
+                return of([]);
+              })
+            )
+          );
           if (spatialResponse && spatialResponse.length > 0) {
             // Convert historical sightings to spatial forecasts
             spatialResponse.slice(0, 3).forEach((sighting: any) => {
@@ -300,8 +315,8 @@ export class AgentOrchestratorService {
           forecastCount: forecasts.length,
           avgProbability: forecasts.reduce((sum, f) => sum + f.probability, 0) / forecasts.length,
           apiCalls: locations.length,
-          dataSource: 'ORCAST Production Backend API',
-          endpoint: 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app/forecast/quick'
+          dataSource: 'ORCAST AWS Backend API',
+          endpoint: `${environment.apiBaseUrl.replace(/\/$/, '')}/forecast/quick`
         }
       );
 

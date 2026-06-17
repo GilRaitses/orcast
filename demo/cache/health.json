@@ -1,0 +1,7 @@
+{
+  "status": "healthy",
+  "storage_backend": "aws",
+  "sightings_loaded": 8,
+  "hotspots_loaded": 8,
+  "timestamp": "2026-06-15T21:06:06.157755+00:00"
+}

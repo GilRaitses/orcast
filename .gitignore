@@ -90,6 +90,9 @@ node_modules/
 **/cypress/videos/*.mp4
 cypress/videos/
 orcast-angular/cypress/videos/
-# Cypress video files (too large for git)
-**/cypress/videos/*.mp4
-cypress/videos/
+
+# AWS deployment state backups (manifest is kept; timestamped backups are local)
+infra/aws/state/backups/
+
+# Local demo server pid
+demo/.demo-server.pid

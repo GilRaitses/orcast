@@ -1,0 +1,262 @@
+{
+  "status": "success",
+  "total_count": 8,
+  "hotspots": [
+    {
+      "hotspot_id": "hotspot_f7c6f98ae0",
+      "name": "Salmon Bank",
+      "center_latitude": 48.5847,
+      "center_longitude": -123.0731,
+      "radius_km": 1.0,
+      "probability": 0.6,
+      "confidence": 0.694,
+      "detection_count": 1,
+      "validated_detection_count": 1,
+      "source_count": 1,
+      "behavior_distribution": {
+        "feeding": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "14.8",
+        "avg_tide_height_ft": "1.8",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.72",
+        "reliability 0.96",
+        "recency 0.14"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2024_002"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378594Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_c94a1ac1b5",
+      "name": "Spieden Channel",
+      "center_latitude": 48.6234,
+      "center_longitude": -123.1567,
+      "radius_km": 1.0,
+      "probability": 0.582,
+      "confidence": 0.666,
+      "detection_count": 1,
+      "validated_detection_count": 1,
+      "source_count": 1,
+      "behavior_distribution": {
+        "feeding": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "18.1",
+        "avg_tide_height_ft": "2.7",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.64",
+        "reliability 0.96",
+        "recency 0.16"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2024_005"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378724Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_0ac0ffe5df",
+      "name": "Lime Kiln Point",
+      "center_latitude": 48.5158,
+      "center_longitude": -123.1526,
+      "radius_km": 1.0,
+      "probability": 0.564,
+      "confidence": 0.636,
+      "detection_count": 1,
+      "validated_detection_count": 0,
+      "source_count": 1,
+      "behavior_distribution": {
+        "feeding": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "15.2",
+        "avg_tide_height_ft": "2.1",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.55",
+        "reliability 0.96",
+        "recency 0.14"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2024_001"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378534Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_be9b108483",
+      "name": "Rosario Strait",
+      "center_latitude": 48.5789,
+      "center_longitude": -122.9876,
+      "radius_km": 1.0,
+      "probability": 0.557,
+      "confidence": 0.649,
+      "detection_count": 1,
+      "validated_detection_count": 0,
+      "source_count": 1,
+      "behavior_distribution": {
+        "feeding": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "13.9",
+        "avg_tide_height_ft": "1.5",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.59",
+        "reliability 0.96",
+        "recency 0.05"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2023_001"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378764Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_3f44d972ba",
+      "name": "Hein Bank",
+      "center_latitude": 48.6542,
+      "center_longitude": -123.0289,
+      "radius_km": 1.0,
+      "probability": 0.555,
+      "confidence": 0.663,
+      "detection_count": 1,
+      "validated_detection_count": 1,
+      "source_count": 1,
+      "behavior_distribution": {
+        "socializing": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "16.1",
+        "avg_tide_height_ft": "3.2",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.63",
+        "reliability 0.96",
+        "recency 0.14"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2024_003"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378640Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_ffdf982e38",
+      "name": "President Channel",
+      "center_latitude": 48.6123,
+      "center_longitude": -123.0456,
+      "radius_km": 1.0,
+      "probability": 0.551,
+      "confidence": 0.679,
+      "detection_count": 1,
+      "validated_detection_count": 1,
+      "source_count": 1,
+      "behavior_distribution": {
+        "socializing": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "15.6",
+        "avg_tide_height_ft": "2.4",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.68",
+        "reliability 0.96",
+        "recency 0.05"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2023_002"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378802Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_659355b6c3",
+      "name": "False Bay",
+      "center_latitude": 48.5432,
+      "center_longitude": -123.1234,
+      "radius_km": 1.0,
+      "probability": 0.502,
+      "confidence": 0.662,
+      "detection_count": 1,
+      "validated_detection_count": 1,
+      "source_count": 1,
+      "behavior_distribution": {
+        "resting": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "16.8",
+        "avg_tide_height_ft": "0.7",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.63",
+        "reliability 0.96",
+        "recency 0.02"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2022_001"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378840Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    },
+    {
+      "hotspot_id": "hotspot_73cb112f89",
+      "name": "Cattle Point",
+      "center_latitude": 48.4923,
+      "center_longitude": -122.9456,
+      "radius_km": 1.0,
+      "probability": 0.483,
+      "confidence": 0.604,
+      "detection_count": 1,
+      "validated_detection_count": 0,
+      "source_count": 1,
+      "behavior_distribution": {
+        "traveling": 1
+      },
+      "environmental_factors": {
+        "avg_water_temp_c": "17.3",
+        "avg_tide_height_ft": "0.9",
+        "environmental_record_count": "1"
+      },
+      "reason_codes": [
+        "1 sighting(s) in cluster",
+        "1 source(s)",
+        "validation 0.46",
+        "reliability 0.96",
+        "recency 0.15"
+      ],
+      "evidence_sighting_ids": [
+        "obis:OBIS_2024_004"
+      ],
+      "generated_at": "2026-06-15T20:59:22.378683Z",
+      "model_version": "aws-deterministic-hotspot-v1"
+    }
+  ]
+}

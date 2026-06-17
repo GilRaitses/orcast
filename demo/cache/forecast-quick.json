@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "location": {
+    "lat": 48.5158,
+    "lng": -123.1526
+  },
+  "prediction": {
+    "probability": 0.568,
+    "confidence": 0.644,
+    "nearest_hotspot": {
+      "hotspot_id": "hotspot_0ac0ffe5df",
+      "name": "Lime Kiln Point",
+      "distance_km": 0.0
+    },
+    "behavior_prediction": {
+      "primary": "feeding",
+      "probabilities": {
+        "feeding": 1.0
+      }
+    },
+    "environmental_factors": {
+      "tide_height_ft": -0.346,
+      "water_temp_c": 12.0,
+      "salinity_ppt": 30.5,
+      "current_speed": 0.5,
+      "quality": "live",
+      "data_sources": {
+        "tide": "NOAA CO-OPS",
+        "temperature": "NOAA CO-OPS"
+      }
+    },
+    "model_version": "aws-deterministic-hotspot-v1"
+  },
+  "environmental_conditions": {
+    "timestamp": "2026-06-15T21:06:12.728659Z",
+    "latitude": 48.5453,
+    "longitude": -123.0125,
+    "tide_height_ft": -0.346,
+    "water_temp_c": 12.0,
+    "salinity_ppt": 30.5,
+    "current_speed": 0.5,
+    "visibility_km": 15.0,
+    "data_sources": {
+      "tide": "NOAA CO-OPS",
+      "temperature": "NOAA CO-OPS"
+    },
+    "quality": "live"
+  }
+}

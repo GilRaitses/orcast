@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom, catchError, of } from 'rxjs';
 import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BackendService } from './backend.service';
 
@@ -408,9 +408,24 @@ export class AnalyticsDashboardService {
     try {
       // Fetch real data from backend APIs
       const [historicalData, predictions, environmentalData] = await Promise.all([
-        this.backendService.getHistoricalSightings().toPromise(),
-        this.backendService.generateMLPredictions('ensemble', 24, 0.7).toPromise(),
-        this.backendService.getHydrophoneData().toPromise()
+        firstValueFrom(this.backendService.getHistoricalSightings().pipe(
+          catchError(error => {
+            console.warn('Failed to get historical sightings:', error);
+            return of([]);
+          })
+        )),
+        firstValueFrom(this.backendService.generateMLPredictions('ensemble', 24, 0.7).pipe(
+          catchError(error => {
+            console.warn('Failed to generate ML predictions:', error);
+            return of(null);
+          })
+        )),
+        firstValueFrom(this.backendService.getHydrophoneData().pipe(
+          catchError(error => {
+            console.warn('Failed to get hydrophone data:', error);
+            return of([]);
+          })
+        ))
       ]);
 
       // Process data for analytics

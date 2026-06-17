@@ -230,6 +230,24 @@ Your deployed app will have these endpoints:
 - Set up alerts for approaching limits
 - Optimize code for performance
 
+## Three-host deployment matrix
+
+ORCAST supports three frontend hosts that all call the same App Runner backend:
+
+| Host | Build config | Deploy command |
+|------|--------------|----------------|
+| Firebase (`orca-904de.web.app`) | `firebase` | `cd orcast-angular && npm run build:firebase && firebase deploy --only hosting` |
+| AWS CloudFront | `aws` | See [infra/aws/README.md](../infra/aws/README.md) |
+| Cloudflare (`orcast.org`) | `cloudflare` | `wrangler deploy --env production` |
+
+Set the backend URL once with:
+
+```bash
+bash scripts/inject-backend-url.sh https://<apprunner-host>
+```
+
+The Cloudflare worker in [`src/index.js`](../src/index.js) proxies `/api/*`, `/forecast/*`, and `/health` to App Runner using `API_BASE_URL` from [`wrangler.toml`](../wrangler.toml).
+
 ## Next Steps
 
 1. **Custom Domain**: Configure custom domain routing

@@ -80,6 +80,18 @@ export class BackendService {
     );
   }
 
+  downloadReportCsv(reportId: string): Observable<Blob> {
+    return this.http.get(`${this.backendUrl}/api/reports/${reportId}.csv`, {
+      responseType: 'blob'
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * MVP agent response: formats the latest probability report as a natural-language answer.
+   * Full LLM agent wiring is deferred to a later phase.
+   */
   queryAgent(prompt: string): Observable<any> {
     return this.generateProbabilityReport(0).pipe(
       map(report => ({ answer: this.formatAgentResponse(prompt, report) })),

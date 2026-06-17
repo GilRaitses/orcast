@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://replace-with-aws-apprunner-url.example.com'
+  apiBaseUrl: 'https://pjrftm3bkv.us-west-2.awsapprunner.com',
+  contactFormUrl: '',
+  contactEmail: 'contact@orcast.org'
 };
-

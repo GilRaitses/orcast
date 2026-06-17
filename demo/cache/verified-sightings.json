@@ -1,0 +1,95 @@
+{
+  "status": "success",
+  "data_source": "aws_backend_normalized",
+  "total_count": 8,
+  "sightings": [
+    {
+      "sighting_id": "obis:OBIS_2023_001",
+      "latitude": 48.5789,
+      "longitude": -122.9876,
+      "observation_timestamp": "2023-05-20T12:30:00+00:00",
+      "behavior_primary": "feeding",
+      "pod_size": 7,
+      "data_quality_score": 0.591,
+      "location_name": "Rosario Strait",
+      "validation_status": "tentative"
+    },
+    {
+      "sighting_id": "obis:OBIS_2023_002",
+      "latitude": 48.6123,
+      "longitude": -123.0456,
+      "observation_timestamp": "2023-06-14T15:10:00+00:00",
+      "behavior_primary": "socializing",
+      "pod_size": 11,
+      "data_quality_score": 0.677,
+      "location_name": "President Channel",
+      "validation_status": "likely"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_003",
+      "latitude": 48.6542,
+      "longitude": -123.0289,
+      "observation_timestamp": "2024-07-03T16:20:00+00:00",
+      "behavior_primary": "socializing",
+      "pod_size": 6,
+      "data_quality_score": 0.631,
+      "location_name": "Hein Bank",
+      "validation_status": "likely"
+    },
+    {
+      "sighting_id": "obis:OBIS_2022_001",
+      "latitude": 48.5432,
+      "longitude": -123.1234,
+      "observation_timestamp": "2022-07-08T10:25:00+00:00",
+      "behavior_primary": "resting",
+      "pod_size": 5,
+      "data_quality_score": 0.627,
+      "location_name": "False Bay",
+      "validation_status": "likely"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_002",
+      "latitude": 48.5847,
+      "longitude": -123.0731,
+      "observation_timestamp": "2024-06-22T11:45:00+00:00",
+      "behavior_primary": "feeding",
+      "pod_size": 12,
+      "data_quality_score": 0.718,
+      "location_name": "Salmon Bank",
+      "validation_status": "likely"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_005",
+      "latitude": 48.6234,
+      "longitude": -123.1567,
+      "observation_timestamp": "2024-08-05T13:45:00+00:00",
+      "behavior_primary": "feeding",
+      "pod_size": 9,
+      "data_quality_score": 0.639,
+      "location_name": "Spieden Channel",
+      "validation_status": "likely"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_004",
+      "latitude": 48.4923,
+      "longitude": -122.9456,
+      "observation_timestamp": "2024-07-18T09:15:00+00:00",
+      "behavior_primary": "traveling",
+      "pod_size": 4,
+      "data_quality_score": 0.462,
+      "location_name": "Cattle Point",
+      "validation_status": "tentative"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_001",
+      "latitude": 48.5158,
+      "longitude": -123.1526,
+      "observation_timestamp": "2024-06-15T14:30:00+00:00",
+      "behavior_primary": "feeding",
+      "pod_size": 8,
+      "data_quality_score": 0.554,
+      "location_name": "Lime Kiln Point",
+      "validation_status": "tentative"
+    }
+  ]
+}

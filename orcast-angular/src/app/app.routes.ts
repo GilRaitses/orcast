@@ -3,7 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./components/live-ai-demo/live-ai-demo.component').then(c => c.LiveAIDemoComponent)
+    loadComponent: () => import('./components/landing/landing.component').then(c => c.LandingComponent)
+  },
+  {
+    path: 'partners',
+    loadComponent: () => import('./components/partners/partners.component').then(c => c.PartnersComponent)
   },
   {
     path: 'agent-spatial-demo',

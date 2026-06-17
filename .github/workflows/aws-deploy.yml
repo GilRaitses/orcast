@@ -1,0 +1,108 @@
+name: AWS Deploy
+
+on:
+  # Disabled after cost shutdown — use workflow_dispatch only to redeploy manually.
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-west-2
+  ECR_REPO: orcast-aws-backend
+  STACK_NAME: orcast-aws-backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Ensure ECR repository exists
+        run: |
+          aws ecr describe-repositories --repository-names "$ECR_REPO" --region "$AWS_REGION" >/dev/null 2>&1 \
+            || aws ecr create-repository --repository-name "$ECR_REPO" --region "$AWS_REGION"
+
+      - name: Build and push backend image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_URI="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG"
+          docker build --platform linux/amd64 -f tools/deployment/aws/Dockerfile -t "$IMAGE_URI" .
+          docker push "$IMAGE_URI"
+          echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
+
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name "$STACK_NAME" \
+            --template-file infra/aws/template.yaml \
+            --capabilities CAPABILITY_IAM \
+            --parameter-overrides \
+              ServiceName=orcast-aws-backend \
+              ContainerImage="$IMAGE_URI" \
+              EnableLiveINaturalist=false \
+              EnableOrcaHello=true \
+              CorsOrigins="https://orca-904de.web.app,https://orcast.org,https://www.orcast.org"
+
+      - name: Resolve stack outputs
+        id: stack
+        run: |
+          BACKEND_URL=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='BackendUrl'].OutputValue" \
+            --output text)
+          FRONTEND_BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" \
+            --output text)
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='FrontendDistributionId'].OutputValue" \
+            --output text)
+          echo "backend_url=https://$BACKEND_URL" >> "$GITHUB_OUTPUT"
+          echo "frontend_bucket=$FRONTEND_BUCKET" >> "$GITHUB_OUTPUT"
+          echo "distribution_id=$DISTRIBUTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Inject backend URL into Angular environments
+        run: |
+          BACKEND_URL="${{ steps.stack.outputs.backend_url }}"
+          for file in orcast-angular/src/environments/environment.*.ts; do
+            sed -i "s|https://BACKEND_URL_PLACEHOLDER|$BACKEND_URL|g" "$file"
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: orcast-angular/package-lock.json
+
+      - name: Build and deploy Angular frontend
+        run: |
+          cd orcast-angular
+          npm ci
+          npm run build -- --configuration=aws
+          aws s3 sync dist/orcast-angular "s3://${{ steps.stack.outputs.frontend_bucket }}" --delete
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.stack.outputs.distribution_id }}" \
+            --paths '/*'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Smoke test deployed backend
+        run: |
+          python -m pip install requests
+          python tools/testing/test_aws_backend_smoke.py --base-url "${{ steps.stack.outputs.backend_url }}"

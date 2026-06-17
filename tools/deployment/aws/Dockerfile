@@ -7,7 +7,7 @@ ENV ORCAST_ENV=production
 ENV ORCAST_STORAGE_BACKEND=aws
 ENV PORT=8080
 
-COPY requirements.txt .
+COPY tools/deployment/aws/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src ./src

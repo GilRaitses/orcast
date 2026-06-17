@@ -1,0 +1,50 @@
+name: Cloudflare Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'wrangler.toml'
+      - 'src/index.js'
+      - 'orcast-angular/**'
+      - '.github/workflows/cloudflare-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: orcast-angular/package-lock.json
+
+      - name: Inject backend URL
+        run: |
+          BACKEND_URL="${{ vars.ORCAST_BACKEND_URL }}"
+          if [ -n "$BACKEND_URL" ]; then
+            bash scripts/inject-backend-url.sh "$BACKEND_URL"
+          elif [ -f infra/aws/state/deployment-manifest.json ]; then
+            bash scripts/inject-backend-url.sh
+          else
+            echo "Set ORCAST_BACKEND_URL repo variable or commit infra/aws/state/deployment-manifest.json"
+            exit 1
+          fi
+
+      - name: Build Angular for Cloudflare
+        run: |
+          cd orcast-angular
+          npm ci
+          npm run build -- --configuration=cloudflare
+
+      - name: Deploy worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npm install -g wrangler
+          wrangler deploy --env production

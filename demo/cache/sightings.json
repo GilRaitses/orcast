@@ -1,0 +1,622 @@
+{
+  "status": "success",
+  "total_count": 8,
+  "sightings": [
+    {
+      "sighting_id": "obis:OBIS_2023_001",
+      "canonical_id": "canon_df3ab2161f530e90",
+      "source": "obis_verified",
+      "source_id": "OBIS_2023_001",
+      "source_url": null,
+      "timestamp": "2023-05-20T12:30:00Z",
+      "latitude": 48.5789,
+      "longitude": -122.9876,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "Rosario Strait",
+      "behavior": "feeding",
+      "pod": null,
+      "ecotype": null,
+      "count": 7,
+      "confidence": 0.92,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2023_001",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2023-05-20T12:30:00Z",
+        "latitude": 48.5789,
+        "longitude": -122.9876,
+        "tide_height_ft": 1.5,
+        "water_temp_c": 13.9,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "tentative",
+        "score": 0.591,
+        "independent_source_count": 1,
+        "spatial_matches": 3,
+        "temporal_matches": 0,
+        "evidence_score": 0.948,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "3 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.95"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "feeding",
+        "location_name": "Rosario Strait",
+        "environmental_context": {
+          "tidal_height": "1.5",
+          "water_temp_c": "13.9"
+        },
+        "data_quality_score": "0.92",
+        "observation_timestamp": "2023-05-20T12:30:00Z",
+        "latitude": "48.5789",
+        "pod_size": "7",
+        "sighting_id": "OBIS_2023_001",
+        "longitude": "-122.9876"
+      },
+      "ingested_at": "2026-06-15T20:59:22.221079Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2023_002",
+      "canonical_id": "canon_2a1074c642e9a4b5",
+      "source": "obis_verified",
+      "source_id": "OBIS_2023_002",
+      "source_url": null,
+      "timestamp": "2023-06-14T15:10:00Z",
+      "latitude": 48.6123,
+      "longitude": -123.0456,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "President Channel",
+      "behavior": "socializing",
+      "pod": null,
+      "ecotype": null,
+      "count": 11,
+      "confidence": 0.94,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2023_002",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2023-06-14T15:10:00Z",
+        "latitude": 48.6123,
+        "longitude": -123.0456,
+        "tide_height_ft": 2.4,
+        "water_temp_c": 15.6,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "likely",
+        "score": 0.677,
+        "independent_source_count": 1,
+        "spatial_matches": 5,
+        "temporal_matches": 0,
+        "evidence_score": 0.958,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "5 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.96"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "socializing",
+        "location_name": "President Channel",
+        "environmental_context": {
+          "tidal_height": "2.4",
+          "water_temp_c": "15.6"
+        },
+        "data_quality_score": "0.94",
+        "observation_timestamp": "2023-06-14T15:10:00Z",
+        "latitude": "48.6123",
+        "pod_size": "11",
+        "sighting_id": "OBIS_2023_002",
+        "longitude": "-123.0456"
+      },
+      "ingested_at": "2026-06-15T20:59:22.221098Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_003",
+      "canonical_id": "canon_343384b0278c07d0",
+      "source": "obis_verified",
+      "source_id": "OBIS_2024_003",
+      "source_url": null,
+      "timestamp": "2024-07-03T16:20:00Z",
+      "latitude": 48.6542,
+      "longitude": -123.0289,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "Hein Bank",
+      "behavior": "socializing",
+      "pod": null,
+      "ecotype": null,
+      "count": 6,
+      "confidence": 0.91,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2024_003",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2024-07-03T16:20:00Z",
+        "latitude": 48.6542,
+        "longitude": -123.0289,
+        "tide_height_ft": 3.2,
+        "water_temp_c": 16.1,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "likely",
+        "score": 0.631,
+        "independent_source_count": 1,
+        "spatial_matches": 4,
+        "temporal_matches": 0,
+        "evidence_score": 0.943,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "4 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.94"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "socializing",
+        "location_name": "Hein Bank",
+        "environmental_context": {
+          "tidal_height": "3.2",
+          "water_temp_c": "16.1"
+        },
+        "data_quality_score": "0.91",
+        "observation_timestamp": "2024-07-03T16:20:00Z",
+        "latitude": "48.6542",
+        "pod_size": "6",
+        "sighting_id": "OBIS_2024_003",
+        "longitude": "-123.0289"
+      },
+      "ingested_at": "2026-06-15T20:59:22.221018Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2022_001",
+      "canonical_id": "canon_4c6e9b94ac41245c",
+      "source": "obis_verified",
+      "source_id": "OBIS_2022_001",
+      "source_url": null,
+      "timestamp": "2022-07-08T10:25:00Z",
+      "latitude": 48.5432,
+      "longitude": -123.1234,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "False Bay",
+      "behavior": "resting",
+      "pod": null,
+      "ecotype": null,
+      "count": 5,
+      "confidence": 0.88,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2022_001",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2022-07-08T10:25:00Z",
+        "latitude": 48.5432,
+        "longitude": -123.1234,
+        "tide_height_ft": 0.7,
+        "water_temp_c": 16.8,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "likely",
+        "score": 0.627,
+        "independent_source_count": 1,
+        "spatial_matches": 4,
+        "temporal_matches": 0,
+        "evidence_score": 0.928,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "4 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.93"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "resting",
+        "location_name": "False Bay",
+        "environmental_context": {
+          "tidal_height": "0.7",
+          "water_temp_c": "16.8"
+        },
+        "data_quality_score": "0.88",
+        "observation_timestamp": "2022-07-08T10:25:00Z",
+        "latitude": "48.5432",
+        "pod_size": "5",
+        "sighting_id": "OBIS_2022_001",
+        "longitude": "-123.1234"
+      },
+      "ingested_at": "2026-06-15T20:59:22.221116Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_002",
+      "canonical_id": "canon_d80d0e231331591c",
+      "source": "obis_verified",
+      "source_id": "OBIS_2024_002",
+      "source_url": null,
+      "timestamp": "2024-06-22T11:45:00Z",
+      "latitude": 48.5847,
+      "longitude": -123.0731,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "Salmon Bank",
+      "behavior": "feeding",
+      "pod": null,
+      "ecotype": null,
+      "count": 12,
+      "confidence": 0.93,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2024_002",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2024-06-22T11:45:00Z",
+        "latitude": 48.5847,
+        "longitude": -123.0731,
+        "tide_height_ft": 1.8,
+        "water_temp_c": 14.8,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "likely",
+        "score": 0.718,
+        "independent_source_count": 1,
+        "spatial_matches": 6,
+        "temporal_matches": 0,
+        "evidence_score": 0.953,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "6 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.95"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "feeding",
+        "location_name": "Salmon Bank",
+        "environmental_context": {
+          "tidal_height": "1.8",
+          "water_temp_c": "14.8"
+        },
+        "data_quality_score": "0.93",
+        "observation_timestamp": "2024-06-22T11:45:00Z",
+        "latitude": "48.5847",
+        "pod_size": "12",
+        "sighting_id": "OBIS_2024_002",
+        "longitude": "-123.0731"
+      },
+      "ingested_at": "2026-06-15T20:59:22.220984Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_005",
+      "canonical_id": "canon_2c43623eac37785f",
+      "source": "obis_verified",
+      "source_id": "OBIS_2024_005",
+      "source_url": null,
+      "timestamp": "2024-08-05T13:45:00Z",
+      "latitude": 48.6234,
+      "longitude": -123.1567,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "Spieden Channel",
+      "behavior": "feeding",
+      "pod": null,
+      "ecotype": null,
+      "count": 9,
+      "confidence": 0.96,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2024_005",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2024-08-05T13:45:00Z",
+        "latitude": 48.6234,
+        "longitude": -123.1567,
+        "tide_height_ft": 2.7,
+        "water_temp_c": 18.1,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "likely",
+        "score": 0.639,
+        "independent_source_count": 1,
+        "spatial_matches": 4,
+        "temporal_matches": 0,
+        "evidence_score": 0.968,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "4 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.97"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "foraging",
+        "location_name": "Spieden Channel",
+        "environmental_context": {
+          "tidal_height": "2.7",
+          "water_temp_c": "18.1"
+        },
+        "data_quality_score": "0.96",
+        "observation_timestamp": "2024-08-05T13:45:00Z",
+        "latitude": "48.6234",
+        "pod_size": "9",
+        "sighting_id": "OBIS_2024_005",
+        "longitude": "-123.1567"
+      },
+      "ingested_at": "2026-06-15T20:59:22.221059Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_004",
+      "canonical_id": "canon_8af15088ba860cb0",
+      "source": "obis_verified",
+      "source_id": "OBIS_2024_004",
+      "source_url": null,
+      "timestamp": "2024-07-18T09:15:00Z",
+      "latitude": 48.4923,
+      "longitude": -122.9456,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "Cattle Point",
+      "behavior": "traveling",
+      "pod": null,
+      "ecotype": null,
+      "count": 4,
+      "confidence": 0.89,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2024_004",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2024-07-18T09:15:00Z",
+        "latitude": 48.4923,
+        "longitude": -122.9456,
+        "tide_height_ft": 0.9,
+        "water_temp_c": 17.3,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "tentative",
+        "score": 0.462,
+        "independent_source_count": 1,
+        "spatial_matches": 0,
+        "temporal_matches": 0,
+        "evidence_score": 0.933,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "0 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.93"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "traveling",
+        "location_name": "Cattle Point",
+        "environmental_context": {
+          "tidal_height": "0.9",
+          "water_temp_c": "17.3"
+        },
+        "data_quality_score": "0.89",
+        "observation_timestamp": "2024-07-18T09:15:00Z",
+        "latitude": "48.4923",
+        "pod_size": "4",
+        "sighting_id": "OBIS_2024_004",
+        "longitude": "-122.9456"
+      },
+      "ingested_at": "2026-06-15T20:59:22.221037Z"
+    },
+    {
+      "sighting_id": "obis:OBIS_2024_001",
+      "canonical_id": "canon_307365472f6ddc5d",
+      "source": "obis_verified",
+      "source_id": "OBIS_2024_001",
+      "source_url": null,
+      "timestamp": "2024-06-15T14:30:00Z",
+      "latitude": 48.5158,
+      "longitude": -123.1526,
+      "species": "Orcinus orca",
+      "common_name": "Killer Whale",
+      "location_name": "Lime Kiln Point",
+      "behavior": "feeding",
+      "pod": null,
+      "ecotype": null,
+      "count": 8,
+      "confidence": 0.95,
+      "source_reliability": 0.96,
+      "evidence": [
+        {
+          "source": "obis_verified",
+          "source_id": "OBIS_2024_001",
+          "source_url": null,
+          "observed_at": null,
+          "reliability": 0.96,
+          "quality_grade": "verified",
+          "evidence_urls": [],
+          "raw_payload_ref": "s3://198456344617-us-west-2-orcast-aws-backend-raw-payloads/raw/ingest_8954eacdee8b/obis_verified/fdb9d9555e65.json",
+          "notes": "Local OBIS verified seed dataset"
+        }
+      ],
+      "environmental": {
+        "timestamp": "2024-06-15T14:30:00Z",
+        "latitude": 48.5158,
+        "longitude": -123.1526,
+        "tide_height_ft": 2.1,
+        "water_temp_c": 15.2,
+        "salinity_ppt": null,
+        "current_speed": null,
+        "visibility_km": null,
+        "data_sources": {
+          "historical": "OBIS verified local snapshot"
+        },
+        "quality": "historical_verified"
+      },
+      "cross_validation": {
+        "status": "tentative",
+        "score": 0.554,
+        "independent_source_count": 1,
+        "spatial_matches": 2,
+        "temporal_matches": 0,
+        "evidence_score": 0.963,
+        "environmental_score": 0.65,
+        "matched_sighting_ids": [],
+        "reasons": [
+          "1 independent source(s)",
+          "2 spatial match(es)",
+          "0 temporal match(es)",
+          "evidence score 0.96"
+        ]
+      },
+      "raw": {
+        "behavior_primary": "foraging",
+        "location_name": "Lime Kiln Point",
+        "environmental_context": {
+          "tidal_height": "2.1",
+          "water_temp_c": "15.2"
+        },
+        "data_quality_score": "0.95",
+        "observation_timestamp": "2024-06-15T14:30:00Z",
+        "latitude": "48.5158",
+        "pod_size": "8",
+        "sighting_id": "OBIS_2024_001",
+        "longitude": "-123.1526"
+      },
+      "ingested_at": "2026-06-15T20:59:22.220956Z"
+    }
+  ]
+}

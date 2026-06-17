@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "environmental_data": {
+    "timestamp": "2026-06-15T21:06:11.738371Z",
+    "latitude": 48.5453,
+    "longitude": -123.0125,
+    "tide_height_ft": -0.346,
+    "water_temp_c": 12.0,
+    "salinity_ppt": 30.5,
+    "current_speed": 0.5,
+    "visibility_km": 15.0,
+    "data_sources": {
+      "tide": "NOAA CO-OPS",
+      "temperature": "NOAA CO-OPS"
+    },
+    "quality": "live"
+  }
+}

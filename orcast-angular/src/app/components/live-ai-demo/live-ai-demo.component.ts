@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { interval, Subscription, timer } from 'rxjs';
+import { interval, Subscription, timer, firstValueFrom } from 'rxjs';
+import { BackendService } from '../../services/backend.service';
+import { environment } from '../../../environments/environment';
 
 interface AgentMessage {
   timestamp: Date;
@@ -853,6 +855,9 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('transcriptContainer', { static: false }) transcriptContainer!: ElementRef;
   @ViewChild('heatmapCanvas', { static: false }) heatmapCanvas!: ElementRef;
 
+  private readonly backendService = inject(BackendService);
+  private readonly apiBaseUrl = environment.apiBaseUrl.replace(/\/$/, '');
+
   isRunning = false;
   isAnalyzing = false;
   activeAgents = 0;
@@ -1478,31 +1483,20 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadRealDataFromEndpoints() {
-    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
-    
-    // Fetch real recent sightings
-    this.fetchRecentSightings(backendUrl);
-    
-    // Fetch real ML predictions  
-    this.fetchMLPredictions(backendUrl);
-    
-    // Fetch real environmental data
-    this.fetchEnvironmentalData(backendUrl);
-    
-    // Fetch real hydrophone data
-    this.fetchHydrophoneData(backendUrl);
+    this.fetchRecentSightings(this.apiBaseUrl);
+    this.fetchMLPredictions(this.apiBaseUrl);
+    this.fetchEnvironmentalData();
+    this.fetchHydrophoneData(this.apiBaseUrl);
   }
 
-  // Real data loading methods - NOW USING GEMMA 3 GPU SERVICE
+  // Real data loading methods — ORCAST AWS backend
   private async loadCurrentMonthSightings() {
-    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
-    
-    this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying ORCAST Gemma 3 GPU service (europe-west4) for available data...');
+    this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying ORCAST AWS backend for forecast data...');
     
     // The sightings endpoints don't exist - only forecast/quick works
     // So we'll use the forecast endpoint to get prediction data instead
     try {
-      const response = await fetch(`${backendUrl}/forecast/quick`, {
+      const response = await fetch(`${this.apiBaseUrl}/forecast/quick`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1543,21 +1537,18 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
         `Failed to connect to backend API: ${error}`);
     }
     
-    // Show user what service is being used
-    this.addAgentMessage('🚀 Service Switch', 'coordination', 
-      'NOW USING: orcast-gemma3-gpu service in europe-west4 region (Gemma 3 GPU-accelerated AI)');
-    
-    this.addAgentMessage('ℹ️ Backend Status', 'data', 
-      'Testing Gemma 3 GPU service endpoints | Previous whale prediction endpoints may not be available on this AI service');
+    this.addAgentMessage('🚀 Service Switch', 'coordination',
+      `Using ORCAST AWS backend at ${this.apiBaseUrl}`);
+
+    this.addAgentMessage('ℹ️ Backend Status', 'data',
+      'Connected to AWS sightings, hotspot, and forecast API');
   }
 
   private async loadRecentActivity() {
-    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
-    
     this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying backend for recent activity predictions...');
     
     try {
-      const response = await fetch(`${backendUrl}/forecast/quick`, {
+      const response = await fetch(`${this.apiBaseUrl}/forecast/quick`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1599,13 +1590,11 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async loadFeedingBehaviorData() {
-    const backendUrl = 'https://orcast-gemma3-gpu-2cvqukvhga.europe-west4.run.app';
-    
     this.addAgentMessage('🔍 Data Collector', 'processing', 'Querying backend for feeding behavior predictions...');
     
     try {
       // Use the working forecast endpoint with feeding behavior focus
-      const response = await fetch(`${backendUrl}/forecast/quick`, {
+      const response = await fetch(`${this.apiBaseUrl}/forecast/quick`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1927,7 +1916,7 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private async fetchMLPredictions(backendUrl: string) {
     try {
-      const response = await fetch(`${backendUrl}/forecast/quick`, {
+      const response = await fetch(`${this.apiBaseUrl}/forecast/quick`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lat: 48.5465, lng: -123.0307 })
@@ -1962,33 +1951,29 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private async fetchEnvironmentalData(backendUrl: string) {
+  private async fetchEnvironmentalData() {
     try {
-      const response = await fetch(`${backendUrl}/forecast/environmental`);
-      const data = await response.json();
-      
+      const data = await firstValueFrom(this.backendService.getEnvironmentalData());
       this.environmentalData = {
-        tide: data.environmental_data?.tide_height || '2.3m rising',
-        wind: data.environmental_data?.wind_speed || '15kt SW', 
-        salmon: data.environmental_data?.salmon_activity || 'High activity',
-        temperature: data.environmental_data?.temperature || '12.4°C'
+        tide: data?.tide_height_ft ? `${data.tide_height_ft}ft` : '2.3m rising',
+        wind: data?.wind_speed || '15kt SW',
+        salmon: data?.salmon_activity || 'High activity',
+        temperature: data?.water_temp_c ? `${data.water_temp_c}°C` : '12.4°C'
       };
-      
-      this.addAgentMessage('🌊 Environmental Agent', 'data', 
-        'Environmental data integrated from forecast system',
+      this.addAgentMessage('🌊 Environmental Agent', 'data',
+        'Environmental data integrated from AWS backend',
         {
           ...this.environmentalData,
-          endpoint: '/forecast/environmental',
+          endpoint: '/api/environmental',
           status: 'success'
         }
       );
-      
     } catch (error) {
-      this.addAgentMessage('🌊 Environmental Agent', 'data', 
-        'Fetching environmental data - connecting to forecast system',
-        { 
-          endpoint: '/forecast/environmental',
-          status: 'fetching' 
+      this.addAgentMessage('🌊 Environmental Agent', 'data',
+        'Fetching environmental data from AWS backend',
+        {
+          endpoint: '/api/environmental',
+          status: 'fetching'
         }
       );
     }

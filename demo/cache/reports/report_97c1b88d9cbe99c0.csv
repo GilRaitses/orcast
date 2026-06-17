@@ -1,0 +1,9 @@
+hotspot_id,name,center_latitude,center_longitude,radius_km,probability,confidence,detection_count,validated_detection_count,source_count
+hotspot_f7c6f98ae0,Salmon Bank,48.5847,-123.0731,1.0,0.6,0.694,1,1,1
+hotspot_c94a1ac1b5,Spieden Channel,48.6234,-123.1567,1.0,0.582,0.666,1,1,1
+hotspot_0ac0ffe5df,Lime Kiln Point,48.5158,-123.1526,1.0,0.564,0.636,1,0,1
+hotspot_be9b108483,Rosario Strait,48.5789,-122.9876,1.0,0.557,0.649,1,0,1
+hotspot_3f44d972ba,Hein Bank,48.6542,-123.0289,1.0,0.555,0.663,1,1,1
+hotspot_ffdf982e38,President Channel,48.6123,-123.0456,1.0,0.551,0.679,1,1,1
+hotspot_659355b6c3,False Bay,48.5432,-123.1234,1.0,0.502,0.662,1,1,1
+hotspot_73cb112f89,Cattle Point,48.4923,-122.9456,1.0,0.483,0.604,1,0,1

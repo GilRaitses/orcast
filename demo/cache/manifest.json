@@ -1,0 +1,62 @@
+{
+  "recorded_at": "2026-06-15T21:06:03.426932+00:00",
+  "source_url": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+  "files": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "file": "health.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sightings",
+      "file": "sightings.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/verified-sightings",
+      "file": "verified-sightings.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/hotspots",
+      "file": "hotspots.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/live-hydrophones",
+      "file": "live-hydrophones.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/environmental",
+      "file": "environmental.json"
+    },
+    {
+      "method": "POST",
+      "path": "/forecast/quick",
+      "file": "forecast-quick.json"
+    },
+    {
+      "method": "POST",
+      "path": "/forecast/spatial",
+      "file": "forecast-spatial.json"
+    },
+    {
+      "method": "POST",
+      "path": "/api/reports/probability",
+      "file": "probability-report.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/report_f5a17f56cf62884e",
+      "file": "reports/report_f5a17f56cf62884e.json"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/report_f5a17f56cf62884e.csv",
+      "file": "reports/report_f5a17f56cf62884e.csv"
+    }
+  ],
+  "sample_report_id": "report_f5a17f56cf62884e"
+}

@@ -14,13 +14,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: orcast-angular/package-lock.json
       - name: Install dependencies
         run: cd orcast-angular && npm ci
+      - name: Inject backend URL
+        run: |
+          BACKEND_URL="${{ vars.ORCAST_BACKEND_URL }}"
+          if [ -z "$BACKEND_URL" ] && [ -f infra/aws/state/deployment-manifest.json ]; then
+            bash scripts/inject-backend-url.sh
+          elif [ -n "$BACKEND_URL" ]; then
+            bash scripts/inject-backend-url.sh "$BACKEND_URL"
+          fi
       - name: Build Angular app
-        run: cd orcast-angular && npm run build:prod
+        run: cd orcast-angular && npm run build -- --configuration=firebase
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:

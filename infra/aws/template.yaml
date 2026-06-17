@@ -19,6 +19,9 @@ Parameters:
     Type: String
     Default: 'true'
     AllowedValues: ['true', 'false']
+  CorsOrigins:
+    Type: String
+    Default: 'https://orca-904de.web.app,https://orcast.org,https://www.orcast.org'
 
 Resources:
   SightingsTable:
@@ -202,6 +205,11 @@ Resources:
               - Name: ORCAST_ENABLE_ORCAHELLO
                 Value:
                   Ref: EnableOrcaHello
+              - Name: ORCAST_ENABLE_LIVE_NOAA
+                Value: 'true'
+              - Name: ORCAST_CORS_ORIGINS
+                Value:
+                  Ref: CorsOrigins
       InstanceConfiguration:
         Cpu: 1024
         Memory: 2048
@@ -215,23 +223,158 @@ Resources:
         HealthyThreshold: 1
         UnhealthyThreshold: 5
 
-  ScheduledIngestionPlaceholder:
-    Type: AWS::Events::Rule
+  SchedulerLambdaRole:
+    Type: AWS::IAM::Role
     Properties:
-      Name:
-        Fn::Sub: '${ServiceName}-scheduled-ingestion-placeholder'
-      Description: Placeholder schedule for future SQS/Lambda ingestion trigger.
-      ScheduleExpression: rate(30 minutes)
-      State: DISABLED
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
-  ScheduledReportPlaceholder:
+  ScheduledIngestionFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: AppRunnerService
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-scheduled-ingestion'
+      Runtime: python3.12
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [SchedulerLambdaRole, Arn]
+      Timeout: 120
+      Environment:
+        Variables:
+          BACKEND_URL:
+            Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
+          API_PATH: /api/sightings/ingest?include_live=true
+      Code:
+        ZipFile: |
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+
+          def handler(event, context):
+              base = os.environ["BACKEND_URL"].rstrip("/")
+              path = os.environ.get("API_PATH", "/api/sightings/ingest?include_live=true")
+              url = f"{base}{path}"
+              req = urllib.request.Request(
+                  url,
+                  data=json.dumps({"include_live": True}).encode(),
+                  method="POST",
+                  headers={"Content-Type": "application/json"},
+              )
+              try:
+                  with urllib.request.urlopen(req, timeout=120) as resp:
+                      return {"statusCode": resp.status, "body": resp.read().decode()}
+              except urllib.error.HTTPError as exc:
+                  return {"statusCode": exc.code, "body": exc.read().decode()}
+
+  ScheduledReportFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: AppRunnerService
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-scheduled-report'
+      Runtime: python3.12
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [SchedulerLambdaRole, Arn]
+      Timeout: 180
+      Environment:
+        Variables:
+          BACKEND_URL:
+            Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
+      Code:
+        ZipFile: |
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+
+          def _post(base, path, payload=None):
+              url = f"{base.rstrip('/')}{path}"
+              data = json.dumps(payload or {}).encode()
+              req = urllib.request.Request(
+                  url,
+                  data=data,
+                  method="POST",
+                  headers={"Content-Type": "application/json"},
+              )
+              with urllib.request.urlopen(req, timeout=120) as resp:
+                  return resp.status, resp.read().decode()
+
+          def handler(event, context):
+              base = os.environ["BACKEND_URL"]
+              try:
+                  recompute_status, recompute_body = _post(base, "/api/hotspots/recompute")
+                  report_status, report_body = _post(
+                      base,
+                      "/api/reports/probability",
+                      {"region": "san_juan_islands", "min_confidence": 0, "report_format": "json"},
+                  )
+                  return {
+                      "statusCode": 200,
+                      "body": json.dumps(
+                          {
+                              "recompute": {"status": recompute_status, "body": recompute_body},
+                              "report": {"status": report_status, "body": report_body},
+                          }
+                      ),
+                  }
+              except urllib.error.HTTPError as exc:
+                  return {"statusCode": exc.code, "body": exc.read().decode()}
+
+  ScheduledIngestionRule:
     Type: AWS::Events::Rule
     Properties:
       Name:
-        Fn::Sub: '${ServiceName}-scheduled-report-placeholder'
-      Description: Placeholder schedule for future hotspot and probability report refresh trigger.
+        Fn::Sub: '${ServiceName}-scheduled-ingestion'
+      Description: Triggers sighting ingestion every 30 minutes.
+      ScheduleExpression: rate(30 minutes)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt: [ScheduledIngestionFunction, Arn]
+          Id: ScheduledIngestionTarget
+
+  ScheduledReportRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Sub: '${ServiceName}-scheduled-report'
+      Description: Recomputes hotspots and refreshes probability reports hourly.
       ScheduleExpression: rate(1 hour)
-      State: DISABLED
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt: [ScheduledReportFunction, Arn]
+          Id: ScheduledReportTarget
+
+  ScheduledIngestionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: ScheduledIngestionFunction
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt: [ScheduledIngestionRule, Arn]
+
+  ScheduledReportPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: ScheduledReportFunction
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt: [ScheduledReportRule, Arn]
 
   FrontendOriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl

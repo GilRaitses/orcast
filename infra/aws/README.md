@@ -148,8 +148,47 @@ The backend reads these environment variables:
 
 ## Notes
 
+- Scheduled ingestion runs every 30 minutes via EventBridge → Lambda → `POST /api/sightings/ingest?include_live=true`.
+- Hotspot and probability report refresh runs hourly via EventBridge → Lambda.
 - The local backend starts with the verified OBIS snapshot so it can generate hotspots and reports without AWS credentials.
 - The OrcaHello adapter rejects non-JSON responses. This prevents HTML status pages from being treated as sightings.
 - Raw source payloads are captured as `memory://raw/...` references during local runs and as `s3://...` references during AWS runs.
 - The first probability model is deterministic and transparent. It can be replaced by trained model artifacts after the AWS storage path is stable.
+
+## Cost estimate
+
+```bash
+bash tools/deployment/aws/estimate-cost.sh
+```
+
+Typical idle/low-traffic cost is **~$70–85/month**, driven mostly by always-on App Runner (1 vCPU, 2 GB RAM). See the script output for a line-item breakdown.
+
+## Safe teardown and redeploy
+
+**Simple scripts (recommended):**
+
+```bash
+bash scripts/rebuild.sh              # AWS deploy + record demo cache
+bash scripts/rebuild.sh --local-only # refresh demo/cache only (free)
+bash scripts/teardown.sh             # tear down AWS; offline demo still works
+bash scripts/demo-start.sh           # serve cached API on :8080 (no AWS)
+bash scripts/demo-start.sh stop
+```
+
+See [`demo/README.md`](../../demo/README.md) for the self-contained offline demo.
+
+**Low-level scripts:**
+
+```bash
+# Tear down everything (backs up first, empties S3, deletes stack + ECR)
+bash tools/deployment/aws/teardown.sh
+
+# Redeploy from repo (builds image, deploys stack, syncs frontend, smoke test, backup)
+bash tools/deployment/aws/deploy.sh
+
+# Backup only (stack outputs, env files, manifest)
+bash tools/deployment/aws/backup-state.sh
+```
+
+`infra/aws/state/deployment-manifest.json` records the last known URLs and image tag for recovery.
 

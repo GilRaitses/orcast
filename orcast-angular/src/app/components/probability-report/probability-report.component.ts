@@ -23,8 +23,12 @@ import { ProbabilityReportResponse } from '../../models/orca-sighting.model';
           <input type="range" min="0" max="95" step="5" [value]="minConfidence * 100" (input)="setConfidence($event)">
         </label>
 
-        <button (click)="generateReport()" [disabled]="isLoading">
+        <button (click)="generateReport()" [disabled]="isLoading" data-cy="generate-report">
           {{ isLoading ? 'Generating report...' : 'Generate report' }}
+        </button>
+
+        <button *ngIf="report" (click)="downloadCsv()" [disabled]="isDownloading" data-cy="download-csv">
+          {{ isDownloading ? 'Downloading...' : 'Download CSV' }}
         </button>
 
         <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
@@ -173,6 +177,7 @@ export class ProbabilityReportComponent implements OnInit {
   minConfidence = 0;
   report: ProbabilityReportResponse | null = null;
   isLoading = false;
+  isDownloading = false;
   errorMessage = '';
 
   constructor(private backendService: BackendService) {}
@@ -197,6 +202,28 @@ export class ProbabilityReportComponent implements OnInit {
       error: error => {
         this.errorMessage = error.message || 'Failed to generate report';
         this.isLoading = false;
+      }
+    });
+  }
+
+  downloadCsv(): void {
+    if (!this.report?.report_id) {
+      return;
+    }
+    this.isDownloading = true;
+    this.backendService.downloadReportCsv(this.report.report_id).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${this.report!.report_id}.csv`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+        this.isDownloading = false;
+      },
+      error: error => {
+        this.errorMessage = error.message || 'Failed to download CSV';
+        this.isDownloading = false;
       }
     });
   }
