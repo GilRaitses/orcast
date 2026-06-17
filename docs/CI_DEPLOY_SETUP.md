@@ -4,24 +4,29 @@ Why GitHub Actions deploy jobs fail and how to fix them.
 
 ## Firebase Hosting (orcast.org)
 
-**Symptom:** `403 Firebase Management API has not been used...` or `Caller does not have required permission`
+**Symptom:** `Failed to get Firebase project orca-904de` or `401` on deploy
+
+**Root cause:** GitHub secret `FIREBASE_SERVICE_ACCOUNT_ORCA_904DE` must be a service account key from Firebase project **`orca-904de`**, not `orca-466204`.
 
 **Fix:**
 
 1. Open [Firebase console](https://console.firebase.google.com/) → project **orca-904de**
-2. Enable [Firebase Management API](https://console.firebase.google.com/project/orca-904de/settings/general)
-3. In GCP IAM for project `orca-904de`, grant the CI service account:
-   - Firebase Hosting Admin
+2. Enable [Firebase Management API](https://console.firebase.google.com/project/orca-904de/settings/general) and Firebase Hosting API
+3. Use service account `firebase-adminsdk-fbsvc@orca-904de.iam.gserviceaccount.com` (or `github-action-*@orca-904de.iam.gserviceaccount.com`) with roles:
+   - Firebase Admin (or Firebase Hosting Admin)
    - Service Usage Consumer
-4. Regenerate a service account key (Project settings → Service accounts → Generate new private key)
-5. Update GitHub secret `FIREBASE_SERVICE_ACCOUNT_ORCA_904DE` with the full JSON
+4. Generate key: `gcloud iam service-accounts keys create key.json --iam-account=firebase-adminsdk-fbsvc@orca-904de.iam.gserviceaccount.com --project=orca-904de`
+5. Update GitHub secret: `gh secret set FIREBASE_SERVICE_ACCOUNT_ORCA_904DE < key.json`
 
 **Local deploy (fastest for orcast.org tonight):**
 
 ```bash
-firebase login
+firebase logout   # clear expired user tokens if you see 401
+export GOOGLE_APPLICATION_CREDENTIALS=/path/to/orca-904de-sa-key.json
 bash tools/deployment/firebase/deploy.sh
 ```
+
+Or interactive: `firebase login --reauth` then `bash tools/deployment/firebase/deploy.sh`
 
 ## Cloudflare Worker (orcast.org API proxy)
 

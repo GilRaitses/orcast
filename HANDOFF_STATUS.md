@@ -1,6 +1,6 @@
 # ORCAST AWS Handoff — Coordination Status
 
-**Last updated:** 2026-06-17 (API Truth deploy)
+**Last updated:** 20260617T064530Z
 
 ## Live URLs
 
@@ -13,8 +13,6 @@ AWS_REGION=us-west-2
 ```
 
 Run `bash scripts/inject-backend-url.sh` before any production build.
-
-**API contract:** [docs/API.md](docs/API.md)
 
 ## Stream status
 
@@ -35,4 +33,5 @@ Run `bash scripts/inject-backend-url.sh` before any production build.
 - test_aws_backend_smoke.py (local + deployed): passed
 - Cypress aws-backend-smoke + probability-report: passed
 - docs ghost endpoint grep (active docs): 0 matches
+
 
