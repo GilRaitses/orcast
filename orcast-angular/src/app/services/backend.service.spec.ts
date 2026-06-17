@@ -6,7 +6,7 @@ import { BackendService } from './backend.service';
 describe('BackendService', () => {
   let service: BackendService;
   let httpMock: HttpTestingController;
-  const backendUrl = 'http://localhost:8080';
+  const backendUrl = 'http://127.0.0.1:8080';
 
   beforeEach(() => {
     TestBed.configureTestingModule({

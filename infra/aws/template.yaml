@@ -238,7 +238,6 @@ Resources:
 
   ScheduledIngestionFunction:
     Type: AWS::Lambda::Function
-    DependsOn: AppRunnerService
     Properties:
       FunctionName:
         Fn::Sub: '${ServiceName}-scheduled-ingestion'
@@ -277,7 +276,6 @@ Resources:
 
   ScheduledReportFunction:
     Type: AWS::Lambda::Function
-    DependsOn: AppRunnerService
     Properties:
       FunctionName:
         Fn::Sub: '${ServiceName}-scheduled-report'

@@ -13,6 +13,7 @@ on:
 
 jobs:
   deploy:
+    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,3 +49,12 @@ jobs:
         run: |
           npm install -g wrangler
           wrangler deploy --env production
+
+  skip-not-configured:
+    if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' || secrets.CLOUDFLARE_ACCOUNT_ID == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::notice::Cloudflare deploy skipped."
+          echo "Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to GitHub repo secrets to enable worker deploy."
+          echo "See docs/CI_DEPLOY_SETUP.md"
