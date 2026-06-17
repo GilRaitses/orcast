@@ -13,18 +13,32 @@ on:
 
 jobs:
   deploy:
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check Cloudflare credentials
+        id: credentials
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CF_TOKEN" ] && [ -n "$CF_ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare deploy skipped. Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. See docs/CI_DEPLOY_SETUP.md"
+          fi
+
       - uses: actions/setup-node@v4
+        if: steps.credentials.outputs.ready == 'true'
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: orcast-angular/package-lock.json
 
       - name: Inject backend URL
+        if: steps.credentials.outputs.ready == 'true'
         run: |
           BACKEND_URL="${{ vars.ORCAST_BACKEND_URL }}"
           if [ -n "$BACKEND_URL" ]; then
@@ -37,24 +51,17 @@ jobs:
           fi
 
       - name: Build Angular for Cloudflare
+        if: steps.credentials.outputs.ready == 'true'
         run: |
           cd orcast-angular
           npm ci
           npm run build -- --configuration=cloudflare
 
       - name: Deploy worker
+        if: steps.credentials.outputs.ready == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           npm install -g wrangler
           wrangler deploy --env production
-
-  skip-not-configured:
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' || secrets.CLOUDFLARE_ACCOUNT_ID == '' }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "::notice::Cloudflare deploy skipped."
-          echo "Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to GitHub repo secrets to enable worker deploy."
-          echo "See docs/CI_DEPLOY_SETUP.md"
