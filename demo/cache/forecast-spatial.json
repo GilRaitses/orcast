@@ -5,41 +5,51 @@
     "lng": -123.1526
   },
   "radius_km": 3.0,
+  "hours": 24,
+  "model": "aws-deterministic-hotspot-v1",
   "grid_points": [
     {
       "lat": 48.488773,
       "lng": -123.193401,
-      "probability": 0.568,
+      "probability": 0.083,
       "confidence": 0.644,
       "predicted_behavior": "feeding",
-      "timestamp": "2026-06-15T21:06:13.786178+00:00"
+      "model_version": "aws-deterministic-hotspot-v1",
+      "forecast_hours": 24,
+      "timestamp": "2026-06-17T06:40:22.479333+00:00"
     },
     {
       "lat": 48.488773,
       "lng": -123.143401,
-      "probability": 0.566,
+      "probability": 0.083,
       "confidence": 0.645,
       "predicted_behavior": "feeding",
-      "timestamp": "2026-06-15T21:06:13.786225+00:00"
+      "model_version": "aws-deterministic-hotspot-v1",
+      "forecast_hours": 24,
+      "timestamp": "2026-06-17T06:40:22.479380+00:00"
     },
     {
       "lat": 48.538773,
       "lng": -123.193401,
-      "probability": 0.563,
+      "probability": 0.082,
       "confidence": 0.651,
       "predicted_behavior": "feeding",
-      "timestamp": "2026-06-15T21:06:13.786259+00:00"
+      "model_version": "aws-deterministic-hotspot-v1",
+      "forecast_hours": 24,
+      "timestamp": "2026-06-17T06:40:22.479421+00:00"
     },
     {
       "lat": 48.538773,
       "lng": -123.143401,
-      "probability": 0.552,
+      "probability": 0.081,
       "confidence": 0.655,
       "predicted_behavior": "resting",
-      "timestamp": "2026-06-15T21:06:13.786292+00:00"
+      "model_version": "aws-deterministic-hotspot-v1",
+      "forecast_hours": 24,
+      "timestamp": "2026-06-17T06:40:22.479456+00:00"
     }
   ],
   "total_points": 4,
-  "forecast_id": "forecast_ebac41cc601e",
-  "generation_time": "2026-06-15T21:06:13.786326+00:00"
+  "forecast_id": "forecast_e7407f467931",
+  "generation_time": "2026-06-17T06:40:22.479503+00:00"
 }

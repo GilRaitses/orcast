@@ -50,8 +50,8 @@ curl https://orcast.org/health
 
 ### Test 2: API Endpoint
 ```bash
-curl https://orcast.org/api/predictions
-# Should return: JSON with predictions
+curl -s https://pjrftm3bkv.us-west-2.awsapprunner.com/api/status
+# Should return JSON with endpoints list (see docs/API.md)
 ```
 
 ### Test 3: Browser Test
@@ -86,10 +86,9 @@ To verify the Worker is working, you can test with the workers.dev subdomain:
 ## Expected Results
 
 Once configured correctly:
-- **https://orcast.org** → OrCast homepage
-- **https://orcast.org/health** → "OK"
-- **https://orcast.org/api/predictions** → JSON predictions
-- **https://orcast.org/api/sightings** → JSON sightings
+- **https://orcast.org** → OrCast homepage (Firebase; may lag CloudFront demo)
+- **https://pjrftm3bkv.us-west-2.awsapprunner.com/health** → JSON health
+- **https://pjrftm3bkv.us-west-2.awsapprunner.com/api/reports/probability** → POST report generation
 
 ## Support
 

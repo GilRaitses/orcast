@@ -1,5 +1,7 @@
 {
   "status": "success",
+  "source": "static_catalog",
+  "live_status_check": false,
   "total_count": 9,
   "data": [
     {

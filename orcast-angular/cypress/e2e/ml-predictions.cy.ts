@@ -16,7 +16,7 @@ describe('ML Predictions Page', () => {
       
       // Check navigation header
       cy.get('orcast-nav-header').should('be.visible')
-      cy.get('.nav-btn').contains('ML Predictions').should('have.class', 'active')
+      cy.get('.nav-btn').contains('Score grid').should('have.class', 'active')
     })
 
     it('should display model selection options', () => {

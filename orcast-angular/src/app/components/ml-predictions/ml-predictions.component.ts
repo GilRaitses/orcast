@@ -33,9 +33,9 @@ interface HourlyPrediction {
   template: `
     <orcast-nav-header currentPage="ml-predictions"></orcast-nav-header>
 
-    <!-- ML Controls Panel -->
+    <!-- Spatial score grid controls -->
     <div class="ml-controls">
-      <h3>🧠 ML Prediction Models</h3>
+      <h3>🗺️ Spatial score grid</h3>
       
       <div class="model-selector">
         <h4>Select Model</h4>
@@ -93,7 +93,7 @@ interface HourlyPrediction {
         (click)="generatePredictions()" 
         class="generate-btn"
         [disabled]="isGenerating">
-        {{ isGenerating ? '🔄 Generating...' : '🚀 Generate Predictions' }}
+        {{ isGenerating ? '🔄 Generating...' : '🚀 Generate score grid' }}
       </button>
     </div>
 

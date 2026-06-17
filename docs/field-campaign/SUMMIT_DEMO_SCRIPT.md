@@ -9,6 +9,7 @@
 | Primary (CloudFront) | https://d2gslju5drx74c.cloudfront.net/ |
 | Custom domain | https://orcast.org/ |
 | Backend health | https://pjrftm3bkv.us-west-2.awsapprunner.com/health |
+| API catalog | [docs/API.md](../API.md) |
 
 Generate QR codes for CloudFront and orcast.org landing pages.
 
@@ -32,10 +33,10 @@ Show landing page `/`.
 - Navigate to `/historical`
 - "Verified OBIS sightings anchor trust. Citizen science goes through the same validation."
 
-### 3. Spatial grid (60 sec)
+### 3. Spatial score grid (60 sec)
 
-- Navigate to `/ml-predictions`
-- "Probability surface over the archipelago, same backend scoring."
+- Navigate to `/ml-predictions` (labeled **Score grid** in nav)
+- "Deterministic hotspot probability surface — `POST /forecast/spatial`, not ML inference."
 
 ### 4. AWS architecture (30 sec)
 
@@ -50,8 +51,10 @@ Show landing page `/`.
 
 ## Honest disclaimers
 
-- Agent demos (`/live-demo`, `/agent-demo`) use simulated agent UX
-- v1 scoring is deterministic fusion, not GPU PINN inference
+- Agent demos (`/live-demo`, `/agent-demo`) use simulated agent UX; `queryAgent()` returns report summaries, not LLM output
+- `/realtime` shows recent sightings and a static hydrophone catalog — not live acoustic detection
+- v1 scoring is deterministic fusion (`aws-deterministic-hotspot-v1`), not GPU PINN inference
+- Legacy Cloudflare prediction/analysis/DTAG routes return **410 Gone** on AWS — use probability reports (see [docs/API.md](../API.md))
 - Live iNaturalist ingestion may be disabled; OBIS + NOAA + hydrophones are core
 
 ## Offline fallback

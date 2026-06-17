@@ -46,7 +46,8 @@ aws cloudformation deploy \
     ContainerImage="$IMAGE_URI" \
     EnableLiveINaturalist=false \
     EnableOrcaHello=true \
-    CorsOrigins="$CORS_ORIGINS"
+    CorsOrigins="$CORS_ORIGINS" \
+    ApiKey="${ORCAST_API_KEY:-}"
 
 BACKEND_HOST=$(aws cloudformation describe-stacks \
   --region "$AWS_REGION" \

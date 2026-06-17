@@ -1,6 +1,6 @@
 {
-  "recorded_at": "2026-06-15T21:06:03.426932+00:00",
-  "source_url": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+  "recorded_at": "2026-06-17T06:40:21.549697+00:00",
+  "source_url": "http://127.0.0.1:8080",
   "files": [
     {
       "method": "GET",
@@ -49,14 +49,14 @@
     },
     {
       "method": "GET",
-      "path": "/api/reports/report_f5a17f56cf62884e",
-      "file": "reports/report_f5a17f56cf62884e.json"
+      "path": "/api/reports/report_8b5b94599785bea7",
+      "file": "reports/report_8b5b94599785bea7.json"
     },
     {
       "method": "GET",
-      "path": "/api/reports/report_f5a17f56cf62884e.csv",
-      "file": "reports/report_f5a17f56cf62884e.csv"
+      "path": "/api/reports/report_8b5b94599785bea7.csv",
+      "file": "reports/report_8b5b94599785bea7.csv"
     }
   ],
-  "sample_report_id": "report_f5a17f56cf62884e"
+  "sample_report_id": "report_8b5b94599785bea7"
 }

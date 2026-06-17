@@ -24,6 +24,10 @@ class Settings:
     repo_root: Path = Path(os.getenv("ORCAST_REPO_ROOT", Path(__file__).resolve().parents[2]))
 
     @property
+    def api_key(self) -> str:
+        return os.getenv("ORCAST_API_KEY", "")
+
+    @property
     def cors_origins(self) -> List[str]:
         if self.cors_origins_raw.strip() == "*":
             return ["*"]

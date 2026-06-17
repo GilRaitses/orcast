@@ -191,7 +191,7 @@ class BehavioralMLIntegration {
     async storePrediction(prediction) {
         // Store prediction in database for analysis
         try {
-            await fetch('/api/predictions', {
+            await fetch('/api/reports/probability', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

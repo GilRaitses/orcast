@@ -136,7 +136,9 @@ def spatial_forecast_grid(
     hotspots: List[Hotspot],
     environment: EnvironmentalSnapshot | None = None,
     step_degrees: float = 0.05,
+    forecast_hours: int = 24,
 ) -> List[Dict[str, Any]]:
+    horizon_factor = min(1.0, max(0.05, forecast_hours / 168.0))
     lat_span = radius_km / 111.0
     lng_span = radius_km / (111.0 * math.cos(math.radians(center_lat)))
     points: List[Dict[str, Any]] = []
@@ -149,9 +151,11 @@ def spatial_forecast_grid(
                 {
                     "lat": round(lat, 6),
                     "lng": round(lng, 6),
-                    "probability": pred["probability"],
+                    "probability": round(pred["probability"] * horizon_factor, 3),
                     "confidence": pred["confidence"],
                     "predicted_behavior": pred["behavior_prediction"]["primary"],
+                    "model_version": MODEL_VERSION,
+                    "forecast_hours": forecast_hours,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
             )

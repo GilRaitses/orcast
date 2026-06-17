@@ -81,11 +81,11 @@ describe('BackendService', () => {
     });
   });
 
-  it('maps realtime events to Detection interface', () => {
+  it('maps realtime sighting events to Detection interface', () => {
     service.getRecentDetections().subscribe(detections => {
       expect(detections.length).toBe(1);
-      expect(detections[0].hydrophone).toBe('Orcasound Lab');
-      expect(detections[0].callType).toBe('resident');
+      expect(detections[0].hydrophone).toBe('Lime Kiln Point');
+      expect(detections[0].callType).toBe('unknown');
     });
 
     const req = httpMock.expectOne(`${backendUrl}/api/realtime/events`);
@@ -94,15 +94,15 @@ describe('BackendService', () => {
       events: [
         {
           id: 'event-1',
-          timestamp: '2026-06-13T10:00:00Z',
-          hydrophone: 'Orcasound Lab',
-          hydrophoneId: 'rpi_orcasound_lab',
-          callType: 'resident',
+          event_type: 'sighting',
+          source: 'local_obis',
+          location_name: 'Lime Kiln Point',
           confidence: 0.91,
-          frequency: 1400,
-          duration: 4.2
+          timestamp: '2026-06-13T10:00:00Z'
         }
-      ]
+      ],
+      stream_active: false,
+      data_freshness: 'historical'
     });
   });
 

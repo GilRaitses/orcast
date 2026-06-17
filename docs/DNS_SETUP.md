@@ -63,14 +63,12 @@ curl https://orcast.org/health
 
 ### 2. Test API Endpoints
 ```bash
-# Test predictions API
-curl https://orcast.org/api/predictions
-
-# Test behavioral analysis
-curl https://orcast.org/api/behavioral-analysis
-
-# Test DTAG data
-curl https://orcast.org/api/dtag-data
+# Health and supported AWS backend routes (see docs/API.md)
+curl -s https://pjrftm3bkv.us-west-2.awsapprunner.com/health | jq .
+curl -s https://pjrftm3bkv.us-west-2.awsapprunner.com/api/verified-sightings | jq '.total_count'
+curl -s -X POST https://pjrftm3bkv.us-west-2.awsapprunner.com/api/reports/probability \
+  -H 'Content-Type: application/json' \
+  -d '{"min_confidence":0}' | jq '.report.report_id'
 ```
 
 ### 3. Test Main Site

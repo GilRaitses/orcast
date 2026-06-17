@@ -295,29 +295,29 @@ export class MapDashboardComponent implements OnInit {
     },
     {
       route: '/realtime',
-      icon: '🎧',
-      title: 'Real-time Detection',
-      description: 'Live hydrophone data from OrcaHello AI with real-time whale call detection and acoustic analysis.',
+      icon: '📍',
+      title: 'Recent sightings',
+      description: 'Historical sighting overlays from the AWS backend — not live acoustic detections.',
       features: [
-        'Live hydrophone streams',
-        'OrcaHello AI detection',
-        'Acoustic pattern analysis',
-        'Real-time alerts',
-        'Sound classification'
+        'Verified and likely sightings only',
+        'Static Orcasound hydrophone catalog',
+        'Recent activity timeline',
+        'Map overlays',
+        'No live stream health checks'
       ],
       status: 'online'
     },
     {
       route: '/ml-predictions',
-      icon: '🧠',
-      title: 'ML Predictions',
-      description: 'Advanced machine learning predictions using PINN physics-informed models and behavioral analysis.',
+      icon: '🗺️',
+      title: 'Spatial score grid',
+      description: 'Deterministic hotspot probability surface (aws-deterministic-hotspot-v1), not ML inference.',
       features: [
-        'PINN physics models',
-        'Behavioral ML predictions',
+        'Hotspot-weighted probability grid',
+        'Configurable forecast horizon (hours)',
         'Probability heat maps',
-        'Temporal forecasting',
-        'Uncertainty quantification'
+        'Environmental context from NOAA',
+        'Threshold filtering'
       ],
       status: 'online'
     },

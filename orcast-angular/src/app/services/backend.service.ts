@@ -89,8 +89,7 @@ export class BackendService {
   }
 
   /**
-   * MVP agent response: formats the latest probability report as a natural-language answer.
-   * Full LLM agent wiring is deferred to a later phase.
+   * Report summary (not LLM): formats the latest probability report as a natural-language answer.
    */
   queryAgent(prompt: string): Observable<any> {
     return this.generateProbabilityReport(0).pipe(
@@ -139,12 +138,12 @@ export class BackendService {
     return events.map((event: any, index: number) => ({
       id: event.id || `detection-${index}`,
       timestamp: new Date(event.timestamp),
-      hydrophone: event.hydrophone || event.source || 'ORCAST',
-      hydrophoneId: event.hydrophoneId || event.source_id || event.source || 'orcast',
+      hydrophone: event.location_name || event.source || 'Sighting',
+      hydrophoneId: event.source || event.id || 'sighting',
       confidence: Number(event.confidence || 0.75),
-      frequency: Number(event.frequency || 1200),
-      duration: Number(event.duration || 3.0),
-      callType: this.normalizeCallType(event.callType)
+      frequency: Number(event.frequency || 0),
+      duration: Number(event.duration || 0),
+      callType: 'unknown'
     }));
   }
 

@@ -61,9 +61,9 @@ npm run deploy:staging
 ## Verification Steps
 
 ### After Deployment
-- [ ] Visit `https://orcast.org/health` - should return "OK"
-- [ ] Visit `https://orcast.org/api/predictions` - should return JSON
-- [ ] Visit `https://orcast.org` - should load the full app
+- [ ] Visit `https://pjrftm3bkv.us-west-2.awsapprunner.com/health` — should return JSON with `healthy` or `degraded`
+- [ ] Visit CloudFront demo URL `/reports` — generate report and CSV
+- [ ] Visit primary demo site — should load the Angular app
 
 ### Cloudflare Dashboard
 - [ ] Check Workers tab for deployment status
@@ -84,15 +84,16 @@ npm run deploy:staging
 
 ## API Endpoints Available
 
-After deployment, these endpoints will be live:
+See **[docs/API.md](API.md)** for the full catalog. Primary live routes:
 
-- `GET /api/sightings` - Recent orca sightings
-- `POST /api/sightings` - Add new sighting
-- `GET /api/predictions` - Behavior predictions
-- `GET /api/behavioral-analysis` - Behavioral analysis
-- `GET /api/dtag-data` - DTAG deployment data
-- `GET /api/real-time-data` - Real-time environmental data
-- `GET /api/feeding-zones` - Feeding zone information
+- `GET /health` — Service health and source summary
+- `GET /api/sightings` — All normalized sightings
+- `GET /api/verified-sightings` — Verified + likely sightings only
+- `POST /api/reports/probability` — Ranked hotspot report
+- `POST /forecast/spatial` — Spatial score grid
+- `GET /api/live-hydrophones` — Static Orcasound catalog (not live stream health)
+
+Deprecated legacy Worker routes return **410 Gone** — see [docs/API.md](API.md).
 
 ## Performance Features
 

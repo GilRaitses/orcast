@@ -29,10 +29,10 @@ interface FrequencyData {
   template: `
     <orcast-nav-header currentPage="realtime"></orcast-nav-header>
 
-    <!-- Real-time Controls Panel -->
+    <!-- Recent sightings panel (historical data, not live acoustics) -->
     <div class="realtime-controls">
-      <h3>🎧 Live Hydrophones</h3>
-      <p>Real-time OrcaHello AI Detection</p>
+      <h3>📍 Recent sightings</h3>
+      <p>Historical sighting overlays — not live acoustic detections</p>
       
       <button 
         (click)="refreshHydrophones()" 
@@ -79,9 +79,9 @@ interface FrequencyData {
       </div>
     </div>
 
-    <!-- Detection Panel -->
+    <!-- Sighting activity panel -->
     <div class="detection-panel">
-      <h3>🚨 Recent Detections</h3>
+      <h3>📋 Recent sighting activity</h3>
       
       <div class="detection-list" *ngIf="recentDetections.length > 0; else noDetections">
         <div 
@@ -97,15 +97,14 @@ interface FrequencyData {
           </div>
           <div class="detection-details">
             <strong>{{ detection.hydrophone }}</strong><br>
-            Call type: {{ detection.callType }}<br>
-            Frequency: {{ detection.frequency | number:'1.0-0' }}Hz<br>
-            Duration: {{ detection.duration | number:'1.1-1' }}s
+            Source sighting record<br>
+            Confidence: {{ (detection.confidence * 100) | number:'1.1-1' }}%
           </div>
         </div>
       </div>
       
       <ng-template #noDetections>
-        <p class="no-detections">Listening for whale calls...</p>
+        <p class="no-detections">No recent sightings loaded yet.</p>
       </ng-template>
       
       <div class="detection-stats">

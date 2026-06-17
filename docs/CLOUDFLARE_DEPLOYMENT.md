@@ -99,9 +99,9 @@ wrangler secret put BIGQUERY_PROJECT_ID
 
 After deployment:
 
-1. **Check Health**: Visit `https://orcast.org/health` - should return "OK"
-2. **Check API**: Visit `https://orcast.org/api/predictions` - should return JSON
-3. **Check App**: Visit `https://orcast.org` - should load the full application
+1. **Check Health**: `curl -s https://pjrftm3bkv.us-west-2.awsapprunner.com/health`
+2. **Check API**: `curl -s https://pjrftm3bkv.us-west-2.awsapprunner.com/api/status`
+3. **Check App**: Visit CloudFront demo URL — should load the Angular app
 
 ## Features Enabled
 
@@ -180,15 +180,13 @@ wrangler kv:namespace list
 
 ## API Endpoints
 
-Your deployed app will have these endpoints:
+See **[docs/API.md](../API.md)**. The AWS App Runner backend exposes sightings, hotspots, forecasts, and reports. Legacy Worker prediction routes return **410 Gone** on AWS; use probability reports instead.
 
-- `GET /api/sightings` - Get recent orca sightings
-- `POST /api/sightings` - Add new sighting
-- `GET /api/predictions` - Get behavior predictions
-- `GET /api/behavioral-analysis` - Get behavioral analysis
-- `GET /api/dtag-data` - Get DTAG deployment data
-- `GET /api/real-time-data` - Get real-time environmental data
-- `GET /api/feeding-zones` - Get feeding zone information
+- `GET /api/sightings` — Normalized sightings
+- `GET /api/verified-sightings` — Verified + likely only
+- `POST /api/reports/probability` — Probability report
+- `POST /forecast/spatial` — Spatial score grid
+- `GET /api/environmental` — NOAA snapshot
 
 ## Performance Optimization
 

@@ -17,9 +17,9 @@
         "feeding": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "14.8",
-        "avg_tide_height_ft": "1.8",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 14.8,
+        "avg_tide_height_ft": 1.8,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
@@ -31,7 +31,7 @@
       "evidence_sighting_ids": [
         "obis:OBIS_2024_002"
       ],
-      "generated_at": "2026-06-15T20:59:22.378594Z",
+      "generated_at": "2026-06-17T06:35:35.345958Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -49,21 +49,21 @@
         "feeding": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "18.1",
-        "avg_tide_height_ft": "2.7",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 18.1,
+        "avg_tide_height_ft": 2.7,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
         "1 source(s)",
         "validation 0.64",
         "reliability 0.96",
-        "recency 0.16"
+        "recency 0.15"
       ],
       "evidence_sighting_ids": [
         "obis:OBIS_2024_005"
       ],
-      "generated_at": "2026-06-15T20:59:22.378724Z",
+      "generated_at": "2026-06-17T06:35:35.346008Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -81,21 +81,21 @@
         "feeding": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "15.2",
-        "avg_tide_height_ft": "2.1",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 15.2,
+        "avg_tide_height_ft": 2.1,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
         "1 source(s)",
         "validation 0.55",
         "reliability 0.96",
-        "recency 0.14"
+        "recency 0.13"
       ],
       "evidence_sighting_ids": [
         "obis:OBIS_2024_001"
       ],
-      "generated_at": "2026-06-15T20:59:22.378534Z",
+      "generated_at": "2026-06-17T06:35:35.345927Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -113,9 +113,9 @@
         "feeding": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "13.9",
-        "avg_tide_height_ft": "1.5",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 13.9,
+        "avg_tide_height_ft": 1.5,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
@@ -127,7 +127,7 @@
       "evidence_sighting_ids": [
         "obis:OBIS_2023_001"
       ],
-      "generated_at": "2026-06-15T20:59:22.378764Z",
+      "generated_at": "2026-06-17T06:35:35.346020Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -145,9 +145,9 @@
         "socializing": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "16.1",
-        "avg_tide_height_ft": "3.2",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 16.1,
+        "avg_tide_height_ft": 3.2,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
@@ -159,7 +159,7 @@
       "evidence_sighting_ids": [
         "obis:OBIS_2024_003"
       ],
-      "generated_at": "2026-06-15T20:59:22.378640Z",
+      "generated_at": "2026-06-17T06:35:35.345977Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -177,9 +177,9 @@
         "socializing": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "15.6",
-        "avg_tide_height_ft": "2.4",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 15.6,
+        "avg_tide_height_ft": 2.4,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
@@ -191,7 +191,7 @@
       "evidence_sighting_ids": [
         "obis:OBIS_2023_002"
       ],
-      "generated_at": "2026-06-15T20:59:22.378802Z",
+      "generated_at": "2026-06-17T06:35:35.346032Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -209,9 +209,9 @@
         "resting": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "16.8",
-        "avg_tide_height_ft": "0.7",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 16.8,
+        "avg_tide_height_ft": 0.7,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
@@ -223,7 +223,7 @@
       "evidence_sighting_ids": [
         "obis:OBIS_2022_001"
       ],
-      "generated_at": "2026-06-15T20:59:22.378840Z",
+      "generated_at": "2026-06-17T06:35:35.346044Z",
       "model_version": "aws-deterministic-hotspot-v1"
     },
     {
@@ -241,9 +241,9 @@
         "traveling": 1
       },
       "environmental_factors": {
-        "avg_water_temp_c": "17.3",
-        "avg_tide_height_ft": "0.9",
-        "environmental_record_count": "1"
+        "avg_water_temp_c": 17.3,
+        "avg_tide_height_ft": 0.9,
+        "environmental_record_count": 1
       },
       "reason_codes": [
         "1 sighting(s) in cluster",
@@ -255,7 +255,7 @@
       "evidence_sighting_ids": [
         "obis:OBIS_2024_004"
       ],
-      "generated_at": "2026-06-15T20:59:22.378683Z",
+      "generated_at": "2026-06-17T06:35:35.345991Z",
       "model_version": "aws-deterministic-hotspot-v1"
     }
   ]

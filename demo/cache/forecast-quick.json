@@ -5,7 +5,7 @@
     "lng": -123.1526
   },
   "prediction": {
-    "probability": 0.568,
+    "probability": 0.583,
     "confidence": 0.644,
     "nearest_hotspot": {
       "hotspot_id": "hotspot_0ac0ffe5df",
@@ -19,7 +19,7 @@
       }
     },
     "environmental_factors": {
-      "tide_height_ft": -0.346,
+      "tide_height_ft": 7.895,
       "water_temp_c": 12.0,
       "salinity_ppt": 30.5,
       "current_speed": 0.5,
@@ -31,11 +31,12 @@
     },
     "model_version": "aws-deterministic-hotspot-v1"
   },
+  "model": "aws-deterministic-hotspot-v1",
   "environmental_conditions": {
-    "timestamp": "2026-06-15T21:06:12.728659Z",
+    "timestamp": "2026-06-17T06:40:22.183294Z",
     "latitude": 48.5453,
     "longitude": -123.0125,
-    "tide_height_ft": -0.346,
+    "tide_height_ft": 7.895,
     "water_temp_c": 12.0,
     "salinity_ppt": 30.5,
     "current_speed": 0.5,

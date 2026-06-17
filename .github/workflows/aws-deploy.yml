@@ -42,6 +42,8 @@ jobs:
           echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
 
       - name: Deploy CloudFormation stack
+        env:
+          ORCAST_API_KEY: ${{ secrets.ORCAST_API_KEY }}
         run: |
           aws cloudformation deploy \
             --stack-name "$STACK_NAME" \
@@ -52,7 +54,8 @@ jobs:
               ContainerImage="$IMAGE_URI" \
               EnableLiveINaturalist=false \
               EnableOrcaHello=true \
-              CorsOrigins="https://orca-904de.web.app,https://orcast.org,https://www.orcast.org"
+              CorsOrigins="https://orca-904de.web.app,https://orcast.org,https://www.orcast.org,https://d2gslju5drx74c.cloudfront.net" \
+              ApiKey="${ORCAST_API_KEY:-}"
 
       - name: Resolve stack outputs
         id: stack

@@ -1,7 +1,19 @@
 {
   "status": "healthy",
-  "storage_backend": "aws",
+  "storage_backend": "memory",
   "sightings_loaded": 8,
   "hotspots_loaded": 8,
-  "timestamp": "2026-06-15T21:06:06.157755+00:00"
+  "sources": [
+    {
+      "source": "obis_verified",
+      "enabled": true,
+      "available": true,
+      "record_count": 8,
+      "skipped_count": 0,
+      "error": null,
+      "checked_at": "2026-06-17T06:35:35.344963Z"
+    }
+  ],
+  "latest_ingestion_run_id": "ingest_e9aa70b2cd6a",
+  "timestamp": "2026-06-17T06:40:21.554232+00:00"
 }

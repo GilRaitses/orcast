@@ -126,11 +126,16 @@ js/
 ```
 
 #### Current API Endpoints:
-- `GET /api/predictions` - Behavioral prediction results
-- `GET /api/behavioral-analysis` - TagTools analysis  
-- `GET /api/real-time-data` - Environmental conditions
-- `GET /api/feeding-zones` - Feeding zone analytics
-- `GET /api/dtag-data` - Biologging device data
+
+See **[docs/API.md](../API.md)**. Supported AWS routes include:
+
+- `GET /api/verified-sightings` — Validated sightings for maps
+- `GET /api/realtime/events` — Recent sighting activity (not live acoustics)
+- `GET /api/environmental` — Environmental conditions
+- `POST /api/reports/probability` — Ranked hotspot report
+- `POST /forecast/spatial` — Spatial score grid
+
+Deprecated legacy Worker routes return **410 Gone** — see [docs/API.md](../API.md).
 
 #### Quick Start:
 1. **Data processing:** Modify `DataLoader` class methods
@@ -344,8 +349,8 @@ firebase deploy --only hosting
 firebase serve
 # Open browser console and look for errors
 
-# Test API endpoints
-curl https://orcast.org/api/predictions
+# Test API endpoints (see docs/API.md)
+curl -s https://pjrftm3bkv.us-west-2.awsapprunner.com/health
 
 # Validate CSS
 # Open browser dev tools → Styles tab

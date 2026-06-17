@@ -22,6 +22,11 @@ Parameters:
   CorsOrigins:
     Type: String
     Default: 'https://orca-904de.web.app,https://orcast.org,https://www.orcast.org'
+  ApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: Shared API key for POST ingest/recompute (X-ORCAST-Key header). Leave empty for open access.
 
 Resources:
   SightingsTable:
@@ -210,6 +215,9 @@ Resources:
               - Name: ORCAST_CORS_ORIGINS
                 Value:
                   Ref: CorsOrigins
+              - Name: ORCAST_API_KEY
+                Value:
+                  Ref: ApiKey
       InstanceConfiguration:
         Cpu: 1024
         Memory: 2048
@@ -251,6 +259,8 @@ Resources:
           BACKEND_URL:
             Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
           API_PATH: /api/sightings/ingest?include_live=true
+          ORCAST_API_KEY:
+            Ref: ApiKey
       Code:
         ZipFile: |
           import json
@@ -262,11 +272,15 @@ Resources:
               base = os.environ["BACKEND_URL"].rstrip("/")
               path = os.environ.get("API_PATH", "/api/sightings/ingest?include_live=true")
               url = f"{base}{path}"
+              headers = {"Content-Type": "application/json"}
+              api_key = os.environ.get("ORCAST_API_KEY", "")
+              if api_key:
+                  headers["X-ORCAST-Key"] = api_key
               req = urllib.request.Request(
                   url,
                   data=json.dumps({"include_live": True}).encode(),
                   method="POST",
-                  headers={"Content-Type": "application/json"},
+                  headers=headers,
               )
               try:
                   with urllib.request.urlopen(req, timeout=120) as resp:
@@ -288,6 +302,8 @@ Resources:
         Variables:
           BACKEND_URL:
             Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
+          ORCAST_API_KEY:
+            Ref: ApiKey
       Code:
         ZipFile: |
           import json
@@ -298,11 +314,15 @@ Resources:
           def _post(base, path, payload=None):
               url = f"{base.rstrip('/')}{path}"
               data = json.dumps(payload or {}).encode()
+              headers = {"Content-Type": "application/json"}
+              api_key = os.environ.get("ORCAST_API_KEY", "")
+              if api_key:
+                  headers["X-ORCAST-Key"] = api_key
               req = urllib.request.Request(
                   url,
                   data=data,
                   method="POST",
-                  headers={"Content-Type": "application/json"},
+                  headers=headers,
               )
               with urllib.request.urlopen(req, timeout=120) as resp:
                   return resp.status, resp.read().decode()

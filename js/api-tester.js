@@ -4,11 +4,12 @@
 class APITester {
     constructor() {
         this.endpoints = {
-            predictions: '/api/predictions',
-            behavioral: '/api/behavioral-analysis',
-            realtime: '/api/real-time-data',
-            feeding: '/api/feeding-zones',
-            dtag: '/api/dtag-data'
+            health: '/health',
+            sightings: '/api/sightings',
+            verified: '/api/verified-sightings',
+            report: '/api/reports/probability',
+            spatial: '/forecast/spatial',
+            status: '/api/status'
         };
     }
 
@@ -18,7 +19,10 @@ class APITester {
         responseArea.className = 'response-area';
         
         try {
-            const response = await fetch(endpoint);
+            const options = endpoint.includes('/api/reports/probability') || endpoint.includes('/forecast/spatial')
+                ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ min_confidence: 0 }) }
+                : {};
+            const response = await fetch(endpoint, options);
             const contentType = response.headers.get('content-type');
             
             let data;
@@ -56,4 +60,4 @@ class APITester {
 }
 
 // Export for use
-window.apiTester = new APITester(); 
+window.apiTester = new APITester();

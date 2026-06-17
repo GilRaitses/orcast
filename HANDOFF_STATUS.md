@@ -1,6 +1,6 @@
 # ORCAST AWS Handoff — Coordination Status
 
-**Last updated:** 20260614T040142Z
+**Last updated:** 2026-06-17 (API Truth deploy)
 
 ## Live URLs
 
@@ -14,6 +14,8 @@ AWS_REGION=us-west-2
 
 Run `bash scripts/inject-backend-url.sh` before any production build.
 
+**API contract:** [docs/API.md](docs/API.md)
+
 ## Stream status
 
 | Stream | Status |
@@ -24,18 +26,13 @@ Run `bash scripts/inject-backend-url.sh` before any production build.
 | D — Frontend AWS | complete — multi-host envs, live-ai-demo, CSV download |
 | E — Cypress | complete — env vars, legacy isolation, aws-backend-smoke + probability-report |
 | F — Cloudflare | complete — wrangler.toml, worker proxy, docs |
-| Wave 1.5 gate | complete — URL injected, pytest + ng test + local smoke passed |
-| Wave 2 deploy | AWS CloudFront complete; Firebase/Cloudflare builds verified (deploy via CI secrets) |
+| API Truth repair | complete — router split, honest endpoints, UI labels, docs/API.md |
 
 ## Verification
 
-- pytest tests/aws_backend: 7 passed
+- pytest tests/aws_backend: 17 passed
 - npm run test:ci: 35 passed
 - test_aws_backend_smoke.py (local + deployed): passed
-- No orcast-gemma3-gpu in orcast-angular/src/
-
-
-
-
-
+- Cypress aws-backend-smoke + probability-report: passed
+- docs ghost endpoint grep (active docs): 0 matches
 

@@ -5,9 +5,9 @@
   "cloudfront_url": "https://d2gslju5drx74c.cloudfront.net",
   "frontend_bucket": "198456344617-us-west-2-orcast-aws-backend-frontend",
   "distribution_id": "E3BMZQLRHZ0Y83",
-  "image_uri": "198456344617.dkr.ecr.us-west-2.amazonaws.com/orcast-aws-backend:3a60bd6",
-  "image_tag": "3a60bd6",
+  "image_uri": "198456344617.dkr.ecr.us-west-2.amazonaws.com/orcast-aws-backend:85c0119",
+  "image_tag": "85c0119",
   "ecr_repo": "orcast-aws-backend",
-  "backed_up_at": "20260614T040142Z",
-  "backup_dir": "infra/aws/state/backups/20260614T040142Z"
+  "backed_up_at": "20260617T064530Z",
+  "backup_dir": "infra/aws/state/backups/20260617T064530Z"
 }

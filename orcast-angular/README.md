@@ -76,14 +76,15 @@ ng generate --help
 
 ## Real API Endpoints
 
-The live demo integrates with these production endpoints:
+See **[docs/API.md](../docs/API.md)** for the full catalog. The Angular app uses the AWS backend via `BackendService`:
 
 | Endpoint | Purpose | Component Integration |
 |----------|---------|----------------------|
-| `/api/recent-sightings` | Real orca database | `fetchRecentSightings()` |
-| `/api/ml-predictions` | ML model outputs | `fetchMLPredictions()` + `createForecastClouds()` |
-| `/api/environmental-data` | NOAA/DFO data | `fetchEnvironmentalData()` |
-| `/api/hydrophone-data` | Acoustic monitoring | `fetchHydrophoneData()` |
+| `/api/verified-sightings` | Validated sightings | `getHistoricalSightings()` |
+| `/forecast/spatial` | Spatial score grid | `generateMLPredictions()` |
+| `/api/environmental` | NOAA snapshot | `getEnvironmentalData()` |
+| `/api/live-hydrophones` | Static hydrophone catalog | `getHydrophoneData()` |
+| `/api/reports/probability` | Ranked hotspot report | `generateProbabilityReport()` |
 
 ## Map Configuration
 

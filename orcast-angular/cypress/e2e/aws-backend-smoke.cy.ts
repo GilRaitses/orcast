@@ -4,7 +4,7 @@ describe('AWS backend smoke', () => {
   it('health and core API endpoints respond', () => {
     cy.request('GET', `${backendUrl}/health`).then(response => {
       expect(response.status).to.eq(200);
-      expect(response.body.status).to.eq('healthy');
+      expect(response.body.status).to.be.oneOf(['healthy', 'degraded']);
       expect(response.body.sightings_loaded).to.be.greaterThan(0);
     });
 

@@ -15,10 +15,10 @@ import { CommonModule } from '@angular/common';
         Historical
       </a>
       <a routerLink="/realtime" class="nav-btn" [class.active]="currentPage === 'realtime'">
-        Real-time
+        Recent sightings
       </a>
       <a routerLink="/ml-predictions" class="nav-btn" [class.active]="currentPage === 'ml-predictions'">
-        ML Predictions
+        Score grid
       </a>
       <a routerLink="/reports" class="nav-btn" [class.active]="currentPage === 'reports'">
         Reports

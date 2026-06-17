@@ -324,8 +324,8 @@ export class LandingComponent implements OnInit {
     },
     {
       route: '/realtime',
-      title: 'Real-time context',
-      description: 'Hydrophones and recent activity overlays.',
+      title: 'Recent sightings',
+      description: 'Historical sighting overlays — not live acoustic detections.',
       status: 'live'
     },
     {
