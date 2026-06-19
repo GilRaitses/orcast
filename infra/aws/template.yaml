@@ -161,6 +161,12 @@ Resources:
                 Resource:
                   - Fn::Sub: '${ReportsBucket.Arn}/*'
                   - Fn::Sub: '${RawPayloadBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource:
+                  - Fn::GetAtt: [ReportsBucket, Arn]
+                  - Fn::GetAtt: [RawPayloadBucket, Arn]
 
   AppRunnerAccessRole:
     Type: AWS::IAM::Role
