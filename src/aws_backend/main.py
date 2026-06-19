@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .routers import community, deprecated, forecast, read, reports, write
+from .routers import community, deprecated, forecast, read, reports, timeseries, write
 from .state import run_ingestion, storage
 
 if TYPE_CHECKING:
@@ -42,6 +42,7 @@ def create_app() -> FastAPI:
     app.include_router(community.router)
     app.include_router(forecast.router)
     app.include_router(reports.router)
+    app.include_router(timeseries.router)
     app.include_router(deprecated.router)
 
     return app
