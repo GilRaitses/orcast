@@ -6,6 +6,7 @@ import { Subject, takeUntil, combineLatest, map } from 'rxjs';
 
 import { MapShellComponent } from '../shared/map-shell.component';
 import { CollapsiblePanelComponent } from '../shared/collapsible-panel.component';
+import { MapLegendComponent } from '../shared/map-legend.component';
 import { BackendService } from '../../services/backend.service';
 import { MapService } from '../../services/map.service';
 import { StateService } from '../../services/state.service';
@@ -21,7 +22,7 @@ interface HistoricalStats {
 @Component({
   selector: 'orcast-historical-sightings',
   standalone: true,
-  imports: [CommonModule, FormsModule, GoogleMapsModule, MapShellComponent, CollapsiblePanelComponent],
+  imports: [CommonModule, FormsModule, GoogleMapsModule, MapShellComponent, CollapsiblePanelComponent, MapLegendComponent],
   template: `
     <orcast-map-shell currentPage="historical">
       <div map>
@@ -77,13 +78,12 @@ interface HistoricalStats {
       </div>
       </aside>
 
-      <aside bottom-right class="map-panel map-panel--bottom-right legend">
-        <h4>Legend</h4>
-        <div class="legend-item" *ngFor="let item of legendItems">
-          <div class="legend-color" [style.background]="item.color"></div>
-          <span>{{ item.label }}</span>
-        </div>
-      </aside>
+      <orcast-map-legend bottom-right
+        [showHeat]="false"
+        [showVisual]="true"
+        [showAcoustic]="false"
+        [showStation]="true">
+      </orcast-map-legend>
 
       <aside left class="map-panel map-panel--left sighting-info" *ngIf="selectedSighting" (click)="closeSightingInfo()">
         <h4>Sighting details</h4>
@@ -168,23 +168,6 @@ interface HistoricalStats {
       color: #c5dff0;
     }
 
-    .legend h4 {
-      margin-bottom: 6px;
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin: 5px 0;
-    }
-    
-    .legend-color {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    
     .sighting-info {
       top: auto;
       bottom: 12px;
@@ -240,14 +223,6 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
     ]
   };
 
-  legendItems = [
-    { color: '#ff4444', label: 'Feeding Behavior' },
-    { color: '#44ff44', label: 'Traveling' },
-    { color: '#4444ff', label: 'Socializing' },
-    { color: '#ffff44', label: 'Resting' },
-    { color: '#ff44ff', label: 'Unknown' }
-  ];
-
   constructor(
     private backendService: BackendService,
     private mapService: MapService,
@@ -268,6 +243,16 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
   onMapInitialized(map: google.maps.Map): void {
     this.mapService.registerMap(map);
     this.updateMapMarkers();
+    this.loadHydrophones();
+  }
+
+  private loadHydrophones(): void {
+    this.backendService.getHydrophoneData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (stations) => this.mapService.addHydrophones(stations),
+        error: () => this.stateService.addError('Failed to load listening stations')
+      });
   }
 
   private setupStateSubscriptions(): void {

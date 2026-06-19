@@ -5,15 +5,16 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import { Subject, takeUntil } from 'rxjs';
 
 import { MapShellComponent } from '../shared/map-shell.component';
+import { MapLegendComponent } from '../shared/map-legend.component';
 import { BackendService } from '../../services/backend.service';
 import { MapService } from '../../services/map.service';
 import { StateService } from '../../services/state.service';
-import { MLPredictionData } from '../../models/orca-sighting.model';
+import { MLPredictionData, MapEvent } from '../../models/orca-sighting.model';
 
 @Component({
   selector: 'orcast-ml-predictions',
   standalone: true,
-  imports: [CommonModule, FormsModule, GoogleMapsModule, MapShellComponent],
+  imports: [CommonModule, FormsModule, GoogleMapsModule, MapShellComponent, MapLegendComponent],
   template: `
     <orcast-map-shell currentPage="ml-predictions">
       <div map>
@@ -77,6 +78,13 @@ import { MLPredictionData } from '../../models/orca-sighting.model';
         <p><strong>Max probability:</strong> {{ (predictionResults.metadata.maxProbability * 100) | number:'1.1-1' }}%</p>
       </ng-container>
       </aside>
+
+      <orcast-map-legend
+        [showHeat]="true"
+        [showVisual]="true"
+        [showAcoustic]="true"
+        [showStation]="false">
+      </orcast-map-legend>
     </orcast-map-shell>
   `,
   styles: [`
@@ -171,6 +179,20 @@ export class MLPredictionsComponent implements OnInit, OnDestroy {
     if (this.predictionResults?.predictions?.length) {
       this.updateMapWithPredictions(this.predictionResults);
     }
+    this.loadReferenceSightings();
+  }
+
+  /**
+   * Overlay real visual/acoustic detections as reference against the modeled
+   * probability surface. Reference-only, so failures must never block the grid.
+   */
+  private loadReferenceSightings(): void {
+    this.backendService.getMapEvents()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (events: MapEvent[]) => this.mapService.addTypedSightings(events),
+        error: (error) => console.warn('Reference sightings failed to load:', error)
+      });
   }
 
   onParameterChange(): void {

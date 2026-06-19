@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GoogleMapsModule } from '@angular/google-maps';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, forkJoin, takeUntil } from 'rxjs';
 
 import { MapShellComponent } from '../shared/map-shell.component';
 import { CollapsiblePanelComponent } from '../shared/collapsible-panel.component';
+import { MapLegendComponent } from '../shared/map-legend.component';
 import { BackendService } from '../../services/backend.service';
 import { MapService } from '../../services/map.service';
 import { StateService } from '../../services/state.service';
@@ -23,7 +24,7 @@ interface SightingEvent {
 @Component({
   selector: 'orcast-realtime-detection',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule, MapShellComponent, CollapsiblePanelComponent],
+  imports: [CommonModule, GoogleMapsModule, MapShellComponent, CollapsiblePanelComponent, MapLegendComponent],
   template: `
     <orcast-map-shell currentPage="realtime">
       <div map>
@@ -79,6 +80,13 @@ interface SightingEvent {
         </div>
       </orcast-collapsible-panel>
       </aside>
+
+      <orcast-map-legend
+        [showHeat]="true"
+        [showVisual]="true"
+        [showAcoustic]="true"
+        [showStation]="true">
+      </orcast-map-legend>
     </orcast-map-shell>
   `,
   styles: [`
@@ -216,10 +224,7 @@ export class RealtimeDetectionComponent implements OnInit, OnDestroy {
 
   onMapInitialized(map: google.maps.Map): void {
     this.mapService.registerMap(map);
-    if (this.hydrophones.length) {
-      this.mapService.addHydrophones(this.hydrophones);
-    }
-    this.applyRealtimeToMap();
+    this.loadInstrumentation();
   }
 
   refresh(): void {
@@ -237,7 +242,6 @@ export class RealtimeDetectionComponent implements OnInit, OnDestroy {
             latitude: d.latitude,
             longitude: d.longitude
           }));
-          this.applyRealtimeToMap();
           this.isLoading = false;
         },
         error: () => {
@@ -247,18 +251,43 @@ export class RealtimeDetectionComponent implements OnInit, OnDestroy {
       });
   }
 
-  private applyRealtimeToMap(): void {
-    const mappable = this.sightings
-      .filter(s => s.latitude != null && s.longitude != null)
-      .map(s => ({
-        id: s.id,
-        latitude: s.latitude!,
-        longitude: s.longitude!,
-        locationName: s.locationName,
-        confidence: s.confidence,
-        timestamp: s.timestamp
-      }));
-    this.mapService.addRealtimeSightings(mappable);
+  /**
+   * Render the real instrumented detections onto the map: a detection-density
+   * heat field (confidence x recency) plus modality-aware markers (visual
+   * sighting vs acoustic detection), listening stations, and sighting-to-station
+   * connectors. Pulls events + stations together so the layers land in one pass.
+   */
+  private loadInstrumentation(): void {
+    forkJoin({
+      events: this.backendService.getMapEvents(),
+      stations: this.backendService.getHydrophoneData()
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ events, stations }) => {
+          const heatPoints = events.map(e => ({
+            lat: e.latitude,
+            lng: e.longitude,
+            weight: Math.max(0.01, e.confidence * this.recencyFactor(e.timestamp))
+          }));
+          if (heatPoints.length) {
+            this.mapService.addDetectionHeat(heatPoints);
+          }
+          this.mapService.addTypedSightings(events);
+          this.mapService.addHydrophones(stations);
+          this.mapService.addFeedConnectors(events, stations);
+        },
+        error: () => {
+          this.stateService.addError('Failed to load detection layers');
+        }
+      });
+  }
+
+  /** Recent, confident detections weigh more; old ones fade but never vanish. */
+  private recencyFactor(timestamp: Date): number {
+    const ageDays = (Date.now() - timestamp.getTime()) / 86_400_000;
+    const factor = Math.exp(-ageDays / 540);
+    return Math.min(1, Math.max(0.15, factor));
   }
 
   loadHydrophones(): void {
