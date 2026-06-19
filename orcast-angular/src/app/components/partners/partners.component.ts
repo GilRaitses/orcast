@@ -4,51 +4,57 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
+import { AppShellComponent } from '../shared/app-shell.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'orcast-partners',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, AppShellComponent],
   template: `
-    <div class="partners-page">
-      <header>
-        <a routerLink="/" class="back">← Home</a>
-        <h1>Partner with ORCAST</h1>
-        <p class="subtitle">Executive summary for research, conservation, and field pilot partners</p>
+    <orcast-app-shell currentPage="partners" [showFooter]="true">
+      <header class="page-head">
+        <h1>Partner with orcast</h1>
+        <p class="subtitle">Pilot study on forecast durability, San Juan islands</p>
       </header>
 
-      <section>
+      <section class="card">
         <h2>Executive summary</h2>
         <p>
-          ORCAST combines verified marine mammal sightings, environmental data, and acoustic
-          context into transparent probability reports for the Salish Sea. We are seeking pilot
-          partners for an August 2026 field week in the San Juan archipelago.
+          orcast is a pilot study on forecast durability for orca sighting probabilities
+          on the San Juan islands (San Juan, Orcas, Lopez, and Shaw). Backend decision
+          infrastructure integrates sighting catalogs (OBIS, iNaturalist, OrcaHello),
+          NOAA tides and conditions, Orcasound hydrophone stations, and crowd sound tags.
+          Maps and planning tools sit on top for people watching from the shore or going
+          out kayaking. Forecasting runs in the backend; the app is the field and social
+          layer. Not for commercial whale-watching boats.
         </p>
       </section>
 
-      <section>
-        <h2>What we offer</h2>
-        <ul>
-          <li>Multi-source sighting fusion with cross-validation and source attribution</li>
-          <li>Ranked hotspot probability reports with downloadable CSV</li>
-          <li>Open pipeline on AWS with documented data sources</li>
-          <li>Field pilot support and feedback-driven iteration</li>
-          <li>Publication and co-authorship opportunities for validated pilots</li>
-        </ul>
-      </section>
+      <div class="two-col">
+        <section class="card">
+          <h2>What we offer</h2>
+          <ul>
+            <li>Maps and planning tools for shore visitors and kayakers on San Juan, Orcas, Lopez, and Shaw</li>
+            <li>Probability reports you can download for a trip</li>
+            <li>Field pilot support and feedback-driven iteration</li>
+            <li>Cross-validated sightings with source attribution</li>
+            <li>Publication and co-authorship opportunities for validated pilots</li>
+          </ul>
+        </section>
 
-      <section>
-        <h2>What we seek</h2>
-        <ul>
-          <li>Research groups with verified sighting datasets or DTAG deployments</li>
-          <li>Tour operators and naturalists willing to test reports in the field</li>
-          <li>Citizen science networks (iNaturalist, Orca Network, Orcasound)</li>
-          <li>Technical reviewers for scoring methodology and validation rules</li>
-        </ul>
-      </section>
+        <section class="card">
+          <h2>What we seek</h2>
+          <ul>
+            <li>Shore visitors and kayakers willing to test maps and planning in the field</li>
+            <li>Research groups with verified sighting datasets or DTAG deployments</li>
+            <li>Citizen science networks (iNaturalist, Orca Network, Orcasound)</li>
+            <li>Technical reviewers for scoring methodology and validation rules</li>
+          </ul>
+        </section>
+      </div>
 
-      <section>
+      <section class="card">
         <h2>Target partners</h2>
         <dl class="partner-list">
           <div>
@@ -66,21 +72,31 @@ import { environment } from '../../../environments/environment';
         </dl>
       </section>
 
-      <section>
+      <section class="card">
         <h2>Technical capabilities (live today)</h2>
         <ul>
           <li>OBIS verified sightings ingestion and cross-validation</li>
           <li>NOAA tides and environmental correlation</li>
           <li>Orcasound hydrophone station integration</li>
-          <li>Hotspot probability scoring with confidence and reason codes</li>
+          <li>Sighting probability scoring with confidence and reason codes</li>
+          <li>Downloadable probability reports and CSV export</li>
           <li>REST API on AWS App Runner with scheduled ingestion</li>
         </ul>
         <p class="note">
-          Agent chat and GPU-accelerated PINN demos are research prototypes, not production services.
+          The chat-style map demos are scripted. The report page and CSV export call the live API on AWS.
         </p>
       </section>
 
-      <section class="contact-block" id="partner-contact">
+      <section class="card cta-card">
+        <h2>See it live</h2>
+        <p>Open a probability report for this week before you reach out.</p>
+        <div class="cta-actions">
+          <a routerLink="/reports" class="btn btn--primary">Try a live report</a>
+          <a class="btn btn--ghost" [href]="mailtoLink">contact&#64;orcast.org</a>
+        </div>
+      </section>
+
+      <section class="card contact-block" id="partner-contact">
         <h2>Get in touch</h2>
         <form *ngIf="contactFormUrl" (ngSubmit)="submitContact()" class="contact-form">
           <label>
@@ -108,98 +124,74 @@ import { environment } from '../../../environments/environment';
             Message
             <textarea [(ngModel)]="contact.message" name="message" rows="4" required></textarea>
           </label>
-          <button type="submit" class="btn" [disabled]="isSubmitting">
+          <button type="submit" class="btn btn--primary" [disabled]="isSubmitting">
             {{ isSubmitting ? 'Sending…' : 'Request a call' }}
           </button>
           <p *ngIf="submitMessage" class="form-note">{{ submitMessage }}</p>
         </form>
-        <div *ngIf="!contactFormUrl">
-          <a class="btn" [href]="mailtoLink">Email contact&#64;orcast.org</a>
+        <div *ngIf="!contactFormUrl" class="mailto-fallback">
+          <a class="btn btn--primary" [href]="mailtoLink">Email contact&#64;orcast.org</a>
         </div>
       </section>
-
-      <footer>
-        <a routerLink="/">Return to home</a>
-        ·
-        <a routerLink="/reports">Try a live report</a>
-      </footer>
-    </div>
+    </orcast-app-shell>
   `,
   styles: [`
-    .partners-page {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
-      background: #001e3c;
-      color: #e8f4fc;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, sans-serif;
-      line-height: 1.6;
+    .page-head {
+      margin-bottom: var(--s5);
     }
-    .back {
-      color: #4fc3f7;
-      text-decoration: none;
-      font-size: 0.9rem;
+    h1 { color: var(--accent); margin: 0 0 var(--s1); }
+    .subtitle { color: var(--text-muted); margin: 0; }
+    .card { margin-bottom: var(--s5); }
+    h2 { font-size: 1.15rem; color: var(--accent); margin: 0 0 var(--s3); }
+    ul { padding-left: 1.2rem; margin: 0; }
+    li { margin-bottom: var(--s1); }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--s4);
     }
-    h1 { color: #4fc3f7; margin-bottom: 0.25rem; }
-    .subtitle { color: #a8cce0; margin-top: 0; }
-    section { margin-bottom: 2rem; }
-    h2 { font-size: 1.15rem; color: #7ec8e8; margin-bottom: 0.5rem; }
-    ul { padding-left: 1.2rem; }
-    li { margin-bottom: 0.35rem; }
-    .partner-list div { margin-bottom: 0.75rem; }
+    .partner-list div { margin-bottom: var(--s3); }
     dt { font-weight: 600; }
-    dd { margin: 0.15rem 0 0; color: #a8cce0; }
+    dd { margin: var(--s1) 0 0; color: var(--text-muted); }
     .note {
       font-size: 0.9rem;
-      color: #8ab4cc;
-      border-left: 3px solid #4fc3f7;
-      padding-left: 0.75rem;
+      color: var(--text-faint);
+      border-left: 3px solid var(--accent);
+      padding-left: var(--s3);
+      margin-top: var(--s4);
+    }
+    .cta-actions {
+      display: flex;
+      gap: var(--s3);
+      flex-wrap: wrap;
+      margin-top: var(--s3);
     }
     .contact-form {
       display: grid;
-      gap: 0.75rem;
+      gap: var(--s3);
       max-width: 480px;
     }
     .contact-form label {
       display: grid;
-      gap: 0.25rem;
+      gap: var(--s1);
       font-size: 0.9rem;
     }
     .contact-form input,
     .contact-form select,
     .contact-form textarea {
-      padding: 0.5rem;
-      border-radius: 4px;
+      padding: var(--s2);
+      border-radius: var(--radius-sm);
       border: 1px solid #2a5a7a;
-      background: #001528;
-      color: #e8f4fc;
+      background: var(--bg-deep);
+      color: var(--text);
     }
-    .btn {
-      display: inline-block;
-      padding: 0.6rem 1.1rem;
-      background: #4fc3f7;
-      color: #001e3c;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .btn:disabled { opacity: 0.6; }
-    .form-note { font-size: 0.85rem; color: #8ab4cc; }
-    footer {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(79, 195, 247, 0.2);
-      font-size: 0.9rem;
-    }
-    footer a { color: #4fc3f7; }
+    .form-note { font-size: 0.85rem; color: var(--text-faint); }
+    .mailto-fallback { margin-top: var(--s2); }
   `]
 })
 export class PartnersComponent {
   contactFormUrl = environment.contactFormUrl || '';
-  mailtoLink = `mailto:${environment.contactEmail || 'contact@orcast.org'}?subject=ORCAST%20partnership%20inquiry`;
+  mailtoLink = `mailto:${environment.contactEmail || 'contact@orcast.org'}?subject=orcast%20partnership%20inquiry`;
   isSubmitting = false;
   submitMessage = '';
 
@@ -220,7 +212,7 @@ export class PartnersComponent {
     this.isSubmitting = true;
     const payload = {
       ...this.contact,
-      _subject: 'ORCAST partnership inquiry'
+      _subject: 'orcast partnership inquiry'
     };
     this.http.post(this.contactFormUrl, payload, { responseType: 'text' }).subscribe({
       next: () => {

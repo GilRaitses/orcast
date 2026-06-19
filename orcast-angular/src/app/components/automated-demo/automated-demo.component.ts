@@ -133,7 +133,7 @@ interface DemoSlide {
           </div>
           <div class="result-item">
             <h4>📊 Data Processing</h4>
-            <p>Real-time environmental data, ML predictions, and behavioral analysis integrated</p>
+            <p>Environmental data and probability map overlays from the live API</p>
           </div>
         </div>
         <button class="restart-btn" (click)="restartDemo()">🔄 Restart Demo</button>
@@ -494,15 +494,14 @@ export class AutomatedDemoComponent implements OnInit, OnDestroy {
     {
       title: "🎬 ORCAST System Introduction",
       content: `
-        <h3>Welcome to the ORCAST Multi-Agent Demonstration</h3>
-        <p>This automated demo showcases our <strong>Gemma 3 AI orchestration platform</strong> for marine wildlife conservation.</p>
+        <h3>ORCAST map walkthrough</h3>
+        <p>This automated demo walks through map views and the live report API for the Salish Sea.</p>
         <ul>
-          <li>🤖 <strong>Multi-agent coordination</strong> for complex decision making</li>
-          <li>🌊 <strong>Real-time data integration</strong> from multiple sources</li>
-          <li>🗺️ <strong>Interactive map visualizations</strong> with predictive overlays</li>
-          <li>🎯 <strong>Personalized trip planning</strong> with conservation focus</li>
+          <li>Sightings and environmental data from AWS</li>
+          <li>Probability map overlays</li>
+          <li>Ranked hotspot reports with CSV export</li>
+          <li>Field pilot context for August 2026</li>
         </ul>
-        <p>Watch as our AI agents work together to create the perfect whale watching experience!</p>
       `,
       duration: 8000,
       mapConfig: {
@@ -572,21 +571,21 @@ export class AutomatedDemoComponent implements OnInit, OnDestroy {
     {
       title: "🧠 Analysis Agent Processing",
       content: `
-        <h3>Step 2: AI-Powered Behavioral Analysis</h3>
-        <p>The <strong>Analysis Agent</strong> processes collected data through multiple ML models:</p>
+        <h3>Step 2: Probability map</h3>
+        <p>The map loads scores from the same API as Reports:</p>
         <ul>
-          <li>🧠 <strong>PINN Physics Models</strong> - Ocean current and behavioral physics</li>
-          <li>📈 <strong>Behavioral ML</strong> - Orca movement pattern recognition</li>
-          <li>🎯 <strong>Ensemble Forecasting</strong> - Multi-model prediction fusion</li>
-          <li>📊 <strong>Probability Mapping</strong> - Spatial likelihood calculations</li>
+          <li><strong>Probability map</strong> — sighting scores for the archipelago</li>
+          <li><strong>Environmental data</strong> — tides and conditions from NOAA</li>
+          <li><strong>Sighting overlays</strong> — verified records on the map</li>
+          <li><strong>Heat map</strong> — spatial likelihood from recent sightings</li>
         </ul>
-        <p>Advanced algorithms identify optimal whale watching locations and timing.</p>
+        <p>Scores identify where whales were seen recently and under what conditions.</p>
       `,
       duration: 12000,
       mapConfig: {
         location: "Predictive Analysis Results",
-        focus: "ML model probability heat maps",
-        layers: ["PINN Predictions", "Behavioral ML", "Ensemble Model", "Probability Heat Map"],
+        focus: "Probability heat map",
+        layers: ["Probability map", "Sightings", "Environmental", "Heat map"],
         animations: [
           { x: 35, y: 40, type: "whale" },
           { x: 55, y: 45, type: "whale" },
@@ -599,7 +598,7 @@ export class AutomatedDemoComponent implements OnInit, OnDestroy {
         {
           agent: "📊 Analysis Agent",
           status: "processing",
-          message: "Running PINN physics-informed neural network models...",
+          message: "Loading probability map from live API...",
           duration: 4000
         },
         {

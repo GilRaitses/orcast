@@ -13,6 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src ./src
 COPY archive/public-templates-backup-20250720/api/verified-sightings.json ./archive/public-templates-backup-20250720/api/verified-sightings.json
 COPY src/integrations/orcasound_hydrophones_for_orcast.json ./src/integrations/orcasound_hydrophones_for_orcast.json
+COPY data/geo/san_juan_land.geojson ./data/geo/san_juan_land.geojson
 
 EXPOSE 8080
 

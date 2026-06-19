@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Query
 
 from ..config import settings
+from ..geo_region import in_bounds
 from ..models import ValidationStatus
 from ..sources.noaa import NoaaAdapter
 from ..state import ensure_hotspots, get_latest_ingestion_run, hydrophones, noaa, run_ingestion, storage
@@ -40,6 +41,8 @@ LIVE_ENDPOINTS = [
     "/api/reports/probability",
     "/api/reports/{report_id}",
     "/api/reports/{report_id}.csv",
+    "/api/community/sightings",
+    "/api/community/submissions",
 ]
 
 DEPRECATED_ROUTES = {
@@ -177,11 +180,16 @@ def verified_sightings(
 
 @router.get("/api/live-hydrophones")
 def live_hydrophones() -> Dict[str, Any]:
-    records = hydrophones.hydrophones()
+    records = [
+        record
+        for record in hydrophones.hydrophones()
+        if in_bounds(record.get("latitude"), record.get("longitude"))
+    ]
     return {
         "status": "success",
         "source": "static_catalog",
         "live_status_check": False,
+        "region": "san_juan_islands",
         "total_count": len(records),
         "data": records,
         "hydrophones": records,
@@ -190,7 +198,7 @@ def live_hydrophones() -> Dict[str, Any]:
 
 @router.get("/api/realtime/events")
 def realtime_events() -> Dict[str, Any]:
-    sightings = storage.list_sightings(limit=25)
+    sightings = storage.list_sightings(limit=100)
     events = [
         {
             "id": sighting.sighting_id,
@@ -203,7 +211,8 @@ def realtime_events() -> Dict[str, Any]:
             "validation_status": sighting.cross_validation.status.value,
         }
         for sighting in sightings
-    ]
+        if in_bounds(sighting.latitude, sighting.longitude)
+    ][:25]
     return {
         "status": "success",
         "events": events,

@@ -80,6 +80,27 @@ class NormalizedSighting(BaseModel):
     ingested_at: datetime = Field(default_factory=utc_now)
 
 
+class CommunitySubmissionStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
+class CommunitySubmission(BaseModel):
+    id: str
+    place: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    observed_at: datetime
+    behavior: str = "unknown"
+    count: Optional[int] = None
+    notes: Optional[str] = None
+    observer_name: Optional[str] = None
+    status: CommunitySubmissionStatus = CommunitySubmissionStatus.PENDING
+    submitted_at: datetime = Field(default_factory=utc_now)
+    reviewed_at: Optional[datetime] = None
+
+
 class SourceStatus(BaseModel):
     source: str
     enabled: bool

@@ -14,8 +14,9 @@ import { MapConfigurationService, MapConfiguration, MapConfigRequest } from '../
     <div class="agent-spatial-demo">
       <!-- Header -->
       <div class="header">
-        <h1>ORCAST Agent-Driven Spatial Planning</h1>
-        <p class="subtitle">Multi-Agent Orchestration for Whale Research & Trip Planning</p>
+        <h1>Map demo (spatial)</h1>
+        <span class="demo-badge">Demo only</span>
+        <p class="subtitle">Interactive map with overlays. Scripted UI.</p>
         
         <div class="demo-controls">
           <button 
@@ -317,6 +318,17 @@ import { MapConfigurationService, MapConfiguration, MapConfigRequest } from '../
       color: #81d4fa;
       margin: 0 0 20px 0;
       font-size: 1.1rem;
+    }
+
+    .demo-badge {
+      display: inline-block;
+      background: #4a3f00;
+      color: #fff9c4;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     .demo-controls {
@@ -1022,7 +1034,7 @@ export class AgentSpatialDemoComponent implements OnInit, OnDestroy {
       name: 'Spatial Forecast Agent',
       icon: '🗺️',
       description: 'Generates spatial forecasts and behavioral predictions',
-      capabilities: ['ML Predictions', 'Spatial Analysis', 'Behavior Modeling']
+      capabilities: ['Probability map', 'Spatial Analysis', 'Sighting overlays']
     },
     {
       id: 'research',

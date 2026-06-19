@@ -251,7 +251,7 @@ export class AgentOrchestratorService {
 
         // Use the backend service to get REAL ML predictions
         const predictionResponse = await firstValueFrom(
-          this.backendService.generateMLPredictions('ensemble', 24, 0.5).pipe(
+          this.backendService.generateMLPredictions(24, 0.5).pipe(
             catchError(error => {
               console.warn('ML prediction failed for location:', location, error);
               return of(null);

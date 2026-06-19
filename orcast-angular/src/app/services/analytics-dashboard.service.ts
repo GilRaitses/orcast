@@ -414,7 +414,7 @@ export class AnalyticsDashboardService {
             return of([]);
           })
         )),
-        firstValueFrom(this.backendService.generateMLPredictions('ensemble', 24, 0.7).pipe(
+        firstValueFrom(this.backendService.generateMLPredictions(24, 0.7).pipe(
           catchError(error => {
             console.warn('Failed to generate ML predictions:', error);
             return of(null);

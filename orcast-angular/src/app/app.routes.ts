@@ -10,16 +10,8 @@ export const routes: Routes = [
     loadComponent: () => import('./components/partners/partners.component').then(c => c.PartnersComponent)
   },
   {
-    path: 'agent-spatial-demo',
-    loadComponent: () => import('./components/agent-spatial-demo/agent-spatial-demo.component').then(c => c.AgentSpatialDemoComponent)
-  },
-  {
     path: 'live-demo',
     loadComponent: () => import('./components/live-ai-demo/live-ai-demo.component').then(c => c.LiveAIDemoComponent)
-  },
-  {
-    path: 'main-map',
-    loadComponent: () => import('./components/main-map/main-map.component').then(c => c.MainMapComponent)
   },
   {
     path: 'historical',
@@ -34,21 +26,30 @@ export const routes: Routes = [
     loadComponent: () => import('./components/ml-predictions/ml-predictions.component').then(c => c.MLPredictionsComponent)
   },
   {
+    path: 'score-grid',
+    redirectTo: 'ml-predictions',
+    pathMatch: 'full'
+  },
+  {
     path: 'reports',
     loadComponent: () => import('./components/probability-report/probability-report.component').then(c => c.ProbabilityReportComponent)
   },
   {
-    path: 'dashboard',
-    loadComponent: () => import('./components/map-dashboard/map-dashboard.component').then(c => c.MapDashboardComponent)
+    path: 'plan',
+    loadComponent: () => import('./components/trip-planner/trip-planner.component').then(c => c.TripPlannerComponent)
   },
   {
-    path: 'agent-demo',
-    loadComponent: () => import('./components/agent-demo/agent-demo.component').then(c => c.AgentDemoComponent)
+    path: 'contribute',
+    loadComponent: () => import('./components/contribute/contribute.component').then(c => c.ContributeComponent)
   },
-  {
-    path: 'automated-demo',
-    loadComponent: () => import('./components/automated-demo/automated-demo.component').then(c => c.AutomatedDemoComponent)
-  },
+  // Archived demo/agent routes — quarantined from the public UI.
+  // These components carried legacy ORCAST/multi-agent copy and are no longer
+  // linked from nav, landing, or footer. Redirect direct hits to live pages.
+  { path: 'agent-spatial-demo', redirectTo: 'reports', pathMatch: 'full' },
+  { path: 'agent-demo', redirectTo: 'reports', pathMatch: 'full' },
+  { path: 'main-map', redirectTo: 'historical', pathMatch: 'full' },
+  { path: 'dashboard', redirectTo: 'reports', pathMatch: 'full' },
+  { path: 'automated-demo', redirectTo: '', pathMatch: 'full' },
   {
     path: '**',
     redirectTo: '/'

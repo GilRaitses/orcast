@@ -78,8 +78,8 @@ import { CommonModule } from '@angular/common';
         <div class="heat-map-controls">
           <h4>🔥 Heat Map Layers</h4>
           <div class="layer-buttons">
-            <button class="layer-btn active">ML Predictions</button>
-            <button class="layer-btn">PINN Forecast</button>
+            <button class="layer-btn active">Probability map</button>
+            <button class="layer-btn">Sightings</button>
           </div>
           <div class="prediction-types">
             <button class="pred-btn">Environmental</button>
@@ -366,7 +366,7 @@ export class MainMapComponent implements OnInit, AfterViewInit {
 
   loadGoogleMaps() {
     const script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&callback=initMap';
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAzDCC0LpxT7GvViweeY4QbLWpfNV-_GGc&callback=initMap';
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);

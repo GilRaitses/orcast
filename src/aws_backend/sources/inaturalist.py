@@ -5,6 +5,7 @@ from typing import List
 
 import requests
 
+from ..geo_region import filter_and_snap
 from ..models import NormalizedSighting, SourceEvidence
 from .base import SourceAdapter, SourceFetchResult
 
@@ -73,6 +74,12 @@ class INaturalistAdapter(SourceAdapter):
             except (TypeError, ValueError):
                 result.skipped_count += 1
                 continue
+
+            snapped = filter_and_snap(latitude, longitude)
+            if snapped is None:
+                result.skipped_count += 1
+                continue
+            latitude, longitude = snapped
 
             quality_grade = obs.get("quality_grade", "unknown")
             reliability = _quality_reliability(quality_grade)

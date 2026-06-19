@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import List
 
 from ..config import settings
+from ..geo_region import filter_and_snap
 from ..models import EnvironmentalSnapshot, NormalizedSighting, SourceEvidence
 from .base import SourceAdapter, SourceFetchResult
 
@@ -29,6 +30,18 @@ class LocalObisAdapter(SourceAdapter):
 
         sightings: List[NormalizedSighting] = []
         for item in result.raw.get("sightings", []):
+            try:
+                raw_lat = float(item["latitude"])
+                raw_lng = float(item["longitude"])
+            except (KeyError, TypeError, ValueError):
+                result.skipped_count += 1
+                continue
+            snapped = filter_and_snap(raw_lat, raw_lng)
+            if snapped is None:
+                result.skipped_count += 1
+                continue
+            latitude, longitude = snapped
+
             timestamp = _parse_time(item.get("observation_timestamp"))
             confidence = float(item.get("data_quality_score", 0.9))
             evidence = SourceEvidence(
@@ -41,8 +54,8 @@ class LocalObisAdapter(SourceAdapter):
             env = item.get("environmental_context") or {}
             environmental = EnvironmentalSnapshot(
                 timestamp=timestamp,
-                latitude=float(item["latitude"]),
-                longitude=float(item["longitude"]),
+                latitude=latitude,
+                longitude=longitude,
                 tide_height_ft=_optional_float(env.get("tidal_height")),
                 water_temp_c=_optional_float(env.get("water_temp_c")),
                 data_sources={"historical": "OBIS verified local snapshot"},
@@ -54,8 +67,8 @@ class LocalObisAdapter(SourceAdapter):
                     source=self.source_name,
                     source_id=str(item.get("sighting_id")),
                     timestamp=timestamp,
-                    latitude=float(item["latitude"]),
-                    longitude=float(item["longitude"]),
+                    latitude=latitude,
+                    longitude=longitude,
                     location_name=item.get("location_name"),
                     behavior=_map_behavior(item.get("behavior_primary")),
                     count=item.get("pod_size"),

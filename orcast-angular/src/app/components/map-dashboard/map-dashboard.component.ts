@@ -20,7 +20,7 @@ interface MapCard {
   template: `
     <div class="dashboard-container">
       <div class="header">
-        <h1>ORCAST</h1>
+        <h1>orcast</h1>
         <p>Multi-Agent Whale Research Platform - Choose Your Map View</p>
       </div>
       
@@ -297,7 +297,7 @@ export class MapDashboardComponent implements OnInit {
       route: '/realtime',
       icon: '📍',
       title: 'Recent sightings',
-      description: 'Historical sighting overlays from the AWS backend — not live acoustic detections.',
+      description: 'Sightings from our database on a map.',
       features: [
         'Verified and likely sightings only',
         'Static Orcasound hydrophone catalog',
@@ -311,7 +311,7 @@ export class MapDashboardComponent implements OnInit {
       route: '/ml-predictions',
       icon: '🗺️',
       title: 'Spatial score grid',
-      description: 'Deterministic hotspot probability surface (aws-deterministic-hotspot-v1), not ML inference.',
+      description: 'Probability map for a region you choose. Same scoring engine as the report page.',
       features: [
         'Hotspot-weighted probability grid',
         'Configurable forecast horizon (hours)',
@@ -324,14 +324,14 @@ export class MapDashboardComponent implements OnInit {
     {
       route: '/agent-demo',
       icon: '🤖',
-      title: 'AI Agent Demo',
-      description: 'Gemma 3 multi-agent orchestration for personalized San Juan Islands trip planning with orca optimization.',
+      title: 'Map demo',
+      description: 'Scripted map UI for field presentations.',
       features: [
-        'Natural language trip planning',
-        'Multi-agent workflow coordination',
-        'Personalized itinerary generation',
-        'User profile & trip history',
-        'Intelligent orca timing optimization'
+        'Map overlays',
+        'Report summary from live API',
+        'Demo only — not a chatbot',
+        'Same backend as Reports',
+        'Field week walkthrough'
       ],
       status: 'beta'
     }

@@ -8,7 +8,15 @@ from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 from .config import Settings, settings
-from .models import Hotspot, IngestionRun, NormalizedSighting, ProbabilityReport
+from .models import (
+    CommunitySubmission,
+    CommunitySubmissionStatus,
+    Hotspot,
+    IngestionRun,
+    NormalizedSighting,
+    ProbabilityReport,
+    utc_now,
+)
 
 
 def model_to_dict(model: Any) -> Dict[str, Any]:
@@ -68,6 +76,28 @@ class StorageBackend(ABC):
     def put_raw_payload(self, source: str, payload: Any, run_id: str) -> str:
         ...
 
+    @abstractmethod
+    def put_community_submission(self, sub: CommunitySubmission) -> None:
+        ...
+
+    @abstractmethod
+    def list_community_submissions(self, status: Optional[str] = None) -> List[CommunitySubmission]:
+        ...
+
+    @abstractmethod
+    def get_community_submission(self, submission_id: str) -> Optional[CommunitySubmission]:
+        ...
+
+    @abstractmethod
+    def update_community_submission_status(
+        self,
+        submission_id: str,
+        status: str,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
+    ) -> Optional[CommunitySubmission]:
+        ...
+
 
 class MemoryStorage(StorageBackend):
     def __init__(self) -> None:
@@ -76,6 +106,7 @@ class MemoryStorage(StorageBackend):
         self.reports: Dict[str, ProbabilityReport] = {}
         self.ingestion_runs: Dict[str, IngestionRun] = {}
         self.raw_payloads: Dict[str, Any] = {}
+        self.community_submissions: Dict[str, CommunitySubmission] = {}
 
     def put_sightings(self, sightings: List[NormalizedSighting]) -> None:
         for sighting in sightings:
@@ -104,6 +135,37 @@ class MemoryStorage(StorageBackend):
         self.raw_payloads[ref] = payload
         return ref
 
+    def put_community_submission(self, sub: CommunitySubmission) -> None:
+        self.community_submissions[sub.id] = sub
+
+    def list_community_submissions(self, status: Optional[str] = None) -> List[CommunitySubmission]:
+        submissions = list(self.community_submissions.values())
+        if status is not None:
+            submissions = [s for s in submissions if s.status.value == status]
+        return sorted(submissions, key=lambda s: s.submitted_at, reverse=True)
+
+    def get_community_submission(self, submission_id: str) -> Optional[CommunitySubmission]:
+        return self.community_submissions.get(submission_id)
+
+    def update_community_submission_status(
+        self,
+        submission_id: str,
+        status: str,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
+    ) -> Optional[CommunitySubmission]:
+        submission = self.community_submissions.get(submission_id)
+        if submission is None:
+            return None
+        submission.status = CommunitySubmissionStatus(status)
+        submission.reviewed_at = utc_now()
+        if latitude is not None:
+            submission.latitude = latitude
+        if longitude is not None:
+            submission.longitude = longitude
+        self.community_submissions[submission_id] = submission
+        return submission
+
 
 class AwsStorage(StorageBackend):
     def __init__(self, cfg: Settings = settings) -> None:
@@ -119,6 +181,7 @@ class AwsStorage(StorageBackend):
         self.hotspots_table = self.dynamodb.Table(cfg.hotspots_table)
         self.reports_table = self.dynamodb.Table(cfg.reports_table)
         self.ingestion_runs_table = self.dynamodb.Table(cfg.ingestion_runs_table)
+        self.community_table = self.dynamodb.Table(cfg.community_table)
 
     def put_sightings(self, sightings: List[NormalizedSighting]) -> None:
         with self.sightings_table.batch_writer() as batch:
@@ -167,6 +230,43 @@ class AwsStorage(StorageBackend):
         body = json.dumps(payload, default=_json_default, indent=2)
         self.s3.put_object(Bucket=self.cfg.raw_payload_bucket, Key=key, Body=body, ContentType="application/json")
         return f"s3://{self.cfg.raw_payload_bucket}/{key}"
+
+    def put_community_submission(self, sub: CommunitySubmission) -> None:
+        item = _decimalize(model_to_dict(sub))
+        item["pk"] = sub.id
+        item["status"] = sub.status.value
+        self.community_table.put_item(Item=item)
+
+    def list_community_submissions(self, status: Optional[str] = None) -> List[CommunitySubmission]:
+        response = self.community_table.scan()
+        submissions = [CommunitySubmission(**item) for item in response.get("Items", [])]
+        if status is not None:
+            submissions = [s for s in submissions if s.status.value == status]
+        return sorted(submissions, key=lambda s: s.submitted_at, reverse=True)
+
+    def get_community_submission(self, submission_id: str) -> Optional[CommunitySubmission]:
+        response = self.community_table.get_item(Key={"pk": submission_id})
+        item = response.get("Item")
+        return CommunitySubmission(**item) if item else None
+
+    def update_community_submission_status(
+        self,
+        submission_id: str,
+        status: str,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
+    ) -> Optional[CommunitySubmission]:
+        submission = self.get_community_submission(submission_id)
+        if submission is None:
+            return None
+        submission.status = CommunitySubmissionStatus(status)
+        submission.reviewed_at = utc_now()
+        if latitude is not None:
+            submission.latitude = latitude
+        if longitude is not None:
+            submission.longitude = longitude
+        self.put_community_submission(submission)
+        return submission
 
 
 def build_storage(cfg: Settings = settings) -> StorageBackend:

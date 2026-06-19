@@ -6,6 +6,7 @@ from typing import Any, List, Optional
 from .config import settings
 from .models import IngestionRun, SourceStatus
 from .scoring import generate_hotspots
+from .sources.community import CommunitySubmissionAdapter
 from .sources.inaturalist import INaturalistAdapter
 from .sources.local_obis import LocalObisAdapter
 from .sources.noaa import NoaaAdapter
@@ -41,6 +42,8 @@ def run_ingestion(include_live: bool = True) -> IngestionRun:
         adapters.append(INaturalistAdapter())
     if include_live and settings.enable_orcahello:
         adapters.append(OrcaHelloAdapter())
+    if settings.enable_community:
+        adapters.append(CommunitySubmissionAdapter())
 
     all_sightings = []
     statuses: List[SourceStatus] = []

@@ -81,6 +81,19 @@ Resources:
         - AttributeName: pk
           KeyType: HASH
 
+  CommunitySubmissionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-community-submissions'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
   ReportsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -140,6 +153,7 @@ Resources:
                   - Fn::GetAtt: [HotspotsTable, Arn]
                   - Fn::GetAtt: [ReportsTable, Arn]
                   - Fn::GetAtt: [IngestionRunsTable, Arn]
+                  - Fn::GetAtt: [CommunitySubmissionsTable, Arn]
               - Effect: Allow
                 Action:
                   - s3:PutObject
@@ -198,6 +212,9 @@ Resources:
               - Name: ORCAST_INGESTION_RUNS_TABLE
                 Value:
                   Ref: IngestionRunsTable
+              - Name: ORCAST_COMMUNITY_TABLE
+                Value:
+                  Ref: CommunitySubmissionsTable
               - Name: ORCAST_REPORTS_BUCKET
                 Value:
                   Ref: ReportsBucket
@@ -464,6 +481,9 @@ Outputs:
   SightingsTableName:
     Value:
       Ref: SightingsTable
+  CommunitySubmissionsTableName:
+    Value:
+      Ref: CommunitySubmissionsTable
   ReportsBucketName:
     Value:
       Ref: ReportsBucket

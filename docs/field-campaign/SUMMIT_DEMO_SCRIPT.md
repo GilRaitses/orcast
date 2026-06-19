@@ -1,6 +1,6 @@
 # AWS Summit NYC — booth demo script
 
-**Duration:** 5 minutes · **Audience:** AWS visitors, potential partners, technical reviewers
+**Duration:** 2 minutes · **Audience:** AWS visitors, potential partners, technical reviewers
 
 ## URLs to share
 
@@ -13,47 +13,38 @@
 
 Generate QR codes for CloudFront and orcast.org landing pages.
 
-## Opening (30 sec)
+## Opening (20 sec)
 
-> "ORCAST fuses whale sightings from research catalogs, environmental data, and hydrophones into transparent probability reports for the Salish Sea. The fusion pipeline runs on AWS App Runner with DynamoDB and S3. Agent chat is a research prototype — the reports are live."
+> "orcast is a pilot study on forecast durability for orca sighting probabilities on the San Juan islands: San Juan, Orcas, Lopez, and Shaw. It supports maps and planning tools by integrating sighting catalogs, hydrophone and crowd sound tags."
 
-Show landing page `/`.
+Show landing page `/`. Point out the four live demo cards and the demo disclaimer.
 
-## Demo flow
+## Demo flow (2 min)
 
-### 1. Probability report (90 sec)
+### 1. Home → Probability report (45 sec)
 
 - Navigate to `/reports`
 - Set confidence slider → **Generate report**
-- Point out: region, model version, hotspot list, **reason codes**
-- Click **Download CSV** — "This is what field partners take on a boat."
+- Point out named places (Friday Harbor, Lime Kiln, Rosario Strait) — not decimal coordinates
+- Mention CSV download as an optional export for field partners — not the hero moment
 
-### 2. Historical backbone (60 sec)
+### 2. Historical sightings (45 sec)
 
 - Navigate to `/historical`
-- "Verified OBIS sightings anchor trust. Citizen science goes through the same validation."
+- Show sighting markers on the map
+- "Cross-validated sightings from OBIS and other catalogs anchor the maps."
 
-### 3. Spatial score grid (60 sec)
+### 3. Partners CTA (30 sec)
 
-- Navigate to `/ml-predictions` (labeled **Score grid** in nav)
-- "Deterministic hotspot probability surface — `POST /forecast/spatial`, not ML inference."
-
-### 4. AWS architecture (30 sec)
-
-- App Runner API, DynamoDB storage, S3 reports, CloudFront frontend
-- Scheduled Lambda ingestion (optional detail if audience is technical)
-
-### 5. Field pilot CTA (30 sec)
-
+- Navigate to `/partners`
 - August field week in San Juan archipelago
-- `/partners` for collaboration
 - mailto contact@orcast.org
 
-## Honest disclaimers
+## Disclaimers
 
-- Agent demos (`/live-demo`, `/agent-demo`) use simulated agent UX; `queryAgent()` returns report summaries, not LLM output
-- `/realtime` shows recent sightings and a static hydrophone catalog — not live acoustic detection
-- v1 scoring is deterministic fusion (`aws-deterministic-hotspot-v1`), not GPU PINN inference
+- The chat-style map demos are scripted. The report page and CSV export call the live API on AWS.
+- Map demos (`/live-demo`, `/agent-demo`) use scripted UI; report summaries are not from a chatbot
+- `/realtime` shows recent sightings and a static hydrophone catalog — no live acoustic stream
 - Legacy Cloudflare prediction/analysis/DTAG routes return **410 Gone** on AWS — use probability reports (see [docs/API.md](../API.md))
 - Live iNaturalist ingestion may be disabled; OBIS + NOAA + hydrophones are core
 

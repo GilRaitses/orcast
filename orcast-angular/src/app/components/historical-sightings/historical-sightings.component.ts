@@ -4,16 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Subject, takeUntil, combineLatest, map } from 'rxjs';
 
-import { NavHeaderComponent } from '../shared/nav-header.component';
+import { MapShellComponent } from '../shared/map-shell.component';
+import { CollapsiblePanelComponent } from '../shared/collapsible-panel.component';
 import { BackendService } from '../../services/backend.service';
 import { MapService } from '../../services/map.service';
 import { StateService } from '../../services/state.service';
-import { OrcaSighting, BehaviorType, PodType } from '../../models/orca-sighting.model';
+import { OrcaSighting, BehaviorType } from '../../models/orca-sighting.model';
 
 interface HistoricalStats {
   totalSightings: number;
   yearSightings: number;
-  activePod: string;
   topBehavior: string;
   topLocation: string;
 }
@@ -21,14 +21,23 @@ interface HistoricalStats {
 @Component({
   selector: 'orcast-historical-sightings',
   standalone: true,
-  imports: [CommonModule, FormsModule, GoogleMapsModule, NavHeaderComponent],
+  imports: [CommonModule, FormsModule, GoogleMapsModule, MapShellComponent, CollapsiblePanelComponent],
   template: `
-    <orcast-nav-header currentPage="historical"></orcast-nav-header>
+    <orcast-map-shell currentPage="historical">
+      <div map>
+        <google-map
+          #map
+          height="100%"
+          width="100%"
+          [options]="mapOptions"
+          (mapInitialized)="onMapInitialized($event)">
+        </google-map>
+      </div>
 
-    <!-- Historical Controls Panel -->
-    <div class="historical-controls">
-      <h3>📊 Historical Sightings</h3>
-      <p>{{ totalSightings }} verified orca sightings (1990-2024)</p>
+      <aside left class="map-panel map-panel--left historical-controls">
+      <h3>Historical sightings</h3>
+      <p class="lead">Cross-validated OBIS sightings on a map.</p>
+      <p class="count">{{ totalSightings }} verified sightings (1990–2024)</p>
       
       <div class="timeline-control">
         <label>Time Period</label>
@@ -42,20 +51,7 @@ interface HistoricalStats {
         <div class="year-display">{{ selectedYear }}</div>
       </div>
       
-      <div class="filter-group">
-        <h4>Pod Types</h4>
-        <div class="filter-checkbox" *ngFor="let podType of podTypes">
-          <input 
-            type="checkbox" 
-            [id]="podType"
-            [checked]="activePodTypes.includes(podType)"
-            (change)="togglePodType(podType)">
-          <label [for]="podType">{{ getPodTypeLabel(podType) }}</label>
-        </div>
-      </div>
-      
-      <div class="filter-group">
-        <h4>Behaviors</h4>
+      <orcast-collapsible-panel title="Behaviors" [open]="true">
         <div class="filter-checkbox" *ngFor="let behavior of behaviors">
           <input 
             type="checkbox" 
@@ -64,97 +60,55 @@ interface HistoricalStats {
             (change)="toggleBehavior(behavior)">
           <label [for]="behavior">{{ getBehaviorLabel(behavior) }}</label>
         </div>
-      </div>
+      </orcast-collapsible-panel>
       
       <button 
         (click)="refreshData()" 
         class="refresh-btn"
         [disabled]="isLoading">
-        {{ isLoading ? '🔄 Loading...' : '🔄 Refresh Data' }}
+        {{ isLoading ? 'Loading…' : 'Refresh data' }}
       </button>
-    </div>
 
-    <!-- Statistics Panel -->
-    <div class="stats-panel">
-      <h4>📈 Current Statistics</h4>
-      <div class="stat-item">
-        <span>Total Sightings:</span>
-        <span>{{ stats.totalSightings }}</span>
+      <div class="inline-stats">
+        <div class="stat-item"><span>Total</span><span>{{ stats.totalSightings }}</span></div>
+        <div class="stat-item"><span>This year</span><span>{{ stats.yearSightings }}</span></div>
+        <div class="stat-item"><span>Top behavior</span><span>{{ stats.topBehavior }}</span></div>
+        <div class="stat-item"><span>Top location</span><span>{{ stats.topLocation }}</span></div>
       </div>
-      <div class="stat-item">
-        <span>This Year:</span>
-        <span>{{ stats.yearSightings }}</span>
-      </div>
-      <div class="stat-item">
-        <span>Most Active Pod:</span>
-        <span>{{ stats.activePod }}</span>
-      </div>
-      <div class="stat-item">
-        <span>Top Behavior:</span>
-        <span>{{ stats.topBehavior }}</span>
-      </div>
-      <div class="stat-item">
-        <span>Best Location:</span>
-        <span>{{ stats.topLocation }}</span>
-      </div>
-    </div>
+      </aside>
 
-    <!-- Map Container -->
-    <google-map 
-      #map
-      [options]="mapOptions"
-      (mapInitialized)="onMapInitialized($event)">
-    </google-map>
+      <aside bottom-right class="map-panel map-panel--bottom-right legend">
+        <h4>Legend</h4>
+        <div class="legend-item" *ngFor="let item of legendItems">
+          <div class="legend-color" [style.background]="item.color"></div>
+          <span>{{ item.label }}</span>
+        </div>
+      </aside>
 
-    <!-- Legend -->
-    <div class="legend">
-      <h4>🗺️ Legend</h4>
-      <div class="legend-item" *ngFor="let item of legendItems">
-        <div class="legend-color" [style.background]="item.color"></div>
-        <span>{{ item.label }}</span>
-      </div>
-    </div>
-
-    <!-- Sighting Information Panel -->
-    <div class="sighting-info" *ngIf="selectedSighting" (click)="closeSightingInfo()">
-      <h4>📍 Sighting Details</h4>
-      <div>
-        <p><strong>Date:</strong> {{ selectedSighting.date | date:'fullDate' }}</p>
+      <aside left class="map-panel map-panel--left sighting-info" *ngIf="selectedSighting" (click)="closeSightingInfo()">
+        <h4>Sighting details</h4>
+        <p><strong>Date:</strong> {{ selectedSighting.date | date:'mediumDate' }}</p>
         <p><strong>Location:</strong> {{ selectedSighting.location }}</p>
-        <p><strong>Pod:</strong> {{ selectedSighting.pod }}</p>
         <p><strong>Behavior:</strong> {{ selectedSighting.behavior }}</p>
-        <p><strong>Group Size:</strong> {{ selectedSighting.groupSize }} individuals</p>
         <p><strong>Confidence:</strong> {{ (selectedSighting.confidence * 100) | number:'1.0-0' }}%</p>
-        <p><strong>Coordinates:</strong> {{ selectedSighting.latitude | number:'1.4-4' }}, {{ selectedSighting.longitude | number:'1.4-4' }}</p>
-      </div>
-    </div>
+      </aside>
+    </orcast-map-shell>
   `,
   styles: [`
     :host {
       display: block;
-      height: 100vh;
-      width: 100%;
-      position: relative;
     }
 
-    google-map {
-      height: 100vh;
-      width: 100%;
+    .count {
+      font-size: 0.85rem;
+      color: #8ab4cc;
+      margin: 0 0 12px;
     }
 
-    .historical-controls {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(0, 30, 60, 0.95);
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #4fc3f7;
-      color: white;
-      z-index: 1000;
-      width: 300px;
-      max-height: 80vh;
-      overflow-y: auto;
+    .lead {
+      font-size: 0.9rem;
+      color: #a8cce0;
+      margin: 0 0 8px;
     }
     
     .timeline-control {
@@ -171,13 +125,6 @@ interface HistoricalStats {
       font-size: 1.2rem;
       color: #4fc3f7;
       font-weight: bold;
-    }
-    
-    .filter-group {
-      margin: 15px 0;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 5px;
     }
     
     .filter-checkbox {
@@ -206,37 +153,23 @@ interface HistoricalStats {
       cursor: not-allowed;
     }
     
-    .stats-panel {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(0, 30, 60, 0.95);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #4fc3f7;
-      color: white;
-      z-index: 1000;
-      width: 250px;
+    .inline-stats {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(79, 195, 247, 0.2);
+      display: grid;
+      gap: 6px;
     }
-    
+
     .stat-item {
       display: flex;
       justify-content: space-between;
-      margin: 8px 0;
-      padding: 5px 0;
-      border-bottom: 1px solid rgba(79, 195, 247, 0.2);
+      font-size: 0.82rem;
+      color: #c5dff0;
     }
-    
-    .legend {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0, 30, 60, 0.95);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #4fc3f7;
-      color: white;
-      z-index: 1000;
+
+    .legend h4 {
+      margin-bottom: 6px;
     }
     
     .legend-item {
@@ -253,17 +186,15 @@ interface HistoricalStats {
     }
     
     .sighting-info {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0, 30, 60, 0.95);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #4fc3f7;
-      color: white;
-      z-index: 1000;
-      max-width: 400px;
+      top: auto;
+      bottom: 12px;
+      max-width: 280px;
       cursor: pointer;
+    }
+
+    .sighting-info p {
+      margin: 4px 0;
+      font-size: 0.85rem;
     }
   `]
 })
@@ -281,16 +212,13 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
   // Filters
   selectedYear = 2024;
   behaviors: BehaviorType[] = ['feeding', 'traveling', 'socializing', 'resting', 'unknown'];
-  podTypes: PodType[] = ['resident', 'transient', 'offshore'];
   activeBehaviors: BehaviorType[] = [...this.behaviors];
-  activePodTypes: PodType[] = [...this.podTypes];
 
   // UI State
   isLoading = false;
   stats: HistoricalStats = {
     totalSightings: 0,
     yearSightings: 0,
-    activePod: '-',
     topBehavior: '-',
     topLocation: '-'
   };
@@ -338,7 +266,7 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
   }
 
   onMapInitialized(map: google.maps.Map): void {
-    this.mapService.initializeMap(map.getDiv()!);
+    this.mapService.registerMap(map);
     this.updateMapMarkers();
   }
 
@@ -349,7 +277,6 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
       .subscribe(filters => {
         this.selectedYear = filters.yearRange.max;
         this.activeBehaviors = [...filters.behaviors];
-        this.activePodTypes = [...filters.podTypes];
         this.filterAndUpdateSightings();
       });
   }
@@ -384,10 +311,6 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
     this.stateService.toggleBehavior(behavior);
   }
 
-  togglePodType(podType: PodType): void {
-    this.stateService.togglePodType(podType);
-  }
-
   refreshData(): void {
     this.loadHistoricalData();
   }
@@ -400,8 +323,7 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
     const filters = {
       maxYear: this.selectedYear,
       minYear: this.selectedYear - 5, // Show last 5 years
-      behaviors: this.activeBehaviors,
-      podTypes: this.activePodTypes
+      behaviors: this.activeBehaviors
     };
 
     this.filteredSightings = this.allSightings.filter(sighting => {
@@ -411,10 +333,6 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
 
       // Behavior filter
       if (!filters.behaviors.includes(sighting.behavior)) return false;
-
-      // Pod type filter
-      const podType = this.getPodTypeFromName(sighting.pod);
-      if (!filters.podTypes.includes(podType)) return false;
 
       return true;
     });
@@ -426,8 +344,7 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
   private updateMapMarkers(): void {
     this.mapService.addHistoricalSightings(this.filteredSightings, {
       maxYear: this.selectedYear,
-      behaviors: this.activeBehaviors,
-      podTypes: this.activePodTypes
+      behaviors: this.activeBehaviors
     });
   }
 
@@ -437,52 +354,28 @@ export class HistoricalSightingsComponent implements OnInit, OnDestroy {
 
     // Calculate behavior counts
     const behaviorCounts: Record<string, number> = {};
-    const podCounts: Record<string, number> = {};
     const locationCounts: Record<string, number> = {};
 
     filteredByYear.forEach(sighting => {
       behaviorCounts[sighting.behavior] = (behaviorCounts[sighting.behavior] || 0) + 1;
-      podCounts[sighting.pod] = (podCounts[sighting.pod] || 0) + 1;
       locationCounts[sighting.location] = (locationCounts[sighting.location] || 0) + 1;
     });
 
     // Find top values
     const topBehavior = Object.keys(behaviorCounts).reduce((a, b) =>
       behaviorCounts[a] > behaviorCounts[b] ? a : b, '-');
-    const topPod = Object.keys(podCounts).reduce((a, b) =>
-      podCounts[a] > podCounts[b] ? a : b, '-');
     const topLocation = Object.keys(locationCounts).reduce((a, b) =>
       locationCounts[a] > locationCounts[b] ? a : b, '-');
 
     this.stats = {
       totalSightings: filteredByYear.length,
       yearSightings: currentYearSightings.length,
-      activePod: topPod,
       topBehavior: topBehavior,
       topLocation: topLocation
     };
   }
 
-  private getPodTypeFromName(podName: string): PodType {
-    if (podName.includes('J-') || podName.includes('K-') || podName.includes('L-')) {
-      return 'resident';
-    } else if (podName.includes('T-')) {
-      return 'transient';
-    } else {
-      return 'offshore';
-    }
-  }
-
   getBehaviorLabel(behavior: BehaviorType): string {
     return behavior.charAt(0).toUpperCase() + behavior.slice(1);
-  }
-
-  getPodTypeLabel(podType: PodType): string {
-    const labels: Record<PodType, string> = {
-      resident: 'Resident Pods (J, K, L)',
-      transient: 'Transient (T-pods)',
-      offshore: 'Offshore Pods'
-    };
-    return labels[podType];
   }
 } 

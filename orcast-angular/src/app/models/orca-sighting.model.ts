@@ -6,7 +6,8 @@ export interface OrcaSighting {
   latitude: number;
   longitude: number;
   behavior: BehaviorType;
-  pod: string;
+  /** Optional pod/ecotype label. Only set when the source actually provides it; never inferred. */
+  pod?: string;
   location: string;
   groupSize: number;
   confidence: number;
@@ -38,6 +39,20 @@ export interface Detection {
   frequency: number;
   duration: number;
   callType: 'resident' | 'transient' | 'unknown';
+  latitude?: number;
+  longitude?: number;
+  locationName?: string;
+}
+
+export interface MapEvent {
+  id: string;
+  kind: 'visual' | 'acoustic';
+  source: string;
+  latitude: number;
+  longitude: number;
+  locationName: string;
+  confidence: number;   // 0-1
+  timestamp: Date;
 }
 
 export interface MLPrediction {
@@ -54,6 +69,10 @@ export interface MLPredictionData {
     totalPredictions: number;
     averageProbability: number;
     maxProbability: number;
+    modelVersion?: string;
+    unfilteredMaxProbability?: number;
+    thresholdAutoAdjusted?: boolean;
+    thresholdApplied?: number;
   };
 }
 

@@ -6,6 +6,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Tuple
 
+from .geo_region import in_bounds, snap_to_water
 from .models import EnvironmentalSnapshot, Hotspot, NormalizedSighting, ValidationStatus
 from .validation import haversine_km
 
@@ -27,6 +28,11 @@ def generate_hotspots(sightings: Iterable[NormalizedSighting], cell_size_degrees
     for index, (_cell, records) in enumerate(cells.items(), start=1):
         center_lat = sum(s.latitude for s in records) / len(records)
         center_lng = sum(s.longitude for s in records) / len(records)
+        # Drop clusters whose centroid falls outside the pilot region, and clamp
+        # in-region centroids onto water so no hotspot renders on land.
+        if not in_bounds(center_lat, center_lng):
+            continue
+        center_lat, center_lng = snap_to_water(center_lat, center_lng)
         source_count = len({s.source for s in records})
         validated_count = sum(1 for s in records if s.cross_validation.status in {ValidationStatus.VERIFIED, ValidationStatus.LIKELY})
         behavior_distribution = Counter(s.behavior for s in records)
