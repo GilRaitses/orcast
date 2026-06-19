@@ -1,12 +1,24 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Dict
+from datetime import date, datetime, timedelta, timezone
+from typing import Dict, List, Optional, Union
 
 import requests
 
 from ..models import EnvironmentalSnapshot
 from .base import SourceAdapter, SourceFetchResult
+
+# CO-OPS datagetter caps a single request at 31 days for 6-minute interval
+# products, so longer ranges must be split into chunks at or below this size.
+_MAX_RANGE_DAYS = 31
+
+# Water-level stations and current stations use different identifier spaces.
+# 9449880 (Friday Harbor) reports water level/temperature; currents require a
+# dedicated current-station id. PUG1515 is a reasonable San Juan-area default
+# and remains configurable per call.
+_DEFAULT_CURRENT_STATION = "PUG1515"
+
+_DATAGETTER_URL = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 
 
 class NoaaAdapter(SourceAdapter):
@@ -17,6 +29,8 @@ class NoaaAdapter(SourceAdapter):
     station_name = "Friday Harbor"
     latitude = 48.5453
     longitude = -123.0125
+
+    current_station = _DEFAULT_CURRENT_STATION
 
     def fetch(self) -> SourceFetchResult:
         raw: Dict[str, object] = {}
@@ -76,6 +90,138 @@ class NoaaAdapter(SourceAdapter):
             data_sources={"tide": "NOAA CO-OPS", "temperature": "NOAA CO-OPS"},
             quality="live" if result.available else "fallback",
         )
+
+    def fetch_water_level_history(
+        self,
+        begin: Union[date, datetime],
+        end: Union[date, datetime],
+        station: Optional[str] = None,
+    ) -> List[Dict[str, object]]:
+        """Return a normalized water-level time series for ``[begin, end]``.
+
+        Long ranges are split into <=31-day chunks to satisfy the CO-OPS
+        datagetter limit; a failing chunk is skipped so the remaining chunks
+        still contribute data.
+        """
+        return self._fetch_history(
+            product="water_level",
+            begin=begin,
+            end=end,
+            station=station or self.station,
+        )
+
+    def fetch_currents_history(
+        self,
+        begin: Union[date, datetime],
+        end: Union[date, datetime],
+        station: str,
+    ) -> List[Dict[str, object]]:
+        """Return a normalized currents (speed) time series for ``[begin, end]``.
+
+        Currents require a current-station id distinct from water-level
+        stations. Any failure (unknown station, unsupported product) yields an
+        empty list rather than raising.
+        """
+        return self._fetch_history(
+            product="currents",
+            begin=begin,
+            end=end,
+            station=station,
+        )
+
+    def _fetch_history(
+        self,
+        product: str,
+        begin: Union[date, datetime],
+        end: Union[date, datetime],
+        station: str,
+    ) -> List[Dict[str, object]]:
+        series: List[Dict[str, object]] = []
+        for chunk_begin, chunk_end in _chunk_ranges(begin, end, _MAX_RANGE_DAYS):
+            params = {
+                "station": station,
+                "product": product,
+                "begin_date": chunk_begin.strftime("%Y%m%d"),
+                "end_date": chunk_end.strftime("%Y%m%d"),
+                "datum": "MLLW",
+                "format": "json",
+                "units": "english",
+                "time_zone": "gmt",
+                "application": "ORCAST",
+            }
+            try:
+                response = requests.get(_DATAGETTER_URL, params=params, timeout=30)
+                content_type = response.headers.get("content-type", "")
+                if response.status_code != 200 or "json" not in content_type.lower():
+                    continue
+                payload = response.json()
+            except (requests.RequestException, ValueError):
+                continue
+
+            series.extend(_normalize_series(payload, product=product, station=station))
+        return series
+
+
+def _chunk_ranges(
+    begin: Union[date, datetime],
+    end: Union[date, datetime],
+    max_days: int,
+) -> List[tuple]:
+    start = _as_date(begin)
+    stop = _as_date(end)
+    if stop < start:
+        start, stop = stop, start
+
+    span = timedelta(days=max_days - 1)
+    chunks: List[tuple] = []
+    cursor = start
+    while cursor <= stop:
+        chunk_end = min(cursor + span, stop)
+        chunks.append((cursor, chunk_end))
+        cursor = chunk_end + timedelta(days=1)
+    return chunks
+
+
+def _as_date(value: Union[date, datetime]) -> date:
+    if isinstance(value, datetime):
+        return value.date()
+    return value
+
+
+def _normalize_series(payload, product: str, station: str) -> List[Dict[str, object]]:
+    if not isinstance(payload, dict):
+        return []
+    rows = payload.get("data") or []
+    normalized: List[Dict[str, object]] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        raw_value = row.get("v")
+        if raw_value in (None, ""):
+            continue
+        try:
+            value = float(raw_value)
+        except (TypeError, ValueError):
+            continue
+        normalized.append(
+            {
+                "t": _to_iso(row.get("t")),
+                "value": value,
+                "product": product,
+                "station": station,
+            }
+        )
+    return normalized
+
+
+def _to_iso(timestamp) -> Optional[str]:
+    if not isinstance(timestamp, str) or not timestamp:
+        return timestamp if isinstance(timestamp, str) else None
+    try:
+        parsed = datetime.strptime(timestamp, "%Y-%m-%d %H:%M")
+    except ValueError:
+        return timestamp
+    return parsed.replace(tzinfo=timezone.utc).isoformat()
 
 
 def _latest_value(payload) -> float | None:

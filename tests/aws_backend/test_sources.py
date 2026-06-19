@@ -1,5 +1,8 @@
+from datetime import date
+
 from src.aws_backend.sources.orcahello import OrcaHelloAdapter
 from src.aws_backend.sources.inaturalist import INaturalistAdapter
+from src.aws_backend.sources.noaa import NoaaAdapter
 from src.aws_backend.sources.base import SourceFetchResult
 
 
@@ -120,6 +123,87 @@ def test_orcahello_normalizes_top_level_array():
 
     confirmed = by_id["confirmed-1"]
     assert confirmed.evidence[0].quality_grade == "confirmed_acoustic_detection"
+
+
+_SAMPLE_WATER_LEVEL = {
+    "metadata": {"id": "9449880", "name": "Friday Harbor"},
+    "data": [
+        {"t": "2024-06-01 00:00", "v": "1.304", "s": "0.005", "f": "0,0,0,0"},
+        {"t": "2024-06-01 00:06", "v": "1.286", "s": "0.004", "f": "0,0,0,0"},
+        {"t": "2024-06-01 00:12", "v": "", "s": "", "f": "1,0,0,0"},
+    ],
+}
+
+
+class _NoaaJsonResponse:
+    status_code = 200
+    headers = {"content-type": "application/json"}
+
+    def __init__(self, payload):
+        self._payload = payload
+
+    def json(self):
+        return self._payload
+
+
+def test_fetch_water_level_history_normalizes_rows(monkeypatch):
+    captured = {}
+
+    def fake_get(url, *_args, **kwargs):
+        captured["url"] = url
+        captured["params"] = kwargs.get("params")
+        return _NoaaJsonResponse(_SAMPLE_WATER_LEVEL)
+
+    monkeypatch.setattr("src.aws_backend.sources.noaa.requests.get", fake_get)
+
+    series = NoaaAdapter().fetch_water_level_history(
+        begin=date(2024, 6, 1), end=date(2024, 6, 2)
+    )
+
+    # Blank-value row is skipped; the two valid rows are normalized.
+    assert len(series) == 2
+    first = series[0]
+    assert set(first) == {"t", "value", "station", "product"}
+    assert first["product"] == "water_level"
+    assert first["station"] == "9449880"
+    assert isinstance(first["value"], float)
+    assert first["value"] == 1.304
+    assert first["t"].startswith("2024-06-01T00:00:00")
+    # Date formatting follows NOAA's YYYYMMDD convention.
+    assert captured["params"]["begin_date"] == "20240601"
+    assert captured["params"]["product"] == "water_level"
+
+
+def test_fetch_water_level_history_chunks_long_ranges(monkeypatch):
+    calls = []
+
+    def fake_get(url, *_args, **kwargs):
+        calls.append(kwargs.get("params"))
+        return _NoaaJsonResponse({"data": []})
+
+    monkeypatch.setattr("src.aws_backend.sources.noaa.requests.get", fake_get)
+
+    # A 90-day range must be split into multiple <=31-day requests.
+    NoaaAdapter().fetch_water_level_history(
+        begin=date(2024, 1, 1), end=date(2024, 3, 31)
+    )
+
+    assert len(calls) > 1
+
+
+def test_fetch_currents_history_error_returns_empty(monkeypatch):
+    import requests
+
+    def fake_get(*_args, **_kwargs):
+        raise requests.RequestException("currents unavailable")
+
+    monkeypatch.setattr("src.aws_backend.sources.noaa.requests.get", fake_get)
+
+    series = NoaaAdapter().fetch_currents_history(
+        begin=date(2024, 6, 1), end=date(2024, 6, 2), station="PUG1515"
+    )
+
+    assert series == []
 
 
 def test_inaturalist_allows_missing_species_guess():
