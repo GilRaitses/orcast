@@ -166,8 +166,8 @@ def test_backfill_endpoint_requires_key_when_configured(monkeypatch):
             "/api/timeseries/backfill",
             headers={"X-ORCAST-Key": "test-secret-key"},
         )
-        assert allowed.status_code == 200
-        assert allowed.json() == [{"stream": "fake", "stations": [], "records": 0}]
+        assert allowed.status_code == 202
+        assert allowed.json()["status"] == "accepted"
 
 
 def test_refresh_endpoint_requires_key_when_configured(monkeypatch):
@@ -183,4 +183,4 @@ def test_refresh_endpoint_requires_key_when_configured(monkeypatch):
             "/api/timeseries/refresh",
             headers={"X-ORCAST-Key": "test-secret-key"},
         )
-        assert allowed.status_code == 200
+        assert allowed.status_code == 202
