@@ -2,21 +2,21 @@
 
 Design for making the map heat a **modeled probability surface** built from environmental and temporal kernels (tide, salmon run, diurnal, lunar, seasonal/solar) estimated from data, with reported sightings repositioned to **validation, social, and citizen-science** roles.
 
-Status: design / study program. Nothing here is fitted yet. This document defines the model, the studies to estimate it, the honesty constraints, and a phased build. It is the methodology counterpart to [../ml/ORCA_ML_INTEGRATION.md](../ml/ORCA_ML_INTEGRATION.md).
+Status: design / study program. Nothing here is fitted yet. This document defines the model, the studies to estimate it, the honesty constraints, and a phased build. It is the methodology counterpart to [../ml/ORCA_ML_INTEGRATION.md](../ml/ORCA_ML_INTEGRATION.md). The estimation/calibration methods (PSTH, reverse correlation, LNP, signal detection, population decoding) and the leveled plan with fitness gates are in [CALIBRATION_STUDIES.md](CALIBRATION_STUDIES.md).
 
 ## The core idea
 
 Today the heat comes from either a synthetic `forecast/spatial` grid (uniform, not meaningful) or, on the landing hero, a density of recent detections (honest but just "where we happened to detect"). Neither is a forecast.
 
-The proposal: model the expected orca encounter rate as a product of slow, interpretable kernels over environmental/temporal covariates, estimate each kernel's shape from data, and render that as the heat. Sightings then stop being the heat and become the thing that **validates** the model and the **community/citizen-science** contribution that feeds estimation.
+The proposal: model the expected orca encounter rate as a product of slow, interpretable kernels over environmental/temporal covariates, estimate each kernel's shape from data, and render that as the forecast. The forecast is the product's default surface. Sightings and acoustic detections stop being the heat and become the **validation overlay** (an interactive instrument layer the user controls) plus the **community/citizen-science** contribution that feeds estimation.
 
-## The honesty constraint (read first)
+## The honesty principle (read first)
 
-A kernel surface that is not yet estimated and validated is fabricated precision — the exact failure we removed elsewhere. Therefore:
+The forecast is the default surface, always shown. Honesty is not handled by hiding it or labeling it "experimental"; it is handled by what the forecast displays:
 
-1. Do not render a kernel-based heat as the default until it beats a baseline on held-out data.
-2. Until then, any modeled surface is labeled "modeled from priors, not yet fit to local data — calibration pending," and shown as an explicitly experimental layer, not the hero default.
-3. The real-detection heat (already shipped) remains the honest default until the model earns its place.
+1. The forecast always carries its own uncertainty/confidence. Early on (few kernels fit), it is broad and clearly low-confidence; as kernels are estimated it sharpens. The confidence is part of the forecast, not a disqualifying badge.
+2. We never render sharper structure than the current evidence supports. The fitness gates below govern how confident and how sharp the forecast is allowed to be, not whether it is shown.
+3. The detection/validation overlay is always available so anyone can check the forecast against what was actually observed. Validation is a first-class, user-controllable layer, not a footnote.
 
 ## Model form
 
@@ -102,29 +102,39 @@ Cross-cutting design choices to specify per study: time-bin width, effort model,
 
 Sightings move from "the heat" to the model's referee and the community layer:
 
-- **Validation:** hold out sightings/detections by time block; score the kernel model with held-out Poisson deviance / log-likelihood, calibration (predicted prob vs observed frequency), PIT histograms, and a skill comparison vs baselines (climatology, recent-detection density). The model only becomes the heat default when it beats baselines.
-- **Social layer:** community sightings are shown as events, corroborations, and a shared field log — not as the probability surface.
+- **Validation overlay (first-class UX):** detections are an interactive layer over the forecast, not a separate page. Held-out scoring (Poisson deviance / log-likelihood, calibration, PIT, skill vs baselines) runs offline and drives the forecast's displayed confidence; the on-map overlay lets a viewer see the actual detections behind that confidence. The forecast stays default throughout; the gates raise its confidence, they do not flip a visibility switch.
+- **Social layer:** community sightings are shown as events, corroborations, and a shared field log over the forecast.
 - **Citizen science hosting:** community submissions (the moderation queue already built) become labeled data that feeds `s_space` and effort models, and corroborate acoustic detections (acoustic + nearby visual = high-confidence event for training).
+
+### Validation overlay UX (instrument panel)
+
+The detection/validation layer needs real controls, not a static legend:
+
+- A collapsible, auto-hiding **instrument panel** overlaid on the map, with a soft, semi-transparent background so it sits over the forecast without blocking it.
+- **Temporal range control:** slider(s) for the time window / recency horizon, so the viewer scrubs which detections are shown against the forecast (e.g., last 24 h, 7 d, season, all).
+- **Modality toggles:** visual sighting / acoustic detection / community report / listening station, each independently switchable, so the overlay can isolate one instrument type.
+- The panel auto-hides when idle and expands on hover/tap; the legend folds into it.
+- Default state: panel collapsed, forecast unobstructed; the overlay is opt-in detail for people who want to inspect the evidence.
 
 ## Architecture (how it plugs in)
 
 - Backend: a new `kernel_model` module beside [scoring.py](../../src/aws_backend/scoring.py) that (a) computes covariates (tide via NOAA, diel/lunar/season via ephemeris, salmon via a new adapter), (b) holds fitted kernel parameters, (c) produces `lambda(x,t)` grids served via `forecast/spatial` (or a new `forecast/kernel`). Fitting runs offline (notebook / batch job), not in the request path; the service loads coefficients.
-- Reuse [validation.py](../../src/aws_backend/validation.py) concept for the validation harness (held-out scoring).
-- Frontend: the existing `addDetectionHeat` stays the honest default; add an explicitly-labeled "modeled forecast (experimental)" layer fed by the kernel grid, with a validation/calibration badge. Only promote it to default after it passes validation.
+- Reuse [validation.py](../../src/aws_backend/validation.py) concept for the validation harness (held-out scoring) that produces the forecast's confidence.
+- Frontend: the kernel forecast `lambda(x,t)` is the default heat. Over it sits the user-controlled detection/validation overlay in the collapsible instrument panel (temporal-range slider + modality toggles, soft transparent background, auto-hide). The forecast shows its confidence inline (e.g., opacity/contrast or a confidence band), which the gates raise over time.
 - New data: a salmon run-timing adapter; historical NOAA tide/current pulls; bathymetry static layer.
 
-## Phased build (honest at every step)
+## Phased build (forecast is default throughout; it sharpens, it never hides)
 
-- **Phase 0 (now):** this doc + a covariate library (tide/diel/lunar/season computed; salmon adapter stub). Optionally render a priors-only modeled layer behind an "experimental, not validated" label. Do not change the default heat.
-- **Phase 1:** assemble >=1 year of acoustic detections + covariates; fit `k_diel`, `k_tide`, `k_lunar`, `k_season` from acoustic; publish kernel curves with CIs; stand up the validation harness.
-- **Phase 2:** add `k_salmon` and `s_space`; full `lambda(x,t)`; backtest vs baselines. If it wins on held-out skill, promote the kernel surface to the heat default and show calibration; sightings settle into validation + social + citizen science.
-- **Phase 3:** uncertainty-aware display (show confidence, not just intensity); per-ecotype models if labels support it.
+- **Phase 0 (now):** this doc + a covariate library (tide/diel/lunar/season computed; salmon adapter stub) + the instrument-panel overlay UX. The forecast is the default surface; pre-fit it is broad and low-confidence (prior-driven), shown with explicit uncertainty, not faked precision.
+- **Phase 1:** assemble >=1 year of acoustic detections + covariates; fit `k_diel`, `k_tide`, `k_lunar`, `k_season` from acoustic; publish kernel curves with CIs; stand up the validation harness; the forecast sharpens and its confidence rises.
+- **Phase 2:** add `k_salmon` and `s_space`; full `lambda(x,t)`; backtest vs baselines; forecast confidence reflects held-out skill.
+- **Phase 3:** richer uncertainty-aware display (confidence, not just intensity); per-ecotype models if labels support it.
 
 ## Open decisions
 
 - Acoustic-first temporal estimation assumes acoustic presence is a fair proxy for encounter probability for shore/kayak viewers (acoustic != visible). Decide how to bridge acoustic presence to visual-encounter probability (a learned link, or present them as two layers).
 - Salmon data source and license; lag structure.
-- Whether to ship a priors-only experimental layer in Phase 0 or wait until Phase 1 fit (recommend wait, or label very loudly).
+- How the forecast renders its confidence inline (opacity/contrast vs an explicit confidence band) so a low-confidence early forecast reads honestly without a disqualifying label.
 - Fitting stack (Python statsmodels/PyMC/GAM via pyGAM or R mgcv offline) and where coefficients live.
 
 ## What this is not
