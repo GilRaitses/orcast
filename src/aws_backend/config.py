@@ -18,7 +18,8 @@ class Settings:
     community_table: str = os.getenv("ORCAST_COMMUNITY_TABLE", "orcast-community-submissions")
     raw_payload_bucket: str = os.getenv("ORCAST_RAW_PAYLOAD_BUCKET", "orcast-raw-payloads")
     reports_bucket: str = os.getenv("ORCAST_REPORTS_BUCKET", "orcast-probability-reports")
-    enable_live_inaturalist: bool = os.getenv("ORCAST_ENABLE_LIVE_INATURALIST", "false").lower() == "true"
+    enable_live_obis: bool = os.getenv("ORCAST_ENABLE_LIVE_OBIS", "true").lower() == "true"
+    enable_live_inaturalist: bool = os.getenv("ORCAST_ENABLE_LIVE_INATURALIST", "true").lower() == "true"
     enable_live_noaa: bool = os.getenv("ORCAST_ENABLE_LIVE_NOAA", "true").lower() == "true"
     enable_orcahello: bool = os.getenv("ORCAST_ENABLE_ORCAHELLO", "true").lower() == "true"
     enable_community: bool = os.getenv("ORCAST_ENABLE_COMMUNITY", "true").lower() == "true"

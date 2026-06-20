@@ -10,6 +10,7 @@ from .sources.community import CommunitySubmissionAdapter
 from .sources.inaturalist import INaturalistAdapter
 from .sources.local_obis import LocalObisAdapter
 from .sources.noaa import NoaaAdapter
+from .sources.obis import LiveObisAdapter
 from .sources.orcahello import OrcaHelloAdapter
 from .sources.orcasound import OrcasoundHydrophoneAdapter
 from .storage import StorageBackend, build_storage
@@ -37,17 +38,11 @@ def ensure_hotspots() -> List[Any]:
 def run_ingestion(include_live: bool = True) -> IngestionRun:
     global latest_ingestion_run
     run = IngestionRun(run_id=f"ingest_{uuid.uuid4().hex[:12]}")
-    adapters = [LocalObisAdapter()]
-    if include_live and settings.enable_live_inaturalist:
-        adapters.append(INaturalistAdapter())
-    if include_live and settings.enable_orcahello:
-        adapters.append(OrcaHelloAdapter())
-    if settings.enable_community:
-        adapters.append(CommunitySubmissionAdapter())
 
     all_sightings = []
     statuses: List[SourceStatus] = []
-    for adapter in adapters:
+
+    def _process(adapter) -> List:
         result = adapter.fetch()
         raw_payload_ref = None
         if result.raw is not None:
@@ -61,6 +56,23 @@ def run_ingestion(include_live: bool = True) -> IngestionRun:
         all_sightings.extend(normalized)
         if result.error:
             run.errors.append(f"{adapter.source_name}: {result.error}")
+        return result, normalized
+
+    # OBIS backbone: prefer the live API, fall back to the local seed so we
+    # never end up without a verified-occurrence backbone.
+    if include_live and settings.enable_live_obis:
+        result, normalized = _process(LiveObisAdapter())
+        if not result.available or not normalized:
+            _process(LocalObisAdapter())
+    else:
+        _process(LocalObisAdapter())
+
+    if include_live and settings.enable_live_inaturalist:
+        _process(INaturalistAdapter())
+    if include_live and settings.enable_orcahello:
+        _process(OrcaHelloAdapter())
+    if settings.enable_community:
+        _process(CommunitySubmissionAdapter())
 
     deduped = deduplicate_sightings(all_sightings)
     validated = cross_validate_sightings(deduped)

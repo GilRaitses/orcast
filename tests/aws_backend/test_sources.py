@@ -3,6 +3,7 @@ from datetime import date
 from src.aws_backend.sources.orcahello import OrcaHelloAdapter
 from src.aws_backend.sources.inaturalist import INaturalistAdapter
 from src.aws_backend.sources.noaa import NoaaAdapter
+from src.aws_backend.sources.obis import LiveObisAdapter
 from src.aws_backend.sources.base import SourceFetchResult
 
 
@@ -230,4 +231,109 @@ def test_inaturalist_allows_missing_species_guess():
 
     assert len(sightings) == 1
     assert sightings[0].common_name == "Killer Whale"
+
+
+# A trimmed OBIS v3 occurrence payload: one in-region, one well out of region.
+_SAMPLE_OBIS = {
+    "results": [
+        {
+            "id": "in-region-1",
+            "occurrenceID": "https://obis.org/occurrence/in-region-1",
+            "decimalLatitude": 48.55,
+            "decimalLongitude": -123.10,
+            "eventDate": "2024-07-15",
+            "locality": "Haro Strait",
+        },
+        {
+            # Out-of-region (off California) must be dropped.
+            "id": "out-of-region-1",
+            "occurrenceID": "out-of-region-1",
+            "decimalLatitude": 36.80,
+            "decimalLongitude": -121.90,
+            "eventDate": "2024-07-16",
+            "locality": "Monterey Bay",
+        },
+    ]
+}
+
+
+class _ObisJsonResponse:
+    status_code = 200
+    headers = {"content-type": "application/json; charset=utf-8"}
+
+    def __init__(self, payload):
+        self._payload = payload
+
+    def json(self):
+        return self._payload
+
+
+def test_live_obis_fetch_queries_occurrence_api(monkeypatch):
+    captured = {}
+
+    def fake_get(url, *_args, **kwargs):
+        captured["url"] = url
+        captured["params"] = kwargs.get("params")
+        return _ObisJsonResponse(_SAMPLE_OBIS)
+
+    monkeypatch.setattr("src.aws_backend.sources.obis.requests.get", fake_get)
+
+    result = LiveObisAdapter().fetch()
+
+    assert result.available is True
+    assert captured["url"] == "https://api.obis.org/v3/occurrence"
+    assert captured["params"]["scientificname"] == "Orcinus orca"
+    assert captured["params"]["geometry"].startswith("POLYGON((")
+    assert captured["params"]["size"] == 1000
+
+
+def test_live_obis_normalize_drops_out_of_region():
+    result = SourceFetchResult(source="obis_verified", available=True, raw=_SAMPLE_OBIS)
+
+    sightings = LiveObisAdapter().normalize(result)
+
+    # Only the in-region occurrence survives; the Monterey record is dropped.
+    assert len(sightings) == 1
+    assert result.skipped_count == 1
+
+    sighting = sightings[0]
+    assert sighting.source == "obis_verified"
+    assert sighting.sighting_id == "obis:in-region-1"
+    assert sighting.source_id == "in-region-1"
+    assert sighting.source_url == "https://obis.org/occurrence/in-region-1"
+    assert sighting.behavior == "unknown"
+    assert sighting.pod is None
+    assert 0.0 <= sighting.confidence <= 1.0
+
+
+def test_live_obis_non_200_returns_unavailable(monkeypatch):
+    class _ErrorResponse:
+        status_code = 503
+        headers = {"content-type": "application/json"}
+        text = "service unavailable"
+
+    monkeypatch.setattr(
+        "src.aws_backend.sources.obis.requests.get",
+        lambda *_a, **_k: _ErrorResponse(),
+    )
+
+    result = LiveObisAdapter().fetch()
+
+    assert result.available is False
+    assert result.status_code == 503
+    assert LiveObisAdapter().normalize(result) == []
+
+
+def test_live_obis_request_exception_returns_unavailable(monkeypatch):
+    import requests
+
+    def fake_get(*_args, **_kwargs):
+        raise requests.RequestException("obis down")
+
+    monkeypatch.setattr("src.aws_backend.sources.obis.requests.get", fake_get)
+
+    result = LiveObisAdapter().fetch()
+
+    assert result.available is False
+    assert "obis down" in result.error
 

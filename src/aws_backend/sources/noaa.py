@@ -14,9 +14,12 @@ _MAX_RANGE_DAYS = 31
 
 # Water-level stations and current stations use different identifier spaces.
 # 9449880 (Friday Harbor) reports water level/temperature; currents require a
-# dedicated current-station id. PUG1515 is a reasonable San Juan-area default
-# and remains configurable per call.
-_DEFAULT_CURRENT_STATION = "PUG1515"
+# dedicated current-station id. The prior default ("PUG1515") returns no data.
+# PUG1702 is "Rosario Strait" (48.4581, -122.7501), a NOAA CO-OPS current
+# station inside the San Juan Islands archipelago that publishes harmonic
+# current predictions. It is verified to return data via the datagetter
+# (product=currents_predictions, interval=60). It remains configurable per call.
+_DEFAULT_CURRENT_STATION = "PUG1702"
 
 _DATAGETTER_URL = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 
@@ -119,15 +122,59 @@ class NoaaAdapter(SourceAdapter):
         """Return a normalized currents (speed) time series for ``[begin, end]``.
 
         Currents require a current-station id distinct from water-level
-        stations. Any failure (unknown station, unsupported product) yields an
-        empty list rather than raising.
+        stations. Real-time survey currents are tried first (``product=currents``);
+        if that yields nothing (most San Juan stations are prediction-only), the
+        harmonic current predictions are used instead
+        (``product=currents_predictions``). Any failure (unknown station,
+        unsupported product) yields an empty list rather than raising.
         """
-        return self._fetch_history(
+        observed = self._fetch_history(
             product="currents",
             begin=begin,
             end=end,
             station=station,
         )
+        if observed:
+            return observed
+        return self._fetch_current_predictions(begin, end, station)
+
+    def _fetch_current_predictions(
+        self,
+        begin: Union[date, datetime],
+        end: Union[date, datetime],
+        station: str,
+    ) -> List[Dict[str, object]]:
+        """Fetch hourly harmonic current predictions and normalize them.
+
+        The ``currents_predictions`` product uses a different payload shape than
+        the observation products: results live under ``current_predictions.cp``
+        with ``Time`` and ``Velocity_Major`` (knots) fields rather than the
+        ``data``/``v`` rows of observation products.
+        """
+        series: List[Dict[str, object]] = []
+        for chunk_begin, chunk_end in _chunk_ranges(begin, end, _MAX_RANGE_DAYS):
+            params = {
+                "station": station,
+                "product": "currents_predictions",
+                "begin_date": chunk_begin.strftime("%Y%m%d"),
+                "end_date": chunk_end.strftime("%Y%m%d"),
+                "interval": "60",
+                "format": "json",
+                "units": "english",
+                "time_zone": "gmt",
+                "application": "ORCAST",
+            }
+            try:
+                response = requests.get(_DATAGETTER_URL, params=params, timeout=30)
+                content_type = response.headers.get("content-type", "")
+                if response.status_code != 200 or "json" not in content_type.lower():
+                    continue
+                payload = response.json()
+            except (requests.RequestException, ValueError):
+                continue
+
+            series.extend(_normalize_current_predictions(payload, station=station))
+        return series
 
     def _fetch_history(
         self,
@@ -208,6 +255,40 @@ def _normalize_series(payload, product: str, station: str) -> List[Dict[str, obj
                 "t": _to_iso(row.get("t")),
                 "value": value,
                 "product": product,
+                "station": station,
+            }
+        )
+    return normalized
+
+
+def _normalize_current_predictions(payload, station: str) -> List[Dict[str, object]]:
+    """Normalize a ``currents_predictions`` payload into series rows.
+
+    Each row mirrors the observation-product schema (``t``/``value``/``product``/
+    ``station``) so downstream storage treats both shapes identically.
+    """
+    if not isinstance(payload, dict):
+        return []
+    container = payload.get("current_predictions")
+    if not isinstance(container, dict):
+        return []
+    rows = container.get("cp") or []
+    normalized: List[Dict[str, object]] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        raw_value = row.get("Velocity_Major")
+        if raw_value in (None, ""):
+            continue
+        try:
+            value = float(raw_value)
+        except (TypeError, ValueError):
+            continue
+        normalized.append(
+            {
+                "t": _to_iso(row.get("Time")),
+                "value": value,
+                "product": "currents_predictions",
                 "station": station,
             }
         )

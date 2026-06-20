@@ -9,10 +9,12 @@ from src.aws_backend.ingest_timeseries import (
     ACOUSTIC,
     CURRENTS,
     SALMON,
+    STATION_UPTIME,
     WATER_LEVEL,
     ingest_acoustic_history,
     ingest_noaa_history,
     ingest_salmon,
+    ingest_station_uptime,
     timeseries_status,
 )
 from src.aws_backend.main import app
@@ -53,6 +55,14 @@ class FakeSalmon:
 
     def fetch_run_index(self, year):
         return list(self._by_year.get(year, []))
+
+
+class FakeHydrophones:
+    def __init__(self, records):
+        self._records = records
+
+    def hydrophones(self):
+        return list(self._records)
 
 
 def _acoustic_records():
@@ -117,6 +127,36 @@ def test_ingest_salmon_writes_series():
     naive_start = datetime(1970, 1, 1)
     naive_end = datetime(2100, 1, 1)
     assert store.get_series(SALMON, "salish_sea", naive_start, naive_end)
+
+
+def test_ingest_station_uptime_writes_up_and_down_records():
+    store = MemoryTimeSeriesStore()
+    adapter = FakeHydrophones(
+        [
+            {"id": "rpi_orcasound_lab", "name": "Orcasound Lab", "status": "online"},
+            {"id": "rpi_port_townsend", "name": "Port Townsend", "status": "offline"},
+        ]
+    )
+
+    summary = ingest_station_uptime(hydrophones_adapter=adapter, store=store)
+
+    assert summary["stream"] == STATION_UPTIME
+    assert summary["records"] == 2
+    assert set(summary["stations"]) == {"rpi_orcasound_lab", "rpi_port_townsend"}
+
+    lab = store.get_series(STATION_UPTIME, "rpi_orcasound_lab", _WIDE_START, _WIDE_END)
+    assert len(lab) == 1
+    assert lab[0]["up"] == 1
+    assert lab[0]["status"] == "online"
+
+    pt = store.get_series(STATION_UPTIME, "rpi_port_townsend", _WIDE_START, _WIDE_END)
+    assert len(pt) == 1
+    assert pt[0]["up"] == 0
+    assert pt[0]["status"] == "offline"
+
+    status = timeseries_status(store=store)
+    assert STATION_UPTIME in status
+    assert status[STATION_UPTIME]["record_count"] == 2
 
 
 def test_timeseries_status_reports_counts_and_bounds():

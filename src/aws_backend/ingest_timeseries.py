@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional
 from .config import settings
 from .sources.noaa import NoaaAdapter
 from .sources.orcahello_history import OrcaHelloHistoryAdapter
+from .sources.orcasound import OrcasoundHydrophoneAdapter
 from .sources.salmon import SalmonRunAdapter
 from .timeseries import build_timeseries_store
 
@@ -27,6 +28,7 @@ ACOUSTIC = "acoustic_detections"
 WATER_LEVEL = "env_water_level"
 CURRENTS = "env_currents"
 SALMON = "salmon_run_index"
+STATION_UPTIME = "station_uptime"
 
 # Wide windows used when summarizing what has been stored. Some streams store
 # tz-aware timestamps (acoustic, NOAA) while others store naive date-only
@@ -111,11 +113,45 @@ def ingest_salmon(
     return {"stream": SALMON, "stations": stations, "records": total}
 
 
+def ingest_station_uptime(
+    hydrophones_adapter: Optional[Any] = None,
+    store: Optional[Any] = None,
+) -> Dict[str, Any]:
+    """Poll the hydrophone roster and append an uptime sample per station.
+
+    Each call records a single point-in-time observation per in-region station
+    so the ``STATION_UPTIME`` stream accumulates an availability time series.
+    """
+    ts = _resolve_store(store)
+    adapter = hydrophones_adapter or OrcasoundHydrophoneAdapter()
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    stations: List[str] = []
+    total = 0
+    for hydrophone in adapter.hydrophones():
+        station_id = hydrophone.get("id") or hydrophone.get("name") or "unknown"
+        status = hydrophone.get("status") or "offline"
+        record = {
+            "t": now_iso,
+            "id": station_id,
+            "station": hydrophone.get("name"),
+            "status": status,
+            "up": 1 if status == "online" else 0,
+        }
+        count = ts.put_series(STATION_UPTIME, str(station_id), [record])
+        if count:
+            stations.append(str(station_id))
+            total += count
+
+    return {"stream": STATION_UPTIME, "stations": stations, "records": total}
+
+
 def backfill_all(
     years_back: int = 3,
     acoustic: Optional[Any] = None,
     noaa: Optional[Any] = None,
     salmon: Optional[Any] = None,
+    hydrophones: Optional[Any] = None,
     store: Optional[Any] = None,
 ) -> List[Dict[str, Any]]:
     """Backfill every stream: all acoustic history plus the last N years."""
@@ -128,6 +164,7 @@ def backfill_all(
         ingest_acoustic_history(adapter=acoustic, store=store),
         ingest_noaa_history(begin, now, noaa=noaa, store=store),
         ingest_salmon(years, salmon=salmon, store=store),
+        ingest_station_uptime(hydrophones_adapter=hydrophones, store=store),
     ]
 
 
@@ -136,6 +173,7 @@ def refresh_recent(
     acoustic: Optional[Any] = None,
     noaa: Optional[Any] = None,
     salmon: Optional[Any] = None,
+    hydrophones: Optional[Any] = None,
     store: Optional[Any] = None,
 ) -> List[Dict[str, Any]]:
     """Refresh the trailing window: recent acoustic, NOAA, current-year salmon."""
@@ -146,15 +184,16 @@ def refresh_recent(
     acoustic_summary = _ingest_acoustic_recent(ts, days=days, adapter=acoustic)
     noaa_summary = ingest_noaa_history(begin, now, noaa=noaa, store=ts)
     salmon_summary = ingest_salmon([now.year], salmon=salmon, store=ts)
+    uptime_summary = ingest_station_uptime(hydrophones_adapter=hydrophones, store=ts)
 
-    return [acoustic_summary, noaa_summary, salmon_summary]
+    return [acoustic_summary, noaa_summary, salmon_summary, uptime_summary]
 
 
 def timeseries_status(store: Optional[Any] = None) -> Dict[str, Any]:
     """Summarize each stream: stations, record count, and first/last timestamp."""
     ts = _resolve_store(store)
     status: Dict[str, Any] = {}
-    for stream in (ACOUSTIC, WATER_LEVEL, CURRENTS, SALMON):
+    for stream in (ACOUSTIC, WATER_LEVEL, CURRENTS, SALMON, STATION_UPTIME):
         status[stream] = _stream_status(ts, stream)
     return status
 

@@ -44,7 +44,7 @@ aws cloudformation deploy \
   --parameter-overrides \
     ServiceName=orcast-aws-backend \
     ContainerImage="$IMAGE_URI" \
-    EnableLiveINaturalist=false \
+    EnableLiveINaturalist=true \
     EnableOrcaHello=true \
     CorsOrigins="$CORS_ORIGINS" \
     ApiKey="${ORCAST_API_KEY:-}"
