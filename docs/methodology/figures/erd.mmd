@@ -1,0 +1,73 @@
+erDiagram
+  NormalizedSighting {
+    string sighting_id PK
+    string source
+    datetime timestamp
+    float latitude
+    float longitude
+    string behavior
+    float confidence
+    float source_reliability
+    json cross_validation
+    list evidence
+    json environmental
+  }
+  Hotspot {
+    string hotspot_id PK
+    string name
+    float center_latitude
+    float center_longitude
+    float radius_km
+    float probability
+    float confidence
+    int detection_count
+    list evidence_sighting_ids
+  }
+  ProbabilityReport {
+    string report_id PK
+    datetime generated_at
+    string region
+    string summary
+    list hotspots
+    string model_version
+  }
+  IngestionRun {
+    string run_id PK
+    datetime started_at
+    datetime completed_at
+    list statuses
+    int sightings_ingested
+    int sightings_stored
+    list errors
+  }
+  CommunitySubmission {
+    string id PK
+    string place
+    float latitude
+    float longitude
+    datetime observed_at
+    string behavior
+    int count
+    string status
+    datetime submitted_at
+    datetime reviewed_at
+  }
+  SourceStatus {
+    string source
+    bool enabled
+    bool available
+    int record_count
+  }
+  TimeSeriesStream {
+    string stream PK
+    string station
+    string partition
+    datetime t
+  }
+
+  ProbabilityReport ||--o{ Hotspot : contains
+  Hotspot }o--o{ NormalizedSighting : "evidence_sighting_ids"
+  CommunitySubmission ||--o| NormalizedSighting : "adapter (status=approved)"
+  IngestionRun ||--o{ SourceStatus : records
+  IngestionRun ||--o{ NormalizedSighting : produces
+  TimeSeriesStream ||--o{ NormalizedSighting : "acoustic derived from OrcaHello"

@@ -1,0 +1,63 @@
+flowchart LR
+  subgraph SRC["External sources"]
+    orcahello["OrcaHello detections API<br/>(acoustic candidates)"]
+    obis["OBIS API<br/>(visual sightings)"]
+    inat["iNaturalist API<br/>(visual sightings)"]
+    noaaW["NOAA CO-OPS<br/>water level (9449880)"]
+    noaaC["NOAA CO-OPS<br/>currents (PUG1702)"]
+    salmon["Albion / DART<br/>salmon run timing"]
+    hydro["Orcasound roster<br/>hydrophone status"]
+    ephem["Ephemeris<br/>(computed solar/diel/lunar)"]
+  end
+
+  subgraph ADP["Source adapters / covariate compute"]
+    a_oh["orcahello_history.py"]
+    a_obis["obis.py"]
+    a_inat["inaturalist.py"]
+    a_noaa["noaa.py"]
+    a_salmon["salmon.py"]
+    a_uptime["orcasound.py"]
+    a_cov["covariates.py (on demand)"]
+  end
+
+  subgraph STORE["Stores"]
+    s3["S3 time-series<br/>NDJSON partitions<br/>timeseries/{stream}/{station}/{yyyy}/{mm}"]
+    ddb["DynamoDB tables<br/>sightings / hotspots / reports /<br/>ingestion-runs / community-submissions"]
+  end
+
+  subgraph API["Service API"]
+    ingest["/api/sightings/ingest"]
+    tsrefresh["/api/timeseries/refresh"]
+    datastatus["/api/data-status"]
+    health["/health"]
+    commpost["POST /api/community/sightings<br/>(public self-posting)"]
+  end
+
+  kernel["Kernel forecast model<br/>log lambda(x,t) = LNP kernels"]
+  forecast["Forecast probability surface<br/>(default map heat)"]
+  overlay["Detection / validation overlay"]
+
+  orcahello --> a_oh --> s3
+  noaaW --> a_noaa
+  noaaC --> a_noaa
+  a_noaa --> s3
+  salmon --> a_salmon --> s3
+  hydro --> a_uptime --> s3
+  obis --> a_obis --> ddb
+  inat --> a_inat --> ddb
+  ephem --> a_cov --> kernel
+
+  commpost --> ddb
+  ingest --> ddb
+  tsrefresh --> s3
+
+  s3 --> kernel
+  ddb --> overlay
+  kernel --> forecast
+  forecast --> overlay
+
+  s3 --> datastatus
+  ddb --> health
+
+  sched["EventBridge rate(30 min) Lambda"] -.keyed call.-> ingest
+  sched -.keyed call.-> tsrefresh

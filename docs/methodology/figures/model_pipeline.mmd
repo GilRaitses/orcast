@@ -1,0 +1,47 @@
+flowchart LR
+  subgraph STIM["Stimulus covariates s(t)"]
+    tide["tide / current phase"]
+    diel["diel hour angle"]
+    lunar["lunar phase"]
+    season["day of year / daylight"]
+    salmonc["salmon run index"]
+    space["space: bathymetry / channel"]
+  end
+
+  subgraph LIN["Linear kernels k"]
+    ktide["k_tide"]
+    kdiel["k_diel"]
+    klunar["k_lunar"]
+    kseason["k_season"]
+    ksalmon["k_salmon"]
+    sspace["s_space"]
+  end
+
+  tide --> ktide
+  diel --> kdiel
+  lunar --> klunar
+  season --> kseason
+  salmonc --> ksalmon
+  space --> sspace
+
+  ktide --> sum["sum in log space + log E(x,t) effort offset"]
+  kdiel --> sum
+  klunar --> sum
+  kseason --> sum
+  ksalmon --> sum
+  sspace --> sum
+
+  sum --> nonlin["nonlinearity f = exp"]
+  nonlin --> lambda["rate lambda(x,t)"]
+  lambda --> prob["encounter probability<br/>1 - exp(-lambda dt)"]
+  prob --> surface["forecast surface (default heat)"]
+
+  acoustic["acoustic detections<br/>(spike train, fixed effort)"] --> fit["LNP / Poisson GAM fit"]
+  fit --> ktide
+  fit --> kdiel
+  fit --> klunar
+  fit --> kseason
+
+  visual["visual sightings (OBIS / community)"] --> validate["held-out validation:<br/>deviance, calibration, PIT"]
+  surface --> validate
+  validate --> conf["displayed confidence on surface"]
