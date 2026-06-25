@@ -1,0 +1,398 @@
+# diagram_fix_instruction.yaml
+# Machine-facing instruction for the ORCAST TikZ figure audit and rebuild pipeline.
+# Emitting agent: pax cursor agent, 2026-06-25
+# Receiving agent: orcast cursor agent
+# Purpose: Replicate the FA0–FA3 figure remediation methodology for any new or
+#          updated ORCAST TikZ figures. This YAML encodes every pattern used to
+#          fix the seven figures in docs/figures/. Execute waves in order.
+
+schema_version: "1"
+pipeline_id: "FA-diagram-fix"
+figures_root: "docs/figures/"
+shared_style: "docs/figures/shared/orcast_tikz_style.sty"
+build_command: |
+  cd docs/figures/<fig-name>/
+  TEXINPUTS=../shared/: pdflatex -interaction=nonstopmode figure.tex
+  pdftoppm -r 150 -png figure.pdf figure && mv figure-1.png figure.png
+rebuild_all: "make all  # from docs/figures/"
+
+# ─── WAVE FA0: DEFECT CLASSIFICATION ─────────────────────────────────────────
+
+wave_FA0:
+  label: "Defect classification"
+  output: "docs/figures/FA0_DEFECT_REGISTER.md"
+  instruction: |
+    For each figure, compile the .tex, render to PNG at 150dpi, then read the
+    PNG with the Read tool. Score every visual defect into a register with
+    columns: id, severity, figure, description, tex_location, status.
+  severity_tiers:
+    P0: "Breaks legibility — blocks submission use (figure unreadable at A4 print)"
+    P1: "Incorrect or misleading content (wrong label, missing edge, implied completion)"
+    P2: "Style drift from reference (badge alignment, whitespace, color inconsistency)"
+  register_format:
+    id: "P{tier}-{seq:02d}"
+    severity: "P0 | P1 | P2"
+    figure: "fig-XX"
+    description: "One sentence."
+    tex_location: "Exact node name or coordinate from .tex source"
+    status: "open | verified | suppressed"
+
+# ─── WAVE FA1: REMEDIATION ────────────────────────────────────────────────────
+
+wave_FA1:
+  label: "Remediation"
+  order: "P0 first, then P1, then P2"
+  scope_globs: ["docs/figures/fig-*/figure.tex"]
+
+  fix_patterns:
+
+    # --- P0: LEGIBILITY FIXES ---
+
+    figure_too_wide:
+      trigger: "Compiled PDF wider than ~17cm (A4 text width)"
+      root_cause: "Absolute coordinates place nodes beyond page boundary; column widths too large"
+      fix: |
+        Option A — Scale the entire figure:
+          Wrap tikzpicture in \scalebox{0.65}{...}
+          Adjust column widths: text width=3.0cm (col1) + text width=0.9cm (col2 badge)
+          Note: scalebox conflicts with & in matrix columns; prefer Option B when possible.
+        Option B — Reduce column widths directly:
+          column 1: text width=3.0cm, inner xsep=4pt
+          column 2: text width=0.9cm, align=right, font=\tiny
+          Recalculate node positions so total width ≤ 17cm.
+        Option C — Rewrite horizontal pipeline as vertical:
+          Stack each processing step top-to-bottom (y decrements by ~1.5cm per step).
+          IC (integrity condition) nodes become right-side stubs with short \draw[->] arrows.
+          Eliminates the width problem entirely for gate pipeline diagrams.
+      example_tex: |
+        % Option A
+        \begin{tikzpicture}[scale=0.65]
+          \matrix[TBL] (tbl) { ... };
+        \end{tikzpicture}
+
+        % Option C (vertical pipeline)
+        \node[STEP] (step1) at (0, 0) {Step 1};
+        \node[STEP] (step2) at (0,-1.5) {Step 2};
+        \node[IC]   (ic1)  at (3.0,-0.75) {IC 1};
+        \draw[->] (step1) -- (step2);
+        \draw[->, dashed] (ic1.west) -- +(-0.5,0);
+      applied_to: ["fig-01 (scale=0.65)", "fig-07 (vertical rewrite)"]
+
+    title_collision:
+      trigger: "Title node overlaps first actor or header row"
+      root_cause: "anchor=north west at node.north places title inside the node bounding box"
+      fix: |
+        Use anchor=south west at [yshift=12pt]<topnode>.north west, not anchor=north west.
+        This places the title 12pt above the top of the first node.
+      example_tex: |
+        \node[font=\normalsize\bfseries, anchor=south west]
+          at ([yshift=12pt]step1.north west) {Figure Title};
+      applied_to: ["fig-02", "fig-04"]
+
+    nodes_off_bounding_box:
+      trigger: "One or more nodes not visible in compiled PNG"
+      root_cause: "Absolute y-coordinates too negative for bounding box; node placed below visible area"
+      fix: |
+        1. Read the PNG with the Read tool to identify which nodes are missing.
+        2. Reduce the y-coordinate magnitude (e.g., at (6.0,-4.5) → at (6.0,-3.0)).
+        3. Or switch to relative positioning: \node (n2) [below=1.5cm of n1] {...};
+        4. Recompile and verify all nodes are within the standalone bounding box.
+      applied_to: ["fig-03 (FreezeSnapshot/WriteReport nodes)"]
+
+    # --- P1: CONTENT CORRECTNESS FIXES ---
+
+    dashed_border_invisible:
+      trigger: "Table supposed to have dashed border renders with solid border"
+      root_cause: |
+        draw= on the TikZ matrix node sets a solid outer border. A \draw[dashed]
+        overlay is then occluded. The matrix draw= must be removed.
+      fix: |
+        In the TBL style for the S3/artifact table: set draw=none on the matrix.
+        Draw the dashed border separately after the matrix is placed:
+          \draw[dashed, ORstroke, very thin] (tbl.north west) rectangle (tbl.south east);
+      example_tex: |
+        % Style definition
+        TBL_S3/.style={TBL, draw=none, ...}
+        % After matrix
+        \draw[dashed, draw=ORstroke, very thin]
+          (tbl_s3.north west) rectangle (tbl_s3.south east);
+      applied_to: ["fig-01 S3 artifact table"]
+
+    missing_fk_edge:
+      trigger: "An expected foreign-key or derived_from edge is absent from the rendered figure"
+      root_cause: |
+        The target node is unreachable by the routing path specified (e.g., .west/.east
+        direction conflicts with node placement). Or the source node is outside the
+        bounding box so the edge is not drawn.
+      fix: |
+        1. Name both source and target nodes explicitly (not by coordinate).
+        2. For FK edges in ERD tables: use row-level named anchor nodes inside the matrix.
+        3. Route edges via intermediate points if needed:
+             \draw[dashed, ->, >=latex] (src.east) -| ++(0.5,0) |- (tgt.west);
+        4. For provenance graphs: reposition the target node to be geometrically reachable
+           (e.g., center-bottom between two source nodes).
+      example_tex: |
+        % ERD FK edge — name the row node
+        |[name=fk_row]| field name & (FK) \\
+        % Elsewhere
+        \draw[dashed, ->, >=latex]
+          (fk_row.east) -- ++(0.3,0) |- (target_pk.east);
+
+        % Provenance graph — reposition D node to center-bottom
+        \node[DNode] (D) at ($(X1.south)!0.5!(X2.south) + (0,-1.5)$) {D};
+        \draw[->] (X1) -- (D);
+        \draw[->] (X2) -- (D);
+      applied_to: ["fig-01 FK edges", "fig-06 D node missing X2 → D edge"]
+
+    wrong_arrow_label:
+      trigger: "Arrow label describes the wrong action or uses wrong terminology"
+      fix: "Find the \node[near start, flowlabel] or edge label node and correct the text."
+      applied_to: ["fig-02: 'scheduled keyed calls' → 'scheduled refresh calls'"]
+
+    credibility_annotation_missing:
+      trigger: |
+        A node implies the system has done something (fitted a model, run a pipeline,
+        stored a result) that has not yet occurred in production.
+      fix: |
+        Add an explicit annotation. Use one of these patterns:
+        - (target schema — not yet at L1)
+        - (pipeline design — not yet executed)
+        - (once run)
+        - (illustrative)
+        - (UI example only)
+        Place as a \textit{} node immediately below or beside the implying node.
+        For S3/artifact tables: add the annotation to the table header row.
+      example_tex: |
+        % Standalone annotation below a node
+        \node[font=\footnotesize\itshape, below=2pt of suspect_node]
+          {(target schema --- not yet at L1)};
+
+        % Inside a matrix header row
+        row 1 col 1/.style={nodes={
+          fill=ORhdr, font=\small\bfseries,
+          label={[font=\tiny\itshape]below:(target schema --- not yet at L1)}}},
+      applied_to:
+        - "fig-01: S3 artifact table header"
+        - "fig-05: fitted-kernel artifact table"
+        - "fig-06: 'no signal' badge, PSTH illustrative value"
+
+    strikethrough_matrix_artifact:
+      trigger: |
+        Text in a TikZ matrix cell appears with a horizontal line through it
+        (rendering artifact from matrix cell borders at small font sizes).
+      fix: |
+        Add \renewcommand\arraystretch{1.4} before the matrix.
+        Or increase row sep in the TBL style: row sep=2pt.
+        Or increase font size slightly (from \tiny to \scriptsize).
+      example_tex: |
+        \renewcommand\arraystretch{1.4}
+        \matrix[TBL] (m) { ... };
+      applied_to: ["fig-05: 'kernel fit, L1-L3 gate verdicts' cell"]
+
+    invisible_box_header:
+      trigger: "A BOX or SUBBOX node header is not visible; body starts mid-box"
+      root_cause: |
+        \node[BOX] placed at absolute coordinates, then \node[SUBBOX] chained
+        without accounting for header height — header is clipped or overwritten.
+      fix: |
+        Use fit= on an outer node that spans both header and body:
+          \node[BOX, fit=(header)(body)] (outer) {};
+        Or use explicit y-offset for the body node:
+          \node[SUBBOX, below=0pt of header.south, anchor=north] (body) {...};
+      applied_to: ["fig-04: Automation agent header"]
+
+    # --- P2: STYLE FIXES ---
+
+    fk_badge_clipping:
+      trigger: "FK/PK badge text clips against right cell border"
+      fix: "Set inner xsep=3pt on column 2 nodes in the TBL style."
+      example_tex: |
+        column 2/.style={nodes={
+          fill=ORbg, anchor=east, inner xsep=3pt, inner ysep=2pt,
+          text width=0.9cm, align=right, font=\tiny\color{ORpk}}},
+
+    edge_label_overlap:
+      trigger: "Multiple edge labels at the same midway position overprint each other"
+      fix: |
+        Use pos= and sloped= with explicit offsets:
+          node[pos=0.3, above, sloped]{label1}
+          node[pos=0.7, below, sloped]{label2}
+        Or shorten the label text and use pos= to space them.
+      applied_to: ["fig-02: 'writes sightings'/'writes timeseries' overlap"]
+
+    legend_overlap:
+      trigger: "Legend box overlaps a diagram node"
+      fix: |
+        Place legend at a corner far from content:
+          \node[legend, anchor=south east] at (current bounding box.south east) {...};
+        Or use anchor=north east at the top-right of the bounding box.
+        Adjust coordinates until no overlap in the PNG.
+      applied_to: ["fig-04: legend overlaps AppRunner node"]
+
+    excessive_whitespace:
+      trigger: "Large vertical gap between nodes that should be visually adjacent"
+      fix: "Reduce the y-coordinate gap. Example: y=-4.5 → y=-2.5 for claims nodes."
+      applied_to: ["fig-06: metric root to claims gap"]
+
+# ─── WAVE FA2: VALIDATION ────────────────────────────────────────────────────
+
+wave_FA2:
+  label: "6-point visual validation"
+  output: "docs/figures/FA2_VALIDATION_REPORT.md"
+  checklist:
+    V1_text_legible:
+      criterion: "All text readable at 120dpi (simulated A4 print)"
+      method: "Read the figure.png with the Read tool. Confirm node labels, edge labels,
+               badge text, and title are not blurry or clipped."
+    V2_no_overflow:
+      criterion: "No text clips against cell or figure boundary"
+      method: "Look for text that disappears at node/cell edges in the PNG."
+    V3_no_collisions:
+      criterion: "No two nodes overlap or occlude each other"
+      method: "Scan for any node that sits on top of another node."
+    V4_edges_correct:
+      criterion: "All edges attach to named nodes; no dangling arrows"
+      method: "Trace each arrow in the PNG from source to target. Verify endpoint."
+    V5_content_accurate:
+      criterion: "No stale field names, wrong relationships, or struck-through artifacts"
+      method: "Cross-check field names against the live schema (DYNAMODB_PROOF.md).
+               Verify any 'illustrative' or 'target schema' annotations are present."
+    V6_reference_style:
+      criterion: "Lilac header (ORhdr), white fields (ORbg), thin ORstroke, FK label outside table"
+      method: "Verify header row color, field background, border weight, badge positioning."
+  pass_criteria:
+    PASS: "All 6 checks pass"
+    PARTIAL_PASS: "One or more checks are ~ (partial) but the primary judge-facing content
+                  remains legible and accurate. Document suppressed items with rationale."
+    FAIL: "Any check is a hard fail — reopen the FA1 fix and remediate before proceeding."
+
+# ─── WAVE FA3: ADVERSARIAL REVIEW ────────────────────────────────────────────
+
+wave_FA3:
+  label: "Adversarial review against submission criteria"
+  output: "docs/figures/FA3_ADVERSARIAL_REVIEW.md"
+  reviewer_posture: "Mock judge with no prior orcast context, hostile to overclaiming."
+  attacks:
+    factual:
+      question: "Does the figure contain any claim verifiable as false at the live URL?"
+      method: "For each node/label, check against orcast-h0.vercel.app, SUBMISSION.md,
+               and DYNAMODB_PROOF.md. Any claim that cannot be verified is a P1 defect."
+    credibility:
+      question: "Does the figure imply the system is more complete than it is?"
+      known_risks:
+        - "Fitted kernels / trained models shown when no kernel has passed all gates
+           → add (pipeline design — not yet executed) or (target schema — not yet at L1)"
+        - "Example metric values mistaken for live results
+           → add (illustrative) or replace with the actual value (e.g. 0%)"
+        - "Step Functions execution ARNs / run IDs shown when no run has occurred
+           → add (once run)"
+        - "Human promotion shown as completed → ensure it reads as the final step, not a past event"
+    clarity:
+      question: "Would a judge without prior context understand this within 30 seconds?"
+      method: "Apply the 30-second rule: cover the caption and describe what you see.
+               If you cannot identify the primary claim without the caption, the figure fails."
+  scoring_axes:
+    - id: aws_database_use
+      weight: primary
+      question: "Is DynamoDB clearly the system of record? Are all tables named and schema visible?"
+    - id: working_application
+      weight: primary
+      question: "Can a judge reproduce what the figures claim using the live URL?"
+    - id: innovation
+      weight: secondary
+      question: "Is the evidence-bounding approach novel vs a conventional forecast map?"
+    - id: technical_complexity
+      weight: secondary
+      question: "Does the figure set demonstrate meaningful depth?"
+    - id: presentation_clarity
+      weight: tertiary
+      question: "Does a non-expert understand each figure within 30 seconds?"
+
+# ─── REGISTRY ENTRIES ─────────────────────────────────────────────────────────
+
+registry_entries:
+  - id: FA0
+    family: FA
+    type: probe
+    status: done
+    output: docs/figures/FA0_DEFECT_REGISTER.md
+  - id: FA1
+    family: FA
+    type: implement
+    status: done
+    scope_globs: ["docs/figures/fig-*/figure.tex"]
+  - id: FA2
+    family: FA
+    type: verify
+    status: done
+    output: docs/figures/FA2_VALIDATION_REPORT.md
+  - id: FA3
+    family: FA
+    type: probe
+    status: done
+    output: docs/figures/FA3_ADVERSARIAL_REVIEW.md
+
+# ─── EXECUTION PROTOCOL ──────────────────────────────────────────────────────
+
+execution_protocol:
+  step_1_audit:
+    action: "For each figure in docs/figures/fig-*/, compile and read the PNG."
+    tool: "Read tool on figure.png after build_command."
+    output: "Defect entries in FA0_DEFECT_REGISTER.md."
+
+  step_2_remediate:
+    action: "Apply fix_patterns above, P0 first. After each fix: rebuild and re-read PNG."
+    critical_rule: |
+      NEVER claim a fix is complete without re-reading the PNG.
+      The visual-verification rule applies: make change → compile → read PNG → verify.
+    do_not:
+      - "Fix without rereading the PNG output"
+      - "Declare a P0 fixed without confirming legibility at 150dpi"
+      - "Remove or weaken credibility annotations — err toward more annotation"
+
+  step_3_validate:
+    action: "Score all 6 FA2 checks per figure. Write FA2_VALIDATION_REPORT.md."
+    gate: "All figures must reach PASS or PARTIAL PASS before FA3."
+
+  step_4_adversarial:
+    action: "Run 3 attacks per figure. Write FA3_ADVERSARIAL_REVIEW.md."
+    gate: "Any P1 defect found in FA3 reopens FA1 for that figure."
+
+  step_5_required_fixes:
+    action: "List required fixes from FA3. Apply and re-verify."
+    final_gate: "No open P0 or P1 defects. All PARTIAL suppressions documented."
+
+# ─── KNOWN OPEN ITEMS (as of 2026-06-24 FA3) ─────────────────────────────────
+
+known_open_after_fa3:
+  - figure: fig-05
+    defect_id: FA3-credibility-01
+    description: |
+      'orcast: NB-GLM fit + gate run' table needs (target schema -- not yet at L1)
+      annotation matching the S3 artifact annotation in fig-01.
+    tex_location: "Oengrun matrix, row 1 (engine_run table header)"
+    status: open
+    required_fix: |
+      Add \node[font=\footnotesize\itshape, below=2pt of Oengrun.south]
+        {(target schema --- not yet at L1)};
+      OR embed annotation in the table header node label.
+
+  - figure: fig-03
+    defect_id: FA2-V4-partial
+    description: "Gate-fail path target (FreezeSnapshot/WriteReport) still marginal in bounding box"
+    status: suppressed
+    suppression_rationale: "Non-blocking for primary judge content (promote/hold/reject flow visible)"
+
+  - figure: fig-04
+    defect_id: FA2-V3-partial
+    description: "Legend box overlaps lower portion of AWS App Runner node"
+    status: suppressed
+    suppression_rationale: "Public/reviewer split clearly legible; legend overlap is cosmetic"
+
+  - figure: fig-05
+    defect_id: FA2-V5-partial
+    description: "Strikethrough artifact in 'kernel fit, L1-L3 gate verdicts' cell"
+    status: suppressed
+    suppression_rationale: |
+      TikZ matrix cell border rendering at this scale. Recommended fix if reopened:
+      \renewcommand\arraystretch{1.4}
