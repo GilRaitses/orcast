@@ -1,0 +1,112 @@
+# orcast Step Log
+
+Do not read linearly. Use keyword search (Ctrl-F or `grep`) for the term you need.
+
+Each entry: `[DATE] [WAVE] [ACTION] — [RESULT/FILE]`
+
+---
+
+[2026-06-24] [H0] Deployed Next.js frontend to Vercel (orcast-h0.vercel.app). Maps key set. WorkOS auth live. — dpl_E6g6wkkTSntzEUcZvWwgkotjqa1m
+
+[2026-06-24] [A] Added Playwright agent-automation path. `X-ORCAST-Agent-Key` header injection. Same-origin proxy. — `web/e2e/demo-no-cred-walkthrough.spec.ts`
+
+[2026-06-24] [A] a-gate composite script. Runs: a-doc-grep + a-maps-smoke + agent_smoke.py + h1-demo-walkthrough + a-video-gate. — `tools/waves/gates/a-gate.sh` PASS
+
+[2026-06-24] [V] Per-beat video recording. `BEAT_PAUSE_MS`. `demo:record` npm script. — `web/package.json`
+
+[2026-06-24] [W] Whitepaper 1 LaTeX build. 9 sections (01_abstract through 09_limits_falsification). Equations E1–E8. Glossary. Appendix diagrams. — `docs/whitepaper/LX/Raitses_orcast_2026.tex`
+
+[2026-06-24] [W] references.bib compiled from SF-01 through SF-12. 264 entries. — `docs/whitepaper/LX/references.bib`
+
+[2026-06-24] [FA] Figure audit defect register. Adversarial review. TikZ style file (`orcast_tikz_style.sty`). Figures fig-01 through fig-07. — `docs/figures/FA0_DEFECT_REGISTER.md`
+
+[2026-06-24] [MP] Three multi-panel benchmark figures built. fig-mp1 (problem/measurement), fig-mp2 (mechanism), fig-mp3 (benchmark scope). — `docs/figures/fig-mp1-*/`, `fig-mp2-*/`, `fig-mp3-*/`
+
+[2026-06-24] [MP] MP5 scope decision: paper 2 title = "Grounding quality measurement for orchestrated AI reasoning chains". Benchmark backbone. AMI trajectory framed as future work. — `docs/whitepaper/MP5_SCOPE_DECISION.md`
+
+[2026-06-24] [R] Research sync: SF-13 (RAG quality) and SF-14 (step-log world model eval) added and searched. — `docs/whitepaper/research/SF-13-*.md`, `SF-14-*.md`
+
+[2026-06-24] [R] WP1 Section 7b extended with 8-scenario benchmark table. Appendix updated with MP figures. PDF rebuilt 989 KB. — `docs/whitepaper/Build/Raitses_orcast_2026.pdf`
+
+[2026-06-24] [R] WP2 foundation: 7-section MD prose + LaTeX root + all sections. references2.bib. PDF 761 KB. — `docs/whitepaper2/`
+
+[2026-06-25] [SC] SF-15 (LeCun AMI primary) and SF-16 (physical world eval benchmarks) added to em_research.py. Both searched. Summaries written. — `docs/whitepaper/research/SF-15-*.md`, `SF-16-*.md`
+
+[2026-06-25] [SC] SEARCH_FAMILY_GRID.md updated: all 16 families with verdicts. — `docs/whitepaper/SEARCH_FAMILY_GRID.md`
+
+[2026-06-25] [SC] WP1 references.bib extended with 10 new entries (SF-15/16 papers). Section 09 extended with world model eval connection. PDF rebuilt. — `docs/whitepaper/Build/Raitses_orcast_2026.pdf`
+
+[2026-06-25] [SC] WP2 Section 6 restructured: LeCun anchor → future work paragraph. Abstract rewritten: no LeCun in abstract. references2.bib rebuilt. PDF 764 KB. — `docs/whitepaper2/Build/Raitses_orcast_grounding_2026.pdf`
+
+[2026-06-25] [Q] Scrutiny wave. q1b-api-schema.sh, q1c-ddb-schema.sh, q1f-wp-claims.sh written. scrutiny.spec.ts (7 assertions). — `tools/waves/gates/q1b-api-schema.sh` etc.
+
+[2026-06-25] [Q] Gap register written. 2 P2 gaps found: fig-08 Vercel AI Gateway label wrong; WP Section 6 C/M/X description inaccurate. — `docs/devpost/Q_GAP_REGISTER.md`
+
+[2026-06-25] [Q] Q2 remediation: fig-08 Vercel AI Gateway relabeled "explore guide chat (claude-haiku-4.5)". WP Section 6 updated. Both PDFs rebuilt. — `docs/figures/fig-08-architecture/figure.tex`
+
+[2026-06-25] [Q] QF adversarial review: all gates PASS, 0 surviving gaps. — `docs/devpost/QF_ADVERSARIAL_REVIEW.md`
+
+[2026-06-25] [F] Beat 06a journal: 13 smoke test entries deleted. 3 realistic entries seeded (J pod transiting, foraging near kelp, unconfirmed dorsal fin). — `tools/testing/seed_realistic_journal.py`
+
+[2026-06-25] [F] Beat 07 DynamoDB: proof slide rebuilt with all 9 tables and live item counts. Old 6-table slide replaced. — `tools/testing/build_ddb_proof_slide.py`, `web/public/demo-slides/dynamodb-proof.png`
+
+[2026-06-25] [F] Level1PsthSection.tsx: blank PSTH kernel image boxes removed. Modulation values shown instead. — `web/app/components/Level1PsthSection.tsx`
+
+[2026-06-25] [F] Vercel redeployed with fixes. App Runner unchanged. a-gate re-run: PASS. Video 132s. — `docs/devpost/figures/_demo-run/demo-walkthrough.webm`
+
+[2026-06-25] [D] Audit deck PDF built: 27 pages, 3.5 MB. All 9 beats with adversarial analysis. Submission copy audit. Figure audit. Whitepaper summary. Fix checklist. — `docs/devpost/submission/audit-deck/Build/Raitses_orcast_audit_2026.pdf`
+
+[2026-06-25] [D] Audit deck also on Desktop: `~/Desktop/orcast-submission/orcast-audit-deck.pdf`
+
+[2026-06-25] [U] evidence.py router added. POST/GET/DELETE /api/evidence/assets. S3 raw_payload_bucket. require_signed_in. 25 MB limit. — `src/aws_backend/routers/evidence.py`
+
+[2026-06-25] [U] main.py: evidence router registered. — `src/aws_backend/main.py`
+
+[2026-06-25] [U] Vercel proxy: multipart/form-data now forwarded as raw binary (not req.text()). Content-Type preserved. — `web/app/api/be/[...path]/route.ts`
+
+[2026-06-25] [U] EvidenceAsset model added. JournalEntry + CommunitySubmission extended with evidence_assets. — `src/aws_backend/models.py`
+
+[2026-06-25] [U] SightingCheckPanel.tsx: image upload button (capture=environment), audio upload button (capture=user), asset chips, evidence_assets in sighting-assist POST. — `web/app/components/SightingCheckPanel.tsx`
+
+[2026-06-25] [U] account page added at /account. Lists journal entries, uploaded evidence, published submissions. "Account" added to Nav. — `web/app/account/page.tsx`
+
+[2026-06-25] [U] Share PDFs built: WP1 share 429 KB / 4 pp (no glossary, no appendix). WP2 share 333 KB / 3 pp (no appendix figures). — `docs/whitepaper/Build/Raitses_orcast_2026_share.pdf`, `docs/whitepaper2/Build/Raitses_orcast_grounding_2026_share.pdf`
+
+[2026-06-25] [U] arXiv tarballs built and validated: WP1 511 KB PASS, WP2 354 KB PASS. — `docs/whitepaper/Build/arxiv/orcast_whitepaper1_arxiv.tar.gz`, `docs/whitepaper2/Build/arxiv/orcast_grounding_arxiv.tar.gz`
+
+[2026-06-25] [U] u-upload.sh, u-account.sh gate scripts written. u-upload/u-account added to run-gate.sh. — `tools/waves/gates/u-upload.sh`, `u-account.sh`
+
+[2026-06-25] [U] UF review: evidence endpoints return 404 (App Runner not redeployed). /account returns 404 (Vercel not redeployed). Journal entries correctly return evidence_assets: [] — PASS. Code complete; deployment pending. — `docs/devpost/UF_UPLOADS_PACKAGING_REVIEW.md`
+
+[2026-06-25] [PP] Wave Set PP chartered: prose rewrite (PP1) + figure audit (PP2) + arXiv rebuild (PP3) + final review (PPF). Parallel subagent dispatch message drafted. — NOT YET EXECUTED
+
+[2026-06-25] [PP1] WP1 prose rewrite: 2 violations fixed (01_abstract "We describe"→"orcast is", "We introduce"→"A grounding benchmark"; 08_geospatial_limits "We tested"→passive measurement form). Grep confirms 0 forbidden patterns in all 9 section files. — `docs/whitepaper/LX/Sections/01_abstract.tex`, `08_geospatial_limits.tex`
+
+[2026-06-25] [PP1] WP2 prose rewrite: 2 violations fixed (02_evidence_binding_gap "We propose"→"$\Runcited$...is"; 06_world_model_extension enumerate block→prose). Grep confirms 0 forbidden patterns in all 6 section files. — `docs/whitepaper2/LX/Sections/02_evidence_binding_gap.tex`, `06_world_model_extension.tex`
+
+[2026-06-25] [PP1] All 4 PDFs rebuilt clean: WP1 full 9pp 1013KB, WP1 share 7pp 439KB, WP2 full 5pp 780KB, WP2 share 4pp 341KB. — `docs/whitepaper/Build/`, `docs/whitepaper2/Build/`
+
+[2026-06-25] [PP2] All 8 manifest figures built (`make all`). Each PNG read at 300 dpi; four adversarial tests applied (factual, credibility, clarity, legibility). — `docs/figures/PP2_FIGURE_AUDIT.md`
+
+[2026-06-25] [PP2] P1 fix: fig-05 "orcast: NB-GLM fit + gate run" header annotated with "(target schema --- not yet at L1)" italic subtitle (FA3-credibility-01 resolved). PNG rebuilt and synced. — `docs/figures/fig-05-decisiondb-mapping/figure.tex`
+
+[2026-06-25] [PP3] arXiv bundles rebuilt and validated: WP1 1063KB PASS (compiled 428KB), WP2 354KB PASS (compiled 333KB). Bundles copied to ~/Desktop/orcast-submission/. — `docs/whitepaper/Build/arxiv/`, `docs/whitepaper2/Build/arxiv/`
+
+[2026-06-25] [PPF] a-gate run: FAIL on a-doc-grep (next_wave_set: U in registry, not H1 — pre-existing since Wave Set U updated registry). Not a PP regression. Video 132s from F wave unchanged.
+
+---
+
+## Operator actions completed
+
+- DynamoDB proof slide deployed to Vercel: YES (2026-06-25 Vercel redeploy after F wave)
+- Level1PsthSection blank images fixed: YES
+- Journal realistic entries seeded: YES
+- Moderation queue smoke test entries cleared: YES (12 rejected)
+- Desktop submission folder created: YES (`~/Desktop/orcast-submission/`)
+
+## Operator actions pending
+
+- App Runner redeploy (evidence.py)
+- Vercel redeploy (account page + SightingCheckPanel)
+- AWS Console screenshot of 9 DynamoDB tables
+- Devpost form submission

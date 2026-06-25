@@ -1,0 +1,33 @@
+\section{The evidence-binding gap in AI reasoning systems}
+
+AI systems that generate natural language outputs about scientific or physical domains make claims
+that require empirical grounding. When a language model responds to a question about orca encounter
+likelihood at Haro Strait, it may correctly name the relevant salmon corridor, acoustic monitoring
+network, and behavioral studies --- but without binding any of these claims to their generating
+observations, prior analyses, or data artifacts. The response is fluent and plausible; it is not
+evidentially accountable.
+
+This is the evidence-binding gap: the structural disconnection between a system's stated claims and
+the observations, methods, and experiments that would make those claims verifiable. The gap is not a
+matter of factual accuracy per se --- a claim may be broadly correct while still carrying no bound
+evidence. It is a matter of verifiability: a judge, steward, or downstream system cannot determine
+whether the claim was produced by accessing ground-truth data or by reproducing a plausible-sounding
+pattern from training.
+
+Prior work on RAG hallucination reduction~\cite{arxiv230915217,arxiv230514627,arxiv240115884,arxiv231109533}
+establishes that retrieval-augmented generation reduces factual error rates and that citation generation
+can be automated. However, this literature focuses on whether RAG improves accuracy, not on whether
+the improvement comes from evidence binding --- from the system's outputs being traceable to their
+generating context --- versus improved parametric knowledge activation.
+
+The geospatial grounding baseline makes this distinction concrete. Google Maps grounding achieves high
+citation density for place-of-interest queries. For marine science evidence queries --- the same domain,
+but requiring scientific rather than place-level grounding --- Maps grounding resolves 0 of 25 citations
+to scientific or dataset sources. NOAA fisheries data, the Center for Whale Research census, Chinook
+salmon migration corridors, and acoustic hydrophone recordings are all generated as claims but remain
+entirely uncited. The system knows about these phenomena from training; it cannot bind its claims to
+verifiable data artifacts.
+
+$\Runcited$ --- the fraction of scientific sentences in a system's output with no bound
+citation --- is the measurement primitive that makes this gap quantitative, reproducible, and
+architecture-diagnostic.

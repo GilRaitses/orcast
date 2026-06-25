@@ -1,0 +1,99 @@
+% Raitses_orcast_grounding_2026_share.tex
+% Content-only sharing version: abstract + body sections + references only.
+% Excludes: Appendix_Figures.
+% Intended for arXiv upload and single-page sharing.
+\documentclass[10pt,twocolumn]{article}
+
+\usepackage[letterpaper,top=0.34in,bottom=0.36in,left=0.36in,right=0.36in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[
+  backend=biber,
+  style=numeric,
+  sorting=nyt,
+  maxbibnames=4,
+  giveninits=true
+]{biblatex}
+
+\addbibresource{references2.bib}
+\graphicspath{{Figures/}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.18em}
+\setlength{\columnsep}{0.20in}
+\setlength{\droptitle}{-4.8em}
+\pretitle{\begin{center}\Large\bfseries}
+\posttitle{\par\end{center}\vspace{-1.0em}}
+\preauthor{\begin{center}}
+\postauthor{\par\end{center}\vspace{-1.35em}}
+\predate{}
+\postdate{}
+\titleformat{\section}{\bfseries\large}{\thesection}{0.55em}{}
+\titlespacing*{\section}{0pt}{0.48em}{0.08em}
+\setlength{\abovedisplayskip}{0.28em}
+\setlength{\belowdisplayskip}{0.28em}
+\setlength{\abovedisplayshortskip}{0.18em}
+\setlength{\belowdisplayshortskip}{0.18em}
+
+\AtEveryBibitem{%
+  \ifboolexpr{not test {\iffieldundef{doi}} or not test {\iffieldundef{journaltitle}}}{%
+    \clearfield{url}%
+    \clearfield{eprint}%
+    \clearfield{eprinttype}%
+  }{}%
+}
+\AtBeginBibliography{\scriptsize}
+
+\newcommand{\Runcited}{R_{\mathrm{uncited}}}
+
+\title{Grounding quality measurement for orchestrated AI reasoning chains:
+       evidence-binding rate as an evaluation primitive for world model systems}
+\author{Gil Raitses \\ \small aimez.ai}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\fontsize{8.45}{9.25}\selectfont
+
+\begin{abstract}
+AI systems that reason about physical or scientific domains routinely produce outputs
+containing scientific claims without citing their generating evidence. $\Runcited$ --- the
+fraction of scientific sentences in a system's output that carry no bound citation --- is a
+formal evaluation primitive for AI reasoning quality. Using a reproducible 8-scenario parallel
+benchmark against the Gemini Interactions API with Google Maps grounding on marine science
+queries, Maps-only geospatial grounding achieves 60--100\% uncited across query types.
+Injecting a structured orchestrated skill-dispatch step-log as RAG context reduces $\Runcited$
+to 0\%, demonstrating that planning traces eliminate uncited claims by converting open-domain
+science queries into closed artifact-reference queries. The RAG lift hierarchy (step-log $>$
+structured data $>$ narrow context $>$ unstructured) functions as a diagnostic for grounding
+architecture quality: context that binds the query to a complete reasoning trace eliminates
+uncited claims; narrowly structured context does not. The extension of this benchmark to AI
+planning systems whose intermediate representations are required to be grounded in their
+generating sensor observations is examined.
+\end{abstract}
+
+\input{Sections/02_evidence_binding_gap}
+\input{Sections/03_metric_definition}
+\input{Sections/04_benchmark_methodology}
+\input{Sections/05_rag_lift_hierarchy}
+\input{Sections/06_world_model_extension}
+\input{Sections/07_limits}
+
+\clearpage
+\nocite{*}
+\printbibliography[title={References}]
+
+%% NOTE: Appendix_Figures intentionally omitted in share version.
+
+\end{document}

@@ -1,0 +1,150 @@
+\documentclass[11pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+
+%% DecisionDB concept mapping to orcast (arXiv:2602.11295)
+%% Layout mirrors the reference decisiondb-fig2.png: 5 tables, 2-row grid.
+\begin{document}
+\begin{tikzpicture}
+
+\tikzset{
+  TBL/.style={
+    matrix of nodes,
+    draw=ORstroke, very thin,
+    inner sep=0pt, row sep=0pt, column sep=0pt,
+    column 1/.style={nodes={
+      fill=ORbg, anchor=west, inner xsep=5pt, inner ysep=5pt,
+      text width=5.2cm, font=\small}},
+    column 2/.style={nodes={
+      fill=ORbg, anchor=east, inner xsep=3pt, inner ysep=5pt,
+      text width=1.0cm, align=right, font=\footnotesize\color{ORpk}}},
+    row 1/.style={nodes={
+      fill=ORhdr, anchor=center, align=center,
+      font=\small\bfseries, text width=6.3cm}},
+    nodes in empty cells,
+  },
+}
+
+%% ── DecisionDB concepts (left column, gray) ──────────────────────────────────
+\tikzset{
+  TBLG/.style={TBL,
+    row 1/.style={nodes={fill=ORhdr!50, anchor=center, align=center,
+                          font=\small\bfseries\itshape, text width=6.3cm}},
+    column 1/.style={nodes={fill=ORbg!80, anchor=west, inner xsep=5pt, inner ysep=5pt,
+                             text width=5.2cm, font=\small\itshape}},
+    column 2/.style={nodes={fill=ORbg!80, anchor=east, inner xsep=3pt, inner ysep=5pt,
+                             text width=1.0cm, align=right, font=\footnotesize\color{ORpk}\itshape}},
+  },
+}
+
+%% ─── ROW 1 ────────────────────────────────────────────────────────────────────
+
+%% DecisionDB: snapshots concept
+\matrix[TBLG] (Dsnapshot) at (0,0) {
+  \node{DecisionDB: snapshots}; & \\
+  \node[name=Dsnapshot-pk]{snap\_id (PK)}; & \node{(PK)};\\
+  \node{content-addressed frozen source}; & \\
+};
+
+%% orcast: frozen source payloads + time-series
+\matrix[TBL] (Osnapshot) at (11.0,0) {
+  \node{orcast: frozen source payload}; & \\
+  \node[name=Osnapshot-pk]{S3 NDJSON partition key}; & \node{(PK)};\\
+  \node{timeseries/\{stream\}/\{station\}/\{yyyy\}/\{mm\}}; & \\
+  \node{\textit{Gap: no content-addressed IDs yet}}; & \\
+};
+
+%% DecisionDB: representations concept
+\matrix[TBLG] (Drepr) at (0,-4.5) {
+  \node{DecisionDB: representations}; & \\
+  \node[name=Drepr-pk]{repr\_id (PK)}; & \node{(PK)};\\
+  \node[name=Drepr-snapfk]{snapshot\_id (FK)}; & \node{(FK)};\\
+};
+
+%% orcast: fitted-kernel artifact
+\matrix[TBL] (Orepr) at (11.0,-4.5) {
+  \node{orcast: fitted-kernel artifact}; & \\
+  \node[name=Orepr-pk]{model\_version / artifact key}; & \node{(PK)};\\
+  \node{kernel config, fitted coefficients}; & \\
+  \node{fit\_report.json (gates + caveats)}; & \\
+};
+
+%% ─── ROW 2 ────────────────────────────────────────────────────────────────────
+
+\matrix[TBLG] (Dengrun) at (0,-9.5) {
+  \node{DecisionDB: engine\_runs}; & \\
+  \node[name=Dengrun-pk]{run\_id (PK)}; & \node{(PK)};\\
+  \node[name=Dengrun-reprfk]{repr\_id (FK)}; & \node{(FK)};\\
+};
+
+\matrix[TBL] (Oengrun) at (11.0,-9.5) {
+  \node{orcast: NB-GLM fit + gate run \\ {\footnotesize\itshape(target schema --- not yet at L1)}}; & \\
+  \node[name=Oengrun-pk]{Step Functions execution ARN}; & \node{(PK)};\\
+  \node{kernel fit, L1--L3 gate verdicts}; & \\
+  \node{confidence, caveats, promotion eligibility}; & \\
+  \node{\textit{(pipeline design -- not yet executed)}}; & \\
+};
+
+\matrix[TBLG] (Ddec) at (0,-14.0) {
+  \node{DecisionDB: decisions}; & \\
+  \node[name=Ddec-pk]{dec\_id (PK)}; & \node{(PK)};\\
+  \node{policy\_id}; & \\
+};
+
+\matrix[TBL] (Odec) at (11.0,-14.0) {
+  \node{orcast: gate verdict + reviewer verdict}; & \\
+  \node[name=Odec-pk]{decision-records.pk: id}; & \node{(PK)};\\
+  \node{verdict: promote|hold|reject}; & \\
+  \node{reviewer, kernel\_version (log FK)}; & \\
+  \node{gates\_summary, supervisor\_recommendation}; & \\
+};
+
+\matrix[TBLG] (Dfmap) at (0,-19.0) {
+  \node{DecisionDB: f\_map}; & \\
+  \node[name=Dfmap-pk]{repr\_id + run\_id (composite PK)}; & \node{(PK)};\\
+  \node[name=Dfmap-decfk]{dec\_id (FK)}; & \node{(FK)};\\
+};
+
+\matrix[TBL] (Ofmap) at (11.0,-19.0) {
+  \node{orcast: partial materialization}; & \\
+  \node[name=Ofmap-pk]{reports.report\_id}; & \node{(PK)};\\
+  \node{model\_version (log FK to artifact)}; & \\
+  \node{hotspots[] (denormalized embed)}; & \\
+  \node{\textit{Gap: not a full f\_map; no repr/run composite key}}; & \\
+};
+
+%% ─── Mapping arrows (concept → orcast) ───────────────────────────────────────
+\foreach \src/\dst in {Dsnapshot/Osnapshot, Drepr/Orepr, Dengrun/Oengrun, Ddec/Odec, Dfmap/Ofmap}{
+  \draw[ORstroke, thin, ->, >=latex, double, double distance=1pt]
+    (\src.east) -- (\dst.west)
+    node[midway, flowlabel, above]{\small maps to};
+}
+
+%% ─── FK edges within DecisionDB column ────────────────────────────────────────
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (Drepr-snapfk.west) -- ++(-0.5,0) |- (Dsnapshot-pk.west)
+  node[pos=0.07, fklabel, below=1pt]{FK};
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (Dengrun-reprfk.west) -- ++(-0.5,0) |- (Drepr-pk.west)
+  node[pos=0.07, fklabel, below=1pt]{FK};
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (Dfmap-decfk.west) -- ++(-0.5,0) |- (Ddec-pk.west)
+  node[pos=0.07, fklabel, below=1pt]{FK};
+
+%% ─── Title + legend ───────────────────────────────────────────────────────────
+\node[font=\normalsize\bfseries, anchor=north west]
+  at ([yshift=8pt]Dsnapshot.north west)
+  {ORCAST -- DecisionDB concept mapping (arXiv:2602.11295)};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=15cm, inner sep=5pt,
+      anchor=north west]
+  at ([yshift=-12pt]Dfmap.south west) {%
+  \textit{Italic shading} = DecisionDB abstract concept (arXiv:2602.11295).
+  White = orcast implementation.
+  Double arrow ($\Rightarrow$) = conceptual mapping.
+  \textbf{Gaps:} orcast does not yet use content-addressed IDs
+  and does not yet have a full materialized f\_map table.
+};
+
+\end{tikzpicture}
+\end{document}
