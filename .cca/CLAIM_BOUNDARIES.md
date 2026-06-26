@@ -2,6 +2,8 @@
 
 Any claim emitted by an agent — in prose, in a social post, in whitepaper text, or in a Devpost description — must appear in the ALLOWED column or be derivable from a live evidence source listed here.
 
+**Decision-of-record:** [STANDING_DECISIONS_REGISTER.md](STANDING_DECISIONS_REGISTER.md) is the authority above this file. It holds the settled decisions and their rationale (and supersessions); this file holds the canonical values/claims those decisions enforce. Where the two disagree, the SDR is the decision and this file is corrected to match.
+
 **Violation procedure:** If you are about to emit a claim not in the ALLOWED column, flag it in your message before proceeding and wait for instruction.
 
 ---

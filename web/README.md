@@ -50,4 +50,4 @@ Backend (App Runner): `ORCAST_ENABLE_BEDROCK`, `ORCAST_BEDROCK_SIGHTING_MODEL`, 
 
 ## Deploy
 
-The repo-root `vercel.json` pins the monorepo build (`cd web && npm run build`, output `web/.next`), so a Git-connected deploy targets this app without a dashboard `rootDirectory` override. Set the environment variables above in the Vercel project settings.
+This app deploys with the Vercel project **Root Directory set to `web`** (dashboard setting; see [../docs/devpost/DEPLOY_VERCEL.md](../docs/devpost/DEPLOY_VERCEL.md)). With that set, Vercel runs install/build inside `web/` and auto-detects Next.js. The tracked [vercel.json](vercel.json) only declares `framework: nextjs` and does not pin install/build/output commands. Set the environment variables above in the Vercel project settings.

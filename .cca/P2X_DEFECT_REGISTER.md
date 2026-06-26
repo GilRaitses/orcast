@@ -55,7 +55,7 @@ Lanes: A=WP prose/number (.tex), B=web/site copy, C=figures, D=deploy hygiene. E
 
 | id | file | fix |
 |----|------|-----|
-| D1 | repo root vercel.json (new) | pin monorepo build: cd web && install/build, outputDirectory web/.next, framework nextjs |
+| D1 | repo root vercel.json (new) | ~~pin monorepo build: cd web && install/build, outputDirectory web/.next, framework nextjs~~ **SUPERSEDED — WRONG FIX.** This conflicted with Root Directory=`web` and broke the build (`ENOENT /vercel/path0/package.json`). Corrected fix: delete repo-root vercel.json, add minimal web/vercel.json (framework nextjs only), Root Directory=`web`. See `.cca/STANDING_DECISIONS_REGISTER.md` SD-011. |
 | D2 | web/README.md + web/.env.example | sync env docs; add ORCAST_DEFAULT_AGENT_ID to .env.example |
 
 ## WONTFIX (verified false positives)

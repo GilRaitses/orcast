@@ -1,6 +1,6 @@
 # orcast waves registry
 
-Canonical index for all wave systems. **Status lives here**; [HANDOFF_STATUS.md](../../HANDOFF_STATUS.md) holds live URLs and deploy evidence; [workflow-truth-table.md](workflow-truth-table.md) holds route-level truth labels.
+Canonical index for all wave systems. **Status lives here**; [HANDOFF_STATUS.md](../../HANDOFF_STATUS.md) holds live URLs and deploy evidence; [workflow-truth-table.md](workflow-truth-table.md) holds route-level truth labels. **Settled authorial/architectural/claim decisions live in [.cca/STANDING_DECISIONS_REGISTER.md](../../.cca/STANDING_DECISIONS_REGISTER.md) (decision-of-record).**
 
 ## Wave types
 
@@ -126,6 +126,8 @@ flowchart TB
 | U1–U6 | U | planned | see [IMPLEMENTATION_BACKLOG.md](../ux/IMPLEMENTATION_BACKLOG.md) |
 | H0 | H | verify on demand | `./tools/waves/run-gate.sh H0` |
 | H1 | H | manual | video, DynamoDB screenshot, Devpost |
+| SD-H | SD | repo-side done; prod-green pending operator | delete root vercel.json + web/vercel.json + Root Directory=web (see SDR O-1) |
+| SD (register) | SD | done | `.cca/STANDING_DECISIONS_REGISTER.md` written + wired; SD assertions in s-doc-grep |
 
 ## Full wave catalog
 
