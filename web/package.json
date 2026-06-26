@@ -1,0 +1,35 @@
+{
+  "name": "orcast-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js (App Router) front end for orcast kernel forecasting.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "demo:walkthrough": "playwright test demo-no-cred-walkthrough --headed --project=chromium-desktop",
+    "demo:screenshots": "DEMO_SCREENSHOTS=1 playwright test demo-no-cred-walkthrough --project=chromium-desktop",
+    "demo:record": "DEMO_RECORD=1 playwright test demo-no-cred-walkthrough --headed --project=chromium-desktop",
+    "demo:beat": "DEMO_RECORD=1 playwright test --project=chromium-desktop",
+    "demo:beat-all": "DEMO_RECORD=1 playwright test beats/ --headed --project=chromium-desktop",
+    "demo:stitch": "bash ../tools/waves/gates/v-stitch.sh"
+  },
+  "dependencies": {
+    "@ai-sdk/gateway": "^3.0.134",
+    "@vis.gl/react-google-maps": "^1.5.0",
+    "@workos-inc/authkit-nextjs": "^4.1.1",
+    "ai": "^6.0.209",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3"
+  }
+}

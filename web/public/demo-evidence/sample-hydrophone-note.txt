@@ -1,0 +1,8 @@
+Sample audio evidence — hydrophone detection note.
+
+This file stands in for an audio clip in demo/test scenarios where no recording is available.
+
+Detection: Echolocation clicks / vocalization detected on Lime Kiln hydrophone.
+Time: 11:30 UTC 2026-06-25
+Frequency range: 1–24 kHz
+Duration: ~40 seconds

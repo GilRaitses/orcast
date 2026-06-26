@@ -1,0 +1,7 @@
+Sample image evidence — dorsal fin observation note.
+
+This file stands in for an actual photo in demo/test scenarios where no camera image is available.
+
+Observation: Black dorsal fin, ~1.2m, triangular shape, observed from shore at Lime Kiln Point.
+Date: 2026-06-25 09:14 UTC
+Location: 48.516, -123.152
