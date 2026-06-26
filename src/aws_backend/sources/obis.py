@@ -39,16 +39,20 @@ class LiveObisAdapter(SourceAdapter):
     source_name = "obis_verified"
     reliability = 0.96
 
-    def __init__(self, size: int = 1000, timeout: int = 20) -> None:
+    def __init__(self, size: int = 200, timeout: int = 45) -> None:
         self.size = size
         self.timeout = timeout
 
-    def fetch(self) -> SourceFetchResult:
+    def fetch(self, start_date: str | None = None, end_date: str | None = None) -> SourceFetchResult:
         params = {
             "scientificname": "Orcinus orca",
             "geometry": _region_wkt(),
             "size": self.size,
         }
+        if start_date:
+            params["startdate"] = start_date
+        if end_date:
+            params["enddate"] = end_date
         try:
             response = requests.get(OBIS_OCCURRENCE_URL, params=params, timeout=self.timeout)
             content_type = response.headers.get("content-type", "")
@@ -107,7 +111,7 @@ class LiveObisAdapter(SourceAdapter):
                 observed_at=timestamp,
                 reliability=self.reliability,
                 quality_grade="verified",
-                notes="OBIS live occurrence record",
+                notes=_obis_citation(record),
             )
             sightings.append(
                 NormalizedSighting(
@@ -127,6 +131,44 @@ class LiveObisAdapter(SourceAdapter):
                 )
             )
         return sightings
+
+    def fetch_validation_records(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+    ) -> List[dict]:
+        """Return held-out validation records with license/citation metadata."""
+        result = self.fetch(start_date=start_date, end_date=end_date)
+        if not result.available or not isinstance(result.raw, dict):
+            return []
+        records: List[dict] = []
+        for record in result.raw.get("results", []):
+            try:
+                raw_lat = float(record["decimalLatitude"])
+                raw_lng = float(record["decimalLongitude"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            snapped = filter_and_snap(raw_lat, raw_lng)
+            if snapped is None:
+                continue
+            latitude, longitude = snapped
+            record_id = record.get("id") or record.get("occurrenceID")
+            source_url = record.get("occurrenceID") if _is_url(record.get("occurrenceID")) else None
+            records.append(
+                {
+                    "t": _parse_time(record.get("eventDate")).isoformat(),
+                    "id": f"obis:{record_id}",
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "quality_grade": "verified",
+                    "license": record.get("license") or record.get("rights"),
+                    "citation": _obis_citation(record),
+                    "source_url": source_url,
+                    "source": self.source_name,
+                    "locality": record.get("locality"),
+                }
+            )
+        return records
 
 
 def _parse_time(value: str | None) -> datetime:
@@ -163,3 +205,10 @@ def _map_behavior(value: str | None) -> str:
     if normalized == "foraging":
         return "feeding"
     return normalized
+
+
+def _obis_citation(record: dict) -> str:
+    dataset = record.get("datasetName") or record.get("datasetID") or "OBIS occurrence"
+    institution = record.get("institutionCode") or record.get("ownerInstitutionCode") or "unknown institution"
+    event_date = record.get("eventDate") or "unknown date"
+    return f"{dataset}; {institution}; eventDate={event_date}"

@@ -177,6 +177,7 @@ class SalmonRunAdapter(SourceAdapter):
                     "columbia_index": columbia_index,
                     "run_index": run_index,
                     "source": source,
+                    "source_url": _source_url_for(source),
                 }
             )
         return series
@@ -205,6 +206,7 @@ class SalmonRunAdapter(SourceAdapter):
                     "columbia_index": None,
                     "run_index": run_index,
                     "source": "climatology_fallback",
+                    "source_url": _source_url_for("climatology_fallback"),
                 }
             )
         return series
@@ -315,3 +317,11 @@ def _row_value(row: Dict[str, object], value_keys: Tuple[str, ...]) -> Optional[
             except (TypeError, ValueError):
                 continue
     return None
+
+
+def _source_url_for(source: str) -> str:
+    if source == "albion":
+        return _ALBION_URL
+    if source == "dart":
+        return _DART_URL
+    return "orcast://salmon/climatology_fallback"

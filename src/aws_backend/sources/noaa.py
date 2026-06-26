@@ -20,6 +20,7 @@ _MAX_RANGE_DAYS = 31
 # current predictions. It is verified to return data via the datagetter
 # (product=currents_predictions, interval=60). It remains configurable per call.
 _DEFAULT_CURRENT_STATION = "PUG1702"
+DEFAULT_CURRENT_STATIONS = ("PUG1701", "PUG1702", "PUG1703")
 
 _DATAGETTER_URL = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 
@@ -34,6 +35,7 @@ class NoaaAdapter(SourceAdapter):
     longitude = -123.0125
 
     current_station = _DEFAULT_CURRENT_STATION
+    current_stations = DEFAULT_CURRENT_STATIONS
 
     def fetch(self) -> SourceFetchResult:
         raw: Dict[str, object] = {}
@@ -288,8 +290,14 @@ def _normalize_current_predictions(payload, station: str) -> List[Dict[str, obje
             {
                 "t": _to_iso(row.get("Time")),
                 "value": value,
+                "velocity_major_knots": value,
+                "speed_knots": abs(value),
                 "product": "currents_predictions",
                 "station": station,
+                "bin": row.get("Bin"),
+                "depth_ft": _coerce_float(row.get("Depth")),
+                "mean_flood_dir_deg": _coerce_float(row.get("meanFloodDir")),
+                "mean_ebb_dir_deg": _coerce_float(row.get("meanEbbDir")),
             }
         )
     return normalized
@@ -314,5 +322,12 @@ def _latest_value(payload) -> float | None:
     try:
         return float(rows[-1]["v"])
     except (KeyError, TypeError, ValueError):
+        return None
+
+
+def _coerce_float(value) -> Optional[float]:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
         return None
 

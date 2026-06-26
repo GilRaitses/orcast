@@ -196,3 +196,25 @@ def _distance_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
         + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(d_lng / 2) ** 2
     )
     return 2 * radius * math.asin(min(1.0, math.sqrt(a)))
+
+
+def nearest_shore_m(lat: float, lng: float) -> Optional[float]:
+    """Approximate distance in metres from a point to the nearest land shoreline."""
+    try:
+        lat = float(lat)
+        lng = float(lng)
+    except (TypeError, ValueError):
+        return None
+    if not in_bounds(lat, lng):
+        return None
+    if is_on_land(lat, lng):
+        return 0.0
+    if not _LAND_RINGS:
+        return None
+    best_km = math.inf
+    for ring in _LAND_RINGS:
+        for xi, yi in ring:
+            best_km = min(best_km, _distance_km(lat, lng, yi, xi))
+    if not math.isfinite(best_km):
+        return None
+    return round(best_km * 1000.0, 1)

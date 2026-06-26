@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import List
+from typing import Any, Dict, List, Optional
 
 import requests
 
@@ -93,7 +93,7 @@ class INaturalistAdapter(SourceAdapter):
                 reliability=reliability,
                 quality_grade=quality_grade,
                 evidence_urls=photos,
-                notes=f"iNaturalist observation by {obs.get('user', {}).get('login', 'unknown')}",
+                notes=_inaturalist_citation(obs),
             )
             sightings.append(
                 NormalizedSighting(
@@ -114,6 +114,45 @@ class INaturalistAdapter(SourceAdapter):
             )
         return sightings
 
+    def fetch_validation_records(self) -> List[dict]:
+        """Return held-out validation records with license/citation metadata."""
+        result = self.fetch()
+        if not result.available or not isinstance(result.raw, dict):
+            return []
+        records: List[dict] = []
+        for obs in result.raw.get("results", []):
+            location = obs.get("location")
+            observed_at = obs.get("time_observed_at") or obs.get("observed_on")
+            if not location or not observed_at:
+                continue
+            try:
+                lat_text, lng_text = location.split(",", 1)
+                latitude = float(lat_text)
+                longitude = float(lng_text)
+            except (TypeError, ValueError):
+                continue
+            snapped = filter_and_snap(latitude, longitude)
+            if snapped is None:
+                continue
+            latitude, longitude = snapped
+            source_id = str(obs.get("id"))
+            license_code = (obs.get("license_code") or obs.get("license") or "unknown")
+            records.append(
+                {
+                    "t": _parse_time(observed_at).isoformat(),
+                    "id": f"inat:{source_id}",
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "quality_grade": obs.get("quality_grade", "unknown"),
+                    "license": license_code,
+                    "citation": _inaturalist_citation(obs),
+                    "source_url": obs.get("uri"),
+                    "source": self.source_name,
+                    "media_license": _photo_license(obs),
+                }
+            )
+        return records
+
 
 def _parse_time(value: str) -> datetime:
     if "T" in value:
@@ -127,4 +166,17 @@ def _quality_reliability(quality_grade: str) -> float:
     if quality_grade == "needs_id":
         return 0.62
     return 0.48
+
+
+def _inaturalist_citation(obs: dict) -> str:
+    user = (obs.get("user") or {}).get("login") or "unknown observer"
+    observed_on = obs.get("observed_on") or obs.get("time_observed_at") or "unknown date"
+    return f"iNaturalist observation {obs.get('id')} by {user}; observed_on={observed_on}"
+
+
+def _photo_license(obs: dict) -> Optional[str]:
+    for photo in obs.get("photos") or []:
+        if photo.get("license_code"):
+            return str(photo["license_code"])
+    return None
 

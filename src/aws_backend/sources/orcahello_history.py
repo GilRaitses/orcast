@@ -25,6 +25,14 @@ logger = logging.getLogger(__name__)
 ORCAHELLO_API_HOST = "https://aifororcasdetections.azurewebsites.net"
 ORCAHELLO_DETECTIONS_PATH = "/api/detections"
 
+# Dedicated moderator-outcome endpoints (v1.2 Swagger).
+REVIEWED_OUTCOME_PATHS = {
+    "confirmed": "/api/detections/confirmed",
+    "false_positive": "/api/detections/falsepositives",
+    "unknown": "/api/detections/unknowns",
+    "unreviewed": "/api/detections/unreviewed",
+}
+
 # OrcaHello marks a reviewed detection as a true orca when ``found`` is an
 # affirmative yes. The archive is inconsistent about casing and occasionally
 # uses a boolean, so we normalize against this set.
@@ -78,8 +86,50 @@ class OrcaHelloHistoryAdapter:
                 records.append(record)
         return records
 
+    def fetch_reviewed_outcomes(
+        self,
+        max_pages: int = 50,
+        records_per_page: int = 100,
+        timeframe: str = "all",
+        in_region_only: bool = True,
+    ) -> List[dict]:
+        """Page the dedicated reviewed-outcome endpoints into normalized records."""
+        records: List[dict] = []
+        for outcome, path in REVIEWED_OUTCOME_PATHS.items():
+            endpoint = f"{self.base_url}{path}"
+            for page in range(1, max_pages + 1):
+                detections = self._fetch_page(
+                    page,
+                    records_per_page,
+                    timeframe,
+                    endpoint=endpoint,
+                )
+                if detections is None:
+                    break
+                if not detections:
+                    break
+                for det in detections:
+                    record = self._normalize(det)
+                    if record is None:
+                        continue
+                    if in_region_only and not _record_in_region(record):
+                        continue
+                    record["outcome"] = outcome
+                    record["reviewed"] = outcome != "unreviewed"
+                    if outcome == "confirmed":
+                        record["confirmed"] = True
+                    elif outcome == "false_positive":
+                        record["confirmed"] = False
+                        record["found"] = record.get("found") or "no"
+                    records.append(record)
+        return records
+
     def _fetch_page(
-        self, page: int, records_per_page: int, timeframe: str
+        self,
+        page: int,
+        records_per_page: int,
+        timeframe: str,
+        endpoint: Optional[str] = None,
     ) -> Optional[List[dict]]:
         """Return the detections array for a page, or ``None`` to stop paging."""
         params = {
@@ -89,8 +139,9 @@ class OrcaHelloHistoryAdapter:
             "Timeframe": timeframe,
             "RecordsPerPage": records_per_page,
         }
+        url = endpoint or self._endpoint
         try:
-            response = requests.get(self._endpoint, params=params, timeout=self.timeout)
+            response = requests.get(url, params=params, timeout=self.timeout)
         except requests.RequestException as exc:
             logger.warning("OrcaHello history request failed on page %s: %s", page, exc)
             return None
