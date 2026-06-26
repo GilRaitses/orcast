@@ -7,7 +7,7 @@ The following diagrams are included as submission-ready figures for the hackatho
   \includegraphics[width=\linewidth]{Figures/fig-1-four-gaps.png}
   \caption{%
     \textbf{The four gaps and the orcast bridge.}
-    Four compounding failure modes in wildlife encounter forecasting (epistemic gap, effort gap, provenance gap, governance gap) and the orcast surfaces that address each. Each gap has at least one arrow to an operational surface; each surface writes to one or more of the nine DynamoDB tables that constitute the system of record. The architecture enforces the property that no confidence-bearing surface exists without a provenance chain and no community submission influences the model without a moderation record.%
+    Four compounding failure modes in wildlife encounter forecasting (epistemic gap, effort gap, provenance gap, governance gap) and the orcast surfaces that address each. Each gap has at least one arrow to an operational surface; each surface writes to one or more DynamoDB tables in the system of record (six representative tables shown). The architecture enforces the property that no confidence-bearing surface exists without a provenance chain and no community submission influences the model without a moderation record.%
   }
   \label{fig:four-gaps}
 \end{figure}
@@ -76,7 +76,7 @@ The following diagrams are included as submission-ready figures for the hackatho
   \includegraphics[width=\linewidth]{Figures/fig-mp2.png}
   \caption{%
     \textbf{The mechanism that produces 0\% uncited rate.}
-    (A) Gate pipeline: acoustic detections pass through six statistical gates (E1--E6) before
+    (A) Gate pipeline: acoustic detections pass through the leveled gate battery (E1--E6; E4 is the composite confidence product, not a separate test) before
     contributing to displayed confidence. Failing a gate surfaces an integrity condition rather
     than suppressing the forecast. Human promotion is the final gate.
     (B) Provenance graph $G=(V,E)$: metric root traces to Claim (C) $\to$ Method (M: skill invocation)

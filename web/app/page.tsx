@@ -53,7 +53,7 @@ function InterestForm() {
     if (!email) return;
     setStatus("sending");
     try {
-      await postJSON("/api/be/api/interest", { email, name, source: "orcast" });
+      await postJSON("api/interest", { email, name, source: "orcast" });
       setStatus("done");
     } catch {
       setStatus("error");
@@ -63,7 +63,7 @@ function InterestForm() {
   if (status === "done") {
     return (
       <p style={{ color: "var(--color-success, #2e7d32)", marginTop: "0.5rem" }}>
-        Got it — you&apos;ll hear from us when the papers are ready.
+        Got it — you&apos;ll hear from me when the papers are ready.
       </p>
     );
   }

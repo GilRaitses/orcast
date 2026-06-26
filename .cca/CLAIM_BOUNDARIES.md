@@ -45,8 +45,8 @@ Any claim emitted by an agent — in prose, in a social post, in whitepaper text
 | Demo video duration | 2m 13s (132.6s) | 2026-06-25 | a-video-gate |
 | WP1 full PDF pages | 10 | 2026-06-26 | latexmk/biber rebuild |
 | WP1 share PDF pages | 7 | 2026-06-26 | latexmk/biber rebuild |
-| WP2 full PDF pages | 7 | 2026-06-25 | pdflatex output |
-| WP2 share PDF pages | 3 | 2026-06-25 | pdflatex output |
+| WP2 full PDF pages | 5 | 2026-06-26 | pdfinfo Build/Raitses_orcast_grounding_2026.pdf |
+| WP2 share PDF pages | 4 | 2026-06-26 | pdfinfo Build/Raitses_orcast_grounding_2026_share.pdf |
 | OrcaHello false-positive rate | 0.673 (reported) | 2022-06-22 fit | level0_detector_qc in /api/gates |
 | CV deviance skill | −0.018 | Fit date 2022-06-22 | /api/gates held-out CV |
 | CV folds passing | 3/5 | Fit date 2022-06-22 | /api/gates |
