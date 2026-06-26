@@ -35,7 +35,7 @@ Wildlife forecasting products display smooth probability maps with no record of 
 
 ### The grounding quality benchmark
 
-The surface planner's step-log, injected as RAG context to the Gemini Interactions API (gemini-3.5-flash, 2026-06-24), reduces the unsupported scientific claim rate from 60–91% (Maps-only geospatial grounding baseline) to 0% across 8 parallel benchmark scenarios. The mechanism is query transformation: injecting a complete reasoning trace converts an open-domain marine science question into a closed artifact-reference question. The language model answers from the step-log, not from world knowledge.
+The surface planner's step-log, injected as RAG context to the Gemini Interactions API (gemini-3.5-flash, 2026-06-24), reduces the unsupported scientific claim rate from 60–100% (Maps-only geospatial grounding baseline, across query types) to 0% across 8 parallel benchmark scenarios. The mechanism is query transformation: injecting a complete reasoning trace converts an open-domain marine science question into a closed artifact-reference question. The language model answers from the step-log, not from world knowledge.
 
 This finding is the basis of a companion paper: *Grounding quality measurement for orchestrated AI reasoning chains: evidence-binding rate as an evaluation primitive for world model systems* (aimez.ai, 2026).
 

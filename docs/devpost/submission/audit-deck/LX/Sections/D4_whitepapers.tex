@@ -1,0 +1,81 @@
+\section{Section 4: Whitepaper Audit}
+
+\subsection{Paper 1: Evidence-bounded encounter forecasting}
+
+\textbf{File:} \texttt{docs/whitepaper/Build/Raitses\_orcast\_2026.pdf} (989 KB, 9 pages)\\
+\textbf{arXiv target:} cs.AI / ecology
+
+\subsubsection{Section titles}
+
+\begin{enumerate}
+\item The four gaps in encounter forecasting
+\item A gate-bounded honesty model
+\item Acoustic grounding: PSTH and Level 0 QC
+\item Provenance grounding as a system
+\item Orchestrated managed agents with verified tools
+\item Governance: quarantine, authority, and audit
+\item Geospatial grounding limits for scientific evidence
+\item Limits and falsification (+ connection to world model evaluation)
+\item [Appendix: diagrams — fig-mp1, fig-mp2, fig-mp3]
+\end{enumerate}
+
+\subsubsection{Four falsifiable claims (gate-bounded honesty section)}
+
+\begin{center}
+\begin{tabular}{p{7cm}p{6cm}}
+\toprule
+Claim & What would falsify it \\
+\midrule
+1. Phase-shuffled null test distinguishes cyclic signal from noise & A kernel that beats the null but shows no cyclic structure in the detection trace \\
+2. Negative deviance skill grounds to withhold confidence & A negative-skill model shown with non-zero effective confidence \\
+3. PIT calibration distinguishes calibrated from overfit & A calibrated model that produces PIT KS p $< 0.05$ \\
+4. Human promotion is the final gate before displayed confidence & Confidence displayed without a matching decision record \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Review notes}
+
+\begin{itemize}
+\item The whitepaper accurately describes the gate battery as implemented (confirmed by q1f-wp-claims.sh: all E1--E8 pass).
+\item The ProvenanceGraph description in Section 6 has been updated (Q2 remediation) to accurately say C/M rendered; X/D/R as step-log inline refs.
+\item Section 8 (Limits) now includes the connection to world model evaluation with LeCun AMI framing as a future extension, not a demonstrated result.
+\end{itemize}
+
+\begin{notebox}
+\textbf{No P0 or P1 gaps in Paper 1.} The paper is consistent with the live code. The main review note: the PSTH kernel visualisation issue in the demo (blank white boxes) is an \textit{application} gap, not a whitepaper gap -- the paper describes the PSTH correctly.
+\end{notebox}
+
+\subsection{Paper 2: Grounding quality measurement}
+
+\textbf{File:} \texttt{docs/whitepaper2/Build/Raitses\_orcast\_grounding\_2026.pdf} (761 KB, 7 pages)\\
+\textbf{arXiv target:} cs.AI / cs.LG
+
+\subsubsection{Abstract claim (post-restructure)}
+
+``AI systems that reason about physical or scientific domains routinely produce outputs containing scientific claims without citing their generating evidence. We introduce $R_\text{uncited}$, the fraction of scientific sentences in a system's output that carry no bound citation, as a formal evaluation primitive for AI reasoning quality. Using a reproducible 8-scenario parallel benchmark against the Gemini Interactions API with Google Maps grounding on marine science queries, Maps-only geospatial grounding achieves 60--100\% uncited across query types. Injecting a structured orchestrated skill-dispatch step-log as RAG context reduces $R_\text{uncited}$ to 0\%.''
+
+\subsubsection{Benchmark finding}
+
+The 0\% uncited result (Scenario 4: surface planner step-log) is the primary empirical contribution. This number was produced on 2026-06-24 and has not been re-run since. Before submitting the paper, consider re-running the benchmark on the current date to confirm the result holds.
+
+\subsubsection{World model extension (Section 6 status)}
+
+After the Q3 restructure, Section 6 frames the step-log as a planning trace with structural equivalence to world model intermediate outputs. The LeCun AMI positioning has been moved to the last paragraph of Section 7 (Limits) as a future extension.
+
+\begin{notebox}
+\textbf{This is the correct structure.} The paper now establishes $R_\text{uncited}$ on its own merits, then notes world model application as an open empirical question. The LeCun citation is present but not the organising thesis.
+\end{notebox}
+
+\begin{p1box}
+\textbf{P1 — Consider re-running the grounding benchmark before submitting Paper 2.} The benchmark is dated 2026-06-24. If the Gemini API or model changes, the numbers may differ. Run: \texttt{python3 tools/testing/grounding\_parallel\_rag.py} with scenarios 1 and 4 to confirm 60--100\% baseline (S1 60\%, S7 100\%) and 0\% step-log result still hold.
+\end{p1box}
+
+\subsubsection{Submission status}
+
+Both whitepapers are PDF-ready and hosted at:
+\begin{itemize}
+\item \texttt{https://gilraitses.github.io/research/orcast/orcast-whitepaper-1.pdf}
+\item \texttt{https://gilraitses.github.io/research/orcast/orcast-whitepaper-2-grounding.pdf}
+\end{itemize}
+Both URLs returned HTTP 200 (confirmed Q1d). The PDFs are also in \texttt{$\sim$/Desktop/orcast-submission/whitepapers/}.

@@ -12,7 +12,7 @@ gemini-3.5-flash, Api-Revision 2026-05-20, 2026-06-24) produced the following ra
 |----------|-------|--------------------|----------------|
 | 4 | Maps + surface planner step-log | **0%** | Full grounding: step-log converts science queries into artifact-reference queries |
 | 8 | Maps + orcast hotspots | 75% | Partial lift (↓25pp from 100%): structured data partially substitutes for citations |
-| 1 | Maps-only orca evidence (baseline) | 60% | Maps baseline (variable 60–91% across runs) |
+| 1 | Maps-only orca evidence (baseline) | 60% | Maps baseline ranges 60–100% across query types (S1 60%, S7 100%) |
 | 7 | Maps-only trip planning | 100% | Maps baseline for planning queries |
 | 2 | Maps + gates context | 100% | No lift: gate data too narrow to cover generated science claims |
 | 5 | Maps-only sighting | 100% | Maps baseline |

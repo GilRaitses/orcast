@@ -14,7 +14,8 @@ Any claim emitted by an agent — in prose, in a social post, in whitepaper text
 | Every map cell traces to kernels and gate verdicts | ALLOWED | `/api/be/api/provenance`, provenance modal in demo |
 | Citizen-science sightings are quarantined until a human promotes them | ALLOWED | `community-submissions` DynamoDB table, moderation queue |
 | The grounding benchmark: surface planner step-log achieves 0% uncited rate | ALLOWED | `tools/testing/grounding_parallel_rag.py` run 2026-06-24; cite date |
-| Maps-only grounding baseline: 60–91% uncited | ALLOWED | `tools/testing/maps_grounding_probe.py` run 2026-06-24 |
+| Maps-only grounding baseline: 60–100% uncited (8-scenario) | ALLOWED | `tools/testing/grounding_parallel_rag.py` run 2026-06-24, Scenario 1 (60%) and Scenario 7 (100%) |
+| Maps-only 3-query probe: 85% uncited averaged (89% evidence query) | ALLOWED | `tools/testing/maps_grounding_probe.py` run 2026-06-24 |
 | 9 DynamoDB tables as system of record | ALLOWED | `tools/waves/gates/q1c-ddb-schema.sh` PASS; live count confirmed |
 | Managed AI agents with step-log provenance | ALLOWED | `surface-planner-v1` interaction trace visible in Beat 04 |
 | The model was fitted but has 0% effective confidence | ALLOWED | `effective_confidence = 0.0` from `/api/be/api/gates` (no promotion yet) |
@@ -40,10 +41,10 @@ Any claim emitted by an agent — in prose, in a social post, in whitepaper text
 | Decision records | 3 | 2026-06-25 | q1c scan |
 | Managed agent cast roles | 4 | 2026-06-25 | q1c scan |
 | R_uncited step-log | 0% | 2026-06-24 | grounding_parallel_rag.py Scenario 4 |
-| R_uncited Maps-only baseline | 60–91% | 2026-06-24 | grounding_parallel_rag.py Scenarios 1, 7 |
+| R_uncited Maps-only baseline | 60–100% | 2026-06-24 | grounding_parallel_rag.py Scenario 1 (60%), Scenario 7 (100%) |
 | Demo video duration | 2m 13s (132.6s) | 2026-06-25 | a-video-gate |
-| WP1 full PDF pages | 9 | 2026-06-25 | pdflatex output |
-| WP1 share PDF pages | 4 | 2026-06-25 | pdflatex output |
+| WP1 full PDF pages | 10 | 2026-06-26 | latexmk/biber rebuild |
+| WP1 share PDF pages | 7 | 2026-06-26 | latexmk/biber rebuild |
 | WP2 full PDF pages | 7 | 2026-06-25 | pdflatex output |
 | WP2 share PDF pages | 3 | 2026-06-25 | pdflatex output |
 | OrcaHello false-positive rate | 0.673 (reported) | 2022-06-22 fit | level0_detector_qc in /api/gates |

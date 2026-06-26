@@ -28,7 +28,7 @@ Community shore sightings enter a quarantine queue. A WorkOS-authenticated revie
 
 ### Grounding quality benchmark
 
-The surface planner's interaction step-log, injected as RAG context to the Gemini Interactions API, reduces the unsupported scientific claim rate (R_uncited) from 60–91% (Maps-only geospatial grounding baseline) to 0%. Measured 2026-06-24 across 8 parallel scenarios. Tool: `tools/testing/grounding_parallel_rag.py`.
+The surface planner's interaction step-log, injected as RAG context to the Gemini Interactions API, reduces the unsupported scientific claim rate (R_uncited) from 60–100% (Maps-only geospatial grounding baseline, across query types) to 0%. Measured 2026-06-24 across 8 parallel scenarios. Tool: `tools/testing/grounding_parallel_rag.py`.
 
 ### Research
 

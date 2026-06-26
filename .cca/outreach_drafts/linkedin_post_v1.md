@@ -22,7 +22,7 @@ Field observers can describe what they saw — upload a photo or audio clip — 
 A multi-turn guided tour of gates, provenance, and the surface planner. At `/explore?planner=1` a managed AI agent dispatches skill-dispatch panels in sequence — the routing is plan-then-execute, not open-ended generation.
 
 **The grounding benchmark:**
-This is the finding that surprised me. When the surface planner's interaction step-log is injected as RAG context to the Gemini Interactions API, the unsupported scientific claim rate drops from 60–91% (Maps-only geospatial grounding baseline, 2026-06-24) to 0%. The difference is not better citation generation — the query type changed. Injecting a complete reasoning trace transforms an open-domain science question into a closed artifact-reference question. The model answers from the step-log.
+This is the finding that surprised me. When the surface planner's interaction step-log is injected as RAG context to the Gemini Interactions API, the unsupported scientific claim rate drops from 60–100% (Maps-only geospatial grounding baseline across query types, 2026-06-24) to 0%. The difference is not better citation generation — the query type changed. Injecting a complete reasoning trace transforms an open-domain science question into a closed artifact-reference question. The model answers from the step-log.
 
 That diagnostic — step-log injection achieves full grounding; narrowly structured context achieves none — is the basis of a companion paper on grounding quality measurement for AI planning systems.
 

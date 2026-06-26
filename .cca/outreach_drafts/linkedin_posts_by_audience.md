@@ -2,7 +2,7 @@
 
 **Author:** Gil Raitses / aimez.ai
 **Status:** Draft. Every claim checked against `.cca/CLAIM_BOUNDARIES.md` (capability table, exact-numbers table, forbidden list). First-person singular only — no "we/our".
-**Gate note:** Maps-only uncited baseline stated as **60–91% (2026-06-24)** per CLAIM_BOUNDARIES; WP2 abstract says 60–100% — reconcile before cross-posting the paper.
+**Gate note:** Maps-only uncited baseline is **60–100% (2026-06-24)** — Scenario 1 (60%, orca evidence) to Scenario 7 (100%, trip planning) in `grounding_parallel_rag.py`. Reconciled across CLAIM_BOUNDARIES, WP1, and WP2 on 2026-06-26. The separate 3-query probe average is 85%.
 
 How to choose: post 1–2 weeks apart, lead with the audience whose feed you most want to reach first. Posts 3 (builders) and 4 (grounding) share the benchmark finding; don't run them back-to-back.
 
@@ -16,7 +16,7 @@ Human-in-the-loop agentic systems route a request through an orchestrator that d
 
 So I defined one. R_uncited is the fraction of scientific sentences in a system's output that carry no bound citation. It's a formal evaluation primitive for orchestrated-reasoning quality, not a vibe check.
 
-The finding, from a reproducible benchmark against the Gemini Interactions API with Google Maps grounding on marine-science queries (2026-06-24): Maps-only geospatial grounding leaves 60–91% of scientific claims uncited. Injecting a structured orchestrated skill-dispatch step-log as RAG context drops R_uncited to 0%.
+The finding, from a reproducible benchmark against the Gemini Interactions API with Google Maps grounding on marine-science queries (2026-06-24): Maps-only geospatial grounding leaves 60–100% of scientific claims uncited across query types. Injecting a structured orchestrated skill-dispatch step-log as RAG context drops R_uncited to 0%.
 
 The mechanism matters more than the number. 0% does not mean the model got better at citing science — it means the query type changed. A complete reasoning trace turns an open-domain science question into a closed artifact-reference question. That gives a RAG lift hierarchy: step-log > structured data > narrow context > unstructured. You diagnose a grounding architecture by how well its context type aligns with the query.
 
@@ -70,7 +70,7 @@ Live demo and both whitepapers linked below.
 
 I ran the same marine-science question through two grounding setups and measured how much of the scientific content was actually backed by a citation (2026-06-24).
 
-Google Maps grounding, the kind that powers "near me" answers, left 60–91% of scientific claims uncited. It grounded the park, the lighthouse, and the museum as places — and grounded none of the fisheries data, census, or hydrophone evidence the answer named.
+Google Maps grounding, the kind that powers "near me" answers, left 60–100% of scientific claims uncited depending on the query. It grounded the park, the lighthouse, and the museum as places — and grounded none of the fisheries data, census, or hydrophone evidence the answer named.
 
 A structured step-log from an orchestrated skill-dispatch pipeline, injected as context, brought the uncited rate to 0%.
 
@@ -105,6 +105,6 @@ Live demo and whitepapers in comments.
 - [ ] No "we/our" — first-person singular or aimez.ai.
 - [ ] Every number matches CLAIM_BOUNDARIES exact-numbers table + carries its date where required (R_uncited: 2026-06-24).
 - [ ] No forbidden claim (predicts locations / CV species ID / high accuracy / promoted=reliable / 0%=broken / R_uncited=0% means cites science / LeCun gap filled).
-- [ ] Maps baseline stated as 60–91% (reconcile WP2's 60–100% before linking the paper).
+- [ ] Maps baseline stated as 60–100% (reconciled across CLAIM_BOUNDARIES, WP1, WP2).
 - [ ] Attach media: provenance drilldown GIF (post 3), /explore routing GIF (post 1), gates dashboard screenshot with 0% + reason (posts 2, 4, 5).
 - [ ] Live link: https://orcast-h0.vercel.app
