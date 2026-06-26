@@ -6,6 +6,7 @@ gunicorn==21.2.0
 # FastAPI (for advanced ML services)
 fastapi==0.116.1
 uvicorn==0.35.0
+python-multipart==0.0.20
 pydantic==2.11.7
 
 # Data science and ML
@@ -23,6 +24,7 @@ redis==5.0.1
 
 # AWS backend services
 boto3==1.43.29
+psycopg[binary]==3.2.9
 
 # HTTP requests
 requests==2.31.0
