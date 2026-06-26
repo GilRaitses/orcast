@@ -99,6 +99,75 @@ class CommunitySubmission(BaseModel):
     status: CommunitySubmissionStatus = CommunitySubmissionStatus.PENDING
     submitted_at: datetime = Field(default_factory=utc_now)
     reviewed_at: Optional[datetime] = None
+    reviewed_by: Optional[str] = None
+    reviewer_email: Optional[str] = None
+    review_reason: Optional[str] = None
+    evidence_assets: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class DecisionVerdict(str, Enum):
+    PROMOTE = "promote"
+    HOLD = "hold"
+    REJECT = "reject"
+
+
+class DecisionRecord(BaseModel):
+    """Immutable audit record of a human kernel-confidence promotion decision."""
+
+    id: str
+    kernel_version: Optional[str] = None
+    verdict: DecisionVerdict
+    reviewer: str = "unknown"
+    reviewer_id: Optional[str] = None
+    reviewer_email: Optional[str] = None
+    reviewer_role: Optional[str] = None
+    reason: str = ""
+    gates_summary: Optional[Dict[str, Any]] = None
+    supervisor_recommendation: Optional[Dict[str, Any]] = None
+    task_token: Optional[str] = None
+    created_at: datetime = Field(default_factory=utc_now)
+
+
+class JournalEntryKind(str, Enum):
+    OBSERVATION = "observation"
+    NOTE = "note"
+    TRIP_PLAN = "trip_plan"
+
+
+class EvidenceAsset(BaseModel):
+    """A media file (image, audio, or other) uploaded by a user as sighting evidence."""
+
+    id: str
+    owner_user_id: str
+    kind: str = "other"  # "image" | "audio" | "other"
+    filename: str
+    content_type: str = "application/octet-stream"
+    size_bytes: int = 0
+    storage_uri: str
+    caption: Optional[str] = None
+    created_at: datetime = Field(default_factory=utc_now)
+    linked_to: Dict[str, Any] = Field(default_factory=lambda: {"journal_entry_id": None, "community_submission_id": None})
+
+
+class JournalEntry(BaseModel):
+    """Private field-journal item scoped to a WorkOS user."""
+
+    id: str
+    user_id: str
+    user_email: Optional[str] = None
+    kind: JournalEntryKind = JournalEntryKind.OBSERVATION
+    title: str
+    place: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    observed_at: Optional[datetime] = None
+    body: Optional[str] = None
+    behavior: str = "unknown"
+    count: Optional[int] = None
+    community_submission_id: Optional[str] = None
+    evidence_assets: List[Dict[str, Any]] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
 
 
 class SourceStatus(BaseModel):
