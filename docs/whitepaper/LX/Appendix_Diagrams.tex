@@ -37,7 +37,7 @@ The following diagrams are included as submission-ready figures for the hackatho
   \includegraphics[width=\linewidth]{Figures/fig-4-grounding-contrast.png}
   \caption{%
     \textbf{Grounding contrast: Google Maps vs orcast on the same orca evidence query.}
-    Left panel (orcast): three annotation types (gate\_citation, provenance\_citation, evidence\_citation) all bound to artifacts or hrefs; $R_\mathrm{uncited} = 0\%$. Right panel (Maps grounding): same query produces 502 words citing three place pins; NOAA fisheries data, Center for Whale Research census, Chinook salmon corridors, and J/K/L pod hydrophone data are all uncited; $R_\mathrm{uncited} = 89\%$ on the evidence query, 85\% averaged (benchmark run 2026-06-24, Gemini 3.5 Flash, Api-Revision 2026-05-20).%
+    Left panel (orcast): three annotation types (gate\_citation, provenance\_citation, evidence\_citation), 6 of 6 annotations bound to artifacts or hrefs; $R_\mathrm{uncited} = 0\%$. Right panel (Maps grounding): the same query produces 502 words across 9 scientific sentences citing three place pins; NOAA fisheries data, Center for Whale Research census, Chinook salmon corridors, and J/K/L pod hydrophone data are uncited (8 of 9 scientific sentences); $R_\mathrm{uncited} = 89\%$ on the evidence query, 85\% averaged (benchmark run 2026-06-24, Gemini 3.5 Flash, Api-Revision 2026-05-20).%
   }
   \label{fig:grounding-contrast}
 \end{figure}
@@ -79,9 +79,10 @@ The following diagrams are included as submission-ready figures for the hackatho
     (A) Gate pipeline: acoustic detections pass through the leveled gate battery (E1--E6; E4 is the composite confidence product, not a separate test) before
     contributing to displayed confidence. Failing a gate surfaces an integrity condition rather
     than suppressing the forecast. Human promotion is the final gate.
-    (B) Provenance graph $G=(V,E)$: metric root traces to Claim (C) $\to$ Method (M: skill invocation)
-    $\to$ Experiment (X: artifact repr\_id/run\_id) $\to$ Data (D: provenance citation) $\to$
-    Research (R: artifact citation). Claims without a bound artifact render the ``no signal'' badge.
+    (B) Provenance graph $G=(V,E)$: a metric root connects to Claim (C), Method (M: skill invocation),
+    Experiment (X: artifact repr\_id/run\_id), Data (D: provenance citation), and Research (R: artifact
+    citation) nodes through the typed edges validated\_by (C$\to$M), evaluated\_by (M$\to$X), supports
+    (X$\to$C), derived\_from (X$\to$D), and grounded\_in (C$\to$R). Claims without a bound artifact render the ``no signal'' badge.
     Scenario~4 eliminates $R_\mathrm{uncited}$ because the planner step-log binds every claim
     to an artifact reference.%
   }
@@ -95,7 +96,7 @@ The following diagrams are included as submission-ready figures for the hackatho
     \textbf{Grounding quality hierarchy and paper scope.}
     (A) $R_\mathrm{uncited}$ for baseline vs RAG-augmented scenarios.
     The surface planner step-log (green, standalone at 0\%) eliminates uncited claims.
-    Hotspot injection (S7$\to$S8) provides a 25 percentage point lift.
+    Hotspot injection (S7$\to$S8) reduces $R_\mathrm{uncited}$ by 25 percentage points (100\% to 75\%).
     Gate context does not reduce $R_\mathrm{uncited}$.
     (B) Paper scope relative to related work. The present paper (center) addresses
     grounding evaluation methodology --- distinct from pedestrian routing cost representations

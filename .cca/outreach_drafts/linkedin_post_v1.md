@@ -10,7 +10,7 @@ I've been building orcast — a gate-bounded encounter forecasting system for So
 The core idea is that a forecast you can't audit isn't trustworthy. So every displayed confidence value in orcast is earned, not assumed.
 
 **The gate battery:**
-A fitted cyclic kernel (diel, lunar, seasonal) has to clear a phase-shuffled null test, a time-rescaling goodness-of-fit check, a held-out deviance skill gate, and PIT calibration before contributing to displayed confidence. If it fails any gate, the map shows the integrity condition — not a blank, the forecast, plus the exact reason confidence is withheld. The current effective confidence is 0%. That's the correct answer: the CV deviance skill is −0.018.
+A fitted cyclic kernel (diel, lunar, seasonal) has to clear a phase-shuffled null test, a time-rescaling goodness-of-fit check, a held-out deviance skill gate, and PIT calibration before contributing to displayed confidence. If it fails any gate, the map shows the integrity condition — not a blank, the forecast, plus the exact reason confidence is withheld. The current effective confidence is 0%. That's the correct answer: the CV deviance skill is −0.018 (3 of 5 folds passing).
 
 **The provenance panel:**
 Click any map cell. You get a drilldown to the acoustic detections, fitted kernels, and gate verdicts that produced that cell's value. The provenance graph renders the interaction step-log as a typed node graph: Claim → Method → Experiment → Data → Research. Every annotation is bound to an artifact ID.
@@ -24,7 +24,7 @@ A multi-turn guided tour of gates, provenance, and the surface planner. At `/exp
 **The grounding benchmark:**
 This is the finding that surprised me. When the surface planner's interaction step-log is injected as RAG context to the Gemini Interactions API, the unsupported scientific claim rate drops from 60–100% (Maps-only geospatial grounding baseline across query types, 2026-06-24) to 0%. The difference is not better citation generation — the query type changed. Injecting a complete reasoning trace transforms an open-domain science question into a closed artifact-reference question. The model answers from the step-log.
 
-That diagnostic — step-log injection achieves full grounding; narrowly structured context achieves none — is the basis of a companion paper on grounding quality measurement for AI planning systems.
+That diagnostic — step-log injection achieves full grounding; narrowly structured context achieves none — is the basis of a companion paper on grounding quality measurement for human-in-the-loop agentic systems.
 
 **Stack:** Amazon DynamoDB (9 tables, system of record), AWS App Runner, Vercel, AWS Step Functions, Amazon Bedrock, S3, WorkOS AuthKit.
 

@@ -282,7 +282,7 @@ function HomePageInner() {
               Grounding quality measurement for orchestrated AI reasoning chains
             </p>
             <p className="muted" style={{ fontSize: "0.83rem", marginBottom: "0.4rem" }}>
-              Evidence-binding rate as an evaluation primitive for world model systems · Gil Raitses, aimez.ai · 2026
+              Evidence-binding rate as an evaluation primitive for human-in-the-loop agentic systems · Gil Raitses, aimez.ai · 2026
             </p>
             <a href="https://github.com/gilraitses/orcast" style={{ fontSize: "0.82rem" }}>
               arXiv bundle (forthcoming) →

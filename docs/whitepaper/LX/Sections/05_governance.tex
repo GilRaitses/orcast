@@ -8,7 +8,7 @@ Citizen science is a user-generated content problem in the information quality l
 
 \subsection{Signed human authority}
 
-orcast separates automated gate eligibility from human promotion authority. A model fit that passes L1 through L3 fitness gates is eligible for promotion, but promotion requires a signed decision by a registered reviewer recorded in the decision-records DynamoDB table. The record includes reviewer identity, verdict, cited gates, and a rationale field. The record is immutable and auditable.
+orcast separates automated gate eligibility from human promotion authority. A model fit that passes kernel-program levels L1 through L3 (fitness gates) is eligible for promotion, but promotion requires a signed decision by a registered reviewer recorded in the decision-records DynamoDB table, one of the nine DynamoDB tables in the system of record. The record includes reviewer identity, verdict, cited gates, and a rationale field. The record is immutable and auditable.
 
 \subsection{Moderation queue mechanics}
 

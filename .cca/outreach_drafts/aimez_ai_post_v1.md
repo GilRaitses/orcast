@@ -35,9 +35,9 @@ Wildlife forecasting products display smooth probability maps with no record of 
 
 ### The grounding quality benchmark
 
-The surface planner's step-log, injected as RAG context to the Gemini Interactions API (gemini-3.5-flash, 2026-06-24), reduces the unsupported scientific claim rate from 60–100% (Maps-only geospatial grounding baseline, across query types) to 0% across 8 parallel benchmark scenarios. The mechanism is query transformation: injecting a complete reasoning trace converts an open-domain marine science question into a closed artifact-reference question. The language model answers from the step-log, not from world knowledge.
+The surface planner's step-log, injected as RAG context to the Gemini Interactions API (gemini-3.5-flash, 2026-06-24), reduces the unsupported scientific claim rate from 60–100% (Maps-only geospatial grounding baseline, across query types) to 0% in the surface-planner step-log scenario — the strongest of eight parallel benchmark scenarios. The mechanism is query transformation: injecting a complete reasoning trace converts an open-domain marine science question into a closed artifact-reference question. The language model answers from the step-log, not from world knowledge.
 
-This finding is the basis of a companion paper: *Grounding quality measurement for orchestrated AI reasoning chains: evidence-binding rate as an evaluation primitive for world model systems* (aimez.ai, 2026).
+This finding is the basis of a companion paper: *Grounding quality measurement for orchestrated AI reasoning chains: evidence-binding rate as an evaluation primitive for human-in-the-loop agentic systems* (aimez.ai, 2026).
 
 The `R_uncited` metric — the fraction of scientific sentences in a system's output with no bound citation — is the evaluation primitive. It is architecture-diagnostic: two systems with identical surface accuracy can have very different `R_uncited` values depending on whether their reasoning traces are passed as context. The benchmark tool is reproducible at `tools/testing/grounding_parallel_rag.py`.
 
@@ -54,10 +54,10 @@ Stack: Next.js · Vercel · FastAPI · AWS App Runner · Amazon Bedrock · AWS S
 ### Research outputs
 
 **Whitepaper 1** — *Evidence-bounded encounter forecasting: an honest-model architecture for effort-biased wildlife observation data*  
-Gil Raitses, aimez.ai (2026) · 9 pp · available as share PDF and arXiv bundle
+Gil Raitses, aimez.ai (2026) · 7 pp (share PDF) · arXiv link pending
 
-**Whitepaper 2** — *Grounding quality measurement for orchestrated AI reasoning chains: evidence-binding rate as an evaluation primitive for world model systems*  
-Gil Raitses, aimez.ai (2026) · 5 pp · available as share PDF and arXiv bundle
+**Whitepaper 2** — *Grounding quality measurement for orchestrated AI reasoning chains: evidence-binding rate as an evaluation primitive for human-in-the-loop agentic systems*  
+Gil Raitses, aimez.ai (2026) · 4 pp (share PDF) · arXiv link pending
 
 ---
 
