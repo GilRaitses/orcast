@@ -1,0 +1,22 @@
+sequenceDiagram
+  participant Chat as Chat surface
+  participant Planner as "surface-planner-v1"
+  participant Manifest as "skills_manifest.json (tier check)"
+  participant Skills as "Skill dispatch (T0/T1/T2/T3)"
+  participant Log as "step_log (JSONB)"
+  participant LLM as "Bedrock / AI Gateway"
+  participant Annot as "annotations[]"
+
+  Chat->>Planner: POST /api/interactions/plan
+  Planner->>Planner: emit ui_intent + skill_plan
+  Planner->>Manifest: validate each skill in skill_plan
+  Manifest-->>Planner: 400 tier_blocked if not allowed
+  Planner->>Skills: dispatch skill_plan
+  Skills->>Log: skill_invocation step (input, status, grounding_refs)
+  Skills-->>Planner: context JSON
+  Planner->>Log: resolve_agent step (id, version, spec_hash)
+  Planner->>LLM: compose_guide_reply(context JSON)
+  LLM-->>Planner: reply text
+  Planner->>Log: model_output step (provider, annotations)
+  Log->>Annot: gate_citation / provenance_citation / artifact_citation
+  Planner-->>Chat: reply + steps[] + annotations[] + ui_intent panels

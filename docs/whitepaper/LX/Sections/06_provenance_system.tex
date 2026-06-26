@@ -1,0 +1,19 @@
+\section{Provenance grounding as a system}
+
+Every displayed claim must trace to producing method, validating experiment, experimental data, and motivating research.
+
+\subsection{Prepare-then-narrate}
+
+The concierge dispatches only allow-listed skills from a versioned manifest. Each skill invocation is recorded as a step. After all skills complete, the LLM narrates the collected JSON context. RAG reduces factual hallucination in conversational systems~\cite{arxiv210407567}. CRAG~\cite{arxiv240115884} demonstrates that corrective retrieval reduces hallucination when retrieval fails. AGREE~\cite{arxiv231109533} shows that adapting LLMs to self-ground claims and generate citations reduces unsupported-claim rates. The LLM attribution survey~\cite{arxiv231103731} confirms that generative systems without attribution produce high rates of unauditable unsupported claims.
+
+\subsection{Step-log provenance}
+
+Every interaction persists an ordered \texttt{steps} array in \texttt{exploration\_turns} as JSONB: a \texttt{resolve\_agent} step recording the cast role id, version, and spec hash; \texttt{skill\_invocation} steps with grounding references; and a \texttt{model\_output} step with annotations. CamFlow whole-system provenance~\cite{arxiv171105296} establishes the requirements. The provenance and data differencing paper~\cite{arxiv14060905} demonstrates step-log sufficiency for reproducibility. Scientific ML workflow provenance in geoscience~\cite{arxiv201000330} directly addresses this class of pipeline.
+
+\subsection{Claim/method/experiment graph}
+
+The ProvenanceGraph component renders the step log as a two-tier visual graph:
+
+\eqcmxgraph Claim nodes (C) are constructed from model output annotations; each C node names the annotation type, bound artifact or href, and a no-signal badge if unbound. Method nodes (M) are constructed from skill invocation steps; each M node names the skill, status, and lists \texttt{grounding\_refs} (artifact or dataset references populated during skill execution). The C and M tiers are rendered in the live UI. The full C/M/X/D/R schema (X = experiment/artifact, D = provenance citation, R = research citation) is stored in step-log JSONB as the intended rendering target; X, D, and R nodes currently appear inline within M rows, not as separate graph nodes. SciERC~\cite{arxiv180809602} establishes the joint entity-relation extraction foundation. SciClaim~\cite{arxiv210910453} introduces the fine-grained C/M/X annotation schema with typed relational edges. MindSearch~\cite{arxiv240720183} demonstrates graph-of-queries decomposition at scale. MindMap~\cite{arxiv230809729} demonstrates that KG-grounded reasoning reduces LLM hallucination.
+
+Claim nodes without an artifact or href binding render a no-signal badge. This is the honesty primitive the geospatial grounding baseline (Section~7) lacks.

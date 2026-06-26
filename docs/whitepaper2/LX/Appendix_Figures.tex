@@ -1,0 +1,38 @@
+\section*{Appendix: Figures}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{fig-mp1.png}
+  \caption{\textbf{Evidence-binding failure and its measurement.}
+    (A) The orcast governance chain: sightings, decision-records, and managed-agents
+    in DynamoDB. (B) $\Runcited$ across eight grounding scenarios. Maps-only baseline:
+    60--100\%. Surface planner step-log (Scenario~4): $\Runcited = 0\%$.
+    Data: \texttt{grounding\_parallel\_rag.py}, gemini-3.5-flash, 2026-06-24.}
+  \label{fig:problem}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{fig-mp2.png}
+  \caption{\textbf{The mechanism that produces $\Runcited = 0\%$.}
+    (A) Gate pipeline from acoustic detections to displayed confidence.
+    (B) Provenance graph $G=(V,E)$: Claim (C) $\to$ Method (M) $\to$
+    Experiment (X) $\to$ Data (D) $\to$ Research (R). Claims without
+    a bound artifact render the ``no signal'' badge.
+    Scenario~4 eliminates $\Runcited$ because the planner step-log binds
+    every claim to an artifact reference.}
+  \label{fig:mechanism}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{fig-mp3.png}
+  \caption{\textbf{Grounding quality hierarchy and paper scope.}
+    (A) $\Runcited$ for baseline vs RAG-augmented scenarios. The surface
+    planner step-log (green, 0\%) dominates; hotspot data provides partial
+    lift (S7$\to$S8); gate context provides no lift.
+    (B) Paper scope: this paper addresses grounding evaluation methodology
+    (center), distinct from pedestrian routing cost representations (pax, left),
+    and directly applicable to world model evaluation infrastructure (AMI, right).}
+  \label{fig:scope}
+\end{figure}

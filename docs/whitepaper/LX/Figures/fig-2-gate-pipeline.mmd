@@ -1,0 +1,17 @@
+flowchart LR
+  DET["Acoustic detections (OrcaHello)"] --> L0["L0 QC quarantine"]
+  L0 --> PSTH["PSTH kernel fit (E1)"]
+  PSTH --> NULL["Phase-shuffled null test (E2)"]
+  NULL -->|"p < 0.05"| GOF["Time-rescaling GoF (E3)"]
+  NULL -->|"p >= 0.05"| IC1["Integrity condition: no signal"]
+  GOF -->|"KS pass"| CV["CV deviance skill (E5)"]
+  GOF -->|"KS fail"| IC2["Integrity condition: GoF failed"]
+  CV -->|"S_D > 0"| PIT["PIT calibration (E6)"]
+  CV -->|"S_D <= 0"| IC3["Integrity condition: skill negative"]
+  PIT -->|"uniform pass"| GATE["Gate pass: kernel enters confidence"]
+  PIT -->|"KS fail"| IC4["Integrity condition: miscalibrated"]
+  GATE --> EFFCONF["Effective confidence c_eff (E4)"]
+  IC1 & IC2 & IC3 & IC4 --> EFFCONF
+  EFFCONF --> HUMAN["Human promotion step"]
+  HUMAN -->|"signed decision record"| PROMOTED["Promoted confidence displayed"]
+  HUMAN -->|"hold/reject"| HELD["Forecast shown at lower confidence"]

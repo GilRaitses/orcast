@@ -1,0 +1,15 @@
+\section{Acoustic grounding: PSTH and Level~0 QC}
+
+Passive acoustic monitoring is orcast's primary temporal instrument: detectors run continuously and effort does not track human activity cycles.
+
+\subsection{PSTH kernel estimation}
+
+The PSTH method aligns detections to a repeating stimulus onset (diel sunrise, flood-current onset, lunar new moon) and bins by phase. The binned counts, divided by station effort and smoothed with a periodic spline, produce a first kernel estimate. Point-process models for spike trains~\cite{arxiv201004875} and the time-elapsed neural model~\cite{arxiv150602361} establish the Poisson-process machinery; the hydrophone is a detector unit, the detection times are the spike train, and the environmental cycles are the stimulus.
+
+\subsection{False-positive rates and quarantine}
+
+Deep learning bioacoustic classifiers exhibit non-trivial false-positive rates in field deployment. The computational bioacoustics review~\cite{arxiv211206725} documents this as a known, widespread problem: performance degrades in field conditions relative to held-out test sets. The North Atlantic right whale upcall detector~\cite{arxiv200109127} demonstrates this for a marine mammal application: a ResNet classifier trained on thousands of examples requires careful validation under variable acoustic conditions. Robust sound event detection in bioacoustic networks~\cite{arxiv190508352} characterizes ambient noise variability as the primary driver of detection unreliability.
+
+For orcast, unreviewed OrcaHello candidates cannot enter a model fit directly. The Level~0 QC gate quarantines them in a separate data stream, and the integrity condition exposed alongside every confidence-bearing surface reports explicitly that the acoustic data consists of unreviewed candidates with known false-positive rates. The effective confidence gate (Section~2) prevents confidence from rising above a threshold while this condition holds.
+
+The integrity condition is part of the forecast, not a reason to hide it.

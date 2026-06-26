@@ -1,0 +1,15 @@
+\section{Orchestrated managed agents with verified tools}
+
+\subsection{Plan-then-execute and tier verification}
+
+The surface planner emits a \texttt{ui\_intent} specifying panels and a \texttt{skill\_plan}. The concierge dispatches exactly those skills. Skills not in the cast role's allowed list return a 400 \texttt{tier\_blocked} before invocation. The model narrates only after all skills complete.
+
+ReAct~\cite{arxiv221003629} establishes the canonical plan-act-verify pattern: constraining the action space to a defined tool set makes the verify step tractable and reduces hallucination. Internal representations predict tool selection hallucination before execution~\cite{arxiv260105214}. HaluAgent~\cite{arxiv240611277} demonstrates that a structured typed toolbox enables reliable operation from smaller models. APIGen~\cite{arxiv240618518} establishes that verifiable function calling is an automatable engineering property.
+
+\subsection{Skill catalog tiers}
+
+T0 skills are public; T1 skills require a geographic viewport; T2/T3 are keyed and blocked on the public route. Cast roles specify an explicit skill subset, model, and policy. Unknown skill IDs return 400. Four cast roles are deployed: \texttt{explore-guide-v1}, \texttt{surface-planner-v1}, \texttt{dossier-explainer-v1}, and \texttt{promotion-clerk-v1}.
+
+\subsection{Step logs as training substrate}
+
+The persisted step-log corpus is the data foundation for embedding-indexed retrieval over prior fits and provenance chains (W-RAG, chartered separately). The step log is both an audit record and a substrate for improving grounding quality over time. TRACE~\cite{arxiv240611460} demonstrates that knowledge-grounded reasoning chains constructed from structured context eliminate irrelevant retrieval noise in multi-hop queries; the orcast step-log is this structure applied to skill-dispatch interactions.

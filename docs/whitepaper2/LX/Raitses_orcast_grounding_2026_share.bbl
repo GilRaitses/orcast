@@ -1,0 +1,1303 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{arxiv230108243}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=76f1284ebdfc9de8a8c55e414874a573}{%
+           family={Assran},
+           familyi={A\bibinitperiod},
+           given={Mahmoud},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{fullhash}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{fullhashraw}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{bibnamehash}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{authorbibnamehash}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{authornamehash}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{authorfullhash}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \strng{authorfullhashraw}{d8d7c7d3b61d3735c1a2d0fba2630e8e}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2301.08243
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2301.08243
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2301.08243
+      \endverb
+    \endentry
+    \entry{arxiv190805656}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=d6430d03064f8fa58aae41426037fcc2}{%
+           family={Bakhtin},
+           familyi={B\bibinitperiod},
+           given={Anton},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{fullhash}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{fullhashraw}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{bibnamehash}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{authorbibnamehash}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{authornamehash}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{authorfullhash}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \strng{authorfullhashraw}{9fc9b12ee050edcd7cb6937bef0e5a9f}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{PHYRE: A New Benchmark for Physical Reasoning}
+      \field{year}{2019}
+      \verb{eprint}
+      \verb 1908.05656
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/1908.05656
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/1908.05656
+      \endverb
+    \endentry
+    \entry{banks2020agentagnostic}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=536e393e1668e48b9efdc5e1a7921538}{%
+           family={Banks},
+           familyi={B\bibinitperiod},
+           given={Jaime},
+           giveni={J\bibinitperiod}}}%
+        {{hash=79aef016ab4b5461111494a7dab71c49}{%
+           family={Graaf},
+           familyi={G\bibinitperiod},
+           given={Maartje\bibnamedelimb M.\bibnamedelimi A.},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim A\bibinitperiod},
+           prefix={de},
+           prefixi={d\bibinitperiod}}}%
+      }
+      \strng{namehash}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{fullhash}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{fullhashraw}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{bibnamehash}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{authorbibnamehash}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{authornamehash}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{authorfullhash}{e363fcfe4fafcff6c4b20b7f29945806}
+      \strng{authorfullhashraw}{e363fcfe4fafcff6c4b20b7f29945806}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Human-Machine Communication}
+      \field{title}{Toward an Agent-Agnostic Transmission Model: Synthesizing Anthropocentric and Technocentric Paradigms in Communication}
+      \field{volume}{1}
+      \field{year}{2020}
+      \field{pages}{19\bibrangedash 36}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.30658/hmc.1.2
+      \endverb
+    \endentry
+    \entry{arxiv240408471}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=bf39176eb9d203a8e86228b360aec867}{%
+           family={Bardes},
+           familyi={B\bibinitperiod},
+           given={Adrien},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{fullhash}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{fullhashraw}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{bibnamehash}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{authorbibnamehash}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{authornamehash}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{authorfullhash}{3d2f966e519f9343b79a1c0e7aa46945}
+      \strng{authorfullhashraw}{3d2f966e519f9343b79a1c0e7aa46945}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Revisiting Feature Prediction for Learning Visual Representations from Video}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2404.08471
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2404.08471
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2404.08471
+      \endverb
+    \endentry
+    \entry{clinciu2019survey}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=4ea4e8f22d19e8bfa73afada62e24aa7}{%
+           family={Clinciu},
+           familyi={C\bibinitperiod},
+           given={Miruna\bibnamedelima Andreea},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=97a1d31469fe7ceb7ec53098087ad69c}{%
+           family={Hastie},
+           familyi={H\bibinitperiod},
+           given={Helen},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{fullhash}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{fullhashraw}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{bibnamehash}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{authorbibnamehash}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{authornamehash}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{authorfullhash}{7469ac0fca4f8bb220a614e90df084ed}
+      \strng{authorfullhashraw}{7469ac0fca4f8bb220a614e90df084ed}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 1st Workshop on Interactive Natural Language Technology for Explainable Artificial Intelligence}
+      \field{title}{A Survey of Explainable {AI} Terminology}
+      \field{year}{2019}
+      \field{pages}{8\bibrangedash 13}
+      \range{pages}{6}
+    \endentry
+    \entry{davis2023affordances}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=9495caefc5e4438eec1f190c1288dd8c}{%
+           family={Davis},
+           familyi={D\bibinitperiod},
+           given={Jenny\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{fullhash}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{fullhashraw}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{bibnamehash}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{authorbibnamehash}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{authornamehash}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{authorfullhash}{9495caefc5e4438eec1f190c1288dd8c}
+      \strng{authorfullhashraw}{9495caefc5e4438eec1f190c1288dd8c}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2023 ACM Conference on Fairness, Accountability, and Transparency}
+      \field{title}{Affordances for Machine Learning}
+      \field{year}{2023}
+      \field{pages}{324\bibrangedash 332}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3593013.3594000
+      \endverb
+    \endentry
+    \entry{arxiv230915217}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=d8dead04bec0d1ebb462dd6ac4504a36}{%
+           family={Es},
+           familyi={E\bibinitperiod},
+           given={Shahul},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{fullhash}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{fullhashraw}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{bibnamehash}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{authorbibnamehash}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{authornamehash}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{authorfullhash}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \strng{authorfullhashraw}{c1c4ea85e78c313d8c00616419b5c4d6}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Ragas: Automated Evaluation of Retrieval Augmented Generation}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2309.15217
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2309.15217
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2309.15217
+      \endverb
+    \endentry
+    \entry{gambino2020casa}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=3aefde5fa033f3d5f33709a6c1639965}{%
+           family={Gambino},
+           familyi={G\bibinitperiod},
+           given={Andrew\bibnamedelima J.},
+           giveni={A\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=1a73b9b7d46da66580e8865ab17a34a9}{%
+           family={Fox},
+           familyi={F\bibinitperiod},
+           given={Jesse},
+           giveni={J\bibinitperiod}}}%
+        {{hash=7109f6ad2e9b64600c36b89765af0016}{%
+           family={Ratan},
+           familyi={R\bibinitperiod},
+           given={Rabindra\bibnamedelima A.},
+           giveni={R\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{fullhash}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{fullhashraw}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{bibnamehash}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{authorbibnamehash}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{authornamehash}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{authorfullhash}{f6ae983809a136c5b5dd6575f82fb362}
+      \strng{authorfullhashraw}{f6ae983809a136c5b5dd6575f82fb362}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Human-Machine Communication}
+      \field{title}{Building a Stronger {CASA}: Extending the Computers Are Social Actors Paradigm}
+      \field{volume}{1}
+      \field{year}{2020}
+      \field{pages}{71\bibrangedash 85}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.30658/hmc.1.5
+      \endverb
+    \endentry
+    \entry{arxiv230514627}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=b5ed531e22d07ceb0e7efc5c88b2d81d}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Tianyu},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{fullhash}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{fullhashraw}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{bibnamehash}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{authorbibnamehash}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{authornamehash}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{authorfullhash}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \strng{authorfullhashraw}{262bff1ea12ba5ab5a23d9c8d5538949}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Enabling Large Language Models to Generate Text with Citations}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2305.14627
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2305.14627
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2305.14627
+      \endverb
+    \endentry
+    \entry{gardner2024critical}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=4424a15560e00cc1d8f686dc0816c5e2}{%
+           family={Gardner},
+           familyi={G\bibinitperiod},
+           given={Paula\bibnamedelima M.},
+           giveni={P\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=32b11b5dca5a768c1d01a4fd87095a69}{%
+           family={Rauchberg},
+           familyi={R\bibinitperiod},
+           given={Jess},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{fullhash}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{fullhashraw}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{bibnamehash}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{authorbibnamehash}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{authornamehash}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{authorfullhash}{06c6969a934b1c6009aef9bdc5b3c620}
+      \strng{authorfullhashraw}{06c6969a934b1c6009aef9bdc5b3c620}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Human-Machine Communication}
+      \field{title}{Feminist Cybernetic, Critical Race, Postcolonial, and Crip Propositions for the Theoretical Future of Human-Machine Communication}
+      \field{volume}{8}
+      \field{year}{2024}
+      \field{pages}{27\bibrangedash 51}
+      \range{pages}{25}
+      \verb{doi}
+      \verb 10.30658/hmc.8.2
+      \endverb
+    \endentry
+    \entry{gibbs2021agency}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=d9a1b9653ce56aa06d8aea1310f245f6}{%
+           family={Gibbs},
+           familyi={G\bibinitperiod},
+           given={Jennifer\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=172635e17ac194279f2635ab77446979}{%
+           family={Kirkwood},
+           familyi={K\bibinitperiod},
+           given={Gavin\bibnamedelima L.},
+           giveni={G\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=cf828c6c4004088cba7d87ae034311eb}{%
+           family={Fang},
+           familyi={F\bibinitperiod},
+           given={Chengyu},
+           giveni={C\bibinitperiod}}}%
+        {{hash=c6c88c8eacf2c4d4fcdcd8b7151e6078}{%
+           family={Wilkenfeld},
+           familyi={W\bibinitperiod},
+           given={J.\bibnamedelimi Nan},
+           giveni={J\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \strng{namehash}{15ae1381b8a1f95d7a5a0797b472f288}
+      \strng{fullhash}{4ab3feba6424be7ef7b4e282e1f0e658}
+      \strng{fullhashraw}{4ab3feba6424be7ef7b4e282e1f0e658}
+      \strng{bibnamehash}{4ab3feba6424be7ef7b4e282e1f0e658}
+      \strng{authorbibnamehash}{4ab3feba6424be7ef7b4e282e1f0e658}
+      \strng{authornamehash}{15ae1381b8a1f95d7a5a0797b472f288}
+      \strng{authorfullhash}{4ab3feba6424be7ef7b4e282e1f0e658}
+      \strng{authorfullhashraw}{4ab3feba6424be7ef7b4e282e1f0e658}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Human-Machine Communication}
+      \field{title}{Negotiating Agency and Control: Theorizing Human-Machine Communication From a Structurational Perspective}
+      \field{volume}{2}
+      \field{year}{2021}
+      \field{pages}{153\bibrangedash 172}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.30658/hmc.2.8
+      \endverb
+    \endentry
+    \entry{arxiv230514992}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=f8e6fbb74cfdbd4d942fefd2fd13b9ef}{%
+           family={Hao},
+           familyi={H\bibinitperiod},
+           given={Shibo},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{fullhash}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{fullhashraw}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{bibnamehash}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{authorbibnamehash}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{authornamehash}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{authorfullhash}{fd949d3a4bdc19184f74358c5de00d43}
+      \strng{authorfullhashraw}{fd949d3a4bdc19184f74358c5de00d43}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Reasoning with Language Model is Planning with World Model}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2305.14992
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2305.14992
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2305.14992
+      \endverb
+    \endentry
+    \entry{hoff2015trust}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=716363f37eb03bbeb58c3c36add5a80b}{%
+           family={Hoff},
+           familyi={H\bibinitperiod},
+           given={Kevin\bibnamedelima A.},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=7234582f24de3dfb7b9ff3e4be93056a}{%
+           family={Bashir},
+           familyi={B\bibinitperiod},
+           given={Masooda},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{8c8997122bc72888547e7dd20016249a}
+      \strng{fullhash}{8c8997122bc72888547e7dd20016249a}
+      \strng{fullhashraw}{8c8997122bc72888547e7dd20016249a}
+      \strng{bibnamehash}{8c8997122bc72888547e7dd20016249a}
+      \strng{authorbibnamehash}{8c8997122bc72888547e7dd20016249a}
+      \strng{authornamehash}{8c8997122bc72888547e7dd20016249a}
+      \strng{authorfullhash}{8c8997122bc72888547e7dd20016249a}
+      \strng{authorfullhashraw}{8c8997122bc72888547e7dd20016249a}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Human Factors}
+      \field{number}{3}
+      \field{title}{Trust in Automation: Integrating Empirical Evidence on Factors That Influence Trust}
+      \field{volume}{57}
+      \field{year}{2015}
+      \field{pages}{407\bibrangedash 434}
+      \range{pages}{28}
+      \verb{doi}
+      \verb 10.1177/0018720814547570
+      \endverb
+    \endentry
+    \entry{horvitz1999}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=a2d47a50d998e20d2bfd01b71fffa12c}{%
+           family={Horvitz},
+           familyi={H\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{fullhash}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{fullhashraw}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{bibnamehash}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{authorbibnamehash}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{authornamehash}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{authorfullhash}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \strng{authorfullhashraw}{a2d47a50d998e20d2bfd01b71fffa12c}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI '99)}
+      \field{title}{Principles of Mixed-Initiative User Interfaces}
+      \field{year}{1999}
+      \field{pages}{159\bibrangedash 166}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1145/302979.303030
+      \endverb
+    \endentry
+    \entry{kahn2007benchmarks}{article}{}{}
+      \name{author}{7}{}{%
+        {{hash=987c6e099d24827834dea2c3910b9627}{%
+           family={Kahn},
+           familyi={K\bibinitperiod},
+           given={Peter\bibnamedelima H.},
+           giveni={P\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=65969149151d8c3a46cb3adda3d7d701}{%
+           family={Ishiguro},
+           familyi={I\bibinitperiod},
+           given={Hiroshi},
+           giveni={H\bibinitperiod}}}%
+        {{hash=3a1825b8dad676dc7168a3961b5ee251}{%
+           family={Friedman},
+           familyi={F\bibinitperiod},
+           given={Batya},
+           giveni={B\bibinitperiod}}}%
+        {{hash=401c2b6898c4cc146157500b540f459b}{%
+           family={Kanda},
+           familyi={K\bibinitperiod},
+           given={Takayuki},
+           giveni={T\bibinitperiod}}}%
+        {{hash=c639c9b699ca3216e9c156f6fdea9b5f}{%
+           family={Freier},
+           familyi={F\bibinitperiod},
+           given={Nathan\bibnamedelima G.},
+           giveni={N\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=8641418c3bc6b86c1737a532f9fc5238}{%
+           family={Severson},
+           familyi={S\bibinitperiod},
+           given={Rachel\bibnamedelima L.},
+           giveni={R\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=9d2570694dc5a09163e19a5bb4b4c1c1}{%
+           family={Miller},
+           familyi={M\bibinitperiod},
+           given={Jessica},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{9a185982af559366f4ce407138f7af7d}
+      \strng{fullhash}{a93f09b41643f7149e5909f00440f57c}
+      \strng{fullhashraw}{a93f09b41643f7149e5909f00440f57c}
+      \strng{bibnamehash}{9a185982af559366f4ce407138f7af7d}
+      \strng{authorbibnamehash}{9a185982af559366f4ce407138f7af7d}
+      \strng{authornamehash}{9a185982af559366f4ce407138f7af7d}
+      \strng{authorfullhash}{a93f09b41643f7149e5909f00440f57c}
+      \strng{authorfullhashraw}{a93f09b41643f7149e5909f00440f57c}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Interaction Studies}
+      \field{number}{3}
+      \field{title}{What is a Human? Toward psychological benchmarks in the field of human-robot interaction}
+      \field{volume}{8}
+      \field{year}{2007}
+      \field{pages}{363\bibrangedash 390}
+      \range{pages}{28}
+      \verb{doi}
+      \verb 10.1075/is.8.3.04kah
+      \endverb
+    \endentry
+    \entry{koban2023dual}{incollection}{}{}
+      \name{author}{2}{}{%
+        {{hash=5ede82a892cb7d06d87f8f9378503a3e}{%
+           family={Koban},
+           familyi={K\bibinitperiod},
+           given={Kevin},
+           giveni={K\bibinitperiod}}}%
+        {{hash=536e393e1668e48b9efdc5e1a7921538}{%
+           family={Banks},
+           familyi={B\bibinitperiod},
+           given={Jaime},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {SAGE Publications Ltd}%
+      }
+      \strng{namehash}{df1a8503644c2a9361e547085021658e}
+      \strng{fullhash}{df1a8503644c2a9361e547085021658e}
+      \strng{fullhashraw}{df1a8503644c2a9361e547085021658e}
+      \strng{bibnamehash}{df1a8503644c2a9361e547085021658e}
+      \strng{authorbibnamehash}{df1a8503644c2a9361e547085021658e}
+      \strng{authornamehash}{df1a8503644c2a9361e547085021658e}
+      \strng{authorfullhash}{df1a8503644c2a9361e547085021658e}
+      \strng{authorfullhashraw}{df1a8503644c2a9361e547085021658e}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Communication}
+      \field{title}{Dual-Process Theory in Human-Machine Communication}
+      \field{year}{2023}
+      \verb{doi}
+      \verb 10.4135/9781529782783
+      \endverb
+    \endentry
+    \entry{koenig2025acceptance}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=da3812a69ba567c768426bf7aee360fe}{%
+           family={Koenig},
+           familyi={K\bibinitperiod},
+           given={Pascal\bibnamedelima D.},
+           giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{da3812a69ba567c768426bf7aee360fe}
+      \strng{fullhash}{da3812a69ba567c768426bf7aee360fe}
+      \strng{fullhashraw}{da3812a69ba567c768426bf7aee360fe}
+      \strng{bibnamehash}{da3812a69ba567c768426bf7aee360fe}
+      \strng{authorbibnamehash}{da3812a69ba567c768426bf7aee360fe}
+      \strng{authornamehash}{da3812a69ba567c768426bf7aee360fe}
+      \strng{authorfullhash}{da3812a69ba567c768426bf7aee360fe}
+      \strng{authorfullhashraw}{da3812a69ba567c768426bf7aee360fe}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{AI \& Society}
+      \field{title}{Attitudes toward Artificial Intelligence: Combining Three Theoretical Perspectives on Technology Acceptance}
+      \field{volume}{40}
+      \field{year}{2025}
+      \field{pages}{1333\bibrangedash 1345}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1007/s00146-024-01987-z
+      \endverb
+    \endentry
+    \entry{arxiv230602572}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=6a1aa6b7eab12b931ca7c7e3f927231d}{%
+           family={LeCun},
+           familyi={L\bibinitperiod},
+           given={Yann},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=073cc71ff9a77d7b122f010968a50bd6}{%
+           family={Alahari},
+           familyi={A\bibinitperiod},
+           given={Karteek},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{fullhash}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{fullhashraw}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{bibnamehash}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{authorbibnamehash}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{authornamehash}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{authorfullhash}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \strng{authorfullhashraw}{1944b8000b7a2c5f4b6dc43f33fcb1c7}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Introduction to Latent Variable Energy-Based Models: A Path Towards Autonomous Machine Intelligence}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2306.02572
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2306.02572
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2306.02572
+      \endverb
+    \endentry
+    \entry{mitchell2023understanding}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=3042c3dfb21b9c9089a0aa657bce4f3b}{%
+           family={Mitchell},
+           familyi={M\bibinitperiod},
+           given={Melanie},
+           giveni={M\bibinitperiod}}}%
+        {{hash=bc94f372aa2760ea95b278844dc8dcd5}{%
+           family={Krakauer},
+           familyi={K\bibinitperiod},
+           given={David\bibnamedelima C.},
+           giveni={D\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{fullhash}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{fullhashraw}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{bibnamehash}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{authorbibnamehash}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{authornamehash}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{authorfullhash}{890a7b92a864d2efa1edab4c9aac90a3}
+      \strng{authorfullhashraw}{890a7b92a864d2efa1edab4c9aac90a3}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the National Academy of Sciences}
+      \field{number}{13}
+      \field{title}{The debate over understanding in {AI}'s large language models}
+      \field{volume}{120}
+      \field{year}{2023}
+      \field{pages}{e2215907120}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1073/pnas.2215907120
+      \endverb
+    \endentry
+    \entry{magenticui2025}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{4}{}{%
+        {{hash=c420e0c2ee0a2a26a60347646b85e283}{%
+           family={Mozannar},
+           familyi={M\bibinitperiod},
+           given={Hussein},
+           giveni={H\bibinitperiod}}}%
+        {{hash=6751ff8ce679fd345d66a156462f1915}{%
+           family={Bansal},
+           familyi={B\bibinitperiod},
+           given={Gagan},
+           giveni={G\bibinitperiod}}}%
+        {{hash=56906422363d5503777cc7cd55e5d23b}{%
+           family={Tan},
+           familyi={T\bibinitperiod},
+           given={Cheng},
+           giveni={C\bibinitperiod}}}%
+        {{hash=7dd00ba501e8437370a57922cf53347c}{%
+           family={Fourney},
+           familyi={F\bibinitperiod},
+           given={Adam},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{d26982964972247e4d4bd880b0f88880}
+      \strng{fullhash}{59b44dfccc66c884b4de3794d6e3dbe5}
+      \strng{fullhashraw}{59b44dfccc66c884b4de3794d6e3dbe5}
+      \strng{bibnamehash}{59b44dfccc66c884b4de3794d6e3dbe5}
+      \strng{authorbibnamehash}{59b44dfccc66c884b4de3794d6e3dbe5}
+      \strng{authornamehash}{d26982964972247e4d4bd880b0f88880}
+      \strng{authorfullhash}{59b44dfccc66c884b4de3794d6e3dbe5}
+      \strng{authorfullhashraw}{59b44dfccc66c884b4de3794d6e3dbe5}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{note}{Microsoft Research AI Frontiers, MSR-TR-2025-40}
+      \field{title}{Magentic-UI: Towards Human-in-the-loop Agentic Systems}
+      \field{year}{2025}
+      \verb{eprint}
+      \verb 2507.22358
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2507.22358
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2507.22358
+      \endverb
+    \endentry
+    \entry{natale2021deceitful}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=e37bb2f4623e6f5de947fe99a26310d8}{%
+           family={Natale},
+           familyi={N\bibinitperiod},
+           given={Simone},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Oxford University Press}%
+      }
+      \strng{namehash}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{fullhash}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{fullhashraw}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{bibnamehash}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{authorbibnamehash}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{authornamehash}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{authorfullhash}{e37bb2f4623e6f5de947fe99a26310d8}
+      \strng{authorfullhashraw}{e37bb2f4623e6f5de947fe99a26310d8}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Deceitful Media: Artificial Intelligence and Social Life after the Turing Test}
+      \field{year}{2021}
+    \endentry
+    \entry{arxiv230514292}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=e81552697fc28291a3bda17d3ddb02ac}{%
+           family={Semnani},
+           familyi={S\bibinitperiod},
+           given={Sina\bibnamedelima J.},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{fullhash}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{fullhashraw}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{bibnamehash}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{authorbibnamehash}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{authornamehash}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{authorfullhash}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \strng{authorfullhashraw}{6e8abcdc22dd039fcf9fc42c7acf19b9}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{WikiChat: Stopping the Hallucination of Large Language Model Chatbots by Few-Shot Grounding on Wikipedia}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2305.14292
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2305.14292
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2305.14292
+      \endverb
+    \endentry
+    \entry{arxiv210314025}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{1}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{The ThreeDWorld Transport Challenge: A Visually Guided Task-and-Motion Planning Benchmark for Physically Realistic Embodied AI}
+      \field{year}{2021}
+      \verb{eprint}
+      \verb 2103.14025
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2103.14025
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2103.14025
+      \endverb
+    \endentry
+    \entry{arxiv231109533}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{2}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{AGREE: Achieving Ground Truth Faithful Generations with LLMs}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2311.09533
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2311.09533
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2311.09533
+      \endverb
+    \endentry
+    \entry{arxiv230410703}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{3}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{ReCEval: Evaluating Reasoning Chains via Correctness and Informativeness}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2304.10703
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2304.10703
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2304.10703
+      \endverb
+    \endentry
+    \entry{arxiv240706886}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{4}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Aligning Cyber Space with Physical World: A Comprehensive Survey on Embodied AI}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2407.06886
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2407.06886
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2407.06886
+      \endverb
+    \endentry
+    \entry{arxiv240216063}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{5}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Citation-Enhanced Generation for LLM-based Chatbots}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2402.16063
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2402.16063
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2402.16063
+      \endverb
+    \endentry
+    \entry{arxiv240115884}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{6}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{CRAG -- Corrective Retrieval Augmented Generation}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2401.15884
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2401.15884
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2401.15884
+      \endverb
+    \endentry
+    \entry{arxiv240509605}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{7}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Elements of World Knowledge (EWOK): A Cognition-Inspired Framework for Evaluating Basic World Knowledge in Language Models}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2405.09605
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2405.09605
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2405.09605
+      \endverb
+    \endentry
+    \entry{arxiv240413781}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{8}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Evaluating Retrieval Quality in Retrieval-Augmented Generation}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2404.13781
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2404.13781
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2404.13781
+      \endverb
+    \endentry
+    \entry{arxiv240300504}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{9}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Learning and Leveraging World Models in Visual Representation Learning}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2403.00504
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2403.00504
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2403.00504
+      \endverb
+    \endentry
+    \entry{arxiv240509711}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{10}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{STAR: A Benchmark for Situated Reasoning in Real-World Videos}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2405.09711
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2405.09711
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2405.09711
+      \endverb
+    \endentry
+    \entry{arxiv240611460}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=88183b946cc5f0e8c96b2e66e1c74a7e}{%
+           family={Unknown},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{fullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{bibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorbibnamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authornamehash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhash}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \strng{authorfullhashraw}{88183b946cc5f0e8c96b2e66e1c74a7e}
+      \field{extraname}{11}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{TRACE the Evidence: Constructing Knowledge-Grounded Reasoning Chains for Retrieval-Augmented Generation}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2406.11460
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2406.11460
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2406.11460
+      \endverb
+    \endentry
+    \entry{walther2011cmc}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{hash=6bdefaa640f7100a4dde355efa6f0ec3}{%
+           family={Walther},
+           familyi={W\bibinitperiod},
+           given={Joseph\bibnamedelima B.},
+           giveni={J\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=4a823417768983b147a157294c72aab4}{%
+           family={Knapp},
+           familyi={K\bibinitperiod},
+           given={Mark\bibnamedelima L.},
+           giveni={M\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=7e364becbd4cc7ac3e665ce75ba42f5a}{%
+           family={Daly},
+           familyi={D\bibinitperiod},
+           given={John\bibnamedelima A.},
+           giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {SAGE}%
+      }
+      \strng{namehash}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{fullhash}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{fullhashraw}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{bibnamehash}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{authorbibnamehash}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{authornamehash}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{authorfullhash}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{authorfullhashraw}{6bdefaa640f7100a4dde355efa6f0ec3}
+      \strng{editorbibnamehash}{f89d7687c6ec007864cdfe1514381d00}
+      \strng{editornamehash}{f89d7687c6ec007864cdfe1514381d00}
+      \strng{editorfullhash}{f89d7687c6ec007864cdfe1514381d00}
+      \strng{editorfullhashraw}{f89d7687c6ec007864cdfe1514381d00}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Handbook of Interpersonal Communication}
+      \field{edition}{4}
+      \field{title}{Theories of Computer-Mediated Communication and Interpersonal Relations}
+      \field{year}{2011}
+      \field{pages}{443\bibrangedash 479}
+      \range{pages}{37}
+    \endentry
+    \entry{arxiv220111903}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=61331a11b490f3d927555985facd25b3}{%
+           family={Wei},
+           familyi={W\bibinitperiod},
+           given={Jason},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e5e566ee8f47df717196e96221e7705}
+      \strng{fullhash}{7e5e566ee8f47df717196e96221e7705}
+      \strng{fullhashraw}{7e5e566ee8f47df717196e96221e7705}
+      \strng{bibnamehash}{7e5e566ee8f47df717196e96221e7705}
+      \strng{authorbibnamehash}{7e5e566ee8f47df717196e96221e7705}
+      \strng{authornamehash}{7e5e566ee8f47df717196e96221e7705}
+      \strng{authorfullhash}{7e5e566ee8f47df717196e96221e7705}
+      \strng{authorfullhashraw}{7e5e566ee8f47df717196e96221e7705}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{Chain of Thought Prompting Elicits Reasoning in Large Language Models}
+      \field{year}{2022}
+      \verb{eprint}
+      \verb 2201.11903
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2201.11903
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2201.11903
+      \endverb
+    \endentry
+    \entry{arxiv240201622}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=996a111b27a6377d1872f651e1233718}{%
+           family={Xie},
+           familyi={X\bibinitperiod},
+           given={Jian},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{fullhash}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{fullhashraw}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{bibnamehash}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{authorbibnamehash}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{authornamehash}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{authorfullhash}{531c99ad189128f139b6b794ae3bfd4f}
+      \strng{authorfullhashraw}{531c99ad189128f139b6b794ae3bfd4f}
+      \field{sortinit}{X}
+      \field{sortinithash}{1965c258adceecf23ce3d67b05113442}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{title}{TravelPlanner: A Benchmark for Real-World Planning with Language Agents}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2402.01622
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2402.01622
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2402.01622
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

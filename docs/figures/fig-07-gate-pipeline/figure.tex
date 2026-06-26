@@ -1,0 +1,100 @@
+\documentclass[11pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{amsmath}
+
+%% fig-07: Gate pipeline — VERTICAL layout (FA1 rewrite)
+%% P0-05 fix: horizontal (40cm wide) → vertical (~11cm wide)
+%% P1-09 fix: IC4 visible; "pass" labels on passing edges only
+
+\begin{document}
+\begin{tikzpicture}[node distance=6pt]
+
+\tikzset{
+  GATE/.style={flowboxheader=6cm},
+  IC/.style={draw=ORstroke, very thin, fill=orange!10, rounded corners=2pt,
+             font=\small, text width=5.5cm, align=left, inner sep=5pt},
+  PASS/.style={draw=ORstroke, very thin, fill=green!10, rounded corners=2pt,
+               font=\small, text width=5.5cm, align=center, inner sep=5pt},
+  TERM/.style={draw=ORstroke, very thin, fill=ORhdr, rounded corners=10pt,
+               font=\small\bfseries, text width=5.5cm, align=center, inner sep=6pt},
+}
+
+%% ─── Vertical pipeline (left column, top to bottom) ──────────────────────────
+\node[GATE] (det) at (0,0)
+  {Acoustic detections (OrcaHello)};
+\node[GATE, below=6pt of det] (l0)
+  {L0 QC quarantine\\(unreviewed stream isolated)};
+\node[GATE, below=6pt of l0] (psth)
+  {PSTH kernel fit\\$\log\lambda(x,t) = b_0 + \sum_k \beta_k\phi_k(t) + \log E$ (E1)};
+\node[GATE, below=6pt of psth] (null)
+  {Phase-shuffled null test\\$p_\text{null} = P(T(\text{shuffled}) \geq T(\text{obs}))$ (E2)};
+\node[GATE, below=6pt of null] (gof)
+  {Time-rescaling GoF KS test\\$\tau_i = \Lambda(t_i) - \Lambda(t_{i-1}) \sim \text{Exp}(1)$ (E3)};
+\node[GATE, below=6pt of gof] (cv)
+  {Held-out deviance skill\\$S_D = 1 - D_\text{model}/D_\text{null}$ (E5)};
+\node[GATE, below=6pt of cv] (pit)
+  {PIT calibration KS test\\$u_i = F_\text{model}(y_i) \sim \text{Uniform}(0,1)$ (E6)};
+\node[GATE, below=6pt of pit] (ceff)
+  {Effective confidence\\$c_\text{eff} = c_\text{raw} \cdot \prod_k g_k$ (E4)};
+\node[TERM, below=6pt of ceff] (human)
+  {Human promotion\\(signed decision record — DynamoDB)};
+
+%% ─── Passing flow arrows ──────────────────────────────────────────────────────
+\foreach \a/\b in {det/l0, l0/psth, psth/null}{
+  \draw[flowarrow] (\a.south) -- (\b.north);
+}
+\draw[flowarrow] (null.south) -- (gof.north)
+  node[midway, flowlabel, right]{pass: $p < \alpha$};
+\draw[flowarrow] (gof.south) -- (cv.north)
+  node[midway, flowlabel, right]{pass: KS ok};
+\draw[flowarrow] (cv.south) -- (pit.north)
+  node[midway, flowlabel, right]{pass: $S_D > 0$};
+\draw[flowarrow] (pit.south) -- (ceff.north)
+  node[midway, flowlabel, right]{pass: calibrated};
+\draw[flowarrow] (ceff.south) -- (human.north);
+
+%% ─── IC failure stubs (right column) ─────────────────────────────────────────
+\node[IC, right=1.5cm of null]  (ic1)
+  {\textbf{IC: no signal}\\\textit{Kernel contributes nothing; confidence unchanged}};
+\node[IC, right=1.5cm of gof]   (ic2)
+  {\textbf{IC: GoF failed}\\\textit{Model does not fit temporal spike train}};
+\node[IC, right=1.5cm of cv]    (ic3)
+  {\textbf{IC: skill negative}\\\textit{Model worse than null on held-out data}};
+\node[IC, right=1.5cm of pit]   (ic4)
+  {\textbf{IC: miscalibrated}\\\textit{$u_i \not\sim \text{Uniform}(0,1)$; PIT fails}};
+
+\draw[flowarrowdash] (null.east) -- (ic1.west)
+  node[midway, flowlabel, above]{fail};
+\draw[flowarrowdash] (gof.east) -- (ic2.west)
+  node[midway, flowlabel, above]{fail};
+\draw[flowarrowdash] (cv.east) -- (ic3.west)
+  node[midway, flowlabel, above]{fail};
+\draw[flowarrowdash] (pit.east) -- (ic4.west)
+  node[midway, flowlabel, above]{fail};
+
+%% All IC nodes feed into c_eff (confidence reduced)
+\foreach \ic in {ic1, ic2, ic3, ic4}{
+  \draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+    (\ic.south) |- (ceff.east);
+}
+
+%% ─── Gate PASS annotation ─────────────────────────────────────────────────────
+\node[PASS, left=1.5cm of ceff]
+  {Gate PASS: all ICs clear\\$c_\text{eff} = c_\text{raw}$\\(no gate reduced confidence)};
+
+%% ─── Title + legend ───────────────────────────────────────────────────────────
+\node[font=\normalsize\bfseries, anchor=north west]
+  at ([yshift=8pt]det.north west)
+  {ORCAST -- Gate pipeline: detections to displayed confidence};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=12.5cm, inner sep=5pt, anchor=north west]
+  at ([yshift=-12pt]human.south west) {%
+  Failing a gate surfaces an integrity condition alongside the metric.
+  It does \textit{not} suppress the forecast.
+  The human promotion step is the final gate before confidence is raised.
+  E1--E6: equation labels from the whitepaper.
+};
+
+\end{tikzpicture}
+\end{document}

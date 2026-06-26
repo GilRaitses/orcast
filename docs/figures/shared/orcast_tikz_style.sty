@@ -1,0 +1,118 @@
+%% orcast_tikz_style.sty
+%% Shared TikZ style for orcast figures.
+%% Visual reference: docs/devpost/figures/_ref/decisiondb-fig2.png
+%% Single lilac accent family, two-compartment entity boxes,
+%% row-level named nodes for edge attachment, and precise ER endpoint symbols.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{orcast_tikz_style}[2026/06/24 orcast figure style]
+
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+\RequirePackage{array}
+\usetikzlibrary{matrix,arrows.meta,positioning,calc,fit,backgrounds}
+
+%% ── Colour palette ──────────────────────────────────────────────────────────
+\definecolor{ORhdr}{RGB}{213,198,232}      % lilac header fill
+\definecolor{ORstroke}{RGB}{172,130,198}   % thin pink-purple stroke
+\definecolor{ORpk}{RGB}{90,60,140}         % dark purple PK/FK annotation text
+\definecolor{ORbg}{RGB}{255,255,255}       % field row background
+
+%% ── Entity matrix style ─────────────────────────────────────────────────────
+%% Usage:
+%%   \begin{tikzpicture}
+%%     \matrix[entity=sightings] (S) { ... };
+%%   \end{tikzpicture}
+%%
+%% Inside the matrix use \headerrow{name}, \pkrow{field}, \fkrow{field},
+%% \fieldrow{field}.  Each row creates a named node "entityname-field"
+%% for precise edge attachment.
+
+\tikzset{
+  %% Outer matrix: drawn border, zero padding between rows
+  entity/.style 2 args={
+    matrix of nodes,
+    draw=ORstroke, very thin,
+    inner sep=0pt,
+    row sep=0pt,
+    column sep=0pt,
+    nodes={inner xsep=5pt, inner ysep=2pt, anchor=west,
+           text width=#2, font=\footnotesize\strut},
+    row 1/.style={nodes={fill=ORhdr, font=\footnotesize\bfseries,
+                          anchor=center, align=center, text width=#2}},
+    row 2/.style={nodes={draw=ORstroke, very thin, fill=ORbg}},
+    every odd row/.style={nodes={fill=ORbg}},
+    every even row/.style={nodes={fill=ORbg}},
+    label={}
+  },
+  entity/.default={?}{3.2cm},
+  %% Individual row styles
+  pkrow/.style={nodes={fill=ORbg}},
+  fkrow/.style={nodes={fill=ORbg}},
+  fieldrow/.style={nodes={fill=ORbg}},
+}
+
+%% ── Row macros ───────────────────────────────────────────────────────────────
+%% These macros define named nodes at the row level so edges can attach precisely.
+%% \pkrow{name}{display text}   — PK row; node named \ename-name
+%% \fkrow{name}{display text}   — FK row; node named \ename-name
+%% \fieldrow{name}{display text} — plain field row
+
+%% The matrix entity style uses column 1 for field text, column 2 for PK/FK badge.
+%% We use a two-column matrix: |l|r| layout via tikz matrix column styles.
+
+%% Convenience: draw an edge from FK row to PK row, orthogonally routed.
+%% The open circle sits at the FK (source) end; filled arrowhead at PK (target) end.
+\tikzset{
+  %% Solid logical reference: open circle at source, filled block at target
+  logicalref/.style={
+    draw=ORstroke, thin,
+    -{>[length=5pt,width=4pt]},   % filled arrowhead at PK end
+    rounded corners=2pt,
+  },
+  %% Dashed: used when the reference is by value, not enforced
+  logicalrefdash/.style={
+    logicalref, dashed,
+  },
+  %% FK label node style (placed mid-edge)
+  fklabel/.style={
+    font=\tiny, text=ORpk, fill=white, inner sep=1pt,
+  },
+}
+
+%% ── Flow diagram styles ───────────────────────────────────────────────────────
+\tikzset{
+  flowbox/.style={
+    draw=ORstroke, very thin, fill=ORhdr!30,
+    rounded corners=3pt,
+    inner sep=5pt, font=\footnotesize,
+    text width=#1, align=center,
+  },
+  flowbox/.default=2.5cm,
+  flowboxheader/.style={
+    draw=ORstroke, very thin, fill=ORhdr,
+    rounded corners=3pt,
+    inner sep=5pt, font=\footnotesize\bfseries,
+    text width=#1, align=center,
+  },
+  flowboxheader/.default=2.5cm,
+  flowarrow/.style={
+    draw=ORstroke, thin, -{Latex[length=4pt]},
+  },
+  flowarrowdash/.style={
+    flowarrow, dashed,
+  },
+  flowlabel/.style={
+    font=\tiny, text=ORpk, fill=white, inner sep=1pt,
+  },
+}
+
+%% ── Page furniture ────────────────────────────────────────────────────────────
+\newcommand{\figpagetitle}[2]{%
+  \node[font=\normalsize\bfseries, anchor=north west] at (current bounding box.north west) {#1};
+  \node[font=\tiny, text=gray, anchor=north east] at (current bounding box.north east) {#2};
+}
+\newcommand{\figlegend}[1]{%
+  \node[draw=ORstroke, very thin, fill=white, font=\tiny,
+        text width=5cm, inner sep=4pt,
+        anchor=south east] at (current bounding box.south east) {#1};
+}

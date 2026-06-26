@@ -1,0 +1,249 @@
+\documentclass[10pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{microtype}
+
+%% fig-08: ORCAST system architecture — four-band layered layout
+%% Bands: User | Vercel | AWS (App Runner + Central Casting) | Data + Orchestration
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  node distance=0pt,
+]
+
+%% ── Colour shortcuts ─────────────────────────────────────────────────────────
+\colorlet{BandUser}{ORhdr!20}
+\colorlet{BandVercel}{ORhdr!35}
+\colorlet{BandAWS}{ORhdr!15}
+\colorlet{BandData}{ORhdr!25}
+\colorlet{BandOrch}{ORhdr!18}
+
+%% ── Box styles ───────────────────────────────────────────────────────────────
+\tikzset{
+  sysbox/.style={
+    draw=ORstroke, very thin, fill=white,
+    rounded corners=3pt, inner sep=5pt,
+    font=\scriptsize, align=center,
+    text width=#1,
+  },
+  sysbox/.default=2.4cm,
+  sysboxh/.style={  %% header/service box
+    sysbox=#1,
+    fill=ORhdr,
+    font=\scriptsize\bfseries,
+  },
+  sysboxh/.default=2.4cm,
+  sysboxprimary/.style={  %% DynamoDB primary emphasis
+    sysbox=#1,
+    fill=ORhdr!60,
+    draw=ORstroke, very thin,
+    font=\scriptsize\bfseries,
+  },
+  sysboxprimary/.default=2.4cm,
+  bandlabel/.style={
+    font=\footnotesize\bfseries\color{ORpk},
+    anchor=west, inner sep=0pt,
+  },
+  arrow/.style={draw=ORstroke, thin, -{Latex[length=4pt]}, rounded corners=2pt},
+  arrowdash/.style={arrow, dashed},
+  arrowbold/.style={draw=ORstroke, thick, <->, >=Latex, rounded corners=2pt},
+  edgelabel/.style={font=\tiny, fill=white, inner sep=1pt, text=ORpk, align=center},
+}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  BAND BACKGROUNDS  (drawn first, in background)
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{scope}[on background layer]
+  %% Band 0: Users
+  \fill[BandUser, rounded corners=4pt]
+    (-0.5, 1.0) rectangle (18.5, 3.2);
+  \node[bandlabel] at (-0.3, 3.0) {Users};
+
+  %% Band 1: Vercel
+  \fill[BandVercel, rounded corners=4pt]
+    (-0.5, -1.3) rectangle (18.5, 0.9);
+  \node[bandlabel] at (-0.3, 0.7) {Vercel};
+
+  %% Band 2: AWS App Runner + Central Casting
+  \fill[BandAWS, rounded corners=4pt]
+    (-0.5, -4.2) rectangle (18.5, -1.5);
+  \node[bandlabel] at (-0.3, -1.7) {AWS App Runner};
+
+  %% Band 3: Data stores
+  \fill[BandData, rounded corners=4pt]
+    (-0.5, -7.2) rectangle (18.5, -4.4);
+  \node[bandlabel] at (-0.3, -4.6) {AWS Data};
+
+  %% Band 4: Orchestration
+  \fill[BandOrch, rounded corners=4pt]
+    (-0.5, -9.8) rectangle (18.5, -7.4);
+  \node[bandlabel] at (-0.3, -7.6) {AWS Orchestration};
+\end{scope}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  BAND 0: USERS
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[sysboxh=3.5cm] (user) at (4, 2.1)
+  {Shore researcher \\ / field observer};
+
+\node[sysboxh=3.5cm] (reviewer) at (10, 2.1)
+  {Signed-in reviewer \\ (WorkOS)};
+
+\node[sysboxh=3.5cm] (agent) at (16, 2.1)
+  {External agent \\ / partner API};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  BAND 1: VERCEL
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[sysboxh=4.0cm] (nextjs) at (3, -0.2)
+  {Next.js \\ forecast · gates · explore \\ ask · journal · moderation};
+
+\node[sysbox=2.8cm] (proxy) at (8.5, -0.2)
+  {/api/be proxy \\ WorkOS + Agent-Key};
+
+\node[sysbox=2.8cm] (planproxy) at (12.0, -0.2)
+  {/api/interactions \\ /plan proxy};
+
+\node[sysbox=2.8cm] (aigw) at (16.0, -0.2)
+  {Vercel AI Gateway \\ explore guide chat \\ (claude-haiku-4.5)};
+
+\node[sysbox=2.6cm] (v1gw) at (18.5, -0.2)
+  {/api/v1 \\ partner gateway};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  BAND 2: APP RUNNER + CENTRAL CASTING
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[sysboxh=3.6cm] (apprunner) at (3, -2.8)
+  {App Runner: FastAPI \\ (AWS us-west-2)};
+
+%% Central Casting sub-band
+\node[sysbox=2.2cm] (prepare) at (9, -2.5)
+  {/interactions \\ /prepare};
+\node[sysbox=2.2cm] (narrate) at (11.8, -2.5)
+  {/interactions \\ /narrate};
+\node[sysbox=2.2cm] (plan) at (14.6, -2.5)
+  {/interactions \\ /plan};
+
+%% Central Casting label
+\node[draw=ORstroke, very thin, dashed, rounded corners=2pt,
+      inner sep=4pt, font=\tiny\bfseries\color{ORpk},
+      fit=(prepare)(plan), label={[font=\tiny\bfseries\color{ORpk}]above:Central Casting}]
+  (cc) {};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  BAND 3: DATA STORES
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[sysboxprimary=4.2cm] (ddb) at (3, -5.8)
+  {Amazon DynamoDB \\ {\normalfont\scriptsize sightings · submissions · decisions} \\
+   {\normalfont\scriptsize journal · hotspots · reports} \\
+   {\normalfont\scriptsize \mbox{ingestion-runs} · \mbox{api-keys} · \mbox{managed-agents}} \\
+   \vspace{1pt}\textit{system of record — 9 tables}};
+
+\node[sysbox=2.8cm] (s3) at (9.5, -5.8)
+  {S3 \\ time-series + \\ fit artifacts};
+
+\node[sysbox=2.8cm] (bedrock) at (13.5, -5.8)
+  {Amazon Bedrock \\ Haiku · Sonnet \\ (sighting narration)};
+
+\node[sysbox=2.8cm] (aurora) at (17.5, -5.8)
+  {RDS PostgreSQL \\ exploration sessions \\ (not system of record)};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  BAND 4: ORCHESTRATION
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[sysboxh=4.0cm] (sfn) at (4, -8.6)
+  {Step Functions \\ ingest → fit → gate → promote \\ (human approval workflow)};
+
+\node[sysbox=2.8cm] (eb) at (11, -8.6)
+  {EventBridge \\ schedule \\ (cron trigger)};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  ARROWS
+%% ═══════════════════════════════════════════════════════════════════════════
+
+%% Users → Next.js
+\draw[arrow] (user.south) -- (nextjs.north);
+
+%% Reviewer → Next.js (WorkOS session)
+\draw[arrow] (reviewer.south) -- (nextjs.north east)
+  node[edgelabel, pos=0.5, right=2pt]{WorkOS};
+
+%% Agent → /api/v1 gateway
+\draw[arrowdash] (agent.south) -- (v1gw.north)
+  node[edgelabel, pos=0.5, right=2pt]{partner key};
+
+%% Next.js → /api/be proxy
+\draw[arrow] (nextjs.east) -- (proxy.west);
+
+%% Next.js → /api/interactions/plan proxy
+\draw[arrow] (nextjs.east) -- ++(0.3,0) |- (planproxy.west);
+
+%% Next.js → Vercel AI Gateway (explore guide chat)
+\draw[arrow] (nextjs.north east) -- ++(0.3,0) |- (aigw.west)
+  node[edgelabel, pos=0.2, above=1pt]{explore chat};
+
+%% /api/be proxy → App Runner
+\draw[arrow] (proxy.south) -- ++(0,-0.6) -| (apprunner.north east)
+  node[edgelabel, pos=0.35, above=1pt]{API calls};
+
+%% /api/v1 gateway → App Runner
+\draw[arrowdash] (v1gw.south) -- ++(0,-0.6) -| (apprunner.north)
+  node[edgelabel, pos=0.3, right=1pt]{partner};
+
+%% /api/interactions/plan proxy → Central Casting
+\draw[arrow] (planproxy.south) -- (plan.north);
+
+%% App Runner ↔ DynamoDB (primary — bold double arrow)
+\draw[arrowbold] (apprunner.south) -- (ddb.north)
+  node[edgelabel, pos=0.5, right=3pt]{reads/writes\\PRIMARY};
+
+%% App Runner → Central Casting
+\draw[arrow] (apprunner.east) -- ++(0.5,0) |- (prepare.west)
+  node[edgelabel, pos=0.15, above=1pt]{dispatch};
+
+%% App Runner → S3
+\draw[arrow] (apprunner.south east) -- ++(0.5,0) |- (s3.west);
+
+%% App Runner → Bedrock
+\draw[arrow] (apprunner.south east) -- ++(0.5,0) |- (bedrock.west);
+
+%% App Runner ↔ Aurora (session only)
+\draw[arrowdash] (apprunner.east) -- ++(8.0,0) |- (aurora.west)
+  node[edgelabel, pos=0.1, above=1pt]{session turns};
+
+%% App Runner → Step Functions (kick off)
+\draw[arrow] (apprunner.south) -- ++(0,-0.4) -| (sfn.north)
+  node[edgelabel, pos=0.2, right=1pt]{trigger};
+
+%% Step Functions → App Runner (callbacks: approve, apply)
+\draw[arrowdash] (sfn.north east) -- ++(0.3,0) -- ++(0,4.2) -- (apprunner.south west)
+  node[edgelabel, pos=0.7, right=1pt]{callbacks};
+
+%% EventBridge → App Runner (schedule)
+\draw[arrowdash] (eb.north) -- ++(0,7.0) -| (apprunner.south)
+  node[edgelabel, pos=0.05, right=1pt]{schedule};
+
+%% Vercel AI Gateway → Bedrock/Claude (LLM for explore guide)
+\draw[arrow] (aigw.south) -- ++(0,-4.6) -| (bedrock.north)
+  node[edgelabel, pos=0.15, right=1pt]{Claude};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%%  TITLE
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[font=\large\bfseries, anchor=north west]
+  at (-0.5, 3.5)
+  {ORCAST -- System architecture};
+
+\node[font=\small, text=gray, anchor=north east]
+  at (18.5, 3.5)
+  {2026-06-25};
+
+\end{tikzpicture}
+\end{document}

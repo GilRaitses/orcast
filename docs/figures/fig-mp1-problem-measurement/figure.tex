@@ -1,0 +1,150 @@
+\documentclass[11pt,border=8pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{pgfplots}
+\usepackage{amsmath}
+\pgfplotsset{compat=1.18}
+
+%% Figure 1 — Two-panel: Panel A = governance ERD, Panel B = 8-scenario bar chart
+%% AMI framing: evidence-binding failure in AI systems and its measurement
+
+\begin{document}
+\begin{tikzpicture}
+
+%% ── Shared styles ─────────────────────────────────────────────────────────────
+\tikzset{
+  TBL/.style={
+    matrix of nodes, draw=ORstroke, very thin,
+    inner sep=0pt, row sep=0pt, column sep=0pt,
+    column 1/.style={nodes={fill=ORbg, anchor=west, inner xsep=4pt, inner ysep=2.5pt,
+                             text width=3.2cm, font=\small}},
+    column 2/.style={nodes={fill=ORbg, anchor=east, inner xsep=4pt, inner ysep=2.5pt,
+                             text width=0.9cm, align=right, font=\tiny\color{ORpk}}},
+    row 1/.style={nodes={fill=ORhdr, anchor=center, align=center,
+                          font=\small\bfseries, text width=4.2cm}},
+    nodes in empty cells,
+  },
+}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% PANEL A — Compact governance ERD (3 tables: sightings → decision-records → managed-agents)
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[font=\small\bfseries, anchor=south west]
+  at (0,0.15) {\textbf{(A)} Governance chain};
+
+\matrix[TBL] (sightings) at (0,0) {
+  \node{sightings}; & \\
+  \node[name=sightings-pk]{pk: sighting\_id}; & \node{(PK)};\\
+  \node{source, observed\_at, lat, lon}; & \\
+  \node{source\_reliability}; & \\
+  \node[name=sightings-runid]{ingestion\_run\_id}; & \node{(log FK)};\\
+};
+
+\matrix[TBL] (drec) at (0,-3.5) {
+  \node{decision-records}; & \\
+  \node[name=drec-pk]{pk: id}; & \node{(PK)};\\
+  \node{verdict: promote|hold|reject}; & \\
+  \node{gates\_summary}; & \\
+  \node[name=drec-kernver]{kernel\_version}; & \node{(log FK)};\\
+  \node{reviewer, created\_at}; & \\
+};
+
+\matrix[TBL] (magents) at (0,-7.2) {
+  \node{managed-agents}; & \\
+  \node[name=magents-pk]{pk: id}; & \node{(PK)};\\
+  \node[name=magents-sk]{sk: version}; & \node{(SK)};\\
+  \node{instructions, skills[]}; & \\
+  \node{policy: ManagedAgentPolicy}; & \\
+};
+
+%% Edges
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (sightings.south) -- (drec.north)
+  node[midway, fklabel, right]{reviewer signs};
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (drec.south) -- (magents.north)
+  node[midway, fklabel, right]{agent config};
+
+%% Legend
+\node[draw=ORstroke, very thin, fill=white, font=\tiny,
+      text width=4.0cm, inner sep=3pt, anchor=north west]
+  at ([yshift=-10pt]magents.south west) {%
+  Dashed arrows = logical references; DynamoDB enforces pk only.
+  Nine tables total; three shown for governance focus.
+};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% PANEL B — 8-scenario bar chart (pgfplots horizontal bars)
+%% Data from grounding_parallel_rag.py, 2026-06-24, gemini-3.5-flash
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[font=\small\bfseries, anchor=south west]
+  at (6.5,0.15) {\textbf{(B)} $R_\text{uncited}$ across 8 grounding scenarios};
+
+\begin{axis}[
+  at={(6.5cm, -0.2cm)},
+  anchor=north west,
+  xbar,
+  width=9.0cm,
+  height=8.5cm,
+  xmin=0, xmax=110,
+  ytick=data,
+  yticklabels={
+    {S1: Maps-only orca},
+    {S2: + gates (RAG)},
+    {S3: + provenance (RAG)},
+    {S4: + planner step-log},
+    {S5: Maps-only sighting},
+    {S6: + sighting-assist},
+    {S7: Maps-only trip},
+    {S8: + hotspots (RAG)},
+  },
+  yticklabel style={font=\small, align=right, text width=4.2cm},
+  xlabel={Unsupported scientific claim rate $R_\text{uncited}$ (\%)},
+  xlabel style={font=\small},
+  tick label style={font=\small},
+  bar width=10pt,
+  nodes near coords,
+  nodes near coords style={font=\tiny, /pgf/number format/fixed},
+  every node near coord/.append style={xshift=2pt},
+  legend style={at={(0.98,0.02)}, anchor=south east, font=\small,
+                draw=ORstroke, very thin},
+  legend cell align=left,
+]
+
+%% Maps-only bars (orange tint)
+\addplot[xbar, fill=orange!40, draw=orange!70] coordinates {
+  (60,1)   %% S1
+  (100,5)  %% S5
+  (100,7)  %% S7
+};
+\addlegendentry{Maps grounding only}
+
+%% RAG-augmented bars (lilac)
+\addplot[xbar, fill=ORhdr, draw=ORstroke] coordinates {
+  (100,2)  %% S2
+  (100,3)  %% S3
+  (0,4)    %% S4 — the key result
+  (100,6)  %% S6
+  (75,8)   %% S8
+};
+\addlegendentry{RAG-augmented}
+
+%% Annotate Scenario 4
+\node[font=\tiny\bfseries, text=green!50!black, anchor=west]
+  at (axis cs:2,4) {0\% — full grounding};
+
+\end{axis}
+
+%% Footnote
+\node[font=\tiny, text=gray, anchor=north west]
+  at (6.5cm, -8.8cm)
+  {Data: \texttt{grounding\_parallel\_rag.py}, gemini-3.5-flash, 2026-06-24.};
+
+%% ─── Panel labels ─────────────────────────────────────────────────────────────
+\node[font=\small, anchor=south, text width=4.5cm, align=center]
+  at ([yshift=-1.8cm]magents.south)
+  {\textit{The nine-table system of record\\provides the evidence substrate.}};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,50 @@
+\section{Benchmark methodology and results}
+
+\subsection{Setup}
+
+The benchmark uses the Gemini Interactions API (gemini-3.5-flash, Api-Revision: 2026-05-20) with
+\texttt{google\_maps} tool at San Juan Islands coordinates (48.5465, $-$123.03). Eight scenarios run
+in parallel via Python asyncio (\texttt{tools/testing/grounding\_parallel\_rag.py}), each submitting a
+distinct query with a distinct RAG context type. Run date: 2026-06-24.
+
+\subsection{Scenarios}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\# & Context injected & Query type \\
+\midrule
+1 & Maps-only (none) & Where are SRKWs seen + evidence \\
+2 & Live gate data & Same + gate framing \\
+3 & Cell provenance & Cell intensity + kernels \\
+4 & Surface planner step-log & Gates blocking promotion \\
+5 & Maps-only (none) & Sighting check \\
+6 & Sighting-assist output & Same + orcast data \\
+7 & Maps-only (none) & Shore whale watching plan \\
+8 & Hotspot probability data & Same + orcast forecast \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Results}
+
+\begin{center}
+\small
+\begin{tabular}{@{}llr@{}}
+\toprule
+Scenario & Context & $\Runcited$ \\
+\midrule
+4 & Planner step-log & \textbf{0\%} \\
+8 & Hotspot data & 75\% \\
+1 & Maps-only orca & 60\% \\
+7 & Maps-only trip & 100\% \\
+2 & Gate context & 100\% \\
+3, 5, 6 & Provenance / sighting & 100\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Scenario~4 achieves $\Runcited = 0\%$. Scenario~8's hotspot data lowers $\Runcited$ by 25~pp
+relative to the same trip-planning query without it (Scenario~7, 100\%), partially substituting
+for science claims.

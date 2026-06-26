@@ -1,0 +1,21 @@
+flowchart TB
+  METRIC["metric: effective_confidence(cell)"]
+  C1["C: lunar kernel beats null"]
+  C2["C: gates summary fetched"]
+  M1["M: fetch_gates (T0 skill)"]
+  M2["M: fetch_provenance (T1 geo skill)"]
+  X1["X: Level 1 PSTH, p=0.002 (repr_id, run_id)"]
+  X2["X: KS test on tau_i passes (artifact)"]
+  D1["D: acoustic candidates, QC mix (provenance_citation)"]
+  R1["R: methodology.tex kernel spec (artifact_citation)"]
+  METRIC --> C1
+  METRIC --> C2
+  C1 -->|"validated_by"| M1
+  C2 -->|"validated_by"| M2
+  M1 -->|"evaluated_by"| X1
+  M2 -->|"evaluated_by"| X2
+  X1 -->|"supports"| C1
+  X1 -->|"derived_from"| D1
+  X1 -->|"grounded_in"| R1
+  X2 -->|"supports"| C2
+  X2 -->|"derived_from"| D1

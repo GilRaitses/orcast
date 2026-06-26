@@ -1,0 +1,118 @@
+\documentclass[11pt,border=8pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{amsmath}
+
+%% Figure 2 — Two-panel: Panel A = gate pipeline (trimmed), Panel B = provenance graph (left branch)
+%% AMI framing: the architecture that produces 0% uncited rate
+
+\begin{document}
+\begin{tikzpicture}[node distance=5pt]
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% PANEL A — Gate pipeline (trimmed: no IC stubs, core flow only)
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[font=\small\bfseries, anchor=south west] at (0,0.1)
+  {\textbf{(A)} Gate pipeline};
+
+\tikzset{
+  GATE/.style={flowboxheader=5.5cm},
+  TERM/.style={draw=ORstroke, very thin, fill=ORhdr, rounded corners=8pt,
+               font=\small\bfseries, text width=5.5cm, align=center, inner sep=5pt},
+}
+
+\node[GATE] (det) at (0,0) {Acoustic detections (OrcaHello)};
+\node[GATE, below=4pt of det] (l0) {L0 QC quarantine};
+\node[GATE, below=4pt of l0] (psth)
+  {PSTH kernel fit\\$\log\lambda = b_0 + \textstyle\sum_k\beta_k\phi_k + \log E$ \textbf{(E1)}};
+\node[GATE, below=4pt of psth] (null)
+  {Phase-shuffled null test \textbf{(E2)}};
+\node[GATE, below=4pt of null] (gof)
+  {Time-rescaling GoF \textbf{(E3)}};
+\node[GATE, below=4pt of gof] (cv)
+  {Deviance skill $S_D$ \textbf{(E5)}};
+\node[GATE, below=4pt of cv] (pit)
+  {PIT calibration \textbf{(E6)}};
+\node[GATE, below=4pt of pit] (ceff)
+  {Effective confidence $c_\text{eff} = c_\text{raw}\cdot\prod_k g_k$ \textbf{(E4)}};
+\node[TERM, below=4pt of ceff] (human)
+  {Human promotion (DynamoDB)};
+
+\foreach \a/\b in {det/l0,l0/psth,psth/null,null/gof,gof/cv,cv/pit,pit/ceff,ceff/human}{
+  \draw[flowarrow] (\a.south) -- (\b.north);
+}
+
+%% Fail stubs (compact, right side only)
+\foreach \step/\ic in {null/{IC: no signal},gof/{IC: GoF failed},cv/{IC: skill negative},pit/{IC: miscalibrated}}{
+  \draw[flowarrowdash] (\step.east) -- ++(0.8,0)
+    node[right, font=\tiny, text=orange!80!black]{\ic};
+}
+
+\node[draw=ORstroke, very thin, fill=white, font=\tiny,
+      text width=5.5cm, inner sep=3pt, anchor=north west]
+  at ([yshift=-8pt]human.south west) {%
+  Failing a gate surfaces an integrity condition alongside the metric; it does not
+  suppress the forecast. Human promotion is the final gate.
+};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% PANEL B — Provenance graph left branch only: metric→C1→M1→X1→D1→R1
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[font=\small\bfseries, anchor=south west] at (8.5,0.1)
+  {\textbf{(B)} Provenance graph $G=(V,E)$};
+
+\tikzset{
+  VN/.style={draw=ORstroke, very thin, fill=ORbg, rounded corners=2pt,
+             inner sep=5pt, text width=4.8cm, align=center, font=\small},
+  VNhdr/.style={VN, fill=ORhdr, font=\small\bfseries},
+  EL/.style={font=\tiny, text=ORpk, fill=white, inner sep=1pt},
+}
+
+\node[VNhdr] (metric) at (8.5,0)
+  {\textbf{metric}\\$c_\text{eff}(\text{cell}) = 0\%$ (not yet promoted)};
+\node[VN] (C1) at (8.5,-2.0)
+  {\textbf{C: Claim}\\``lunar kernel beats null''\\gate\_citation};
+\node[VN] (M1) at (8.5,-4.0)
+  {\textbf{M: Method}\\fetch\_gates (T0 skill)\\skill\_invocation step};
+\node[VN] (X1) at (8.5,-6.0)
+  {\textbf{X: Experiment}\\Level 1 PSTH (illustrative $p=0.002$)\\repr\_id, run\_id};
+\node[VN] (D1) at (8.5,-8.0)
+  {\textbf{D: Data}\\acoustic candidates, QC mix\\provenance\_citation};
+\node[VN] (R1) at (8.5,-9.8)
+  {\textbf{R: Research}\\methodology.tex kernel spec\\artifact\_citation};
+
+\draw[ORstroke, thin, ->, >=latex] (metric.south) -- (C1.north)
+  node[midway, EL, right]{claim};
+\draw[ORstroke, thin, ->, >=latex] (C1.south) -- (M1.north)
+  node[midway, EL, right]{validated\_by};
+\draw[ORstroke, thin, ->, >=latex] (M1.south) -- (X1.north)
+  node[midway, EL, right]{evaluated\_by};
+\draw[ORstroke, thin, ->, >=latex] (X1.south) -- (D1.north)
+  node[midway, EL, right]{derived\_from};
+\draw[ORstroke, thin, ->, >=latex] (D1.south) -- (R1.north)
+  node[midway, EL, right]{grounded\_in};
+%% supports (X→C)
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (X1.east) -- ++(0.4,0) |- (C1.east)
+  node[pos=0.2, EL, right]{supports};
+
+%% no-signal badge annotation
+\node[draw=red!50, fill=red!8, rounded corners=2pt, font=\tiny,
+      inner sep=3pt, text width=3.2cm, align=center]
+  at (14.2,-4.0)
+  {\textbf{no signal} (UI example)\\Claims without artifact\\render this badge.\\Absent from Scenario 4:\\step-log binds all claims.};
+
+\draw[ORstroke, very thin, dashed, ->, >=latex]
+  (M1.east) -- (13.1,-4.0);
+
+\node[draw=ORstroke, very thin, fill=white, font=\tiny,
+      text width=4.8cm, inner sep=3pt, anchor=north west]
+  at ([yshift=-6pt]R1.south west) {%
+  Left branch only. Each C→M→X→D→R chain is rendered live from the
+  interaction step log (interaction\_steps JSONB). Scenario 4 injects
+  this chain as grounding context, eliminating $R_\text{uncited}$.
+};
+
+\end{tikzpicture}
+\end{document}

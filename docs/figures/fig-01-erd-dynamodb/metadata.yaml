@@ -1,0 +1,12 @@
+figure_key: fig-01-erd-dynamodb
+title: "DynamoDB ERD -- logical application references"
+tool: tikz
+lane: orcast
+section_refs: [methodology §6, whitepaper §1]
+caption: >
+  Nine DynamoDB tables with logical application-level references.
+  Edges attach to the specific field row. Open marker + FK label at
+  the dependent end; filled arrowhead into the referenced (PK) row.
+  DynamoDB enforces pk only; no FK constraints are applied by the database.
+used_in: [submission, whitepaper, methodology]
+content_sha256: pending

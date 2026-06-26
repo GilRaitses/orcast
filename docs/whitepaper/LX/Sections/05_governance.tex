@@ -1,0 +1,17 @@
+\section{Governance: quarantine, authority, and audit}
+
+Shore-based sighting submissions enter orcast through a moderation queue; quarantine blocks any model influence until approval. The governance architecture has three components: quarantine by default, signed human authority, and an immutable decision record.
+
+\subsection{Why quarantine is necessary}
+
+Citizen science is a user-generated content problem in the information quality literature: quality pipelines are necessary for scientific usability~\cite{arxiv190508289}. The LIGO Gravity Spy program provides an operational precedent: citizen classifier votes are aggregated and validated against expert labels before influencing detector characterization~\cite{arxiv161104596}. The Milky Way Project demonstrates that unmoderated citizen labels alone produce systematic errors without ensemble aggregation and expert calibration~\cite{arxiv14062692}. Galaxy morphology classification confirms that hybrid human-ML pipelines outperform either component alone only when citizen data is filtered for quality~\cite{arxiv14097935}.
+
+\subsection{Signed human authority}
+
+orcast separates automated gate eligibility from human promotion authority. A model fit that passes L1 through L3 fitness gates is eligible for promotion, but promotion requires a signed decision by a registered reviewer recorded in the decision-records DynamoDB table. The record includes reviewer identity, verdict, cited gates, and a rationale field. The record is immutable and auditable.
+
+\subsection{Moderation queue mechanics}
+
+Community shore submissions are stored in a pending state. Approval stamps attribution and a low reliability weight before the submission can influence the model. Private field journal entries remain private unless the author publishes them to the community queue, at which point they enter the same moderation pipeline.
+
+Every public confidence surface reflects only validated and promoted data; the provenance chain is auditable to the specific reviewer decisions that authorized each data point.

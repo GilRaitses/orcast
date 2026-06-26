@@ -1,0 +1,69 @@
+\section{Limits and falsification}
+
+\subsection{Scope limits}
+
+\textbf{Domain specificity.} The benchmark uses marine science queries. Extension to other domains
+requires updating the science marker regex for that domain's technical vocabulary.
+
+\textbf{Model dependence.} Results were produced with gemini-3.5-flash (2026-06-24). A model with
+stronger domain-specific knowledge may generate fewer science claims.
+
+\textbf{$\Runcited$ does not measure semantic accuracy.} A claim that is cited to a bound artifact
+but semantically wrong is not captured. Extension to factual accuracy requires a reference
+ground truth.
+
+\textbf{Step-log quality dependence.} $\Runcited = 0\%$ requires a complete, structured step-log;
+sparse or malformed traces would not achieve the same result.
+
+\subsection{Falsification conditions}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{4.5cm}p{3.8cm}@{}}
+\toprule
+Claim & Falsifying condition \\
+\midrule
+Step-log injection achieves $\Runcited = 0\%$ & Step-log-injected query produces uncovered science claims \\
+Hierarchy is stable across query types & Different Scenario~4 query yields high $\Runcited$ \\
+Gate context achieves no lift & Gate data injection covers generated science claims \\
+$\Runcited$ diagnoses architecture quality & Two architecturally different systems produce identical hierarchies \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Extension path}
+
+Multi-domain validation: run the benchmark on pedestrian routing (pax), clinical care, and
+manufacturing. World model evaluation: apply the benchmark to JEPA-based world models
+(V-JEPA~\cite{arxiv240408471}) and measure whether planning trace injection reduces $\Runcited$.
+Semantic accuracy addition: add a second metric for whether cited claims are factually accurate
+relative to their bound artifacts.
+
+\subsection{The benchmark gap in existing physical-world evaluation}
+
+Physical-world AI benchmarks evaluate task completion or prediction accuracy without auditing
+intermediate claim binding. PHYRE~\cite{arxiv190805656} measures physical reasoning via puzzle
+solve rate. STAR~\cite{arxiv240509711} evaluates situated reasoning in real-world videos via
+question answering accuracy. ThreeDWorld~\cite{arxiv210314025} measures embodied planning by
+object transport success rate. TravelPlanner~\cite{arxiv240201622} evaluates language agent
+planning by plan validity. The comprehensive Embodied AI survey~\cite{arxiv240706886} categorizes
+evaluation as navigation, interaction, manipulation, and reasoning accuracy. None measures whether
+intermediate reasoning claims are bound to their generating sensor observations. EWOK~\cite{arxiv240509605}
+tests world modeling via plausibility matching. The need for evaluation primitives beyond functional
+task success has a precedent: human-robot interaction required psychological benchmarks to capture
+what task-completion metrics omit~\cite{kahn2007benchmarks}. $\Runcited$ provides the missing
+primitive for evidence binding.
+
+\subsection{World model evaluation as a future extension}
+
+A natural extension is to apply this benchmark to world model planning systems whose design
+explicitly requires sensor-grounded intermediate representations. LeCun's autonomous machine
+intelligence architecture~\cite{arxiv230602572} specifies that the world model module must
+learn to represent the information content of the percept that is relevant for predicting
+future states --- a grounding requirement on intermediate representations. Joint-embedding
+predictive architectures, from I-JEPA~\cite{arxiv230108243} to V-JEPA~\cite{arxiv240408471}, and
+Image World Models~\cite{arxiv240300504} are evaluated on downstream accuracy on image and video
+benchmarks; no claim-level evidence binding metric is proposed.
+Whether $\Runcited$ on JEPA planning traces reproduces Section~5's diagnostic hierarchy is an open
+empirical question. Section~4's methodology requires only a structured planning trace; running it on
+world model outputs needs no architectural change.

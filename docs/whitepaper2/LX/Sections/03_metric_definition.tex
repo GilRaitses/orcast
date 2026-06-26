@@ -1,0 +1,50 @@
+\section{$\Runcited$ as a formal evaluation metric}
+
+\subsection{Definition}
+
+Let $S$ be the set of sentences in a system's output. Define $S_\mathrm{sci} \subseteq S$ as the
+sentences containing scientific or quantitative markers. For each sentence $s \in S_\mathrm{sci}$,
+let $\mathrm{cited}(s)$ be the indicator that $s$ names at least one entity appearing in the bound
+citation set $C$.
+
+\begin{equation}
+\label{eq:runcited}
+\Runcited = \frac{|\{ s \in S_\mathrm{sci} : \neg\,\mathrm{cited}(s) \}|}{|S_\mathrm{sci}|}
+\end{equation}
+
+$\Runcited = 0$ when every scientific sentence names a bound citation. $\Runcited = 1$ when no
+scientific sentence does. It is undefined when $|S_\mathrm{sci}| = 0$.
+
+\subsection{Properties}
+
+$\Runcited$ has four properties that make it useful as an evaluation primitive.
+
+\textbf{Claim-level granularity.} The metric operates at the sentence level. A response with 10
+scientific sentences and 9 bound citations still has $\Runcited = 0.1$, distinguishing it from
+response-level pass/fail metrics.
+
+\textbf{Architecture-diagnostic.} Two systems with the same surface accuracy can have very different
+$\Runcited$ values depending on whether their reasoning traces are passed as context to the language
+model. The metric discriminates between evidence-bound and parametric-knowledge-based claim generation.
+
+\textbf{Reproducible.} $\Runcited$ is computed from the raw API output. No human annotation is
+required. The scientific marker set is implemented as a regex over domain-specific technical terms.
+
+\textbf{Model-independent.} $\Runcited$ can be applied to any language model's output. It measures
+the binding between output and context, not internal model behavior.
+
+\subsection{Relation to prior evaluation frameworks}
+
+The Ragas framework~\cite{arxiv230915217} evaluates faithfulness (whether claims are supported by
+retrieved context), answer relevancy, and context precision. These metrics require a reference context.
+$\Runcited$ measures a weaker but more deployable condition: whether the model's output names sources
+in the context it was given, without requiring a predefined reference set.
+
+The ALCE benchmark~\cite{arxiv230514627} evaluates citation generation at the claim level. $\Runcited$
+is complementary: it measures the rate of claims carrying no citation at all, regardless of citation
+validity.
+
+$\Runcited$ is also distinct from explainable-AI evaluation, which concerns the transparency of a
+model's decision process rather than the binding of its output to gathered evidence~\cite{clinciu2019survey},
+and from reasoning-chain evaluation, which scores the internal correctness and informativeness of
+intermediate steps rather than their traceability to artifacts~\cite{arxiv230410703}.

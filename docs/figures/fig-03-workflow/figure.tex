@@ -1,0 +1,78 @@
+\documentclass[11pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usetikzlibrary{shapes.geometric}
+
+%% Step Functions workflow: ingest → fit → gate → human decision
+\begin{document}
+\begin{tikzpicture}[node distance=8pt]
+
+\tikzset{
+  STEP/.style={flowboxheader=3.8cm},
+  DEC/.style={draw=ORstroke, very thin, fill=ORhdr!40, diamond,
+              aspect=2.5, font=\small, inner sep=4pt, align=center},
+  END/.style={draw=ORstroke, very thin, fill=ORhdr, rounded corners=12pt,
+              font=\small\bfseries, inner sep=6pt, text width=3.2cm, align=center},
+}
+
+%% ─── States ────────────────────────────────────────────────────────────────────
+\node[STEP] (ingest)   at (0,0)     {IngestAndStore\\(EventBridge trigger)};
+\node[STEP] (fit)      at (6.0,0)   {FitAndGate\\(NB-GLM + L1--L3 gates)};
+\node[DEC]  (gate_ok)  at (12.0,0)  {gates\\pass?};
+\node[STEP] (draft)    at (18.0,0)  {DraftPromotion\\(supervisor rec.)};
+\node[STEP] (await)    at (24.0,0)  {AwaitHumanDecision\\(task token)};
+\node[DEC]  (verdict)  at (30.0,0)  {reviewer\\verdict?};
+
+\node[END] (promote)   at (36.0,2.5)   {Promote\\(confidence raised)};
+\node[END] (hold)      at (36.0,0)     {Hold\\(confidence unchanged)};
+\node[END] (reject)    at (36.0,-2.5)  {Reject\\(confidence withheld)};
+
+%% P0-03 fix: reposition within bounding box (was at y=-4.5, below page)
+\node[STEP] (freeze)   at (6.0,-3.5)  {FreezeSnapshot\\(S3 source payloads)};
+\node[STEP] (report)   at (12.0,-3.5) {WriteReport\\(DynamoDB + S3 JSON)};
+
+\node[draw=ORstroke, very thin, fill=orange!10, rounded corners=2pt,
+      font=\small, text width=3.6cm, align=center, inner sep=4pt]
+  (catch) at (6.0,3.0) {Catch / Retry\\(max 2 retries)\\$\to$ error record};
+
+%% ─── Arrows ────────────────────────────────────────────────────────────────────
+\draw[flowarrow] (ingest.east) -- (fit.west);
+\draw[flowarrow] (fit.east) -- (gate_ok.west);
+\draw[flowarrow] (gate_ok.east) -- (draft.west) node[midway, flowlabel, above]{yes};
+\draw[flowarrow] (draft.east) -- (await.west);
+\draw[flowarrow] (await.east) -- (verdict.west);
+
+%% verdict branches
+\draw[flowarrow] (verdict.east) -- (promote.west) node[near start, flowlabel, above]{promote};
+\draw[flowarrow] (verdict.east) -- (hold.west)    node[midway, flowlabel, above]{hold};
+\draw[flowarrow] (verdict.east) -- (reject.west)  node[near start, flowlabel, below]{reject};
+
+%% gate fail branch
+\draw[flowarrowdash] (gate_ok.south) -- ++(0,-1.5)
+  -| (freeze.north) node[near start, flowlabel, right]{no (integrity IC)};
+
+%% FreezeSnapshot → WriteReport → done
+\draw[flowarrow] (freeze.east) -- (report.west);
+\draw[flowarrow] (fit.south) |- (freeze.west)
+  node[near start, flowlabel, below]{parallel};
+
+%% Catch
+\draw[flowarrowdash] (fit.north) -- (catch.south)
+  node[midway, flowlabel, right]{error};
+
+%% ─── Title ─────────────────────────────────────────────────────────────────────
+%% P0-03 fix: title raised above catch node, not at ingest level
+\node[font=\normalsize\bfseries, anchor=south west]
+  at ([yshift=6pt]catch.north west)
+  {ORCAST -- Step Functions workflow: fit, gate, promote};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=14cm, inner sep=4pt, anchor=south west]
+  at ([yshift=-10pt]freeze.south west) {%
+  \textbf{Note:} current fitted confidence $\approx 0.5$ and may route to Hold
+  depending on configured threshold.
+  Dashed arrow = error / optional path.
+  Reviewer action: \texttt{POST /api/decision-records} with WorkOS session.
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,25 @@
+flowchart TB
+  subgraph maps [Maps grounding: same orca evidence query]
+    MQ["Query: where are SRKWs seen and why?"]
+    MT["Model text: 502 words"]
+    MC1["Citation: Lime Kiln Point State Park (place pin)"]
+    MC2["Citation: Lime Kiln Lighthouse (place pin)"]
+    MC3["Citation: The Whale Museum (place pin)"]
+    MU["Uncited: NOAA fisheries data, CWR census, Chinook corridors, J/K/L pod hydrophones"]
+    MR["R_uncited = 89% on evidence query / 85% averaged"]
+    MQ --> MT
+    MT --> MC1 & MC2 & MC3
+    MT --> MU
+    MU --> MR
+  end
+  subgraph orcast [orcast grounding: same orca query]
+    OQ["POST /api/interactions/plan"]
+    OS["skill_plan: fetch_gates, fetch_provenance, fetch_hotspots"]
+    OA1["gate_citation -> href=/gates (bound)"]
+    OA2["provenance_citation -> artifact repr_id (bound)"]
+    OA3["evidence_citation -> sighting source (bound)"]
+    OR["R_uncited = 0%: 6/6 annotations bound"]
+    OQ --> OS
+    OS --> OA1 & OA2 & OA3
+    OA1 & OA2 & OA3 --> OR
+  end

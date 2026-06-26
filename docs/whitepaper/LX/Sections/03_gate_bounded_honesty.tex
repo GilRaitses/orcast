@@ -1,0 +1,37 @@
+\section{A gate-bounded honesty model}
+
+\subsection{Distributional family}
+
+Encounter counts are sparse, overdispersed, and zero-inflated. The negative binomial distribution arises as a gamma-Poisson marginalization and provides two free parameters to capture overdispersion and random effects~\cite{arxiv11123605}. Hurdle and NB models are required for species abundance estimation when Gaussian assumptions fail on ecological count data~\cite{arxiv201016040}. Species distribution modeling frameworks identify structured noise and under-counting as reasons that count-specific distributional families are necessary~\cite{arxiv210208534}.
+
+The kernel model uses the log-linear intensity, decomposing the log encounter rate into a baseline plus additive cyclic kernel contributions from diel, lunar, and seasonal covariates:
+
+\eqintensity
+
+See also the methodology of record.
+
+\subsection{Null gating}
+
+Each fitted cyclic kernel must beat a phase-shuffled null before contributing to displayed confidence. Phase shuffling permutes detection times across stimulus phases to generate the reference distribution. Point process models for spike trains~\cite{arxiv201004875} and the time-elapsed neural model~\cite{arxiv150602361} establish the mathematical foundation. \eqnulltest
+
+Time-rescaling applies the compensator transformation; residuals should be exponential, and a KS test on them is the second gate component~\cite{arxiv160603988}:
+
+\eqtrescaling
+
+An open measurement gap (C-2): this methodology is documented in neuroscience and statistical literature but lacks an ecology-domain citation in the arXiv corpus. The whitepaper cites methodological precedents.
+
+\subsection{CV skill and calibration}
+
+Gates L2 and L3 require positive held-out deviance skill
+
+\eqdevskill
+
+and PIT calibration
+
+\eqpit Negative skill means the model is less predictive than the null and displayed confidence must be withheld. The epidemiological calibration literature establishes that PIT-based recalibration reliably improves log score~\cite{arxiv211206305}. The abstention loss framework~\cite{arxiv210408236} formalizes the principle that a predictive system should withhold confidence when skill is low. Spatial and temporal CV must account for autocorrelation~\cite{arxiv200514263,arxiv190511744}.
+
+\subsection{Effective confidence gate}
+
+Displayed effective confidence is bounded by the product of gate outcomes:
+
+\eqeffconf Failed gates reduce confidence and expose the failing integrity condition alongside the metric. The gate is not a visibility switch; the forecast is always shown.

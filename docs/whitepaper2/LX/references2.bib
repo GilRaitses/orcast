@@ -1,0 +1,361 @@
+% references2.bib — Whitepaper 2: Grounding quality measurement for orchestrated AI reasoning chains
+% Primary anchors (PRIMARY_ANCHOR_CLAIM_GATE.md):
+%   Horvitz 1999 (foundational mixed-initiative) + Magentic-UI 2025 (contemporary orchestrator)
+% LeCun AMI retained as optional context, not load-bearing.
+% Families: SF-13, SF-14, SF-15, SF-16
+
+% --- PRIMARY ANCHORS: human-in-the-loop orchestration ---
+
+@inproceedings{horvitz1999,
+  author = {Horvitz, Eric},
+  title = {Principles of Mixed-Initiative User Interfaces},
+  booktitle = {Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI '99)},
+  pages = {159--166},
+  year = {1999},
+  doi = {10.1145/302979.303030}
+}
+
+@online{magenticui2025,
+  author = {Mozannar, Hussein and Bansal, Gagan and Tan, Cheng and Fourney, Adam and others},
+  title = {Magentic-UI: Towards Human-in-the-loop Agentic Systems},
+  year = {2025},
+  eprint = {2507.22358},
+  eprinttype = {arxiv},
+  note = {Microsoft Research AI Frontiers, MSR-TR-2025-40},
+  url = {https://arxiv.org/abs/2507.22358}
+}
+
+% --- CONTEXT: LeCun AMI architecture (not load-bearing) ---
+
+@online{arxiv230602572,
+  author = {LeCun, Yann and Alahari, Karteek},
+  title = {Introduction to Latent Variable Energy-Based Models: A Path Towards Autonomous Machine Intelligence},
+  year = {2023},
+  eprint = {2306.02572},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2306.02572}
+}
+
+% --- SF-15: LeCun AMI architecture and JEPA evaluation gap ---
+
+@online{arxiv240408471,
+  author = {Bardes, Adrien and others},
+  title = {Revisiting Feature Prediction for Learning Visual Representations from Video},
+  year = {2024},
+  eprint = {2404.08471},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2404.08471}
+}
+
+@online{arxiv240300504,
+  author = {Unknown},
+  title = {Learning and Leveraging World Models in Visual Representation Learning},
+  year = {2024},
+  eprint = {2403.00504},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2403.00504}
+}
+
+@online{arxiv240509605,
+  author = {Unknown},
+  title = {Elements of World Knowledge (EWOK): A Cognition-Inspired Framework for Evaluating Basic World Knowledge in Language Models},
+  year = {2024},
+  eprint = {2405.09605},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2405.09605}
+}
+
+% --- SF-13: RAG quality measurement ---
+
+@online{arxiv230915217,
+  author = {Es, Shahul and others},
+  title = {Ragas: Automated Evaluation of Retrieval Augmented Generation},
+  year = {2023},
+  eprint = {2309.15217},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2309.15217}
+}
+
+@online{arxiv230514627,
+  author = {Gao, Tianyu and others},
+  title = {Enabling Large Language Models to Generate Text with Citations},
+  year = {2023},
+  eprint = {2305.14627},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2305.14627}
+}
+
+@online{arxiv240413781,
+  author = {Unknown},
+  title = {Evaluating Retrieval Quality in Retrieval-Augmented Generation},
+  year = {2024},
+  eprint = {2404.13781},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2404.13781}
+}
+
+@online{arxiv230514292,
+  author = {Semnani, Sina J. and others},
+  title = {WikiChat: Stopping the Hallucination of Large Language Model Chatbots by Few-Shot Grounding on Wikipedia},
+  year = {2023},
+  eprint = {2305.14292},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2305.14292}
+}
+
+@online{arxiv230410703,
+  author = {Unknown},
+  title = {ReCEval: Evaluating Reasoning Chains via Correctness and Informativeness},
+  year = {2023},
+  eprint = {2304.10703},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2304.10703}
+}
+
+% --- SF-14: World model evaluation and step-log traces ---
+
+@online{arxiv230514992,
+  author = {Hao, Shibo and others},
+  title = {Reasoning with Language Model is Planning with World Model},
+  year = {2023},
+  eprint = {2305.14992},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2305.14992}
+}
+
+@online{arxiv230108243,
+  author = {Assran, Mahmoud and others},
+  title = {Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture},
+  year = {2023},
+  eprint = {2301.08243},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2301.08243}
+}
+
+@online{arxiv240611460,
+  author = {Unknown},
+  title = {TRACE the Evidence: Constructing Knowledge-Grounded Reasoning Chains for Retrieval-Augmented Generation},
+  year = {2024},
+  eprint = {2406.11460},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2406.11460}
+}
+
+@online{arxiv220111903,
+  author = {Wei, Jason and others},
+  title = {Chain of Thought Prompting Elicits Reasoning in Large Language Models},
+  year = {2022},
+  eprint = {2201.11903},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2201.11903}
+}
+
+@online{arxiv240115884,
+  author = {Unknown},
+  title = {CRAG -- Corrective Retrieval Augmented Generation},
+  year = {2024},
+  eprint = {2401.15884},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2401.15884}
+}
+
+@online{arxiv231109533,
+  author = {Unknown},
+  title = {AGREE: Achieving Ground Truth Faithful Generations with LLMs},
+  year = {2023},
+  eprint = {2311.09533},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2311.09533}
+}
+
+% --- SF-16: Physical-world evaluation benchmarks (gap confirmation) ---
+
+@online{arxiv190805656,
+  author = {Bakhtin, Anton and others},
+  title = {PHYRE: A New Benchmark for Physical Reasoning},
+  year = {2019},
+  eprint = {1908.05656},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/1908.05656}
+}
+
+@online{arxiv240509711,
+  author = {Unknown},
+  title = {STAR: A Benchmark for Situated Reasoning in Real-World Videos},
+  year = {2024},
+  eprint = {2405.09711},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2405.09711}
+}
+
+@online{arxiv210314025,
+  author = {Unknown},
+  title = {The ThreeDWorld Transport Challenge: A Visually Guided Task-and-Motion Planning Benchmark for Physically Realistic Embodied AI},
+  year = {2021},
+  eprint = {2103.14025},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2103.14025}
+}
+
+@online{arxiv240201622,
+  author = {Xie, Jian and others},
+  title = {TravelPlanner: A Benchmark for Real-World Planning with Language Agents},
+  year = {2024},
+  eprint = {2402.01622},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2402.01622}
+}
+
+@online{arxiv240706886,
+  author = {Unknown},
+  title = {Aligning Cyber Space with Physical World: A Comprehensive Survey on Embodied AI},
+  year = {2024},
+  eprint = {2407.06886},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2407.06886}
+}
+
+% --- Additional RAG / grounding papers ---
+
+@online{arxiv240216063,
+  author = {Unknown},
+  title = {Citation-Enhanced Generation for LLM-based Chatbots},
+  year = {2024},
+  eprint = {2402.16063},
+  eprinttype = {arxiv},
+  url = {https://arxiv.org/abs/2402.16063}
+}
+
+@article{hoff2015trust,
+  author = {Hoff, Kevin A. and Bashir, Masooda},
+  title = {Trust in Automation: Integrating Empirical Evidence on Factors That Influence Trust},
+  journal = {Human Factors},
+  volume = {57},
+  number = {3},
+  pages = {407--434},
+  year = {2015},
+  doi = {10.1177/0018720814547570}
+}
+
+@article{gambino2020casa,
+  author = {Gambino, Andrew J. and Fox, Jesse and Ratan, Rabindra A.},
+  title = {Building a Stronger {CASA}: Extending the Computers Are Social Actors Paradigm},
+  journal = {Human-Machine Communication},
+  volume = {1},
+  pages = {71--85},
+  year = {2020},
+  doi = {10.30658/hmc.1.5}
+}
+
+@article{gibbs2021agency,
+  author = {Gibbs, Jennifer L. and Kirkwood, Gavin L. and Fang, Chengyu and Wilkenfeld, J. Nan},
+  title = {Negotiating Agency and Control: Theorizing Human-Machine Communication From a Structurational Perspective},
+  journal = {Human-Machine Communication},
+  volume = {2},
+  pages = {153--172},
+  year = {2021},
+  doi = {10.30658/hmc.2.8}
+}
+
+@incollection{koban2023dual,
+  author = {Koban, Kevin and Banks, Jaime},
+  title = {Dual-Process Theory in Human-Machine Communication},
+  booktitle = {Communication},
+  publisher = {SAGE Publications Ltd},
+  year = {2023},
+  doi = {10.4135/9781529782783}
+}
+
+@article{koenig2025acceptance,
+  author = {Koenig, Pascal D.},
+  title = {Attitudes toward Artificial Intelligence: Combining Three Theoretical Perspectives on Technology Acceptance},
+  journal = {AI \& Society},
+  volume = {40},
+  pages = {1333--1345},
+  year = {2025},
+  doi = {10.1007/s00146-024-01987-z}
+}
+
+@inproceedings{davis2023affordances,
+  author = {Davis, Jenny L.},
+  title = {Affordances for Machine Learning},
+  booktitle = {Proceedings of the 2023 ACM Conference on Fairness, Accountability, and Transparency},
+  pages = {324--332},
+  publisher = {ACM},
+  year = {2023},
+  doi = {10.1145/3593013.3594000}
+}
+
+@inproceedings{clinciu2019survey,
+  author = {Clinciu, Miruna Andreea and Hastie, Helen},
+  title = {A Survey of Explainable {AI} Terminology},
+  booktitle = {Proceedings of the 1st Workshop on Interactive Natural Language Technology for Explainable Artificial Intelligence},
+  pages = {8--13},
+  publisher = {Association for Computational Linguistics},
+  year = {2019}
+}
+% --- end IST675 HMC/HAII candidate sources ---
+
+% --- IST675 batch 2: verified via web lookup (dates corrected vs reading-response) ---
+% NB: reading responses mis-dated several; corrected here per source of record.
+
+@article{banks2020agentagnostic,
+  author = {Banks, Jaime and de Graaf, Maartje M. A.},
+  title = {Toward an Agent-Agnostic Transmission Model: Synthesizing Anthropocentric and Technocentric Paradigms in Communication},
+  journal = {Human-Machine Communication},
+  volume = {1},
+  pages = {19--36},
+  year = {2020},
+  doi = {10.30658/hmc.1.2}
+}
+
+@article{mitchell2023understanding,
+  author = {Mitchell, Melanie and Krakauer, David C.},
+  title = {The debate over understanding in {AI}'s large language models},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume = {120},
+  number = {13},
+  pages = {e2215907120},
+  year = {2023},
+  doi = {10.1073/pnas.2215907120}
+}
+
+@book{natale2021deceitful,
+  author = {Natale, Simone},
+  title = {Deceitful Media: Artificial Intelligence and Social Life after the Turing Test},
+  publisher = {Oxford University Press},
+  year = {2021}
+}
+
+@incollection{walther2011cmc,
+  author = {Walther, Joseph B.},
+  title = {Theories of Computer-Mediated Communication and Interpersonal Relations},
+  booktitle = {The Handbook of Interpersonal Communication},
+  edition = {4},
+  editor = {Knapp, Mark L. and Daly, John A.},
+  pages = {443--479},
+  publisher = {SAGE},
+  year = {2011}
+}
+
+@article{kahn2007benchmarks,
+  author = {Kahn, Peter H. and Ishiguro, Hiroshi and Friedman, Batya and Kanda, Takayuki and Freier, Nathan G. and Severson, Rachel L. and Miller, Jessica},
+  title = {What is a Human? Toward psychological benchmarks in the field of human-robot interaction},
+  journal = {Interaction Studies},
+  volume = {8},
+  number = {3},
+  pages = {363--390},
+  year = {2007},
+  doi = {10.1075/is.8.3.04kah}
+}
+
+@article{gardner2024critical,
+  author = {Gardner, Paula M. and Rauchberg, Jess},
+  title = {Feminist Cybernetic, Critical Race, Postcolonial, and Crip Propositions for the Theoretical Future of Human-Machine Communication},
+  journal = {Human-Machine Communication},
+  volume = {8},
+  pages = {27--51},
+  year = {2024},
+  doi = {10.30658/hmc.8.2}
+}
+% --- end IST675 batch 2 ---

@@ -1,14 +1,11 @@
-\section{Extension to AI planning systems}
+\section{Extension to orchestrated and planning systems}
 
 \subsection{The step-log as a planning trace}
 
-The surface planner step-log that achieves $\Runcited = 0\%$ in Scenario~4 has the
-structure of a planning trace. The agent received a query, resolved a configuration,
-dispatched skills, and produced a plan. The step-log records every intermediate state:
-which skills ran, what their outputs were, and what the final plan consists of. When
-this trace is injected as RAG context, the language model answers from the trace's
-artifact references rather than from world knowledge. $\Runcited = 0\%$ because the
-trace transforms the query from open-domain science to closed artifact-reference.
+Scenario~4's surface planner step-log is a planning trace that records the query, the skills
+dispatched, and the intermediate states. Injected as RAG context, the model answers from trace
+artifact references rather than world knowledge; $\Runcited = 0\%$ because the query becomes closed
+artifact-reference, not open-domain science.
 
 The paper ``Reasoning with Language Model is Planning with World Model''~\cite{arxiv230514992}
 explicitly frames LLM reasoning steps as world-state traces and proposes evaluating whether
@@ -21,20 +18,12 @@ to skill-dispatch interactions. Chain-of-Thought evaluation~\cite{arxiv220111903
 that intermediate reasoning steps are causally important for correct final outputs, supporting
 the claim that step-log quality measurement is foundational to planning system evaluation.
 
-\subsection{Applying $\Runcited$ to planning systems}
+\subsection{Applying $\Runcited$ to orchestrated agentic systems}
 
-The benchmark methodology in Section~4 is directly portable to any AI planning system whose
-interactions produce a structured trace. For a planning system that receives a query about a
-physical or scientific domain, dispatches skills or sensors to gather current-state information,
-produces a plan or action sequence based on gathered context, and narrates the plan with
-references to gathered artifacts: inject the planning trace as RAG context to a language model,
-ask a domain-specific question, and measure $\Runcited$ on the response. When the trace binds
-the query to artifact references, $\Runcited$ approaches 0\%. When the trace is sparse or
-unstructured, $\Runcited$ remains high.
+Section~4's benchmark applies to any orchestrated human-in-the-loop agentic system that produces a
+structured interaction trace. Magentic-UI exemplifies this class~\cite{magenticui2025}: inject the
+orchestration trace as RAG context, ask a domain-specific question, and measure $\Runcited$ --- bound
+artifact references drive $\Runcited$ toward 0\%; sparse traces leave it high. As users are increasingly asked to
+accept and rely on such systems~\cite{koenig2025acceptance}, the metric supplies the output-grounding
+measurement that orchestrator-in-the-loop systems are currently deployed without.
 
-The RAG lift hierarchy (Section~5) provides the diagnostic: step-log context achieves full
-grounding; structured domain data achieves partial lift; narrow structured data achieves no
-lift. This hierarchy is a property of context-type alignment with the science claims the
-model would otherwise generate, not a property of context volume. The Ragas framework
-~\cite{arxiv230915217} measures faithfulness separately from answer relevancy; $\Runcited$
-measures a simpler, deployable condition that precedes both: whether claims are cited at all.

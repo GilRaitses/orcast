@@ -1,0 +1,230 @@
+\documentclass[10pt,border=8pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{microtype}
+
+%% fig-01: DynamoDB ERD — 9 tables, row-level FK edge attachment
+%% Headers use inline node options to override column styles.
+%% Fields use \scriptsize to fit long field text.
+
+\begin{document}
+\begin{tikzpicture}[scale=0.75, every node/.style={scale=0.75}]
+
+%% shared row height
+\newcommand{\rh}{0.52}  % cm per row
+
+%% ── macro: draw one ERD table ────────────────────────────────────────────────
+%% Usage: manually place \matrix[TBLE] with inline node options for header
+
+\tikzset{
+  HDR/.style={fill=ORhdr, draw=ORstroke, very thin,
+              inner xsep=5pt, inner ysep=3pt,
+              font=\small\bfseries, anchor=center, align=center},
+  HDRITALIC/.style={HDR, fill=ORhdr!55, font=\small\bfseries\itshape},
+  ROW/.style={fill=ORbg, draw=ORstroke, very thin,
+              inner xsep=5pt, inner ysep=2.5pt,
+              font=\scriptsize, anchor=west},
+  BADGE/.style={fill=ORbg, draw=ORstroke, very thin,
+               inner xsep=3pt, inner ysep=2.5pt,
+               font=\tiny\bfseries\color{ORpk}, anchor=east, align=right},
+  ROWDASH/.style={ROW, draw=none},
+}
+
+%% Column widths (coordinate units, scale=0.75 applied visually)
+\def\wA{5.2}   % wide field column
+\def\wB{1.0}   % badge column
+\def\wAm{4.6}  % medium field column (small tables)
+\def\wBm{1.0}  % badge column small
+
+%% ────────────────────────────────────────────────────────────────────────────
+%% Helper: draw table frame and header. Args: anchor(name), x, y, col width, label
+%%   Then place ROW nodes below it.
+%%
+%% We use a matrix so FK names are easy. But define header separately.
+%%
+%% Strategy: matrix of nodes, header row overridden per-cell via |[...]| syntax.
+%%
+%% TBL style: no pre-set text widths; set per cell inline.
+\tikzset{
+  TBL/.style={
+    matrix of nodes,
+    draw=ORstroke, very thin,
+    inner sep=0pt, row sep=0pt, column sep=0pt,
+    nodes in empty cells,
+    every odd row/.style={nodes={fill=ORbg}},
+    every even row/.style={nodes={fill=ORbg}},
+  },
+}
+
+%% ═══ ROW 1 ═══════════════════════════════════════════════════════════════════
+
+\matrix[TBL] (sightings) at (0,0) {
+  |[HDR, text width=\wA cm, minimum width=\wA cm]| sightings &
+  |[HDR, text width=\wB cm, minimum width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=sightings-pk]| pk: sighting\_id &
+  |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, name=sightings-runid]| ingestion\_run\_id &
+  |[BADGE, text width=\wB cm]| (log FK) \\
+  |[ROW, text width=\wA cm]| source, source\_id, source\_url & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| observed\_at, lat, lon & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| behavior, count & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| source\_reliability & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| evidence[]: SourceEvidence & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| cross\_validation (embed) & |[BADGE, text width=\wB cm]| \\
+};
+
+\matrix[TBL] (csubm) at (6.5,0) {
+  |[HDR, text width=\wA cm]| \mbox{community-submissions} & |[HDR, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=csubm-pk]| pk: id & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, name=csubm-sightingid]| approved\_sighting\_id & |[BADGE, text width=\wB cm]| (log FK) \\
+  |[ROW, text width=\wA cm]| place, lat, lon & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| observed\_at, behavior, count & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| status: pending\,\textbar\,approved\,\textbar\,rejected & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| observer, notes, submitted\_at & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| reviewed\_at & |[BADGE, text width=\wB cm]| \\
+};
+
+\matrix[TBL] (drec) at (13.0,0) {
+  |[HDR, text width=\wA cm]| decision-records & |[HDR, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=drec-pk]| pk: id & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, name=drec-kernver]| kernel\_version & |[BADGE, text width=\wB cm]| (log FK) \\
+  |[ROW, text width=\wA cm]| verdict: promote\,\textbar\,hold\,\textbar\,reject & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| gates\_summary & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| supervisor\_recommendation & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| reviewer, created\_at & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| task\_token (internal) & |[BADGE, text width=\wB cm]| \\
+};
+
+%% S3 artifact — dashed border drawn separately
+\matrix[TBL, draw=none] (kernart) at (19.5,0) {
+  |[HDRITALIC, text width=\wA cm]| \mbox{fitted-kernel artifact (S3)} & |[HDRITALIC, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=kernart-pk]| model\_version / key & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, font=\scriptsize\itshape]| target schema — not yet at L1 & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| fitted\_kernels.json & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| fit\_report.json & |[BADGE, text width=\wB cm]| \\
+};
+\draw[ORstroke, very thin, dashed]
+  (kernart.north west) rectangle (kernart.south east);
+
+\matrix[TBL] (journal) at (26.0,0) {
+  |[HDR, text width=\wA cm]| user-journal & |[HDR, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=journal-pk]| pk: user\_id & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, name=journal-sk]| sk: entry\_id & |[BADGE, text width=\wB cm]| (SK) \\
+  |[ROW, text width=\wA cm]| kind, body, observed\_at & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=journal-submid]| published\_submission\_id & |[BADGE, text width=\wB cm]| (log FK) \\
+};
+
+%% ═══ ROW 2 ═══════════════════════════════════════════════════════════════════
+
+\matrix[TBL] (ingruns) at (0,-9.8) {
+  |[HDR, text width=\wA cm]| ingestion-runs & |[HDR, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=ingruns-pk]| pk: run\_id & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm]| started\_at, completed\_at & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| statuses[]: SourceStatus & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| sightings\_ingested, \_stored & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| errors[] & |[BADGE, text width=\wB cm]| \\
+};
+
+\matrix[TBL] (hotspots) at (6.5,-9.8) {
+  |[HDR, text width=\wA cm]| hotspots & |[HDR, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=hotspots-pk]| pk: hotspot\_id & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, name=hotspots-modelver]| model\_version & |[BADGE, text width=\wB cm]| (log FK) \\
+  |[ROW, text width=\wA cm, name=hotspots-sightids]| evidence\_sighting\_ids[] & |[BADGE, text width=\wB cm]| (log FK) \\
+  |[ROW, text width=\wA cm]| probability, confidence & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| radius\_km, center\_lat/lon & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| reason\_codes[], generated\_at & |[BADGE, text width=\wB cm]| \\
+};
+
+\matrix[TBL] (reports) at (13.0,-9.8) {
+  |[HDR, text width=\wA cm]| reports & |[HDR, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, name=reports-pk]| pk: report\_id & |[BADGE, text width=\wB cm]| (PK) \\
+  |[ROW, text width=\wA cm, name=reports-modelver]| model\_version & |[BADGE, text width=\wB cm]| (log FK) \\
+  |[ROW, text width=\wA cm]| hotspots[]: HotspotSnapshot & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm, font=\scriptsize\itshape]| (denormalized embed) & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| source\_status[]: SourceStatus & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| region, summary & |[BADGE, text width=\wB cm]| \\
+  |[ROW, text width=\wA cm]| storage\_uri, generated\_at & |[BADGE, text width=\wB cm]| \\
+};
+
+\matrix[TBL] (partnerkeys) at (19.5,-9.8) {
+  |[HDR, text width=\wAm cm]| partner-api-keys & |[HDR, text width=\wBm cm]| \\
+  |[ROW, text width=\wAm cm, name=partnerkeys-pk]| pk: key\_id & |[BADGE, text width=\wBm cm]| (PK) \\
+  |[ROW, text width=\wAm cm]| key\_hash, partner\_id, scopes & |[BADGE, text width=\wBm cm]| \\
+};
+
+\matrix[TBL] (magents) at (24.6,-9.8) {
+  |[HDR, text width=\wAm cm]| managed-agents & |[HDR, text width=\wBm cm]| \\
+  |[ROW, text width=\wAm cm, name=magents-pk]| pk: id & |[BADGE, text width=\wBm cm]| (PK) \\
+  |[ROW, text width=\wAm cm, name=magents-sk]| sk: version & |[BADGE, text width=\wBm cm]| (SK) \\
+  |[ROW, text width=\wAm cm]| instructions, skills[] & |[BADGE, text width=\wBm cm]| \\
+  |[ROW, text width=\wAm cm]| model (embed) & |[BADGE, text width=\wBm cm]| \\
+  |[ROW, text width=\wAm cm]| policy: ManagedAgentPolicy & |[BADGE, text width=\wBm cm]| \\
+  |[ROW, text width=\wAm cm]| active & |[BADGE, text width=\wBm cm]| \\
+};
+
+%% ═══ EDGES ════════════════════════════════════════════════════════════════════
+%% FK label sits at the arrow source (dependent / child end)
+
+%% sightings.ingestion_run_id --> ingestion-runs.run_id
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (sightings-runid.west) -- ++(-0.7,0)
+    node[fklabel, midway, above=1pt]{FK}
+  |- (ingruns-pk.west);
+
+%% community-submissions.approved_sighting_id --> sightings.sighting_id
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (csubm-sightingid.west) -- ++(-0.5,0)
+    node[fklabel, midway, above=1pt]{FK}
+  |- (sightings-pk.east);
+
+%% decision-records.kernel_version --> fitted-kernel artifact.pk
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (drec-kernver.east) -- ++(0.5,0)
+    node[fklabel, midway, above=1pt]{FK}
+  |- (kernart-pk.west);
+
+%% hotspots.model_version --> fitted-kernel artifact.pk
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (hotspots-modelver.east) -- ++(0.4,0)
+    node[fklabel, midway, above=1pt]{FK}
+  -- ++(0,3.8) -| (kernart-pk.south);
+
+%% hotspots.evidence_sighting_ids --> sightings.sighting_id
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (hotspots-sightids.west) -- ++(-0.6,0)
+    node[fklabel, midway, above=1pt]{FK}
+  -- ++(0,4.2) -| (sightings-pk.south);
+
+%% reports.model_version --> fitted-kernel artifact.pk
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (reports-modelver.north) -- ++(0,1.5)
+    node[fklabel, midway, right=1pt]{FK}
+  -| (kernart-pk.east);
+
+%% user-journal.published_submission_id --> community-submissions.pk
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (journal-submid.west) -- ++(-0.6,0)
+    node[fklabel, midway, above=1pt]{FK}
+  -- ++(0,-3.8) -| (csubm-pk.north);
+
+%% ═══ TITLE + LEGEND ══════════════════════════════════════════════════════════
+
+\node[font=\large\bfseries, anchor=north west]
+  at ([yshift=14pt]sightings.north west)
+  {ORCAST -- DynamoDB ERD: logical application references};
+
+\node[font=\small, text=gray, anchor=north east]
+  at ([yshift=14pt]journal.north east)
+  {2026-06-25};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=24cm, inner sep=6pt,
+      anchor=north west]
+  at ([yshift=-14pt]ingruns.south west) {%
+  \textbf{Notation:} FK label at arrow source (dependent row). Filled arrowhead ($\to$)
+  at referenced (PK) row. Dashed edges = logical reference (no DB constraint).
+  Dashed border = S3 artifact, not a DynamoDB table.
+  \quad\textit{DynamoDB enforces pk only; no FK constraints are enforced by the database.}
+};
+
+\end{tikzpicture}
+\end{document}

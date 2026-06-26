@@ -1,0 +1,132 @@
+schema_version: 1
+project: orcast
+style_ref: docs/devpost/figures/_ref/decisiondb-fig2.png
+shared_style: docs/figures/shared/orcast_tikz_style.sty
+
+figures:
+  - key: fig-01-erd-dynamodb
+    title: "DynamoDB ERD -- logical application references"
+    tool: tikz
+    source: docs/figures/fig-01-erd-dynamodb/figure.tex
+    outputs:
+      pdf: docs/figures/fig-01-erd-dynamodb/figure.pdf
+      png: docs/figures/fig-01-erd-dynamodb/figure.png
+    section_refs: [methodology §6, whitepaper §1, submission]
+    caption: >
+      Nine DynamoDB tables with logical application-level references.
+      Edges attach to the specific field row; open marker + FK label at
+      the dependent end; filled arrowhead at the referenced (PK) row.
+      DynamoDB enforces pk only; no FK constraints are applied by the database.
+    used_in: [submission, whitepaper, methodology]
+    status: done
+
+  - key: fig-02-data-layer
+    title: "Data layer -- ingest, store, serve"
+    tool: tikz
+    source: docs/figures/fig-02-data-layer/figure.tex
+    outputs:
+      pdf: docs/figures/fig-02-data-layer/figure.pdf
+      png: docs/figures/fig-02-data-layer/figure.png
+    section_refs: [methodology §4]
+    caption: >
+      External sources feed adapters; adapters write to S3 time-series
+      and DynamoDB tables; the service API and kernel model read from stores.
+    used_in: [methodology]
+    status: done
+
+  - key: fig-03-workflow
+    title: "Step Functions workflow -- fit, gate, promote"
+    tool: tikz
+    source: docs/figures/fig-03-workflow/figure.tex
+    outputs:
+      pdf: docs/figures/fig-03-workflow/figure.pdf
+      png: docs/figures/fig-03-workflow/figure.png
+    section_refs: [methodology §5]
+    caption: >
+      Orchestrator workflow: ingest to fit to gate to human decision.
+      Shows Hold/Reject paths and the manual reviewer action.
+    used_in: [methodology]
+    status: done
+
+  - key: fig-04-auth-flow
+    title: "Request and auth flow -- public vs reviewer"
+    tool: tikz
+    source: docs/figures/fig-04-auth-flow/figure.tex
+    outputs:
+      pdf: docs/figures/fig-04-auth-flow/figure.pdf
+      png: docs/figures/fig-04-auth-flow/figure.png
+    section_refs: [methodology §3]
+    caption: >
+      Vercel proxy routes: public reads go through the allow-list branch;
+      reviewer mutations require WorkOS session; agent automation uses
+      X-ORCAST-Agent-Key on the proxy.
+    used_in: [methodology]
+    status: done
+
+  - key: fig-05-decisiondb-mapping
+    title: "DecisionDB concept mapping to orcast"
+    tool: tikz
+    source: docs/figures/fig-05-decisiondb-mapping/figure.tex
+    outputs:
+      pdf: docs/figures/fig-05-decisiondb-mapping/figure.pdf
+      png: docs/figures/fig-05-decisiondb-mapping/figure.png
+    section_refs: [whitepaper §4, "arXiv:2602.11295"]
+    caption: >
+      Maps DecisionDB schema concepts (arXiv:2602.11295) to orcast:
+      snapshot to frozen source payload + time-series streams,
+      representation to kernel config / fitted kernel version,
+      engine_run to NB-GLM fit and gate run,
+      decision to gate verdict and reviewer verdict.
+      Gaps noted: orcast does not yet use content-addressed IDs.
+    used_in: [whitepaper]
+    status: done
+
+  - key: fig-06-provenance-graph
+    title: "Claim/Method/Experiment provenance graph"
+    tool: tikz
+    source: docs/figures/fig-06-provenance-graph/figure.tex
+    outputs:
+      pdf: docs/figures/fig-06-provenance-graph/figure.pdf
+      png: docs/figures/fig-06-provenance-graph/figure.png
+    section_refs: [whitepaper §4, PROVENANCE_GRAPH_CONTRACT.md]
+    caption: >
+      G = (V, E) provenance graph rendered from the interaction step log.
+      Metric root traces to Claim (C) nodes via validated_by edges to
+      Method (M) skill invocations, evaluated_by to Experiment (X) artifacts,
+      derived_from to Data (D) citations, and grounded_in to Research (R) docs.
+    used_in: [whitepaper]
+    status: done
+
+  - key: fig-07-gate-pipeline
+    title: "Gate pipeline -- detections to displayed confidence"
+    tool: tikz
+    source: docs/figures/fig-07-gate-pipeline/figure.tex
+    outputs:
+      pdf: docs/figures/fig-07-gate-pipeline/figure.pdf
+      png: docs/figures/fig-07-gate-pipeline/figure.png
+    section_refs: [whitepaper §2, methodology §5]
+    caption: >
+      Full leveled gate battery from Level 0 QC quarantine through PSTH
+      kernel fit (E1), phase-shuffled null test (E2), time-rescaling GoF (E3),
+      held-out deviance skill (E5), and PIT calibration (E6). Failing gates
+      surface integrity conditions; human promotion is the final step.
+    used_in: [whitepaper]
+    status: done
+
+  - key: fig-08-architecture
+    title: "System architecture overview"
+    tool: tikz
+    source: docs/figures/fig-08-architecture/figure.tex
+    outputs:
+      pdf: docs/figures/fig-08-architecture/figure.pdf
+      png: docs/figures/fig-08-architecture/figure.png
+    section_refs: [whitepaper §8, submission]
+    caption: >
+      End-to-end system: Vercel Next.js frontend, App Runner FastAPI backend,
+      DynamoDB system of record (9 tables, primary), S3 artifacts, Step Functions
+      orchestrator with human approval workflow, Bedrock sighting narration,
+      WorkOS reviewer auth, Central Casting managed agents (prepare/narrate/plan).
+      Four-band layout: Users, Vercel, AWS App Runner + Central Casting, AWS Data,
+      AWS Orchestration.
+    used_in: [whitepaper, submission, demo-slides]
+    status: done

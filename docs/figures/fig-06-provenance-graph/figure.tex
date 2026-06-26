@@ -1,0 +1,145 @@
+\documentclass[11pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{amsmath}
+
+%% fig-06: C/M/X/D/R provenance graph
+%% FA1 fixes:
+%%   P1-07: D node repositioned to center-bottom (x=8.5) reachable from X1 and X2
+%%   P1-08: no-signal badge moved to right-margin with explicit UI-example label
+%%   P2-06: y-spacing tightened (claims at -2.5, methods at -5.5, X at -9.0)
+%%   Adversarial fix: PSTH p=0.002 labeled as (illustrative); c_eff labeled as (example)
+
+\begin{document}
+\begin{tikzpicture}[
+  node distance=10pt,
+  every node/.style={font=\small},
+  VN/.style={draw=ORstroke, very thin, fill=ORbg, rounded corners=2pt,
+             inner sep=6pt, text width=4.2cm, align=center},
+  VNhdr/.style={VN, fill=ORhdr, font=\small\bfseries},
+  EL/.style={font=\tiny, text=ORpk, fill=white, inner sep=1pt},
+]
+
+%% ─── Metric root ──────────────────────────────────────────────────────────────
+\node[VNhdr] (metric) at (8.5,0)
+  {\textbf{metric (example)}\\
+   \texttt{effective\_confidence(cell)}\\
+   \textit{0\% (not yet promoted)}};
+
+%% ─── Claim nodes (C) ──────────────────────────────────────────────────────────
+\node[VN] (C1) at (0,-2.5)
+  {\textbf{C: Claim}\\
+   ``lunar kernel beats null''\\
+   \textit{source: gate\_citation}};
+
+\node[VN] (C2) at (17,-2.5)
+  {\textbf{C: Claim}\\
+   ``gates summary fetched''\\
+   \textit{source: provenance\_citation}};
+
+%% ─── Method nodes (M) ────────────────────────────────────────────────────────
+\node[VN] (M1) at (0,-5.5)
+  {\textbf{M: Method}\\
+   \texttt{fetch\_gates} (T0 public skill)\\
+   \textit{skill\_invocation step}};
+
+\node[VN] (M2) at (17,-5.5)
+  {\textbf{M: Method}\\
+   \texttt{fetch\_provenance} (T1 geo skill)\\
+   \textit{skill\_invocation step}};
+
+%% ─── Experiment nodes (X) ────────────────────────────────────────────────────
+\node[VN] (X1) at (0,-9.0)
+  {\textbf{X: Experiment}\\
+   Level~1 PSTH (illustrative $p=0.002$)\\
+   \texttt{repr\_id, run\_id} (artifact)};
+
+\node[VN] (X2) at (17,-9.0)
+  {\textbf{X: Experiment}\\
+   KS test on $\tau_i$ passes\\
+   (time-rescaling GoF)};
+
+%% ─── Data node (D) — center so both X1 and X2 can reach it ──────────────────
+\node[VN] (D1) at (8.5,-12.5)
+  {\textbf{D: Data}\\
+   acoustic candidates, QC mix\\
+   \textit{provenance\_citation}};
+
+%% ─── Research node (R) ───────────────────────────────────────────────────────
+\node[VN] (R1) at (0,-12.5)
+  {\textbf{R: Research}\\
+   methodology.tex kernel spec\\
+   \textit{artifact\_citation}};
+
+%% ─── Edges ────────────────────────────────────────────────────────────────────
+%% metric → C
+\draw[ORstroke, thin, ->, >=latex, rounded corners=3pt]
+  (metric.west) -| (C1.north) node[pos=0.15, EL, above]{claim};
+\draw[ORstroke, thin, ->, >=latex, rounded corners=3pt]
+  (metric.east) -| (C2.north) node[pos=0.15, EL, above]{claim};
+
+%% C → M (validated_by)
+\draw[ORstroke, thin, ->, >=latex]
+  (C1.south) -- (M1.north) node[midway, EL, right]{validated\_by};
+\draw[ORstroke, thin, ->, >=latex]
+  (C2.south) -- (M2.north) node[midway, EL, right]{validated\_by};
+
+%% M → X (evaluated_by)
+\draw[ORstroke, thin, ->, >=latex]
+  (M1.south) -- (X1.north) node[midway, EL, right]{evaluated\_by};
+\draw[ORstroke, thin, ->, >=latex]
+  (M2.south) -- (X2.north) node[midway, EL, right]{evaluated\_by};
+
+%% X → C (supports)
+\draw[ORstroke, thin, dashed, ->, >=latex, rounded corners=3pt]
+  (X1.north east) -- ++(0.4,0) |- (C1.east)
+  node[pos=0.2, EL, right]{supports};
+
+%% X1 → D (derived_from)
+\draw[ORstroke, thin, ->, >=latex, rounded corners=3pt]
+  (X1.south) -- ++(0,-0.5) -| (D1.west)
+  node[pos=0.3, EL, above]{derived\_from};
+
+%% X2 → D (derived_from) — now reachable from right side
+\draw[ORstroke, thin, ->, >=latex, rounded corners=3pt]
+  (X2.south) -- ++(0,-0.5) -| (D1.east)
+  node[pos=0.3, EL, above]{derived\_from};
+
+%% X1 → R (grounded_in)
+\draw[ORstroke, thin, ->, >=latex]
+  (X1.south west) -- ++(0,-0.3) -| (R1.north)
+  node[pos=0.15, EL, right]{grounded\_in};
+
+%% ─── No-signal badge — right margin, labeled as UI example ───────────────────
+%% P1-08 fix: moved to right margin with explicit "(UI example)" annotation
+\node[draw=red!60, fill=red!8, rounded corners=2pt, font=\small,
+      inner sep=5pt, text width=3.8cm, align=left]
+  (nosig) at (24.0,-5.5)
+  {\textbf{no signal} \textit{badge}\\
+   \textit{(UI example only)}\\
+   Claims without a bound artifact\\
+   render this badge — the honesty\\
+   primitive Maps grounding lacks.};
+
+\draw[ORstroke, thin, dashed, ->, >=latex]
+  (M2.east) -- (nosig.west)
+  node[midway, EL, above]{if unbound};
+
+%% ─── Title + legend ───────────────────────────────────────────────────────────
+\node[font=\normalsize\bfseries, anchor=north]
+  at ([yshift=8pt]metric.north)
+  {ORCAST -- Provenance graph $G=(V,E)$: metric drilldown};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=18cm, inner sep=5pt, anchor=south west]
+  at ([yshift=-10pt]D1.south west) {%
+  \textbf{Node types:}
+  \textbf{C} Claim, \textbf{M} Method (skill\_invocation step),
+  \textbf{X} Experiment (artifact repr\_id/run\_id),
+  \textbf{D} Data (provenance\_citation), \textbf{R} Research (artifact\_citation).
+  Edge types: validated\_by, evaluated\_by, supports (dashed), derived\_from, grounded\_in.
+  \textit{Example values are illustrative; effective confidence is 0\% (not yet promoted).
+  Rendered live by ProvenanceGraph from the persisted interaction step log.}
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,137 @@
+\documentclass[11pt,border=8pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+\usepackage{amsmath}
+
+%% Figure 3 — Two-panel: Panel A = RAG lift bar chart (pure TikZ), Panel B = scope Venn
+%% AMI framing: grounding quality hierarchy and paper scope
+
+\begin{document}
+\begin{tikzpicture}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% PANEL A — Pure TikZ bar chart: uncited rate by scenario
+%% Bars: height proportional to uncited% (max=100, scale=0.07cm per %)
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\def\SCALE{0.055}  %% cm per percent
+
+\node[font=\small\bfseries, anchor=south west] at (0,0.15)
+  {\textbf{(A)} $R_\text{uncited}$ (\%) by grounding scenario};
+
+%% Axes
+\draw[ORstroke, thin] (0.8,-0.2) -- (0.8,-7.2);  %% y-axis
+\draw[ORstroke, thin] (0.8,-7.2) -- (10.0,-7.2); %% x-axis
+
+%% Y-axis ticks and labels
+\foreach \pct/\y in {0/0, 25/1.375, 50/2.75, 75/4.125, 100/5.5}{
+  \draw[ORstroke, thin] (0.6,-7.2+\y) -- (0.8,-7.2+\y);
+  \node[font=\tiny, anchor=east] at (0.55,-7.2+\y) {\pct\%};
+}
+\draw[ORstroke!30, very thin, dashed] (0.8,-1.825) -- (10.0,-1.825); %% 25% line
+\draw[ORstroke!30, very thin, dashed] (0.8,-4.45)  -- (10.0,-4.45);  %% 50% line
+
+%% Y-axis label
+\node[font=\small, rotate=90, anchor=south] at (0.1,-4.2) {$R_\text{uncited}$ (\%)};
+
+%% ── Bars ──────────────────────────────────────────────────────────────────
+%% Data: S1=60, S2=100, S4=0, S5=100, S7=100, S8=75
+%% orange!40 = Maps-only;  ORhdr = RAG-augmented;  green!35 = planner
+
+%% Grouped: S1 (Maps) and S2 (RAG) side by side
+\fill[orange!50, draw=orange!70] (1.2,-7.2) rectangle (1.8,-7.2+60*\SCALE);
+\node[font=\tiny, anchor=south, rotate=90] at (1.5,-7.2+60*\SCALE+0.1) {60};
+\fill[ORhdr, draw=ORstroke] (1.9,-7.2) rectangle (2.5,-7.2+100*\SCALE);
+\node[font=\tiny, anchor=south, rotate=90] at (2.2,-7.2+100*\SCALE+0.1) {100};
+\node[font=\tiny, align=center, text width=1.6cm] at (1.85,-7.6) {S1 vs S2\\orca evidence};
+
+%% Grouped: S5 (Maps) and S6 (RAG)
+\fill[orange!50, draw=orange!70] (3.2,-7.2) rectangle (3.8,-7.2+100*\SCALE);
+\node[font=\tiny, anchor=south, rotate=90] at (3.5,-7.2+100*\SCALE+0.1) {100};
+\fill[ORhdr, draw=ORstroke] (3.9,-7.2) rectangle (4.5,-7.2+100*\SCALE);
+\node[font=\tiny, anchor=south, rotate=90] at (4.2,-7.2+100*\SCALE+0.1) {100};
+\node[font=\tiny, align=center, text width=1.6cm] at (3.85,-7.6) {S5 vs S6\\sighting};
+
+%% Grouped: S7 (Maps) and S8 (RAG) — shows lift
+\fill[orange!50, draw=orange!70] (5.2,-7.2) rectangle (5.8,-7.2+100*\SCALE);
+\node[font=\tiny, anchor=south, rotate=90] at (5.5,-7.2+100*\SCALE+0.1) {100};
+\fill[ORhdr, draw=ORstroke] (5.9,-7.2) rectangle (6.5,-7.2+75*\SCALE);
+\node[font=\tiny, anchor=south, rotate=90] at (6.2,-7.2+75*\SCALE+0.1) {75};
+\node[font=\tiny, align=center, text width=1.6cm] at (5.85,-7.6) {S7 vs S8\\trip planning};
+%% lift arrow
+\draw[->, >=latex, thick, orange!60!red]
+  (5.8,-7.2+100*\SCALE) -- (6.5,-7.2+75*\SCALE)
+  node[midway, right, font=\tiny, text=orange!60!red]{↓25pp};
+
+%% Scenario 4 standalone — bright green (the key result)
+\fill[green!35, draw=green!60!black] (7.8,-7.2) rectangle (8.6,-7.2+0.05);
+\node[font=\small\bfseries, text=green!40!black, anchor=south] at (8.2,-7.2+0.1) {0\%};
+\node[font=\tiny, align=center, text width=1.8cm] at (8.2,-7.6) {S4: planner\\step-log (RAG)};
+\node[font=\tiny\bfseries, text=green!40!black, align=center, text width=2.0cm]
+  at (8.2,-5.8) {Full grounding:\\$R_\text{uncited}=0\%$\\step-log binds\\all claims};
+\draw[->, >=latex, green!40!black] (8.2,-6.3) -- (8.2,-7.15);
+
+%% Legend
+\fill[orange!50, draw=orange!70] (1.1,-8.0) rectangle (1.5,-8.3);
+\node[font=\small, anchor=west] at (1.6,-8.15) {Maps-only baseline};
+\fill[ORhdr, draw=ORstroke] (4.2,-8.0) rectangle (4.6,-8.3);
+\node[font=\small, anchor=west] at (4.7,-8.15) {RAG-augmented};
+\fill[green!35, draw=green!60!black] (7.2,-8.0) rectangle (7.6,-8.3);
+\node[font=\small, anchor=west] at (7.7,-8.15) {Planner step-log};
+
+\node[font=\tiny, text=gray] at (5.0,-8.7)
+  {gemini-3.5-flash, 2026-06-24};
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% PANEL B — Scope Venn: pax | orcast | AMI
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\node[font=\small\bfseries, anchor=south west] at (11.5,0.15)
+  {\textbf{(B)} Paper scope relative to related work};
+
+%% pax ellipse (left)
+\draw[ORstroke, very thin, fill=blue!8]
+  (14.0,-4.0) ellipse (2.6cm and 3.5cm);
+%% orcast ellipse (center)
+\draw[ORstroke, thin, fill=ORhdr!25]
+  (17.0,-4.0) ellipse (2.6cm and 3.5cm);
+%% AMI dashed oval (right overlap zone)
+\draw[ORstroke, thin, dashed, fill=green!8, fill opacity=0.5]
+  (18.5,-4.0) ellipse (1.8cm and 3.0cm);
+
+%% pax label + items
+\node[font=\small\bfseries] at (13.1,-2.0) {pax};
+\node[font=\tiny, align=left, text width=2.4cm] at (13.1,-3.4)
+  {Routing cost encoding\\Walk graph construction\\Camera stress field $\sigma$\\Thermal comfort / UTCI\\Pedestrian crowding};
+\node[font=\tiny\itshape, align=center, text width=2.5cm] at (13.1,-5.8)
+  {``Which cost encoding\\gives the best path?''};
+
+%% orcast label + items
+\node[font=\small\bfseries] at (16.2,-2.0) {this paper};
+\node[font=\tiny, align=center, text width=2.4cm] at (16.0,-3.8)
+  {$R_\text{uncited}$ metric\\Step-log binding\\RAG lift hierarchy\\Gate-bounded confidence\\Benchmark methodology};
+\node[font=\tiny\itshape, align=center, text width=2.4cm] at (16.0,-6.0)
+  {``How do we measure\\whether AI claims\\are evidence-bound?''};
+
+%% AMI label + items
+\node[font=\small\bfseries, text=green!40!black] at (18.5,-2.0) {AMI};
+\node[font=\tiny, align=center, text width=1.8cm, text=green!40!black] at (18.5,-3.6)
+  {World model\\eval frameworks\\Evidence-bound\\planning traces\\Sensor→belief\\binding};
+\node[font=\tiny\itshape, align=center, text width=2.0cm, text=green!40!black]
+  at (18.5,-5.6) {``Evaluation for\\world model\\reasoning chains''};
+
+%% Overlap annotation
+\draw[ORstroke, thin, dashed, <->, >=latex]
+  (17.0,-7.0) -- (18.5,-7.0)
+  node[midway, below, font=\tiny]{application zone};
+
+%% Box note
+\node[draw=ORstroke, very thin, fill=white, font=\tiny,
+      text width=8.5cm, inner sep=3pt, anchor=north west]
+  at (11.5,-8.0) {%
+  Non-overlapping scope confirmed: pax = routing representations (routing, cs.AI);
+  orcast (this paper) = grounding quality evaluation (cs.LG/cs.AI);
+  AMI overlap = evaluation frameworks for world model reasoning chains.
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,88 @@
+%% Equations — Wave Set W whitepaper
+%% Input via \input{Equations} after the relevant section bodies if desired,
+%% or simply reference these labels from the section tex files directly.
+%% The numbered equations are placed inline in each section; this file
+%% provides the canonical label registry and variable glossary mapping.
+
+%% E1 — Log-linear encounter intensity
+\begin{equation}
+\label{eq:intensity}
+\log \lambda(x,t) = b_0 + \sum_{k} \beta_k \, \phi_k(t) + \log E(x,t)
+\end{equation}
+% Variables: lambda(x,t) encounter intensity at cell x, time t;
+% b_0 baseline log-rate; beta_k kernel coefficient for covariate k;
+% phi_k(t) cyclic phase function (diel, lunar, seasonal, tide);
+% E(x,t) observation effort offset.
+% Sources: modeling/fit_kernels.py, methodology.tex Eq.1
+
+%% E2 — Phase-shuffled null p-value
+\begin{equation}
+\label{eq:nulltest}
+p_{\text{null}} = P\!\bigl(T(\text{shuffled}) \geq T(\text{observed})\bigr)
+\end{equation}
+% Variables: T() test statistic (kernel amplitude or likelihood ratio);
+% shuffled: detections permuted over phase bins preserving marginal rate.
+% Gate: p_null < alpha (default 0.05) required before kernel enters confidence.
+% Sources: modeling/fit_kernels.py null test; SF-4 (2010.04875, 1506.02361)
+
+%% E3 — Time-rescaling goodness-of-fit
+\begin{equation}
+\label{eq:trescaling}
+\tau_i = \Lambda(t_i) - \Lambda(t_{i-1}), \quad \tau_i \overset{\text{H}_0}{\sim} \mathrm{Exp}(1)
+\end{equation}
+% Variables: tau_i compensated inter-event interval;
+% Lambda(t) = int_0^t lambda(s) ds compensator / cumulative intensity;
+% KS test on {tau_i} versus Exp(1) is the goodness-of-fit gate.
+% Sources: time-rescaling theorem (1606.03988); SF-4
+
+%% E4 — Effective confidence gate
+\begin{equation}
+\label{eq:effconf}
+c_{\text{eff}} = c_{\text{raw}} \cdot \prod_{k} g_k, \quad g_k \in \{0, 1\}
+\end{equation}
+% Variables: c_eff effective confidence displayed; c_raw model-estimated confidence;
+% g_k gate outcome for condition k (1 = pass, 0 = fail).
+% If any g_k = 0, c_eff <= c_raw and the failing integrity condition is surfaced.
+% Sources: gates response effective_confidence field; GatesResponse in web/lib/api.ts
+
+%% E5 — Deviance skill score
+\begin{equation}
+\label{eq:devskill}
+S_D = 1 - \frac{D_{\text{model}}}{D_{\text{null}}}
+\end{equation}
+% Variables: S_D held-out deviance skill score;
+% D_model mean held-out deviance of the fitted model;
+% D_null mean held-out deviance of the climatology null.
+% S_D < 0 means model is worse than null; gate fails; confidence withheld.
+% Sources: fit_kernels.py CV loop; SF-5 (2112.06305, 2104.08236)
+
+%% E6 — Probability integral transform calibration
+\begin{equation}
+\label{eq:pit}
+u_i = F_{\text{model}}(y_i), \quad u_i \overset{\text{H}_0}{\sim} \mathrm{Uniform}(0,1)
+\end{equation}
+% Variables: u_i PIT residual for observation i;
+% F_model predictive CDF evaluated at observed count y_i.
+% KS test on {u_i} versus Uniform(0,1) is the calibration gate.
+% Sources: SF-5 calibration papers (2205.09680, 2112.06305)
+
+%% E7 — Uncited scientific claim rate
+\begin{equation}
+\label{eq:uncited}
+R_{\text{uncited}} = \frac{\bigl|\{ s \in S_{\mathrm{sci}} : \nexists\; \text{cited\_name} \in s \}\bigr|}{|S_{\mathrm{sci}}|}
+\end{equation}
+% Variables: S_sci set of sentences containing scientific/quantitative markers;
+% cited_name any named place or entity in the citation list;
+% R_uncited fraction of scientific sentences with no bound citation.
+% Maps baseline: R_uncited = 0.85 (2026-06-24); orcast: R_uncited = 0.
+% Sources: tools/testing/maps_grounding_probe.py SCIENCE_MARKERS logic
+
+%% E8 — Claim/method/experiment provenance graph
+\begin{equation}
+\label{eq:cmxgraph}
+G = (V, E), \quad V = \{\text{metric}, C, M, X, D, R\}
+\end{equation}
+% V: metric (root), C claim, M method, X experiment, D data, R research.
+% E typed edges: validated_by (C->M), evaluated_by (M->X),
+%    supports (X->C), derived_from (X->D), grounded_in (C->R).
+% Sources: PROVENANCE_GRAPH_CONTRACT.md; SciClaim (2109.10453); MindSearch (2407.20183)

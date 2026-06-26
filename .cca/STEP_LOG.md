@@ -94,6 +94,20 @@ Each entry: `[DATE] [WAVE] [ACTION] — [RESULT/FILE]`
 
 [2026-06-25] [PPF] a-gate run: FAIL on a-doc-grep (next_wave_set: U in registry, not H1 — pre-existing since Wave Set U updated registry). Not a PP regression. Video 132s from F wave unchanged.
 
+[2026-06-25] [PA] Primary-anchor claim gate established: no "gap" claim without a named, verified, well-cited primary study + verified absence. Methodology written. — `docs/whitepaper/PRIMARY_ANCHOR_CLAIM_GATE.md`, `.cca/CLAIM_BOUNDARIES.md`
+
+[2026-06-25] [PA] WP1 re-anchored on journal primaries: Olson et al. 2018 (ESR, opportunistic SRKW hotspots) + Diggle/Menezes/Su 2010 (JRSS-C, preferential-sampling LGCP) + Thornton et al. 2022 (DFO CSAS applied correction). Section 02 four-gaps now derives the gap instead of asserting it. references.bib + olson2018/diggle2010/thornton2022. WP1 rebuilt 10pp full / 7pp share, 0 undefined cites. — `docs/whitepaper/LX/Sections/02_four_gaps.tex`
+
+[2026-06-25] [PA] WP2 reframed to human-in-the-loop HAII paper anchored on Magentic-UI (Mozannar et al. 2025, MSR) + Horvitz 1999 (CHI mixed-initiative). Gap derived by verified absence (Magentic-UI proposes no grounding metric). LeCun AMI demoted to context. Title/abstract/§2/§6 reframed; grounding benchmark folded in. WP2 rebuilt 5pp full / 4pp share, 0 undefined cites. — `docs/whitepaper2/LX/Sections/02_evidence_binding_gap.tex`, `06_world_model_extension.tex`
+
+[2026-06-25] [PA] Mined IST675 (HMC course) reading responses hw1–hw15: 51 unique cited sources. Added 8 HAII-relevant ones with verified full citations (Hoff & Bashir 2015 trust; Gambino et al. 2020 CASA; Gibbs et al. 2021 agency; Koban & Banks 2023; Koenig 2025 acceptance; Evans 2017 + Davis 2023 affordances; Clinciu & Hastie 2019 XAI) to WP2 references2.bib as candidate supports. Author-year-only sources NOT fabricated per claim gate. WP2 rebuilt clean. — `docs/whitepaper2/LX/references2.bib`
+
+[2026-06-25] [PA] Batch 2: web-verified 9 more IST675 HAII sources and added to WP2 bib. Claim gate caught date errors in the reading responses: Banks agent-agnostic is 2020 not "2024"; Mitchell & Krakauer PNAS is 2023 not "2022"; Natale Deceitful Media is 2021 not "2023"; Kahn benchmarks is 2007 not "2011"; Gardner & Rauchberg is 2024 not "2019". Corrected dates used. 17 IST675 sources total in WP2 bib (41 entries). — `docs/whitepaper2/LX/references2.bib`
+
+[2026-06-25] [PA] Advanced: wired the two strongest new sources into WP2 §2 as load-bearing inline citations — Banks & de Graaf 2020 (agent-agnostic agency/interactivity/influence) and Mitchell & Krakauer 2023 (understanding debate → output-level binding sidesteps it). WP2 rebuilt 5pp full / 4pp share, 0 undefined cites, verified visually. — `docs/whitepaper2/LX/Sections/02_evidence_binding_gap.tex`
+
+[2026-06-25] [SEL] Adversarial selection campaign: 5 parallel subagent waves (trust/agency/interaction/affordance/critical) ranked the 17 IST675 candidates by topical fit to WP2. KEEP 13 (wired inline across §2/§3/§5/§6/§7): hoff2015, koenig2025, banks2020, gibbs2021, koban2023, gambino2020, kahn2007, walther2011, davis2023, mitchell2023, natale2021, clinciu2019, gardner2024. CUT 4: yam2020 (cultural, off-topic), gunkel2018 (robot rights, off-topic), clark1998 (extended-mind metaphor), evans2017 (redundant w/ davis). Audit found 4 original orphan sources surviving only on \nocite{*}: restored I-JEPA + ReCEval + WikiChat inline, dropped junk arxiv310013002 (Unknown author, invalid id). Removed \nocite{*} from both roots → references now = cited only (36 entries). WP2 rebuilt 5pp/4pp, 0 undefined. — `docs/whitepaper2/LX/`
+
 ---
 
 ## Operator actions completed

@@ -1,0 +1,103 @@
+\documentclass[11pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+
+%% Request + Auth flow: public reads vs authenticated reviewer actions
+\begin{document}
+\begin{tikzpicture}[node distance=8pt]
+
+\tikzset{
+  BOX/.style={flowboxheader=4.2cm, text width=4.2cm},
+  SUBBOX/.style={flowbox=4.2cm, text width=4.2cm},
+}
+
+%% ─── Actors ────────────────────────────────────────────────────────────────────
+\node[BOX] (browser)  at (0,0)   {Browser\\(viewer / reviewer)};
+\node[SUBBOX] (br1)   at (0,-1.4) {viewer: forecast, gates, provenance\\
+  reviewer: moderation, decisions\\
+  returns from /callback with session};
+
+\node[BOX] (vercel)   at (7.0,0) {Vercel Next.js web};
+\node[SUBBOX] (v1)    at (7.0,-1.4) {/login, /signup, /callback\\
+  /api/be/[...path] server proxy\\
+  AuthKit middleware validates session\\
+  browser never sees X-ORCAST-Key};
+
+\node[BOX] (workos)   at (14.0,0) {Hosted WorkOS AuthKit\\(\texttt{*.authkit.app})};
+\node[SUBBOX] (w1)    at (14.0,-1.4) {browser redirects directly\\
+  providers: email + social login\\
+  success redirects back to /callback};
+
+\node[BOX] (apprun)   at (7.0,-7.0) {AWS App Runner (FastAPI)};
+\node[SUBBOX] (ar1)   at (7.0,-8.4) {serves /forecast/* + /api/provenance\\
+  serves /api/gates via serve.py\\
+  handles sightings, community, decisions\\
+  write paths require API key from proxy};
+
+\node[BOX] (ddb)      at (14.0,-7.0) {DynamoDB};
+\node[SUBBOX] (db1)   at (14.0,-8.4) {sightings, reports, hotspots\\
+  community-submissions\\
+  decision-records, user-journal\\
+  ingestion-runs};
+
+\node[BOX] (s3)       at (14.0,-13.0) {S3};
+\node[SUBBOX] (s3b)   at (14.0,-14.4) {reports/\{id\}.json\\
+  time-series NDJSON\\
+  models/* fitted artifacts\\
+  raw payload snapshots};
+
+\node[BOX] (agent)    at (0,-7.0) {Automation agent\\(Playwright / CI)};
+\node[SUBBOX] (ag1)   at (0,-8.4) {injects X-ORCAST-Agent-Key header\\
+  proxy validates; reviewer identity\\
+  same trust model as WorkOS session};
+
+%% ─── Flow lanes ────────────────────────────────────────────────────────────────
+%% Public GET
+\draw[flowarrow] (browser.east) -- node[midway, flowlabel, above]{public GET} (vercel.west);
+\draw[flowarrow] (vercel.east) -- node[midway, flowlabel, above]{302 to *.authkit.app} (workos.west);
+\draw[flowarrowdash] (workos.west) -- node[midway, flowlabel, below]{redirect back} (vercel.east);
+
+\draw[flowarrow] (vercel.south) -- node[midway, flowlabel, right]{forward read request} (apprun.north);
+\draw[flowarrow] (apprun.east) -- node[midway, flowlabel, above]{reads/writes app records} (ddb.west);
+\draw[flowarrow] (apprun.east) -- node[near end, flowlabel, below]{reads models/*} (s3.west);
+
+%% Mutation / PII path
+\draw[flowarrowdash] (browser.south) -- ++(0,-3.5) -| (agent.north)
+  node[near start, flowlabel, right]{reviewer / mutation};
+
+\draw[flowarrow] (agent.east) -- node[midway, flowlabel, above]{X-ORCAST-Agent-Key} (apprun.west);
+
+%% ─── Labels for public vs reviewer zones ──────────────────────────────────────
+\node[draw=ORstroke, very thin, fill=green!8, rounded corners=2pt,
+      font=\small, text width=5.5cm, inner sep=4pt]
+  at (3.5,-5.5) {\textbf{Public reads}\\
+  allow-list + rate limit\\
+  /api/be public branch\\
+  no WorkOS session required};
+
+\node[draw=ORstroke, very thin, fill=ORhdr!30, rounded corners=2pt,
+      font=\small, text width=5.5cm, inner sep=4pt]
+  at (3.5,-11.0) {\textbf{Authenticated mutations + PII}\\
+  /api/be protected branch\\
+  WorkOS session required\\
+  server injects X-ORCAST-Key only};
+
+%% ─── Title ─────────────────────────────────────────────────────────────────────
+%% P0-04 fix: raise title well above browser node
+\node[font=\normalsize\bfseries, anchor=south west]
+  at ([yshift=14pt]browser.north west)
+  {ORCAST -- Request + auth flow: public reads vs reviewer actions};
+
+\node[font=\small, text=gray, anchor=north east]
+  at ([yshift=8pt]workos.north east)
+  {2026-06-24};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=14cm, inner sep=4pt, anchor=south west]
+  at ([yshift=-10pt]agent.south west) {%
+  Public reads remain open; reviewer actions and PII require WorkOS session
+  or X-ORCAST-Agent-Key.
+  Automation agent uses the same proxy path as the browser reviewer.
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,34 @@
+\section{Limits and falsification}
+
+\subsection{Current scope limits}
+
+The pilot covers one hydrophone station (Haro Strait, OrcaHello) over approximately 7.5 months. Diel and lunar kernels are fitted; tide, season, and salmon index kernels are in the leveled program but not yet fitted at L1. The spatial kernel is prior-dominated. Effective confidence is 0\% promoted pending a reviewer promotion decision.
+
+Two search families returned Partial verdicts. The effort bias family lacks a cetacean-specific effort-correction measurement in the arXiv corpus; the analogs~\cite{arxiv190306669,arxiv211012951} support the methodological claim but not a cetacean-domain number. The null gating family lacks ecology-journal documentation of phase-shuffled null tests for diel/lunar covariates; the neuroscience precedents~\cite{arxiv201004875,arxiv150602361} establish the statistical machinery.
+
+\subsection{Falsification table}
+
+The following conditions would weaken or falsify hypothesis H1 in this deployment:
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{5.2cm}p{3.2cm}@{}}
+  \toprule
+  Observation & Interpretation \\
+  \midrule
+  Displayed confidence rises without a promotion decision & Gate policy failed; H1 weakened \\
+  Provenance modal omits a failed gate & Honesty contract violated \\
+  Citizen submission influences model without moderation approval & Corollary 3 falsified \\
+  Sighting check returns confident yes/no without uncertainty disclosure & prepare-then-narrate violated \\
+  New covariate passes gates but CV deviance skill is negative & Correct outcome; gate correctly withholds confidence \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Extension path}
+
+Adding stations, reviewed OrcaHello labels, effort covariates, and spatial kernels re-runs the full gate battery. Confidence moves only when gates and human authority agree. The W-Eval study (chartered separately) tests H1 directly through a structured field observer panel comparing steward trust in the gate-bounded forecast against a confidence-smoothed baseline.
+
+\subsection{Connection to world model evaluation}
+
+Provenance and grounding here connect to a broader evaluation gap in physical-world AI systems. LeCun's autonomous machine intelligence architecture~\cite{arxiv230602572} specifies that world model intermediate representations must be grounded in their generating sensor observations, and that planning outputs must be evidence-bound. V-JEPA~\cite{arxiv240408471} and Image World Models~\cite{arxiv240300504} are trained and evaluated on downstream accuracy benchmarks; no claim-level evidence-binding metric is proposed. Physical-world AI benchmarks (PHYRE~\cite{arxiv190805656}; STAR~\cite{arxiv240509711}; ThreeDWorld~\cite{arxiv210314025}; TravelPlanner~\cite{arxiv240201622}) all measure task completion or planning success without auditing whether intermediate claims are bound to sensor observations. The Elements of World Knowledge framework~\cite{arxiv240509605} tests world modeling via plausibility matching, not evidence binding. The orcast grounding benchmark ($R_\mathrm{uncited}$, Section~7) provides the evaluation primitive this literature lacks, and the companion paper extends it formally to world model planning traces~\cite{arxiv240611460}.

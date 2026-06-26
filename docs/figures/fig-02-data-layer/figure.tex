@@ -1,0 +1,129 @@
+\documentclass[11pt,border=10pt]{standalone}
+\usepackage{../shared/orcast_tikz_style}
+
+%% Data layer: external sources -> adapters -> stores -> API / kernel model
+\begin{document}
+\begin{tikzpicture}[node distance=6pt]
+
+%% ─── External sources ────────────────────────────────────────────────────────
+\node[flowboxheader=3.8cm] (src_hdr) at (0,0) {External sources};
+\node[flowbox=3.8cm, below=0pt of src_hdr] (orcahello) {OrcaHello detections API\\(acoustic candidates)};
+\node[flowbox=3.8cm, below=0pt of orcahello] (obis) {OBIS API (visual sightings)};
+\node[flowbox=3.8cm, below=0pt of obis] (inat) {iNaturalist API (visual)};
+\node[flowbox=3.8cm, below=0pt of inat] (noaaw) {NOAA CO-OPS water level\\9449880 (Friday Harbor)};
+\node[flowbox=3.8cm, below=0pt of noaaw] (noaac) {NOAA CO-OPS currents\\PUG1702 (Rosario Strait)};
+\node[flowbox=3.8cm, below=0pt of noaac] (salmon) {Albion / DART\\salmon run timing};
+\node[flowbox=3.8cm, below=0pt of salmon] (hydro) {Orcasound station roster\\(hydrophone uptime)};
+\node[flowbox=3.8cm, below=0pt of hydro] (ephem) {Ephemeris\\(solar / diel / lunar computed)};
+\node[flowbox=3.8cm, below=0pt of ephem] (bathym) {NOAA ETOPO1 bathymetry\\(static \texttt{data/geo/}, not streaming)};
+
+%% ─── Adapters ────────────────────────────────────────────────────────────────
+\node[flowboxheader=3.5cm] (adp_hdr) at (5.5,0) {Adapters / covariate compute};
+\node[flowbox=3.5cm, below=0pt of adp_hdr] (a_oh) {\texttt{orcahello\_history.py}};
+\node[flowbox=3.5cm, below=0pt of a_oh] (a_obis) {\texttt{obis.py}};
+\node[flowbox=3.5cm, below=0pt of a_obis] (a_inat) {\texttt{inaturalist.py}};
+\node[flowbox=3.5cm, below=0pt of a_inat] (a_noaa) {\texttt{noaa.py}\\(water level + currents)};
+\node[flowbox=3.5cm, below=0pt of a_noaa] (a_salmon) {\texttt{salmon.py}};
+\node[flowbox=3.5cm, below=0pt of a_salmon] (a_uptime) {\texttt{orcasound.py}};
+\node[flowbox=3.5cm, below=0pt of a_uptime] (a_cov) {\texttt{covariates.py}\\(computed on demand)};
+\node[flowbox=3.5cm, below=0pt of a_cov] (a_bath) {\textit{static read (no adapter)}};
+
+%% ─── Stores ──────────────────────────────────────────────────────────────────
+\node[flowboxheader=4.0cm] (s3_hdr) at (11.0,-0.6) {S3 time-series NDJSON};
+\node[flowbox=4.0cm, below=0pt of s3_hdr] (s3) {\texttt{timeseries/\{stream\}/\{station\}/}\\
+  \texttt{\{yyyy\}/\{mm\}.ndjson}\\
+  acoustic, env, salmon, uptime};
+
+\node[flowboxheader=4.0cm] (ddb_hdr) at (11.0,-5.5) {DynamoDB tables};
+\node[flowbox=4.0cm, below=0pt of ddb_hdr] (ddb) {sightings, hotspots, reports,\\
+  ingestion-runs,\\
+  community-submissions,\\
+  decision-records, user-journal,\\
+  partner-api-keys, managed-agents};
+
+%% ─── API + Kernel ────────────────────────────────────────────────────────────
+\node[flowboxheader=4.0cm] (api_hdr) at (17.0,-2.0) {Service API (FastAPI)};
+\node[flowbox=4.0cm, below=0pt of api_hdr] (api) {\texttt{/api/sightings/ingest}\\
+  \texttt{/api/timeseries/refresh}\\
+  \texttt{/api/data-status}\\
+  \texttt{POST /api/community/sightings}\\
+  \texttt{/health}};
+
+\node[flowboxheader=4.0cm] (kern_hdr) at (17.0,-7.5) {Kernel forecast model};
+\node[flowbox=4.0cm, below=0pt of kern_hdr] (kern) {$\log\lambda(x,t) = b_0 + \sum_k \beta_k\phi_k(t) + \log E$\\
+  (LNP cascade — PSTH kernels)};
+
+\node[flowboxheader=4.0cm] (sched_hdr) at (17.0,-11.5) {EventBridge scheduler};
+\node[flowbox=4.0cm, below=0pt of sched_hdr] (sched) {\texttt{rate(30 min)} Lambda\\
+  keyed calls to ingest + refresh};
+
+%% ─── Arrows ──────────────────────────────────────────────────────────────────
+%% sources -> adapters
+\foreach \src/\dst in {orcahello/a_oh, obis/a_obis, inat/a_inat}{
+  \draw[flowarrow] (\src.east) -- (\dst.west);
+}
+\draw[flowarrow] (noaaw.east) -- (a_noaa.west);
+\draw[flowarrow] (noaac.east) -- (a_noaa.west);
+\draw[flowarrow] (salmon.east) -- (a_salmon.west);
+\draw[flowarrow] (hydro.east) -- (a_uptime.west);
+\draw[flowarrow] (ephem.east) -- (a_cov.west);
+\draw[flowarrow] (bathym.east) -- (a_bath.west);
+
+%% adapters -> S3
+\draw[flowarrow] (a_oh.east) -- (s3.west)
+  node[midway, flowlabel, above]{\textrightarrow\ timeseries/};
+\draw[flowarrow] (a_noaa.east) -- (s3.west);
+\draw[flowarrow] (a_salmon.east) -- (s3.west);
+\draw[flowarrow] (a_uptime.east) -- (s3.west);
+
+%% adapters -> DynamoDB
+\draw[flowarrow] (a_obis.east) -| (ddb.west)
+  node[near start, flowlabel, above]{\textrightarrow\ sightings};
+\draw[flowarrow] (a_inat.east) -| (ddb.west);
+\draw[flowarrow] (a_oh.east) -| (ddb.west)
+  node[pos=0.15, flowlabel, below]{\textrightarrow\ sightings};
+
+%% adapters -> kernel (covariates on demand)
+\draw[flowarrow] (a_cov.east) -| (kern.west)
+  node[midway, flowlabel, above]{covariates};
+
+%% S3 -> kernel
+\draw[flowarrow] (s3.east) -- (kern.west)
+  node[midway, flowlabel, above]{reads timeseries};
+
+%% DynamoDB -> API
+\draw[flowarrow] (ddb.east) -- (api.west)
+  node[midway, flowlabel, above]{reads/writes};
+
+%% S3 -> API
+\draw[flowarrow] (s3.east) -| (api.west)
+  node[near end, flowlabel, above]{reads};
+
+%% Community POST -> DynamoDB
+\draw[flowarrowdash] (api.south) -- ++(0,-0.5) -| (ddb.north)
+  node[midway, flowlabel, above]{\texttt{POST community/sightings}};
+
+%% Scheduler -> API (P1-03 fix: label corrected)
+\draw[flowarrowdash] (sched.north) -- (api.south)
+  node[midway, flowlabel, right]{scheduled refresh calls};
+
+%% ─── Title ───────────────────────────────────────────────────────────────────
+%% P0-02 fix: raise title well above headers with larger yshift
+\node[font=\normalsize\bfseries, anchor=south west]
+  at ([yshift=12pt]src_hdr.north west)
+  {ORCAST -- Data layer: ingest, store, serve};
+\node[font=\small, text=gray, anchor=north east]
+  at ([yshift=8pt]sched_hdr.north east)
+  {2026-06-24};
+
+\node[draw=ORstroke, very thin, fill=white, font=\small,
+      text width=9cm, inner sep=4pt, anchor=south west]
+  at ([yshift=-10pt]bathym.south west) {%
+  \textbf{Legend:}
+  solid arrow = data write/read;
+  dashed arrow = optional/manual/scheduled path.
+  BathymetryAdapter is a static \texttt{data/geo/} read, not a streaming adapter.
+};
+
+\end{tikzpicture}
+\end{document}

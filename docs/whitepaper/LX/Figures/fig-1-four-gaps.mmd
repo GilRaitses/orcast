@@ -1,0 +1,39 @@
+flowchart TB
+  subgraph gaps [Four gaps]
+    EG[Epistemic gap]
+    UG[Effort gap]
+    PG[Provenance gap]
+    GG[Governance gap]
+  end
+  subgraph orcast [orcast surfaces]
+    CM[Confidence meter + integrity conditions]
+    PR[Provenance modal per cell]
+    GT[Gate battery L0-L5]
+    MQ[Moderation queue]
+    DR[Decision records]
+    JN[Field journal]
+    AS[Sighting check]
+  end
+  subgraph db [DynamoDB system of record]
+    T1[sightings]
+    T2[community-submissions]
+    T3[decision-records]
+    T4[user-journal]
+    T5[hotspots / reports]
+    T6[managed-agents]
+  end
+  EG --> CM
+  EG --> GT
+  UG --> GT
+  UG --> AS
+  PG --> PR
+  PG --> GT
+  GG --> MQ
+  GG --> DR
+  GG --> JN
+  CM --> T5
+  GT --> T5
+  MQ --> T2
+  DR --> T3
+  JN --> T4
+  DR --> T6

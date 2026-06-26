@@ -1,0 +1,23 @@
+# 4. Provenance grounding as a system
+
+Scientific grounding requires that every displayed claim can be traced to its producing method, the experiment that validated that method, the data the experiment ran on, and the research that motivated the experimental design. This section describes the orcast provenance architecture, the claim graph it produces, and a measured comparison against the geospatial grounding available from the Gemini Interactions API with Google Maps.
+
+## Prepare-then-narrate architecture
+
+The orcast interactions pipeline uses a prepare-then-narrate pattern. When a user asks a question through the exploration guide surface, a concierge orchestrator dispatches only allow-listed skills from a versioned manifest. Each skill invocation is recorded as a step with its input, output status, duration, and grounding references. After all skills complete, the LLM narrates the collected JSON context, not free tool calls. The LLM cannot invoke tools that are not in the manifest for that cast role.
+
+This architecture reduces unsupported claim rates relative to unstructured generation. The retrieval-augmented generation literature establishes that retrieval-in-the-loop reduces factual hallucination in conversational systems \cite{arxiv210407567}. The CRAG framework \cite{arxiv240115884} demonstrates that corrective retrieval, evaluating whether retrieved content is relevant before including it, substantially reduces hallucination when retrieval goes wrong. The AGREE framework \cite{arxiv231109533} shows that adapting LLMs to self-ground claims in retrieved passages and generate citations produces measurable reduction in unsupported-claim rates without additional training. The comprehensive LLM attribution survey \cite{arxiv231103731} confirms that generative systems without attribution produce high rates of unsupported claims that are difficult to audit.
+
+## Step-log provenance
+
+Every interaction persists an ordered `steps` array in the `exploration_turns` Postgres table as JSONB. The array includes a `resolve_agent` step that records the cast role id, version, and spec hash; one `skill_invocation` step per dispatched skill with its grounding references; and a `model_output` step with the annotations produced. This ordered log is sufficient to reconstruct the provenance chain from a displayed metric to its source data.
+
+The scientific workflow provenance literature establishes that this level of step-log capture is sufficient for reproducibility. CamFlow whole-system provenance \cite{arxiv171105296} establishes the formal requirements: capture of data sources, the transformations applied, and their ordering. The provenance and data differencing paper \cite{arxiv140609050} demonstrates that a per-step run trace is sufficient for reproducibility analysis in e-Science pipelines. Scientific ML workflow provenance in geoscience and climate applications \cite{arxiv201000330} directly addresses the case of data-intensive scientific pipelines, showing that step-level logging enables reproducibility.
+
+## Claim/method/experiment graph
+
+The ProvenanceGraph component renders the step log as a directed C/M/X/D/R graph (equation E8): claim nodes from model output annotations, method nodes from skill invocations with tier badges and grounding references, experiment nodes from annotation artifact fields (repr_id, run_id), data nodes from provenance citations, and research nodes from artifact citations to documentation. Each claim node carries the type of annotation that produced it (gate_citation, provenance_citation, decision_citation, artifact_citation) and a binding to its producing skill.
+
+The SciERC framework \cite{arxiv180809602} establishes the foundational NLP approach for building C/M/X graphs from scientific text: joint extraction of entities, relations, and coreference clusters in scientific articles. The SciClaim dataset \cite{arxiv210910453} introduces a fine-grained graph annotation schema that captures experimental associations at the claim-span level with typed relational edges, exactly the binding model the ProvenanceGraph implements. MindSearch \cite{arxiv240720183} demonstrates multi-agent query decomposition into directed acyclic graphs of sub-questions with explicit linkage, establishing the graph-of-queries pattern at scale. MindMap \cite{arxiv230809729} demonstrates that knowledge graph prompting reduces LLM hallucination and improves reasoning transparency by forcing responses to be grounded in structured graph nodes.
+
+Any claim node that carries no artifact or href binding renders a no-signal badge. This is the honesty primitive that the geospatial grounding baseline (Section 7) lacks.

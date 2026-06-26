@@ -1,0 +1,43 @@
+\section*{Glossary}
+
+\subsection*{Encounter intensity}
+Encounter intensity $\lambda(x,t)$ is the expected rate of orca encounters at map cell $x$ and time $t$ under the fitted point-process model. It is expressed in the log domain as a sum of kernel contributions (Eq.~\ref{eq:intensity}) and converted to an encounter probability per cell per time bin as $p(x,t) = 1 - e^{-\lambda(x,t)\,\Delta t}$.
+
+\subsection*{Fitness gate}
+A fitness gate is a binary statistical decision that must pass before the corresponding evidence component is allowed to contribute to displayed confidence. Gates include the phase-shuffled null test (Eq.~\ref{eq:nulltest}), the time-rescaling goodness-of-fit test (Eq.~\ref{eq:trescaling}), held-out deviance skill (Eq.~\ref{eq:devskill}), and PIT calibration (Eq.~\ref{eq:pit}). A failing gate does not suppress the forecast; it lowers the effective confidence and surfaces the failing integrity condition.
+
+\subsection*{Effective confidence}
+Effective confidence $c_\mathrm{eff}$ is the displayed confidence score, bounded by the product of all gate outcomes (Eq.~\ref{eq:effconf}). It is the model-estimated confidence multiplied by one binary gate outcome per gated condition. When any gate fails, effective confidence is reduced and the integrity condition is shown alongside the metric. Effective confidence is never promoted above the model estimate; it can only be equal to or lower than it.
+
+\subsection*{Integrity condition}
+An integrity condition is a plain-language statement of a scope limit or data quality constraint that is shown alongside every confidence-bearing display surface. Examples include ``effort assumed continuous (not effort-corrected)'', ``spike-train fit uses unreviewed acoustic candidates'', and ``season kernel extrapolated beyond observed coverage.'' Integrity conditions are features of the honesty model, not errors to be concealed.
+
+\subsection*{Effort offset}
+The effort offset $\log E(x,t)$ in Eq.~\ref{eq:intensity} is an additive term that accounts for heterogeneous observation effort across stations and time. Where effort is known and roughly constant (continuous acoustic monitoring), the offset is fixed; where effort is heterogeneous (visual sighting surveys), the offset is estimated from patrol records or assumed. An integrity condition is surfaced whenever the effort offset is assumed rather than measured.
+
+\subsection*{Phase-shuffled null}
+A phase-shuffled null is a reference distribution produced by permuting the assignment of detection times to stimulus phase bins, preserving the marginal detection rate while destroying any phase relationship. The test statistic from the observed kernel is compared to this distribution to produce $p_\mathrm{null}$ (Eq.~\ref{eq:nulltest}). A kernel that does not beat the phase-shuffled null is not allowed to contribute to displayed confidence.
+
+\subsection*{Time-rescaling goodness-of-fit}
+Time-rescaling transforms observed detection times through the model compensator $\Lambda(t)$ to produce residuals $\tau_i$ (Eq.~\ref{eq:trescaling}) that should be exponentially distributed if the model fits. A Kolmogorov-Smirnov test on these residuals is the goodness-of-fit gate. Failure means the model does not fit the temporal structure of the data.
+
+\subsection*{Deviance skill score}
+The deviance skill score $S_D$ (Eq.~\ref{eq:devskill}) measures whether the fitted model is sharper than a climatology null on held-out data. $S_D < 0$ means the model is worse than the null on the held-out set; displayed confidence is withheld when this gate fails.
+
+\subsection*{PIT uniformity}
+The probability integral transform (PIT) residual $u_i = F_\mathrm{model}(y_i)$ (Eq.~\ref{eq:pit}) should be uniformly distributed if the predictive distribution is calibrated. A Kolmogorov-Smirnov test on PIT residuals is the calibration gate. Failure means the model is systematically over- or under-confident.
+
+\subsection*{Provenance graph}
+A provenance graph is the directed graph $G = (V, E)$ (Eq.~\ref{eq:cmxgraph}) that traces a displayed metric from its claim node through the method that produced it, the experiment that validated the method, the data the experiment ran on, and the research that motivated the experimental design. The graph is rendered from the persisted interaction step log; every node has a producing artifact reference, and any claim node without one renders a no-signal badge.
+
+\subsection*{Skill dispatch tier}
+A skill dispatch tier is a categorical access level for interaction skills. T0 skills are public; T1 skills require a geographic viewport; T2 and T3 skills are keyed and blocked on public routes. The tier system enforces that the model cannot invoke high-privilege tools without appropriate authentication, and unknown skill identifiers return a 400 response before invocation.
+
+\subsection*{Prepare-then-narrate}
+Prepare-then-narrate is the orcast interaction pipeline pattern in which a concierge orchestrator dispatches all allow-listed skills and collects grounded context before the LLM narrates. The model does not select tools dynamically during generation; it narrates the collected JSON. This ensures that every claim in the narration has a producing skill, artifact reference, and step log entry.
+
+\subsection*{Surface planner}
+A surface planner is a keyed cast role (surface-planner-v1) that emits a validated \texttt{ui\_intent} object specifying which panels to open and a \texttt{skill\_plan} listing which skills to run, before any narration occurs. The surface planner separates planning from execution; the concierge dispatches exactly the skill plan without model-selected additions.
+
+\subsection*{Uncited-evidence rate}
+The uncited-evidence rate $R_\mathrm{uncited}$ (Eq.~\ref{eq:uncited}) measures the fraction of sentences containing scientific or quantitative content that carry no bound citation. This is the primary metric in the grounding benchmark (Section~7). The Google Maps grounding baseline achieved $R_\mathrm{uncited} = 0.85$ on marine science evidence queries (2026-06-24); orcast achieved $R_\mathrm{uncited} = 0$ on the same orca evidence query with all annotations bound to an artifact or provenance reference.

@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "label": "Maps-only: orca evidence (baseline)",
+    "rag_label": "none",
+    "elapsed": 18.4,
+    "text": "Along the west side of San Juan Island, **Lime Kiln Point State Park** (often referred to simply as \"Whale Watch Park\") is globally recognized as the absolute best place to view Southern Resident killer whales (SRKWs)\u2014consisting of J, K, and L pods\u2014directly from the shore. \n\n### The Evidence Supporting Lime Kiln Point State Park\n\nThe reputation of Lime Kiln Point as a premier shore-based whale-watching site is not just local lore; it is backed by decades of geological, ecological, and acoustic scientific data.\n\n#### 1. Bathymetry (Underwater Topography)\n* **The Evidence:** Nautical charts of the Haro Strait show that the seafloor drops off precipitously right off the rocky cliffs of Lime Kiln Point. Depths of several hundred feet are located within mere yards of the shore.\n* **Why it matte",
+    "total_citations": 4,
+    "place_citations": 4,
+    "scientific_citations": 0,
+    "density": 7.5,
+    "sci_claims": 10,
+    "unsupported": 6,
+    "uncited_rate": 60.0,
+    "step_types": [
+      "google_maps_call",
+      "google_maps_result",
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 2,
+    "label": "Maps + orcast gates context (RAG)",
+    "rag_label": "orcast_gates",
+    "elapsed": 15.6,
+    "text": "### Best Shoreline Viewing Locations\nOn the west side of San Juan Island, the absolute best place to view Southern Resident Killer Whales (SRKWs) from shore is **Lime Kiln Point State Park** (often referred to as \"Whale Watch Park\"). \n\nBecause the underwater topography of the Haro Strait drops off steeply very close to the shore, whales\u2014particularly salmon-hunting killer whales\u2014frequently swim within yards of the rocky cliffs. Other nearby shore-based viewpoints along the scenic West Side Road include:\n*   **Westside Preserve:** Located just south of Lime Kiln, offering beautiful bluff-top views.\n*   **San Juan County Park:** Located further north, offering wide-open vistas of the strait.\n\n---\n\n### What the Acoustic Monitoring Data Shows\nAccording to the current **ORCAST Live Context (Gate",
+    "total_citations": 5,
+    "place_citations": 5,
+    "scientific_citations": 0,
+    "density": 16.9,
+    "sci_claims": 4,
+    "unsupported": 4,
+    "uncited_rate": 100.0,
+    "step_types": [
+      "google_maps_call",
+      "google_maps_result",
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 3,
+    "label": "Maps + orcast provenance context (RAG)",
+    "rag_label": "orcast_provenance",
+    "elapsed": 10.5,
+    "text": "Based on the provided **Orcast Live Context**, here are the details for the modeled orca encounter intensity at Haro Strait:\n\n### 1. Modeled Encounter Intensity\n* **Encounter Intensity:** `0.220603`\n* **Confidence:** `0.0`\n\n---\n\n### 2. Contributing Kernels\nThe prediction incorporates two main temporal kernels (environmental cycles) that influence the log-rate of detections:\n\n* **Kernel Diel (Daily/Diurnal Cycle):** \n  * **Phase:** `0.778`\n  * **Log Rate Contribution:** `0.2757`\n  * **Beats Null:** `False` (meaning this daily cycle contribution did not perform statistically better than a baseline null model in this instance).\n* **Kernel Lunar (Moon Phase/Tidal Cycle):** \n  * **Phase:** `0.339`\n  * **Log Rate Contribution:** `0.3399`\n  * **Beats Null:** `True` (indicating that the lunar phas",
+    "total_citations": 0,
+    "place_citations": 0,
+    "scientific_citations": 0,
+    "density": 0.0,
+    "sci_claims": 4,
+    "unsupported": 4,
+    "uncited_rate": 100.0,
+    "step_types": [
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 4,
+    "label": "Maps + orcast surface planner output (RAG)",
+    "rag_label": "orcast_planner",
+    "elapsed": 9.7,
+    "text": "Based on the provided **Orcast Live Context**, here are the current statuses for the promotion gates and integrity conditions:\n\n### 1. Fitness Gates\n* **Status:** The fitness gates are currently **fitted** (as indicated by `fetch_gates fitted` [gate_citation]). \n\n### 2. Integrity and Approval Conditions\n* **Supervisor Recommendation:** **Success** (`fetch_supervisor_recommendation success`)\n* **Pending Approval:** **None** (`fetch_pending_approval none`)\n* **Provenance:** **Success** (`fetch_provenance success` [provenance_citation])",
+    "total_citations": 0,
+    "place_citations": 0,
+    "scientific_citations": 0,
+    "density": 0.0,
+    "sci_claims": 0,
+    "unsupported": 0,
+    "uncited_rate": 0.0,
+    "step_types": [
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 5,
+    "label": "Maps-only: sighting check (baseline)",
+    "rag_label": "none",
+    "elapsed": 16.4,
+    "text": "It is highly likely that what you saw was indeed an orca! \n\nLime Kiln Point State Park, located on the west side of San Juan Island, is globally famous as \"Whale Watch Park\" because the underwater topography drops off very steeply close to shore. This allows deep-water marine mammals to swim incredibly close to the rocky coastline, making it one of the premier land-based whale-watching spots in the world.\n\n### Could it be an orca?\nYes, a distinct black dorsal fin close to shore at Lime Kiln is a classic indicator of an orca. Depending on who you saw, the fin can look very different:\n* **Adult Male Orca:** Their dorsal fins are unmistakable\u2014perfectly straight, triangular, and towering up to 6 feet tall. \n* **Female or Juvenile Orca:** Their dorsal fins are smaller (about 2 to 3 feet tall) a",
+    "total_citations": 3,
+    "place_citations": 3,
+    "scientific_citations": 0,
+    "density": 5.1,
+    "sci_claims": 7,
+    "unsupported": 7,
+    "uncited_rate": 100.0,
+    "step_types": [
+      "google_maps_call",
+      "google_maps_result",
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 6,
+    "label": "Maps + orcast sighting-assist context (RAG)",
+    "rag_label": "orcast_sighting",
+    "elapsed": 7.0,
+    "text": "Based on the **Orcast Live Context** provided, here is what the sighting check says about your encounter likelihood and the data it relies on:\n\n### 1. Encounter Likelihood\n* **Baseline Intensity:** The model estimates a **22% baseline encounter intensity** for your current time.\n* **Confidence Level:** The model has an **overall confidence of 0.0**. \n* **Warning:** Because of the zero-confidence rating, Orcast advises treating this forecast with caution. It is a temporal-only prediction and does not actively pinpoint orcas at your specific map location (Lime Kiln Point).\n\n### 2. Grounded Data & Model Performance\nThe likelihood score and its confidence rating are grounded in the following data:\n* **Temporal Inputs:** The 22% baseline is calculated using the specific time of day (**early mor",
+    "total_citations": 0,
+    "place_citations": 0,
+    "scientific_citations": 0,
+    "density": 0.0,
+    "sci_claims": 2,
+    "unsupported": 2,
+    "uncited_rate": 100.0,
+    "step_types": [
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 7,
+    "label": "Maps-only: trip planning (baseline)",
+    "rag_label": "none",
+    "elapsed": 22.6,
+    "text": "Here is a complete, step-by-step afternoon itinerary for shore-based whale watching along the scenic west side of San Juan Island, centered around Lime Kiln Point.\n\n---\n\n### **Preparation: What to Bring**\n*   **Binoculars or a Zoom Lens:** Vital for spotting blows, fins, and breaches.\n*   **Warm Layers & Windbreaker:** Even on warm summer afternoons, the wind coming off the Haro Strait can be quite chilly.\n*   **A Discover Pass:** Required for parking at the state park.\n*   **Camp Chairs or a Thick Blanket:** The best spots involve sitting on rocky bluffs or gravel beaches.\n\n---\n\n### **The Afternoon Itinerary**\n\n#### **Stop 1: Westside Preserve (1:00 PM \u2013 2:00 PM)**\n*   **The Vibe:** A quieter, more serene start to your afternoon.\n*   **The Viewpoint:** A short, easy trail leads to grassy ",
+    "total_citations": 13,
+    "place_citations": 13,
+    "scientific_citations": 0,
+    "density": 18.6,
+    "sci_claims": 4,
+    "unsupported": 4,
+    "uncited_rate": 100.0,
+    "step_types": [
+      "google_maps_call",
+      "google_maps_result",
+      "google_maps_call",
+      "google_maps_result",
+      "google_maps_call",
+      "google_maps_result",
+      "google_maps_call",
+      "google_maps_result",
+      "thought",
+      "model_output"
+    ]
+  },
+  {
+    "id": 8,
+    "label": "Maps + orcast hotspots + dossier (RAG)",
+    "rag_label": "orcast_hotspots",
+    "elapsed": 16.8,
+    "text": "Based on the **Orcast Live Context** data, you have an excellent setup for a shore-based whale-watching afternoon on San Juan Island\u2019s west side. \n\n### 1. What the \"Confidence Gate\" Says About Reliability\nThe **confidence gate** (which measures the model's certainty in its own prediction) indicates that **today's forecast is highly reliable**. \n* The confidence scores for the Andrews Bay hotspot are exceptionally strong, starting at **84.7% (0.847)** and remaining highly stable through **83.5%** and **82.2%**.\n* Coupled with high probability scores (ranging from **73.3% to 78.7%**), this means the data is highly consistent. You can head out with a very high degree of confidence that orcas will be moving through this exact corridor today.\n* *Note on timing:* Because the probability and conf",
+    "total_citations": 8,
+    "place_citations": 8,
+    "scientific_citations": 0,
+    "density": 16.3,
+    "sci_claims": 4,
+    "unsupported": 3,
+    "uncited_rate": 75.0,
+    "step_types": [
+      "google_maps_call",
+      "google_maps_result",
+      "google_maps_call",
+      "google_maps_result",
+      "thought",
+      "model_output"
+    ]
+  }
+]
