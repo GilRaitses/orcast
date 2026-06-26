@@ -36,7 +36,7 @@ class InterestSignup(BaseModel):
         return v
 
 
-@router.post("/interest")
+@router.post("/api/interest")
 def register_interest(payload: InterestSignup):
     """Store an interest signup. Gracefully degrades if S3 is unavailable."""
     ts = datetime.now(timezone.utc)
