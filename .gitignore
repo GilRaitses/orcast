@@ -1,3 +1,6 @@
+# Vercel
+.vercel
+
 # Logs
 logs
 *.log
@@ -82,6 +85,7 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.agent-credentials.env
 
 # dataconnect generated files
 .dataconnect
@@ -96,3 +100,12 @@ infra/aws/state/backups/
 
 # Local demo server pid
 demo/.demo-server.pid
+.venv-modeling/
+.venv-tts/
+venv/
+.venv/
+
+# Committed secrets removed from tracking (keep local copies only)
+config.js
+src/frontend/production_config.js
+config/redis_connection.env

@@ -136,3 +136,11 @@ Each entry: `[DATE] [WAVE] [ACTION] — [RESULT/FILE]`
 - Vercel redeploy (account page + SightingCheckPanel)
 - AWS Console screenshot of 9 DynamoDB tables
 - Devpost form submission
+
+[2026-06-26] [PROVENANCE-CONTRACT] Corrected fig-06 against the canonical contract `docs/devpost/casting/PROVENANCE_GRAPH_CONTRACT.md` (which DOES exist; prior "false positive" verdict was from a search wrongly scoped to docs/figures/). Two real P1 defects fixed: (1) `grounded_in` rewired X1→R1 ⇒ C1→R1 per contract edge table ("claim traces to research origin"); (2) no-signal/unbound badge rewired M2→nosig ⇒ C2→nosig per render rule 5 ("any claim with no supports edge"). PNG re-exported (drawio -s 2 -b 10), visually verified. DIAGRAM_DEFECT_REGISTER updated: F1/F2 moved from false-positive → corrected/fixed.
+
+[2026-06-26] [MEDIA] beat-05 re-recorded against live (new /ask composer): typed sighting prompt → Bedrock reply (8.7% baseline, deviance −0.018 honest framing). First take 22s clipped the 28s VO; re-recorded at 31.7s. Re-assembled demo-final-narrated.mp4 (190s, 6.65MB) via demo-video-assembly skill. Regenerated ask.gif (12s window, typed prompt→reply) → web/public/demo-gifs/ask.gif + docs/.../gifs/ + ~/aimez/docs/assets/orcast-gifs/. Visually verified beat frame + gif.
+
+[2026-06-26] [OUTREACH] 5 audience-targeted LinkedIn posts drafted, claim-gated against CLAIM_BOUNDARIES.md (first-person singular, no we/our): (1) AI/ML researchers (R_uncited, WP2), (2) marine science/conservation (WP1, honest 0%), (3) engineers (stack), (4) AI honesty/grounding (Maps vs step-log), (5) solo founders (build discipline). File: .cca/outreach_drafts/linkedin_posts_by_audience.md. FLAG: WP2 abstract says Maps baseline 60–100% but CLAIM_BOUNDARIES gate says 60–91% — posts use 60–91%; reconcile before linking WP2.
+
+[2026-06-26] [DEPLOY] gitignore hardened (.venv-tts/, venv/). Scoped deploy commit (no venvs, no unrelated WIP): new ask.gif + beat-05 + narrated mp4 + fig-06 fix + linkedin posts + register. orcast + aimez pushed.

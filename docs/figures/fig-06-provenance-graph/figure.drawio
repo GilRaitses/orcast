@@ -1,0 +1,51 @@
+<mxfile host="app.diagrams.net" agent="orcast" version="24.0.0">
+  <diagram name="6. Provenance graph" id="prov">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1520" pageHeight="860" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="ORCAST - Provenance graph G=(V,E): metric drilldown" style="text;html=1;fontStyle=1;fontSize=16;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#2F1F3A;" vertex="1" parent="1"><mxGeometry x="60" y="18" width="640" height="28" as="geometry" /></mxCell>
+
+        <!-- metric root -->
+        <mxCell id="metric" value="&lt;b&gt;metric (example)&lt;/b&gt;&lt;br&gt;effective_confidence(cell)&lt;br&gt;&lt;i&gt;0% (not yet promoted)&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#E8DDF4;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="610" y="60" width="300" height="74" as="geometry" /></mxCell>
+
+        <!-- Claims -->
+        <mxCell id="C1" value="&lt;b&gt;C: Claim&lt;/b&gt;&lt;br&gt;&quot;lunar kernel beats null&quot;&lt;br&gt;&lt;i&gt;source: gate_citation&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="160" y="200" width="300" height="74" as="geometry" /></mxCell>
+        <mxCell id="C2" value="&lt;b&gt;C: Claim&lt;/b&gt;&lt;br&gt;&quot;gates summary fetched&quot;&lt;br&gt;&lt;i&gt;source: provenance_citation&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="1060" y="200" width="300" height="74" as="geometry" /></mxCell>
+
+        <!-- Methods -->
+        <mxCell id="M1" value="&lt;b&gt;M: Method&lt;/b&gt;&lt;br&gt;fetch_gates (T0 public skill)&lt;br&gt;&lt;i&gt;skill_invocation step&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="160" y="330" width="300" height="74" as="geometry" /></mxCell>
+        <mxCell id="M2" value="&lt;b&gt;M: Method&lt;/b&gt;&lt;br&gt;fetch_provenance (T1 geo skill)&lt;br&gt;&lt;i&gt;skill_invocation step&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="1060" y="330" width="300" height="74" as="geometry" /></mxCell>
+
+        <!-- Experiments -->
+        <mxCell id="X1" value="&lt;b&gt;X: Experiment&lt;/b&gt;&lt;br&gt;Level 1 PSTH (illustrative p=0.002)&lt;br&gt;&lt;i&gt;repr_id, run_id (artifact)&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="160" y="460" width="300" height="74" as="geometry" /></mxCell>
+        <mxCell id="X2" value="&lt;b&gt;X: Experiment&lt;/b&gt;&lt;br&gt;KS test on τ passes&lt;br&gt;&lt;i&gt;(time-rescaling GoF)&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="1060" y="460" width="300" height="74" as="geometry" /></mxCell>
+
+        <!-- Data + Research -->
+        <mxCell id="R1" value="&lt;b&gt;R: Research&lt;/b&gt;&lt;br&gt;methodology.tex kernel spec&lt;br&gt;&lt;i&gt;artifact_citation&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="160" y="600" width="300" height="74" as="geometry" /></mxCell>
+        <mxCell id="D1" value="&lt;b&gt;D: Data&lt;/b&gt;&lt;br&gt;acoustic candidates, QC mix&lt;br&gt;&lt;i&gt;provenance_citation&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=11;fillColor=#FFFFFF;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="610" y="600" width="300" height="74" as="geometry" /></mxCell>
+
+        <!-- no-signal badge -->
+        <mxCell id="nosig" value="&lt;b&gt;no signal&lt;/b&gt; &lt;i&gt;badge&lt;/i&gt;&lt;br&gt;&lt;i&gt;(UI example only)&lt;/i&gt;&lt;br&gt;Claims without a bound artifact render this badge - the honesty primitive Maps grounding lacks." style="rounded=2;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;fontSize=10;spacingLeft=6;spacingRight=6;fillColor=#FCEBEC;strokeColor=#D06A72;fontColor=#7A2E33;" vertex="1" parent="1"><mxGeometry x="1060" y="600" width="300" height="100" as="geometry" /></mxCell>
+
+        <!-- legend -->
+        <mxCell id="legend" value="&lt;b&gt;Node types:&lt;/b&gt; C Claim · M Method (skill_invocation step) · X Experiment (artifact repr_id/run_id) · D Data (provenance_citation) · R Research (artifact_citation).&amp;nbsp;&amp;nbsp;&lt;b&gt;Edge types:&lt;/b&gt; validated_by, evaluated_by, supports (dashed), derived_from, grounded_in.&lt;br&gt;&lt;i&gt;Example values are illustrative; effective confidence is 0% (not yet promoted). Rendered live by ProvenanceGraph from the persisted interaction step log.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;fontSize=10;spacingLeft=8;spacingRight=8;fillColor=#FAF7FC;strokeColor=#A86FB2;fontColor=#1F1426;" vertex="1" parent="1"><mxGeometry x="60" y="740" width="1400" height="80" as="geometry" /></mxCell>
+
+        <!-- edges -->
+        <mxCell id="pe_c1" value="claim" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="metric" target="C1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="310" y="97" /></Array></mxGeometry></mxCell>
+        <mxCell id="pe_c2" value="claim" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="metric" target="C2"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1210" y="97" /></Array></mxGeometry></mxCell>
+        <mxCell id="pe_m1" value="validated_by" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="C1" target="M1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_m2" value="validated_by" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="C2" target="M2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_x1" value="evaluated_by" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="M1" target="X1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_x2" value="evaluated_by" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="M2" target="X2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_supports" value="supports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="X1" target="C1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="100" y="497" /><mxPoint x="100" y="237" /></Array></mxGeometry></mxCell>
+        <mxCell id="pe_df1" value="derived_from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0.7;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="X1" target="D1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_df2" value="derived_from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;entryX=0.85;entryY=0;" edge="1" parent="1" source="X2" target="D1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="865" y="497" /></Array></mxGeometry></mxCell>
+        <mxCell id="pe_gi" value="grounded_in" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#A86FB2;fontSize=9;fontColor=#6A4C78;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="C1" target="R1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="500" y="237" /><mxPoint x="500" y="637" /></Array></mxGeometry></mxCell>
+        <mxCell id="pe_unbound" value="no supports edge &#8594; unbound" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;endFill=1;strokeColor=#D06A72;fontSize=9;fontColor=#7A2E33;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="C2" target="nosig"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1420" y="237" /><mxPoint x="1420" y="650" /></Array></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
