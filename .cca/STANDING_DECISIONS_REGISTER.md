@@ -97,7 +97,7 @@ Created 2026-06-26 (Wave Set SD). Provenance is mined from `.cca/STEP_LOG.md`, t
 ### SD-011 — Deploy canon (corrected): Vercel Root Directory = `web`
 - **Decision:** Deploy with the Vercel project dashboard Root Directory = `web`; track a minimal `web/vercel.json` (`{"$schema": ..., "framework": "nextjs"}` only); keep no repo-root `vercel.json`; do not pin `cd web` install/build or `outputDirectory`. Keep `web/.env.example` tracked.
 - **Rationale:** Matches the original design (`DEPLOY_VERCEL.md:27`). A repo-root monorepo pin breaks npm at the repo root (`ENOENT /vercel/path0/package.json`, exit 254); Next.js auto-detect inside `web/` is sufficient.
-- **Status:** ratified (repo-side applied in working tree; **production-green pending operator dashboard confirm + deploy — see Open items O-1**).
+- **Status:** ratified (repo-side committed `09684bf` + pushed to `main`; **production-green pending operator dashboard confirm + deploy — see Open items O-1**).
 - **Resolved:** 2026-06-26 SD-H root-cause + remediation. Supersedes SD-011-OLD.
 - **Enforces_via:** `docs/devpost/DEPLOY_VERCEL.md:27`; presence of `web/vercel.json` and absence of repo-root `vercel.json` (SD doc-grep assertion).
 - **Surfaces:** `web/vercel.json` (added), `web/README.md:53` (corrected), repo root (no `vercel.json`). **Drift (P1) to reconcile:** `.cca/P2X_DEFECT_REGISTER.md:58,79`, `.cca/P2X_CLEANUP_CHARTER.md:56,87`, `.cca/SD0_STANDING_DECISIONS_CHARTER.md:44` (seed I), `docs/devpost/DEPLOY_VERCEL.md:5-11` (env under-count), `.cca/OPEN_ITEMS.md:11` (`sam deploy`), `docs/devpost/UF_UPLOADS_PACKAGING_REVIEW.md:59` (git-push auto-Vercel), `infra/aws/README.md:61` (missing `--platform linux/amd64`).
