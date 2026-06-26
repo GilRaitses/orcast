@@ -12,6 +12,7 @@ const PANELS = [
   {
     title: "Gate-bounded forecast map",
     href: "/",
+    gif: "/demo-gifs/forecast.gif",
     description:
       "Every map cell carries only the confidence its evidence has earned. Gates suppress display when statistical tests fail — click any cell to trace the value back to its detections and kernel fits.",
     label: "Open map",
@@ -19,6 +20,7 @@ const PANELS = [
   {
     title: "Integrity conditions dashboard",
     href: "/gates",
+    gif: "/demo-gifs/gates.gif",
     description:
       "The full gate battery: phase-shuffled null test, time-rescaling GoF, held-out deviance skill, PIT calibration. Failing gates surface a named condition — not a blank — alongside the forecast.",
     label: "View gates",
@@ -26,6 +28,7 @@ const PANELS = [
   {
     title: "Sighting check + evidence upload",
     href: "/ask",
+    gif: "/demo-gifs/ask.gif",
     description:
       "Describe what you saw or upload a photo or audio clip. The system returns an encounter likelihood grounded in live gate state, not a yes/no from parametric LLM knowledge.",
     label: "Sighting check",
@@ -33,6 +36,7 @@ const PANELS = [
   {
     title: "Exploration guide + surface planner",
     href: "/explore?planner=1",
+    gif: "/demo-gifs/planner.gif",
     description:
       "A managed AI agent routes through gates, provenance, and evidence panels in sequence. Plan-then-execute: every skill dispatch is logged; the step-log is the audit substrate.",
     label: "Open guide",
@@ -225,16 +229,17 @@ function HomePageInner() {
               onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.08)")}
               onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
             >
-              {/* Placeholder slot: swap this div for an <img> or <video> once GIFs are captured */}
-              <div style={{
-                width: "100%", aspectRatio: "16/9", borderRadius: "6px",
-                background: "var(--color-bg, #f0f2f6)",
-                marginBottom: "0.9rem",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "0.78rem", color: "var(--color-muted, #888)",
-              }}>
-                demo coming
-              </div>
+              <img
+                src={p.gif}
+                alt={`${p.title} demo`}
+                loading="lazy"
+                style={{
+                  width: "100%", aspectRatio: "16/9", objectFit: "cover",
+                  borderRadius: "6px", marginBottom: "0.9rem",
+                  background: "var(--color-bg, #f0f2f6)",
+                  border: "1px solid var(--color-border, #dde)",
+                }}
+              />
               <h3 style={{ fontSize: "0.97rem", fontWeight: 600, marginBottom: "0.4rem" }}>
                 {p.title}
               </h3>
