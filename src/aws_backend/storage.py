@@ -11,6 +11,7 @@ from .config import Settings, settings
 from .models import (
     CommunitySubmission,
     CommunitySubmissionStatus,
+    DecisionRecord,
     Hotspot,
     IngestionRun,
     NormalizedSighting,
@@ -95,7 +96,22 @@ class StorageBackend(ABC):
         status: str,
         latitude: Optional[float] = None,
         longitude: Optional[float] = None,
+        reviewed_by: Optional[str] = None,
+        reviewer_email: Optional[str] = None,
+        review_reason: Optional[str] = None,
     ) -> Optional[CommunitySubmission]:
+        ...
+
+    @abstractmethod
+    def put_decision_record(self, record: DecisionRecord) -> None:
+        ...
+
+    @abstractmethod
+    def list_decision_records(self, limit: int = 200) -> List[DecisionRecord]:
+        ...
+
+    @abstractmethod
+    def get_decision_record(self, record_id: str) -> Optional[DecisionRecord]:
         ...
 
 
@@ -107,6 +123,7 @@ class MemoryStorage(StorageBackend):
         self.ingestion_runs: Dict[str, IngestionRun] = {}
         self.raw_payloads: Dict[str, Any] = {}
         self.community_submissions: Dict[str, CommunitySubmission] = {}
+        self.decision_records: Dict[str, DecisionRecord] = {}
 
     def put_sightings(self, sightings: List[NormalizedSighting]) -> None:
         for sighting in sightings:
@@ -153,18 +170,35 @@ class MemoryStorage(StorageBackend):
         status: str,
         latitude: Optional[float] = None,
         longitude: Optional[float] = None,
+        reviewed_by: Optional[str] = None,
+        reviewer_email: Optional[str] = None,
+        review_reason: Optional[str] = None,
     ) -> Optional[CommunitySubmission]:
         submission = self.community_submissions.get(submission_id)
         if submission is None:
             return None
+        if submission.status != CommunitySubmissionStatus.PENDING:
+            return submission
         submission.status = CommunitySubmissionStatus(status)
         submission.reviewed_at = utc_now()
         if latitude is not None:
             submission.latitude = latitude
         if longitude is not None:
             submission.longitude = longitude
+        submission.reviewed_by = reviewed_by
+        submission.reviewer_email = reviewer_email
+        submission.review_reason = review_reason
         self.community_submissions[submission_id] = submission
         return submission
+
+    def put_decision_record(self, record: DecisionRecord) -> None:
+        self.decision_records[record.id] = record
+
+    def list_decision_records(self, limit: int = 200) -> List[DecisionRecord]:
+        return sorted(self.decision_records.values(), key=lambda r: r.created_at, reverse=True)[:limit]
+
+    def get_decision_record(self, record_id: str) -> Optional[DecisionRecord]:
+        return self.decision_records.get(record_id)
 
 
 class AwsStorage(StorageBackend):
@@ -182,6 +216,7 @@ class AwsStorage(StorageBackend):
         self.reports_table = self.dynamodb.Table(cfg.reports_table)
         self.ingestion_runs_table = self.dynamodb.Table(cfg.ingestion_runs_table)
         self.community_table = self.dynamodb.Table(cfg.community_table)
+        self.decision_records_table = self.dynamodb.Table(cfg.decision_records_table)
 
     def put_sightings(self, sightings: List[NormalizedSighting]) -> None:
         with self.sightings_table.batch_writer() as batch:
@@ -255,18 +290,62 @@ class AwsStorage(StorageBackend):
         status: str,
         latitude: Optional[float] = None,
         longitude: Optional[float] = None,
+        reviewed_by: Optional[str] = None,
+        reviewer_email: Optional[str] = None,
+        review_reason: Optional[str] = None,
     ) -> Optional[CommunitySubmission]:
         submission = self.get_community_submission(submission_id)
         if submission is None:
             return None
+        if submission.status != CommunitySubmissionStatus.PENDING:
+            return submission
         submission.status = CommunitySubmissionStatus(status)
         submission.reviewed_at = utc_now()
         if latitude is not None:
             submission.latitude = latitude
         if longitude is not None:
             submission.longitude = longitude
-        self.put_community_submission(submission)
+        submission.reviewed_by = reviewed_by
+        submission.reviewer_email = reviewer_email
+        submission.review_reason = review_reason
+        item = _decimalize(model_to_dict(submission))
+        item["pk"] = submission_id
+        item["status"] = status
+        try:
+            from botocore.exceptions import ClientError
+
+            self.community_table.put_item(
+                Item=item,
+                ConditionExpression="#st = :pending",
+                ExpressionAttributeNames={"#st": "status"},
+                ExpressionAttributeValues={":pending": CommunitySubmissionStatus.PENDING.value},
+            )
+        except ClientError as exc:
+            if exc.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                return self.get_community_submission(submission_id)
+            raise
         return submission
+
+    def put_decision_record(self, record: DecisionRecord) -> None:
+        item = _decimalize(model_to_dict(record))
+        item["pk"] = record.id
+        item["verdict"] = record.verdict.value
+        # Audit records are write-once: refuse to overwrite an existing pk so a
+        # promotion decision can never be silently rewritten.
+        self.decision_records_table.put_item(
+            Item=item,
+            ConditionExpression="attribute_not_exists(pk)",
+        )
+
+    def list_decision_records(self, limit: int = 200) -> List[DecisionRecord]:
+        response = self.decision_records_table.scan()
+        records = [DecisionRecord(**item) for item in response.get("Items", [])]
+        return sorted(records, key=lambda r: r.created_at, reverse=True)[:limit]
+
+    def get_decision_record(self, record_id: str) -> Optional[DecisionRecord]:
+        response = self.decision_records_table.get_item(Key={"pk": record_id})
+        item = response.get("Item")
+        return DecisionRecord(**item) if item else None
 
 
 def build_storage(cfg: Settings = settings) -> StorageBackend:
