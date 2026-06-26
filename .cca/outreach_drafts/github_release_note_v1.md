@@ -33,7 +33,7 @@ The surface planner's interaction step-log, injected as RAG context to the Gemin
 ### Research
 
 - Whitepaper 1: Evidence-bounded encounter forecasting (10 pp). Anchored on Olson et al. 2018 (opportunistic SRKW sightings) + Diggle et al. 2010 (preferential-sampling correction).
-- Whitepaper 2: Grounding quality measurement for orchestrated AI reasoning chains, an evaluation primitive for human-in-the-loop agentic systems (5 pp). Anchored on Magentic-UI (Microsoft 2025) + Horvitz 1999 (mixed-initiative).
+- Whitepaper 2: Grounding quality measurement for orchestrated AI reasoning chains, an evaluation primitive for orchestrator-in-the-loop agentic systems (5 pp). Anchored on Magentic-UI (Microsoft 2025) + Horvitz 1999 (mixed-initiative).
 - 16 Emergent Mind search family summaries in `docs/whitepaper/research/`
 - arXiv bundles built and validated; arXiv link pending (WP1, WP2)
 

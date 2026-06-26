@@ -24,7 +24,7 @@ A multi-turn guided tour of gates, provenance, and the surface planner. At `/exp
 **The grounding benchmark:**
 This is the finding that surprised me. When the surface planner's interaction step-log is injected as RAG context to the Gemini Interactions API, the unsupported scientific claim rate drops from 60–100% (Maps-only geospatial grounding baseline across query types, 2026-06-24) to 0%. The difference is not better citation generation — the query type changed. Injecting a complete reasoning trace transforms an open-domain science question into a closed artifact-reference question. The model answers from the step-log.
 
-That diagnostic — step-log injection achieves full grounding; narrowly structured context achieves none — is the basis of a companion paper on grounding quality measurement for human-in-the-loop agentic systems.
+That diagnostic — step-log injection achieves full grounding; narrowly structured context achieves none — is the basis of a companion paper on grounding quality measurement for orchestrator-in-the-loop agentic systems.
 
 **Stack:** Amazon DynamoDB (9 tables, system of record), AWS App Runner, Vercel, AWS Step Functions, Amazon Bedrock, S3, WorkOS AuthKit.
 
