@@ -7,7 +7,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
 
-from ..auth import require_api_key
+from ..auth import ReviewerIdentity, require_api_key, require_trusted_reviewer, reviewer_identity
 from ..models import CommunitySubmission, CommunitySubmissionStatus
 from ..state import storage
 from ..storage import model_to_dict
@@ -32,6 +32,7 @@ class CommunitySightingRequest(BaseModel):
 class CommunityReviewRequest(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    reason: Optional[str] = Field(default=None, max_length=1000)
 
 
 @router.post("/api/community/sightings", status_code=status.HTTP_201_CREATED)
@@ -75,14 +76,23 @@ def approve_community_submission(
     submission_id: str,
     payload: Optional[CommunityReviewRequest] = None,
     _: None = Depends(require_api_key),
+    identity: ReviewerIdentity = Depends(require_trusted_reviewer),
 ) -> Dict[str, Any]:
     latitude = payload.latitude if payload else None
     longitude = payload.longitude if payload else None
+    existing = storage.get_community_submission(submission_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    if existing.status != CommunitySubmissionStatus.PENDING:
+        raise HTTPException(status_code=409, detail="Submission already reviewed")
     updated = storage.update_community_submission_status(
         submission_id,
         CommunitySubmissionStatus.APPROVED.value,
         latitude=latitude,
         longitude=longitude,
+        reviewed_by=identity.reviewer_id or identity.display_name,
+        reviewer_email=identity.reviewer_email,
+        review_reason=payload.reason if payload else None,
     )
     if updated is None:
         raise HTTPException(status_code=404, detail="Submission not found")
@@ -92,11 +102,21 @@ def approve_community_submission(
 @router.post("/api/community/submissions/{submission_id}/reject")
 def reject_community_submission(
     submission_id: str,
+    payload: Optional[CommunityReviewRequest] = None,
     _: None = Depends(require_api_key),
+    identity: ReviewerIdentity = Depends(require_trusted_reviewer),
 ) -> Dict[str, Any]:
+    existing = storage.get_community_submission(submission_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    if existing.status != CommunitySubmissionStatus.PENDING:
+        raise HTTPException(status_code=409, detail="Submission already reviewed")
     updated = storage.update_community_submission_status(
         submission_id,
         CommunitySubmissionStatus.REJECTED.value,
+        reviewed_by=identity.reviewer_id or identity.display_name,
+        reviewer_email=identity.reviewer_email,
+        review_reason=payload.reason if payload else None,
     )
     if updated is None:
         raise HTTPException(status_code=404, detail="Submission not found")

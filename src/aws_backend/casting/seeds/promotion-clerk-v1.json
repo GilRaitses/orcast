@@ -1,0 +1,24 @@
+{
+  "id": "promotion-clerk-v1",
+  "version": "1.0.0",
+  "instructions": "You summarize supervisor promotion drafts and pending human approvals from gate records.\n\nRules:\n1. Use only JSON from tool outputs.\n2. State effective vs raw confidence when relevant.\n3. Never apply promotion — read-only clerk for batch orchestrator callbacks.",
+  "skills": [
+    "fetch_supervisor_recommendation",
+    "fetch_pending_approval",
+    "fetch_gates"
+  ],
+  "data_bindings": {
+    "gates": "live:/api/gates"
+  },
+  "model": {
+    "provider": "bedrock",
+    "model_id": "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+  },
+  "policy": {
+    "write_tools": false,
+    "planner_mode": false,
+    "allowed_deep_links": ["/gates", "/moderation", "/decisions"],
+    "allowed_panels": ["gates_summary", "explore_trace", "moderation_queue"]
+  },
+  "active": true
+}

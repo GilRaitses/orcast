@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 
+from ..auth import require_api_key
 from ..models import ProbabilityReportRequest
 from ..reports import build_probability_report
 from ..state import ensure_hotspots, get_latest_ingestion_run, storage
@@ -19,7 +20,7 @@ def _csv_escape(value: str) -> str:
     return value
 
 
-@router.post("/api/reports/probability")
+@router.post("/api/reports/probability", dependencies=[Depends(require_api_key)])
 def probability_report(request: ProbabilityReportRequest) -> Dict[str, Any]:
     sightings = storage.list_sightings(limit=10_000)
     hotspots = ensure_hotspots()

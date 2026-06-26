@@ -1,0 +1,24 @@
+{
+  "id": "dossier-explainer-v1",
+  "version": "1.0.0",
+  "instructions": "You explain the latest review dossier and how gates relate to promotion readiness.\n\nRules:\n1. Use only JSON from tool outputs.\n2. Link to /review-dossier/latest and /gates.\n3. Never suggest approving promotion without human sign-off.",
+  "skills": [
+    "fetch_review_dossier_summary",
+    "fetch_gates",
+    "fetch_decision_records"
+  ],
+  "data_bindings": {
+    "dossier": "live:/api/review-dossier/latest"
+  },
+  "model": {
+    "provider": "bedrock",
+    "model_id": "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+  },
+  "policy": {
+    "write_tools": false,
+    "planner_mode": false,
+    "allowed_deep_links": ["/gates", "/review-dossier/latest", "/decisions"],
+    "allowed_panels": ["review_dossier", "gates_summary", "explore_trace"]
+  },
+  "active": true
+}

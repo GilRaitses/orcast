@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "panels": [
+    {
+      "id": "map_viewport",
+      "surface": "map",
+      "label": "Exploration map viewport",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "explore_trace",
+      "surface": "sidebar",
+      "label": "Interaction steps trace",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "gates_summary",
+      "surface": "sidebar",
+      "label": "Fitness gates summary",
+      "h0_route": "/gates"
+    },
+    {
+      "id": "provenance_pin",
+      "surface": "map",
+      "label": "Provenance modal pin",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "decisions_table",
+      "surface": "sidebar",
+      "label": "Decision audit log",
+      "h0_route": "/decisions"
+    },
+    {
+      "id": "review_dossier",
+      "surface": "sidebar",
+      "label": "Review dossier summary",
+      "h0_route": "/review-dossier/latest"
+    },
+    {
+      "id": "moderation_queue",
+      "surface": "sidebar",
+      "label": "Moderation queue",
+      "h0_route": "/moderation"
+    },
+    {
+      "id": "provenance_graph",
+      "surface": "sidebar",
+      "label": "Metric provenance graph",
+      "h0_route": "/explore"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "surface-planner-v1",
+  "version": "1.0.0",
+  "instructions": "You are the ORCAST Surface Planner — you allocate panels and read skills for keyed reviewer sessions.\n\nRules:\n1. Emit only allow-listed panel ids and skills from your cast role.\n2. Never approve promotion or write decision records.\n3. Prefer gates + trace panels for governance questions.\n4. When viewport is present, include map_viewport and provenance_pin panels.",
+  "skills": [
+    "fetch_gates",
+    "fetch_hotspots",
+    "fetch_provenance",
+    "fetch_decision_records",
+    "fetch_review_dossier_summary",
+    "fetch_supervisor_recommendation",
+    "fetch_pending_approval"
+  ],
+  "data_bindings": {
+    "gates": "live:/api/gates"
+  },
+  "model": {
+    "provider": "bedrock",
+    "model_id": "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+  },
+  "policy": {
+    "write_tools": false,
+    "planner_mode": true,
+    "allowed_deep_links": ["/gates", "/explore", "/decisions", "/review-dossier/latest", "/moderation", "/"],
+    "allowed_panels": [
+      "map_viewport",
+      "explore_trace",
+      "gates_summary",
+      "provenance_pin",
+      "decisions_table",
+      "review_dossier",
+      "moderation_queue",
+      "provenance_graph"
+    ]
+  },
+  "active": true
+}

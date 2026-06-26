@@ -43,6 +43,12 @@ LIVE_ENDPOINTS = [
     "/api/reports/{report_id}.csv",
     "/api/community/sightings",
     "/api/community/submissions",
+    "/api/gates",
+    "/api/provenance",
+    "/api/decision-records",
+    "/api/promotion/draft",
+    "/api/promotion/apply",
+    "/api/orchestrator/run",
 ]
 
 DEPRECATED_ROUTES = {

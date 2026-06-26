@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict
@@ -12,6 +13,27 @@ from ..state import ensure_hotspots, noaa
 from ..storage import model_to_dict
 
 router = APIRouter()
+
+# Hard cap on spatial-grid size so a large radius + fine resolution cannot
+# request an enormous (CPU/memory-blowing) grid.
+_MAX_GRID_POINTS = 5000
+
+
+def _clamp_grid_step(lat: float, radius_km: float, grid_resolution: float) -> float:
+    """Return a grid step (degrees) that keeps the grid under the point cap.
+
+    Mirrors the grid extent in ``spatial_forecast_grid`` and widens the step
+    when the requested resolution would exceed ``_MAX_GRID_POINTS``.
+    """
+    step = max(0.01, grid_resolution)
+    lat_span = max(radius_km, 0.0) / 111.0
+    lng_span = max(radius_km, 0.0) / (111.0 * max(math.cos(math.radians(lat)), 1e-6))
+    n_lat = 2.0 * lat_span / step + 1.0
+    n_lng = 2.0 * lng_span / step + 1.0
+    total = n_lat * n_lng
+    if total > _MAX_GRID_POINTS:
+        step *= math.sqrt(total / _MAX_GRID_POINTS)
+    return step
 
 
 @router.post("/forecast/quick")
@@ -33,13 +55,14 @@ def quick_forecast(request: ForecastQuickRequest) -> Dict[str, Any]:
 def spatial_forecast(request: SpatialForecastRequest) -> Dict[str, Any]:
     env = noaa.current_environment()
     hotspots = ensure_hotspots()
+    step_degrees = _clamp_grid_step(request.lat, request.radius_km, request.grid_resolution)
     grid = spatial_forecast_grid(
         request.lat,
         request.lng,
         request.radius_km,
         hotspots,
         env,
-        step_degrees=max(0.01, request.grid_resolution),
+        step_degrees=step_degrees,
         forecast_hours=request.hours,
     )
     return {
