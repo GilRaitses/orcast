@@ -55,6 +55,17 @@ The contract **does** exist at `docs/devpost/casting/PROVENANCE_GRAPH_CONTRACT.m
 
 Confirmation wave verdict (2 reviewers): **9/11 figures 6/6 clean**; no P0/P1 remain. Accepted-as-is residuals: fig-07 IC-return bundle (faithful to source, non-blocking) and minor label density in the fig-04 auth flow (pre-existing, complex flow).
 
+## Circle-back on accepted-as-is residuals + contract audit (2026-06-26)
+
+| id | fig | resolution |
+|----|-----|-----------|
+| F1/F2 | fig-06 | FIXED — `grounded_in` C→R; no-signal badge off unbound claim C2 (per PROVENANCE_GRAPH_CONTRACT.md). See corrected table above. |
+| R8 | fig-07 | RE-EXAMINED → CANONICAL, kept. Returns `gr1`–`gr4` are already staggered (corridors x1155–1185, entries 0.35–0.65) and the `reduce c_eff` convergence is exactly E4 (`c_eff = c_raw · Π gk`) — every failed gate multiplicatively reduces confidence. Legible; no change. |
+| R9b | fig-04 | FIXED — three inter-box labels overlapped body text. Shortened to fit the ~45px gaps + white label bg: `redirect to *.authkit.app`→`redirect`, `allow-list + rate limit`→`allow-list`, `WorkOS session required`→`auth required`. Re-exported + verified. |
+| — | fig-01 | AUDITED vs MANAGED_AGENTS_CONTRACT.md: managed-agents table (PK `id`, SK `version`, `instructions/skills[]`, `policy`, `model`/`active`) matches the contract schema. No drift. |
+
+Gotchas reviewed: `id="null"` silent-drop (addressed — fig-07 uses `gnull`); `--crop` no-op for PNG and `-z` zoom-not-export are informational CLI notes, not defects. No P0/P1/P2 figure defects remain open.
+
 ## CLI reference
 
 See `DRAWIO_CLI_NOTES.md`. Export commands of record:
