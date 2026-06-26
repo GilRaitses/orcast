@@ -126,7 +126,7 @@ flowchart TB
 | U1–U6 | U | planned | see [IMPLEMENTATION_BACKLOG.md](../ux/IMPLEMENTATION_BACKLOG.md) |
 | H0 | H | verify on demand | `./tools/waves/run-gate.sh H0` |
 | H1 | H | manual | video, DynamoDB screenshot, Devpost |
-| SD-H | SD | repo-side committed `09684bf`; prod-green pending operator | delete root vercel.json + web/vercel.json + Root Directory=web (see SDR O-1) |
+| SD-H | SD | done; prod GREEN (deploy `gfgdba0t5`, commit `8e5c6ee`) | Root Directory=web + web/vercel.json + web/ app committed + dup project deleted (SDR SD-011) |
 | SD (register) | SD | done | `.cca/STANDING_DECISIONS_REGISTER.md` written + wired; SD assertions in s-doc-grep |
 
 ## Full wave catalog
