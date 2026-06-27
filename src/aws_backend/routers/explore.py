@@ -94,14 +94,13 @@ def _keyed_automation(request: Request) -> bool:
 def create_session(payload: CreateSessionRequest, request: Request) -> Dict[str, Any]:
     _require_aurora()
     client_ip = request.client.host if request.client else None
+    store = SessionStore()
     try:
         if not _keyed_automation(request):
             assert_session_quota(client_ip)
+        session_id = store.create_session(title=payload.title, client_ip=client_ip)
     except ExploreLimitError as exc:
         raise HTTPException(status_code=429, detail={"error": exc.code, "message": exc.message}) from exc
-    store = SessionStore()
-    try:
-        session_id = store.create_session(title=payload.title, client_ip=client_ip)
     except _DB_UNREACHABLE as exc:
         raise _db_unavailable(exc) from exc
     return {"status": "success", "session_id": session_id}
@@ -121,6 +120,8 @@ def explore_turn(payload: ExploreTurnRequest) -> Dict[str, Any]:
         assert_turn_quota(payload.session_id)
     except ExploreLimitError as exc:
         raise HTTPException(status_code=429, detail={"error": exc.code, "message": exc.message}) from exc
+    except _DB_UNREACHABLE as exc:
+        raise _db_unavailable(exc) from exc
 
     guide = compose_guide_reply(
         payload.message,
