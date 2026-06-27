@@ -360,6 +360,38 @@ research-findings commit.
   do not promote.
 - Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
   W1-W2-W3-done-W4-chartered).
+## 2026-06-27 (CHARTERED: signal & modeling research campaign -- the +0.144 lever)
+
+Operator: "commit and push the record [W7] ... charter waveset with parallel target research agents for
+source discovery for grounding all the additional in-region nodes ... make waves to explore creative and
+physics-based modeling literature for sparse data and non-linear dynamics to capture more granularity and
+maybe subtler covariates computed from existing or available-to-source signals."
+
+- Committed + pushed the W7 measured-HOLD record (2a2c72f: wave_shape.yml + STEP_LOG; served fit untouched,
+  confidence stays 0.0).
+- Diagnosis driving the charter: W7 = 0.49 HOLD and the W6 ingest added 0 NET-NEW analysis observations,
+  so re-running the same cached data cannot reach 0.6. Crossing 0.6 honestly needs genuinely new,
+  independent signal -> served CV-skill ~+0.144, fold-stable. Two ways to get there, both researched:
+  MORE observation and MORE signal per observation.
+- Chartered the signal_modeling_research campaign (SIGNAL_MODELING_CHARTER.md + SIGNAL_MODELING_DISPATCH.md;
+  block added to wave_shape.yml). Two parallel research waves + a synthesis, investigation-first, nothing
+  deploys/promotes/commits (B.1/B.6/B.10):
+  - W9 source discovery (||2): S1 in-region node discovery + grounding (Orcasound/OrcaHello/ONC/SMRU/JASCO/
+    NOAA-DFO nodes beyond the 4, per-node access/provenance + W6-style grounding plan, flag INDEPENDENT vs
+    cache-duplicate); S2 covariate source discovery (SST/fronts, salinity, currents/shear, river discharge,
+    upwelling, harmonics, terrain, ambient-noise/AIS, prey) each classed by admissible role under B.2.
+  - W10 modeling literature (||3): M1 sparse/bursty count + point-process methods (LGCP, GP intensity,
+    hierarchical Bayes, Hawkes, hurdle/NB, GAM); M2 nonlinear-dynamics + physics-based (state-space/SDE/PINN/
+    reservoir/delay-embedding) with HONEST over-fitting risk at our N; M3 subtler derived covariates
+    (tidal nonlinearities, current shear/fronts, terrain features, prey-lag, spatiotemporal terms).
+  - SYN synthesis: ranked plan toward fold-stable +0.144 (data vs model, B.2 role) + the single cheapest
+    high-value experiment.
+- Load-bearing rail (charter sec 4): every proposal judged by held-out, fold-stable CV mean-deviance-skill,
+  never in-sample fit -- the frontier is small-N and the confidence map jumps quickly, so flexible
+  methods that cannot show out-of-sample fold-stable gains are dead-ends, stated honestly.
+- Status CHARTERED; W9/W10 launch is the next operator gate. No fit, no deploy, no promotion; effective
+  confidence stays 0.0.
+
 ## 2026-06-27 (W7 MEASURED: served 4-station refit -> 0.49 HOLD, NOT promoted)
 
 Operator: "get the number for the decision and if it passes a very good threshold and it's reasonable to

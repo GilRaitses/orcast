@@ -288,7 +288,64 @@ forward_path_campaign:
         - { role: l3-retest,        owns: modeling/studies/salmon_lag.py, deliverable: "re-run the FROZEN pre-registered Jun-Sep held-out test on the extended series; verdict against G3's decision bar (all criteria fail today -> WITHHELD)" }
       gate: "G3 decision bar cleared (FRESH OOS replication on NEW data + LOYO >=3-of-n at n>=8 + multiplicity-clean p) AND operator decides -> L3 graduates; otherwise stays WITHHELD-with-flag"
   operator_gates:
-    - W6 ingest deploy (G1 PASS done; awaits ONLY operator deploy approval + production store write) <- NEXT
-    - W7 promotion (PROMOTE band: served skill >=+0.144 + folds + lower-bound + PIT + L1, + recorded supervisor decision; ingest alone is HOLD at 0.49)
+    - W6 ingest deploy (DEPLOYED; served store now 4-station)
+    - W7 promotion (MEASURED-HOLD at 0.49; PROMOTE band needs served skill >=+0.144 + folds + lower-bound + PIT + L1, + recorded supervisor decision)
     - W8 L3 decision (depends on W6 + a fresh powered summer; G3 decision bar + operator decision)
+    - any commit or push (unchanged)
+
+# Signal & modeling research campaign: the +0.144 lever. W7 measured 0.49 HOLD and the W6 ingest
+# added 0 NEW observations, so the same cached data cannot move the number. Crossing 0.6 honestly
+# needs genuinely new, independent signal to served skill ~+0.144, fold-stable. Two parallel research
+# waves research the two ways to get there: MORE observation (new in-region nodes + sourceable
+# covariate signals) and MORE signal per observation (sparse-data / nonlinear-physics modeling +
+# subtler derived covariates), then a synthesis ranks what graduates to a build/deploy wave.
+# Canonical prose: SIGNAL_MODELING_CHARTER.md. Prompts: SIGNAL_MODELING_DISPATCH.md.
+# Investigation-first; nothing deploys, promotes, or commits (B.1/B.6/B.10).
+signal_modeling_research:
+  status: CHARTERED                          # 2026-06-27; W9/W10 launch is the next operator gate
+  model: inherit
+  premise: "W7 = 0.49 HOLD; W6 ingest added 0 net-new analysis observations -> re-running cached data cannot reach 0.6. Get genuinely new signal to served CV-skill ~+0.144 (fold-stable) via (a) more independent observation or (b) more signal per observation. Judge EVERY proposal by held-out, fold-stable CV mean-deviance-skill, never in-sample fit (small-N overfitting trap)."
+  honesty: "B.1 nothing promotes (findings are decision aids); B.2 every covariate classed effort/exposure vs effect-modifier vs validation-only, acoustic stays the temporal driver; B.3 withhold over fake; B.10 no agent commits. External lit/sources via web; in-region feed probes via aimez EC2 i-04a649f91274e9fce; no production write."
+  objectives:
+    S1_nodes:       "enumerate every additional in-region acoustic/hydrophone node + reviewed-detection source beyond the 4; per-node access/provenance/license + W6-style grounding plan; flag genuinely-independent vs cache-duplicate"
+    S2_covariates:  "catalogue sourceable physical/oceanographic/biological signals; per-signal access + admissible role under B.2 + collinearity with existing covariates"
+    M1_sparse:      "sparse/bursty count + point-process methods (LGCP, GP intensity, hierarchical Bayes, Hawkes, hurdle/NB, penalized GAM) that lift held-out skill at our N"
+    M2_nonlinear:   "nonlinear-dynamics + physics-based methods (state-space/SDE/PINN/reservoir/delay-embedding) with HONEST over-fitting risk at our N"
+    M3_derived:     "subtler covariates computable from existing or S2-sourceable signals (tidal nonlinearities, current shear/fronts, terrain features, prey-lag, spatiotemporal terms)"
+    SYN:            "rank what graduates to a build/deploy wave (data vs model), what is a dead-end, and the cheapest high-value experiment toward fold-stable +0.144"
+  findings_dir: .cca/catalogue/O0/20260627_mlops/research/signal_modeling/
+  investigation_first: true
+  no_convergence_file_edits: true
+  no_deploy: true
+  no_promotion: true
+  no_commit: true
+  waves:
+    - id: W9
+      name: source-discovery
+      parallelism: 2
+      status: chartered
+      agents:
+        - { role: node-source-discovery,      owns: research/signal_modeling/S1_node_sources.md,      deliverable: "in-region node catalog (Orcasound/OrcaHello/ONC/SMRU/JASCO/NOAA-DFO) + per-node access/provenance + W6-style grounding plan + ranked go/no-go on which add INDEPENDENT observation" }
+        - { role: covariate-source-discovery, owns: research/signal_modeling/S2_covariate_sources.md, deliverable: "covariate source catalog (SST/fronts, salinity, currents/shear, river discharge, upwelling, tide/current harmonics, terrain, ambient-noise/AIS, prey) + per-signal admissible-role (B.2) + collinearity + ranked go/no-go" }
+      gate: "S1 + S2 each land a catalog with access/provenance + per-item honest role/grounding plan"
+    - id: W10
+      name: modeling-literature
+      parallelism: 3
+      status: chartered
+      depends_on_soft: [W9]                    # M3 uses S2's candidate signals; can run together if M3 assumes a candidate list
+      agents:
+        - { role: sparse-data-methods,    owns: research/signal_modeling/M1_sparse_data_methods.md, deliverable: "ranked sparse/bursty-count method shortlist + held-out-payoff + data-volume need + pipeline feasibility + per-method go/no-go" }
+        - { role: nonlinear-physics,      owns: research/signal_modeling/M2_nonlinear_physics.md,    deliverable: "nonlinear-dynamics/physics-informed shortlist + HONEST over-fitting risk at our N + 'promising-now vs needs-far-more-data' split + per-method go/no-go" }
+        - { role: derived-covariates,     owns: research/signal_modeling/M3_derived_covariates.md,   deliverable: "derived/engineered covariate list w/ computation recipe + physical rationale + B.2 role + collinearity + expected held-out contribution + ranked go/no-go" }
+      gate: "M1/M2/M3 each land a shortlist with applicability + expected held-out payoff + over-fitting risk note"
+    - id: SYN
+      name: synthesis
+      depends_on: [W9, W10]
+      status: chartered
+      agents:
+        - { role: synthesis, owns: research/signal_modeling/SYNTHESIS_signal_modeling.md, deliverable: "ranked plan toward fold-stable +0.144: node(s) to ground (S1), covariate(s) to wire (S2), model(s)/covariate(s) to prototype (M1/M2/M3); dead-ends; the single cheapest high-value experiment; each tagged data-vs-model + B.2 role" }
+      gate: "ranked graduate/dead-end plan + cheapest experiment; anything that follows is a separate operator-gated build/deploy/promote wave"
+  operator_gates:
+    - W9 + W10 research launch <- NEXT
+    - graduating a finding to a build/deploy/promote wave (separate, gated)
     - any commit or push (unchanged)
