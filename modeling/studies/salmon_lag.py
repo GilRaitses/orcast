@@ -35,6 +35,14 @@ LAG_MAX = 30
 N_PERMUTATIONS = 1000
 PERMUTATION_SEED = 20260627
 
+# Stock-alignment gate (B.3 honesty). A real feed only earns k_salmon credit if
+# its dominant run is the Fraser SUMMER Chinook stock that SRKW chiefly target.
+# Albion (Fraser/DFO) is that stock. DART (Columbia/Bonneville) is a real,
+# parseable feed but its dominant peak is the Columbia FALL run, a DIFFERENT
+# stock; it is a proxy/secondary source, not stock-aligned, so a real-but-DART
+# signal that beats the null still leaves L3 withheld with the mismatch reason.
+_STOCK_ALIGNED_SOURCES = {"albion"}
+
 
 def _round(v: float) -> float:
     return round(float(v), 6)
@@ -270,6 +278,18 @@ def _source_summary(source_by_year: Dict[str, str]) -> Tuple[str, bool]:
     return label, real_only
 
 
+def _stock_aligned(source_by_year: Dict[str, str]) -> bool:
+    """True only if every real source is a Fraser-summer-Chinook (SRKW-target) feed.
+
+    DART (Columbia/Bonneville fall run) is real but NOT stock-aligned; it cannot
+    earn k_salmon credit on its own even if it beats the permutation null.
+    """
+    srcs = set(source_by_year.values())
+    if not srcs:
+        return False
+    return srcs <= _STOCK_ALIGNED_SOURCES
+
+
 def _write_payload(result: GateResult, path: Path = REPORT_PATH) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = asdict(result)
@@ -295,6 +315,7 @@ def run(write_json: bool = True) -> GateResult:
 
     run_index, source_by_year, notes = _build_run_index(days)
     source_label, source_is_real = _source_summary(source_by_year)
+    stock_aligned = _stock_aligned(source_by_year)
     best_lag, best_corr, lag_to_corr = _best_lag(run_index, presence, LAG_MIN, LAG_MAX)
     p_value, null_best_abs, mean_null, std_null = _permutation_null(
         run_index=run_index,
@@ -307,17 +328,33 @@ def run(write_json: bool = True) -> GateResult:
     effect_delta = abs(best_corr) - mean_null
     effect_z = (effect_delta / std_null) if std_null > 0 else 0.0
 
-    if source_is_real and p_value < 0.05:
+    if source_is_real and stock_aligned and p_value < 0.05:
         status = GATE_PASS
         reason = (
-            "Lag scan finds a non-null run-timing alignment signal with a real salmon feed "
-            f"(best lag {best_lag:+d} days, r={best_corr:.3f}, p={p_value:.4f})."
+            "Lag scan finds a non-null run-timing alignment signal with a real, stock-aligned "
+            f"(Fraser-summer Chinook) salmon feed (best lag {best_lag:+d} days, r={best_corr:.3f}, "
+            f"p={p_value:.4f})."
         )
     elif not source_is_real:
         status = GATE_WITHHELD
         reason = (
             "Lag scan is informational only because salmon source includes climatology fallback; "
             "signal may be suggestive but cannot earn k_salmon gate credit on a placeholder feed."
+        )
+    elif source_is_real and not stock_aligned:
+        status = GATE_WITHHELD
+        null_clause = (
+            f"and it does NOT beat the permutation null (p={p_value:.4f} >= 0.05)"
+            if p_value >= 0.05
+            else f"and although it beats the permutation null (p={p_value:.4f} < 0.05)"
+        )
+        reason = (
+            f"Lag scan ran on a REAL feed (source={source_label}) "
+            f"(best lag {best_lag:+d} days, r={best_corr:.3f}, p={p_value:.4f}), {null_clause}, "
+            "the feed is STOCK-MISMATCHED: DART (Columbia/Bonneville) is dominated by the Columbia "
+            "FALL Chinook run, a different stock than the Fraser SUMMER Chinook that SRKW chiefly "
+            "target. A Columbia-fall proxy cannot earn k_salmon credit; L3 stays withheld pending a "
+            "stock-aligned (Fraser) feed."
         )
     else:
         status = GATE_WITHHELD
@@ -339,6 +376,12 @@ def run(write_json: bool = True) -> GateResult:
             "source": source_label,
             "source_by_year": source_by_year,
             "real_feed_only": source_is_real,
+            "stock_aligned": stock_aligned,
+            "stock_note": (
+                "stock_aligned=True requires a Fraser-summer-Chinook (SRKW-target) feed (Albion). "
+                "DART (Columbia/Bonneville) is the Columbia fall run: real and parseable but a "
+                "different stock, so stock_aligned=False and it cannot earn k_salmon credit alone."
+            ),
             "notes": notes,
         },
         "lag_scan": {
@@ -351,6 +394,7 @@ def run(write_json: bool = True) -> GateResult:
             "null_best_abs_mean": _round(mean_null),
             "null_best_abs_std": _round(std_null),
             "p_value": _round(p_value),
+            "beats_permutation_null": bool(p_value < 0.05),
             "effect_size_delta_abs": _round(effect_delta),
             "effect_size_z": _round(effect_z),
             "lag_correlations": {str(k): _round(v) for k, v in lag_to_corr.items()},

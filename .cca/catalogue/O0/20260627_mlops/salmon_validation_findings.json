@@ -1,0 +1,39 @@
+{
+  "year": 2025,
+  "live": true,
+  "dart": {
+    "feed": "dart",
+    "url": "https://www.cbr.washington.edu/dart/cs/php/rpt/adult_daily.php",
+    "reachable": true,
+    "http_status": 200,
+    "content_type": "text/csv;charset=UTF-8",
+    "parseable": true,
+    "row_count": 269,
+    "sample": {
+      "2025-03-15": 1.0,
+      "2025-03-16": 1.0,
+      "2025-03-19": 2.0,
+      "2025-09-07": 22928.0
+    },
+    "beats_climatology": true,
+    "note": "live; parsed via salmon._parse_daily_payload on CSV->rows; data peak doy=250 (climatology placeholder peak doy=201)"
+  },
+  "albion": {
+    "feed": "albion",
+    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
+    "reachable": false,
+    "http_status": null,
+    "content_type": null,
+    "parseable": false,
+    "row_count": 0,
+    "sample": {},
+    "beats_climatology": false,
+    "note": "unreachable (ConnectionError); DFO host DNS is intermittent"
+  },
+  "verdict": {
+    "real_feed_available": true,
+    "real_feed": "dart",
+    "albion_parseable": false,
+    "l3_recommendation": "promote-eligible: DART (Columbia/Bonneville) yields a real daily Chinook run-timing index that beats the climatology placeholder. Apply PATCH-salmon.md."
+  }
+}

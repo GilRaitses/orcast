@@ -1,0 +1,607 @@
+{
+  "status": "ok",
+  "generated_at": "2026-06-27T07:56:55.534163+00:00",
+  "consistency_bar": 0.5,
+  "provenance": "DIAGNOSTIC, not a fit. Multi-station design = production haro_strait stream (S3) + cached OrcaHello index for orcasound_lab/north_san_juan_channel/andrews_bay + S3 env_currents + station_uptime. No store write, no model artifact, no confidence promotion.",
+  "n_stations": 4,
+  "stations": [
+    "andrews_bay",
+    "haro_strait",
+    "north_san_juan_channel",
+    "orcasound_lab"
+  ],
+  "per_station_detections": {
+    "andrews_bay": 265,
+    "haro_strait": 761,
+    "north_san_juan_channel": 34,
+    "orcasound_lab": 1029
+  },
+  "per_station_bins": {
+    "andrews_bay": 3108,
+    "haro_strait": 5361,
+    "north_san_juan_channel": 8349,
+    "orcasound_lab": 50081
+  },
+  "effort_assumed_continuous": true,
+  "effort_module": {
+    "available": true,
+    "note": "modeling/effort.py (Agent A) consumed via exposure_for_bins for the effort-normalized PSTH comparison (FALLBACK_CONTINUOUS = honest; FALLBACK_DETECTION_DENSITY = circular, sensitivity only).",
+    "summary": {
+      "fallback": "continuous",
+      "bin_hours": 1.0,
+      "min_effort_fraction": 0.001,
+      "any_station_uptime_binds": false,
+      "per_station": {
+        "andrews_bay": {
+          "n_detections": 265,
+          "n_bins": 3108,
+          "uptime_resolved": true,
+          "uptime_binds_window": false,
+          "effort_assumed_continuous": true,
+          "mean_effort_fraction": 1.0,
+          "min_effort_fraction": 1.0,
+          "max_effort_fraction": 1.0,
+          "frac_bins_down": 0.0,
+          "log_effort_mean": 0.0,
+          "log_effort_min": 0.0,
+          "log_effort_max": 0.0,
+          "log_effort_std": 0.0,
+          "log_effort_degenerate": true,
+          "n_uptime_samples": 347,
+          "uptime_up_fraction_mean": 0.0,
+          "uptime_constant_in_window": true
+        },
+        "haro_strait": {
+          "n_detections": 761,
+          "n_bins": 5361,
+          "uptime_resolved": false,
+          "uptime_binds_window": false,
+          "effort_assumed_continuous": true,
+          "mean_effort_fraction": 1.0,
+          "min_effort_fraction": 1.0,
+          "max_effort_fraction": 1.0,
+          "frac_bins_down": 0.0,
+          "log_effort_mean": 0.0,
+          "log_effort_min": 0.0,
+          "log_effort_max": 0.0,
+          "log_effort_std": 0.0,
+          "log_effort_degenerate": true
+        },
+        "north_san_juan_channel": {
+          "n_detections": 34,
+          "n_bins": 8349,
+          "uptime_resolved": true,
+          "uptime_binds_window": false,
+          "effort_assumed_continuous": true,
+          "mean_effort_fraction": 1.0,
+          "min_effort_fraction": 1.0,
+          "max_effort_fraction": 1.0,
+          "frac_bins_down": 0.0,
+          "log_effort_mean": 0.0,
+          "log_effort_min": 0.0,
+          "log_effort_max": 0.0,
+          "log_effort_std": 0.0,
+          "log_effort_degenerate": true,
+          "n_uptime_samples": 346,
+          "uptime_up_fraction_mean": 1.0,
+          "uptime_constant_in_window": true
+        },
+        "orcasound_lab": {
+          "n_detections": 1029,
+          "n_bins": 50081,
+          "uptime_resolved": true,
+          "uptime_binds_window": false,
+          "effort_assumed_continuous": true,
+          "mean_effort_fraction": 1.0,
+          "min_effort_fraction": 1.0,
+          "max_effort_fraction": 1.0,
+          "frac_bins_down": 0.0,
+          "log_effort_mean": 0.0,
+          "log_effort_min": 0.0,
+          "log_effort_max": 0.0,
+          "log_effort_std": 0.0,
+          "log_effort_degenerate": true,
+          "n_uptime_samples": 346,
+          "uptime_up_fraction_mean": 1.0,
+          "uptime_constant_in_window": true
+        }
+      }
+    }
+  },
+  "tide_model": "harmonic",
+  "tide_reconstruction_r2": 0.8470809929517612,
+  "fit_covariates": [
+    "diel",
+    "tide",
+    "lunar",
+    "season"
+  ],
+  "covariates_excluded": {},
+  "baseline_cross_station_consistency": {
+    "testable": true,
+    "n_stations": 4,
+    "mean_psth_correlation": {
+      "diel": 0.33606293921082514,
+      "tide": 0.1364130760715123,
+      "lunar": 0.1660812532470315,
+      "season": 0.15893289487753845
+    },
+    "consistent": false
+  },
+  "kernels": {
+    "diel": {
+      "testable": true,
+      "n_stations": 4,
+      "mean_psth_correlation": 0.3361,
+      "correlation_matrix": {
+        "andrews_bay": {
+          "haro_strait": 0.1246,
+          "north_san_juan_channel": 0.0728,
+          "orcasound_lab": 0.3684
+        },
+        "haro_strait": {
+          "andrews_bay": 0.1246,
+          "north_san_juan_channel": 0.4301,
+          "orcasound_lab": 0.6856
+        },
+        "north_san_juan_channel": {
+          "andrews_bay": 0.0728,
+          "haro_strait": 0.4301,
+          "orcasound_lab": 0.3349
+        },
+        "orcasound_lab": {
+          "andrews_bay": 0.3684,
+          "haro_strait": 0.6856,
+          "north_san_juan_channel": 0.3349
+        }
+      },
+      "per_station_mean_corr": {
+        "andrews_bay": 0.1886,
+        "haro_strait": 0.4134,
+        "north_san_juan_channel": 0.2793,
+        "orcasound_lab": 0.463
+      },
+      "worst_pairs": [
+        {
+          "pair": [
+            "andrews_bay",
+            "north_san_juan_channel"
+          ],
+          "corr": 0.0728
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "haro_strait"
+          ],
+          "corr": 0.1246
+        },
+        {
+          "pair": [
+            "north_san_juan_channel",
+            "orcasound_lab"
+          ],
+          "corr": 0.3349
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "orcasound_lab"
+          ],
+          "corr": 0.3684
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "north_san_juan_channel"
+          ],
+          "corr": 0.4301
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "orcasound_lab"
+          ],
+          "corr": 0.6856
+        }
+      ],
+      "per_station_phase_coverage": {
+        "andrews_bay": 1.0,
+        "haro_strait": 1.0,
+        "north_san_juan_channel": 1.0,
+        "orcasound_lab": 1.0
+      },
+      "coverage_confound": false,
+      "effort_normalization": {
+        "exposure_normalized_mean_corr": 0.3361,
+        "flat_effort_mean_corr": 0.3361,
+        "delta": 0.0,
+        "effort_module_continuous_mean_corr": 0.3361,
+        "effort_module_detection_density_mean_corr": 0.3188
+      },
+      "bin_count_sensitivity": {
+        "8": 0.4784,
+        "12": 0.3674,
+        "24": 0.3361
+      },
+      "split_half_reliability": {
+        "per_station": {
+          "andrews_bay": -0.0726,
+          "haro_strait": 0.0973,
+          "north_san_juan_channel": 0.0447,
+          "orcasound_lab": 0.037
+        },
+        "mean": 0.0266
+      },
+      "partial_pooling_shrinkage": {
+        "mean_corr": 0.8526075818447202,
+        "pooling_constant_k": 513.0
+      },
+      "verdict_code": "noise_artifact",
+      "verdict": "below bar, but within-station split-half reliability is ALSO below the bar: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated genuine heterogeneity"
+    },
+    "tide": {
+      "testable": true,
+      "n_stations": 4,
+      "mean_psth_correlation": 0.1364,
+      "correlation_matrix": {
+        "andrews_bay": {
+          "haro_strait": -0.1819,
+          "north_san_juan_channel": -0.2032,
+          "orcasound_lab": -0.1783
+        },
+        "haro_strait": {
+          "andrews_bay": -0.1819,
+          "north_san_juan_channel": 0.4415,
+          "orcasound_lab": 0.6288
+        },
+        "north_san_juan_channel": {
+          "andrews_bay": -0.2032,
+          "haro_strait": 0.4415,
+          "orcasound_lab": 0.3116
+        },
+        "orcasound_lab": {
+          "andrews_bay": -0.1783,
+          "haro_strait": 0.6288,
+          "north_san_juan_channel": 0.3116
+        }
+      },
+      "per_station_mean_corr": {
+        "andrews_bay": -0.1878,
+        "haro_strait": 0.2961,
+        "north_san_juan_channel": 0.1833,
+        "orcasound_lab": 0.254
+      },
+      "worst_pairs": [
+        {
+          "pair": [
+            "andrews_bay",
+            "north_san_juan_channel"
+          ],
+          "corr": -0.2032
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "haro_strait"
+          ],
+          "corr": -0.1819
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "orcasound_lab"
+          ],
+          "corr": -0.1783
+        },
+        {
+          "pair": [
+            "north_san_juan_channel",
+            "orcasound_lab"
+          ],
+          "corr": 0.3116
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "north_san_juan_channel"
+          ],
+          "corr": 0.4415
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "orcasound_lab"
+          ],
+          "corr": 0.6288
+        }
+      ],
+      "per_station_phase_coverage": {
+        "andrews_bay": 1.0,
+        "haro_strait": 1.0,
+        "north_san_juan_channel": 1.0,
+        "orcasound_lab": 1.0
+      },
+      "coverage_confound": false,
+      "effort_normalization": {
+        "exposure_normalized_mean_corr": 0.1364,
+        "flat_effort_mean_corr": 0.1364,
+        "delta": 0.0,
+        "effort_module_continuous_mean_corr": 0.1364,
+        "effort_module_detection_density_mean_corr": 0.1259
+      },
+      "bin_count_sensitivity": {
+        "8": 0.2104,
+        "12": 0.1224,
+        "24": 0.1364
+      },
+      "split_half_reliability": {
+        "per_station": {
+          "andrews_bay": 0.0441,
+          "haro_strait": 0.0789,
+          "north_san_juan_channel": -0.1565,
+          "orcasound_lab": 0.139
+        },
+        "mean": 0.0264
+      },
+      "partial_pooling_shrinkage": {
+        "mean_corr": 0.7025332908396299,
+        "pooling_constant_k": 513.0
+      },
+      "verdict_code": "noise_artifact",
+      "verdict": "below bar, but within-station split-half reliability is ALSO below the bar: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated genuine heterogeneity"
+    },
+    "lunar": {
+      "testable": true,
+      "n_stations": 4,
+      "mean_psth_correlation": 0.1661,
+      "correlation_matrix": {
+        "andrews_bay": {
+          "haro_strait": 0.141,
+          "north_san_juan_channel": -0.0633,
+          "orcasound_lab": 0.1297
+        },
+        "haro_strait": {
+          "andrews_bay": 0.141,
+          "north_san_juan_channel": 0.0625,
+          "orcasound_lab": 0.6056
+        },
+        "north_san_juan_channel": {
+          "andrews_bay": -0.0633,
+          "haro_strait": 0.0625,
+          "orcasound_lab": 0.1209
+        },
+        "orcasound_lab": {
+          "andrews_bay": 0.1297,
+          "haro_strait": 0.6056,
+          "north_san_juan_channel": 0.1209
+        }
+      },
+      "per_station_mean_corr": {
+        "andrews_bay": 0.0692,
+        "haro_strait": 0.2697,
+        "north_san_juan_channel": 0.04,
+        "orcasound_lab": 0.2854
+      },
+      "worst_pairs": [
+        {
+          "pair": [
+            "andrews_bay",
+            "north_san_juan_channel"
+          ],
+          "corr": -0.0633
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "north_san_juan_channel"
+          ],
+          "corr": 0.0625
+        },
+        {
+          "pair": [
+            "north_san_juan_channel",
+            "orcasound_lab"
+          ],
+          "corr": 0.1209
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "orcasound_lab"
+          ],
+          "corr": 0.1297
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "haro_strait"
+          ],
+          "corr": 0.141
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "orcasound_lab"
+          ],
+          "corr": 0.6056
+        }
+      ],
+      "per_station_phase_coverage": {
+        "andrews_bay": 1.0,
+        "haro_strait": 1.0,
+        "north_san_juan_channel": 1.0,
+        "orcasound_lab": 1.0
+      },
+      "coverage_confound": false,
+      "effort_normalization": {
+        "exposure_normalized_mean_corr": 0.1661,
+        "flat_effort_mean_corr": 0.1661,
+        "delta": 0.0,
+        "effort_module_continuous_mean_corr": 0.1661,
+        "effort_module_detection_density_mean_corr": 0.1425
+      },
+      "bin_count_sensitivity": {
+        "8": 0.0954,
+        "12": 0.2009,
+        "24": 0.1661
+      },
+      "split_half_reliability": {
+        "per_station": {
+          "andrews_bay": 0.4012,
+          "haro_strait": 0.4773,
+          "north_san_juan_channel": 0.4408,
+          "orcasound_lab": 0.4086
+        },
+        "mean": 0.432
+      },
+      "partial_pooling_shrinkage": {
+        "mean_corr": 0.7786544716038685,
+        "pooling_constant_k": 513.0
+      },
+      "verdict_code": "noise_artifact",
+      "verdict": "below bar, but within-station split-half reliability is ALSO below the bar: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated genuine heterogeneity"
+    },
+    "season": {
+      "testable": true,
+      "n_stations": 4,
+      "mean_psth_correlation": 0.1589,
+      "correlation_matrix": {
+        "andrews_bay": {
+          "haro_strait": 0.112,
+          "north_san_juan_channel": 0.4119,
+          "orcasound_lab": 0.0945
+        },
+        "haro_strait": {
+          "andrews_bay": 0.112,
+          "north_san_juan_channel": 0.2204,
+          "orcasound_lab": 0.0724
+        },
+        "north_san_juan_channel": {
+          "andrews_bay": 0.4119,
+          "haro_strait": 0.2204,
+          "orcasound_lab": 0.0424
+        },
+        "orcasound_lab": {
+          "andrews_bay": 0.0945,
+          "haro_strait": 0.0724,
+          "north_san_juan_channel": 0.0424
+        }
+      },
+      "per_station_mean_corr": {
+        "andrews_bay": 0.2061,
+        "haro_strait": 0.1349,
+        "north_san_juan_channel": 0.2249,
+        "orcasound_lab": 0.0698
+      },
+      "worst_pairs": [
+        {
+          "pair": [
+            "north_san_juan_channel",
+            "orcasound_lab"
+          ],
+          "corr": 0.0424
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "orcasound_lab"
+          ],
+          "corr": 0.0724
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "orcasound_lab"
+          ],
+          "corr": 0.0945
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "haro_strait"
+          ],
+          "corr": 0.112
+        },
+        {
+          "pair": [
+            "haro_strait",
+            "north_san_juan_channel"
+          ],
+          "corr": 0.2204
+        },
+        {
+          "pair": [
+            "andrews_bay",
+            "north_san_juan_channel"
+          ],
+          "corr": 0.4119
+        }
+      ],
+      "per_station_phase_coverage": {
+        "andrews_bay": 0.4167,
+        "haro_strait": 0.75,
+        "north_san_juan_channel": 1.0,
+        "orcasound_lab": 1.0
+      },
+      "coverage_confound": true,
+      "effort_normalization": {
+        "exposure_normalized_mean_corr": 0.1589,
+        "flat_effort_mean_corr": 0.1589,
+        "delta": 0.0,
+        "effort_module_continuous_mean_corr": 0.1589,
+        "effort_module_detection_density_mean_corr": 0.1636
+      },
+      "bin_count_sensitivity": {
+        "8": 0.1974,
+        "12": 0.1769,
+        "24": 0.1589
+      },
+      "split_half_reliability": {
+        "per_station": {
+          "andrews_bay": 0.7702,
+          "haro_strait": 0.8761,
+          "north_san_juan_channel": 0.6103,
+          "orcasound_lab": 0.5349
+        },
+        "mean": 0.6979
+      },
+      "partial_pooling_shrinkage": {
+        "mean_corr": 0.7207430995702971,
+        "pooling_constant_k": 513.0
+      },
+      "verdict_code": "reproducible_divergent_coverage",
+      "verdict": "below bar while within-station split-half reliability clears it, BUT the per-station phase coverage differs (the stations span different parts of the cycle) -> reproducible-but-divergent shapes are confounded by observation window, NOT demonstrated biological heterogeneity"
+    }
+  },
+  "recommendation": {
+    "can_clear_0p5_bar_honestly": false,
+    "verdict": "NO -- the 0.5 cross-station bar cannot be cleared honestly with the current 4-station data. diel, tide, lunar are noise-bound (within-station split-half reliability is itself below 0.5, so the cross-station correlation cannot exceed noise); season is reproducible within a station but the stations span different parts of the cycle (observation-window confound), so its low correlation is NOT demonstrated biological heterogeneity. The path is more detections per station (3-node production ingest, Agent D) + coarser PSTH bins + partial pooling, re-judged later; not a tuned threshold and not forced consistency.",
+    "noise_artifact_kernels": [
+      "diel",
+      "tide",
+      "lunar"
+    ],
+    "coverage_confounded_kernels": [
+      "season"
+    ],
+    "genuine_heterogeneity_kernels": [],
+    "kernels_clearing_bar": [],
+    "coarser_bins_help_kernels": [
+      "diel"
+    ],
+    "effort_normalization_moves_kernels": [],
+    "effort_assumed_continuous": true,
+    "sparsest_stations": [
+      "north_san_juan_channel",
+      "andrews_bay"
+    ],
+    "actions": [
+      "Aggregate the per-station PSTH at coarser phase resolution (8-12 bins) with a minimum per-bin count, instead of 24 bins, so empty-bin -log floors stop dominating the correlation.",
+      "Raise per-station detection volume via the 3-node production ingest (Agent D) before re-judging the bar; north_san_juan_channel (~34) and andrews_bay are far too sparse for a 24-bin PSTH.",
+      "Score cross-station consistency against the JOINT fitted kernel with a station random effect (partial pooling / shrinkage), reporting the split-half reliability as the ceiling, rather than correlating raw per-station marginals.",
+      "When Agent A's modeling/effort.py lands, re-run with the real log E offset; here effort normalization is a near-no-op because exposure is flat wherever station_uptime is absent.",
+      "If, after more data, a kernel's reproducible shape still differs across stations, report it as genuine heterogeneity (station random effect), not a failed gate -- do not force consistency."
+    ]
+  }
+}

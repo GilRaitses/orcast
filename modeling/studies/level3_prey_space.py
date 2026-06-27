@@ -89,6 +89,8 @@ def run() -> GateResult:
             "status": salmon.status,
             "source": (salmon.metrics.get("run_index", {}) or {}).get("source"),
             "source_by_year": (salmon.metrics.get("run_index", {}) or {}).get("source_by_year"),
+            "real_feed_only": (salmon.metrics.get("run_index", {}) or {}).get("real_feed_only"),
+            "stock_aligned": (salmon.metrics.get("run_index", {}) or {}).get("stock_aligned"),
             "lag_scan": {
                 "best_lag_days": (salmon.metrics.get("lag_scan", {}) or {}).get("best_lag_days"),
                 "best_correlation": (salmon.metrics.get("lag_scan", {}) or {}).get("best_correlation"),
@@ -99,8 +101,9 @@ def run() -> GateResult:
             },
             "reason": salmon.reason,
             "honesty_note": (
-                "If source is climatology_fallback, this lag scan is only suggestive and cannot "
-                "earn k_salmon gate credit."
+                "k_salmon credit requires BOTH a real feed (not climatology_fallback) AND a "
+                "stock-aligned Fraser-summer-Chinook source. DART (Columbia/Bonneville) is a real "
+                "but stock-mismatched fall-run proxy, so it cannot earn credit on its own."
             ),
         },
         "gate_requirements_unmet": [

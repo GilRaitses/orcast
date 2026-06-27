@@ -3,7 +3,7 @@
   "name": "multistation",
   "status": "fail",
   "metrics": {
-    "experiment": "multi-station (haro_strait stream + cached OrcaHello index for 3 nodes)",
+    "experiment": "multi-station (haro_strait stream + cached OrcaHello index for 3 nodes); Wave 2 integration: effort/log E wired (modeling.effort), time-rescaling re-scored with burst-dedup, cross-station scored with coarser bins + split-half ceiling",
     "stations_acoustic": 4,
     "n_detections": 2089,
     "per_station_detections": {
@@ -26,26 +26,209 @@
       "season": 1.0
     },
     "tide_model": "harmonic",
+    "effort_assumed_continuous": true,
     "level1_cross_station": {
       "testable": true,
       "n_stations": 4,
+      "consistency_bar": 0.5,
+      "scoring": "coarser PSTH (12 bins, min per-bin count 1) with within-station split-half reliability as the ceiling and partial-pooling reported with its inflation caveat (agent C)",
       "mean_psth_correlation": {
-        "diel": 0.33606293921082514,
-        "tide": 0.1364130760715123,
-        "lunar": 0.1660812532470315,
-        "season": 0.15893289487753845
+        "diel": 0.053,
+        "tide": 0.2626,
+        "lunar": 0.1256,
+        "season": 0.7017
       },
-      "consistent": false
+      "consistent": false,
+      "noise_artifact_kernels": [
+        "diel",
+        "tide"
+      ],
+      "coverage_confounded_kernels": [
+        "season"
+      ],
+      "genuine_heterogeneity_kernels": [
+        "lunar"
+      ],
+      "kernels": {
+        "diel": {
+          "testable": true,
+          "n_stations": 4,
+          "mean_psth_correlation": 0.053,
+          "headline_bins": 12,
+          "bin_count_sensitivity": {
+            "8": -0.025,
+            "12": 0.053,
+            "24": 0.0105
+          },
+          "split_half_reliability": {
+            "per_station": {
+              "andrews_bay": -0.1092,
+              "haro_strait": 0.374,
+              "north_san_juan_channel": -0.396,
+              "orcasound_lab": 0.4264
+            },
+            "mean": 0.0738
+          },
+          "per_station_phase_coverage": {
+            "andrews_bay": 1.0,
+            "haro_strait": 1.0,
+            "north_san_juan_channel": 1.0,
+            "orcasound_lab": 1.0
+          },
+          "coverage_confound": false,
+          "partial_pooling_shrinkage": {
+            "mean_corr": 0.8485,
+            "pooling_constant_k": 513.0,
+            "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "verdict_code": "noise_artifact",
+          "verdict": "below bar, but within-station split-half reliability is ALSO below 0.5: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated heterogeneity"
+        },
+        "tide": {
+          "testable": true,
+          "n_stations": 4,
+          "mean_psth_correlation": 0.2626,
+          "headline_bins": 12,
+          "bin_count_sensitivity": {
+            "8": 0.3496,
+            "12": 0.2626,
+            "24": -0.0593
+          },
+          "split_half_reliability": {
+            "per_station": {
+              "andrews_bay": 0.2589,
+              "haro_strait": 0.142,
+              "north_san_juan_channel": null,
+              "orcasound_lab": -0.5091
+            },
+            "mean": -0.0361
+          },
+          "per_station_phase_coverage": {
+            "andrews_bay": 1.0,
+            "haro_strait": 1.0,
+            "north_san_juan_channel": 1.0,
+            "orcasound_lab": 1.0
+          },
+          "coverage_confound": false,
+          "partial_pooling_shrinkage": {
+            "mean_corr": 0.8307,
+            "pooling_constant_k": 513.0,
+            "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "verdict_code": "noise_artifact",
+          "verdict": "below bar, but within-station split-half reliability is ALSO below 0.5: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated heterogeneity"
+        },
+        "lunar": {
+          "testable": true,
+          "n_stations": 4,
+          "mean_psth_correlation": 0.1256,
+          "headline_bins": 12,
+          "bin_count_sensitivity": {
+            "8": 0.3807,
+            "12": 0.1256,
+            "24": 0.363
+          },
+          "split_half_reliability": {
+            "per_station": {
+              "andrews_bay": 0.8129,
+              "haro_strait": 0.6724,
+              "north_san_juan_channel": null,
+              "orcasound_lab": 0.5427
+            },
+            "mean": 0.676
+          },
+          "per_station_phase_coverage": {
+            "andrews_bay": 1.0,
+            "haro_strait": 1.0,
+            "north_san_juan_channel": 1.0,
+            "orcasound_lab": 1.0
+          },
+          "coverage_confound": false,
+          "partial_pooling_shrinkage": {
+            "mean_corr": 0.8372,
+            "pooling_constant_k": 513.0,
+            "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "verdict_code": "reproducible_divergent",
+          "verdict": "below bar while within-station split-half clears it and coverage is comparable -> consistent with GENUINE station heterogeneity (model with a station random effect)"
+        },
+        "season": {
+          "testable": true,
+          "n_stations": 4,
+          "mean_psth_correlation": 0.7017,
+          "headline_bins": 12,
+          "bin_count_sensitivity": {
+            "8": 0.455,
+            "12": 0.7017,
+            "24": 0.0231
+          },
+          "split_half_reliability": {
+            "per_station": {
+              "andrews_bay": 0.129,
+              "haro_strait": 0.5161,
+              "north_san_juan_channel": null,
+              "orcasound_lab": 0.782
+            },
+            "mean": 0.4757
+          },
+          "per_station_phase_coverage": {
+            "andrews_bay": 0.4167,
+            "haro_strait": 0.75,
+            "north_san_juan_channel": 1.0,
+            "orcasound_lab": 1.0
+          },
+          "coverage_confound": true,
+          "partial_pooling_shrinkage": {
+            "mean_corr": 0.7894,
+            "pooling_constant_k": 513.0,
+            "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "verdict_code": "coverage_confounded",
+          "verdict": "per-station phase coverage differs (stations span different parts of the cycle), so the cross-station correlation is over the shared window only -> observation-window confound, NOT demonstrated full-cycle consistency (mean corr=0.7017 is not creditable)"
+        }
+      },
+      "can_clear_0p5_bar_honestly": false
     },
+    "cross_station_consistent": false,
+    "cross_station_can_clear_0p5_bar_honestly": false,
+    "cross_station_noise_artifact_kernels": [
+      "diel",
+      "tide"
+    ],
+    "cross_station_coverage_confounded_kernels": [
+      "season"
+    ],
+    "cross_station_genuine_heterogeneity_kernels": [
+      "lunar"
+    ],
     "cv_mean_deviance_skill_multistation": 0.07779744481420332,
     "cv_mean_deviance_skill_singlestation_baseline": -0.04730031489935951,
     "cv_folds_passing": "4/5",
+    "time_rescaling_verdict": "withheld",
+    "time_rescaling_verdict_scope": "neither",
+    "time_rescaling_verdict_reason": "detection burstiness/clustering: a smooth conditional intensity cannot reproduce within-encounter inter-event intervals (event-level KS p=0; a constant-rate Poisson fails identically per Wave 1 diagnostic), and the burst-deduped encounter-onset process still does not clear Exp(1) on the current data. Time-rescaling is WITHHELD with the clustering reason rather than tuned to pass (B.3); bin-level calibration is gated separately by the held-out NB PIT.",
+    "time_rescaling_event_level": {
+      "pooled_pass_exp": false,
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_mean": 0.9793193473294262,
+      "pooled_frac_under_0p05": 0.8163069544364508,
+      "pooled_n": 2085
+    },
+    "time_rescaling_encounter_level": {
+      "method": "burst-dedup to encounter onsets (IEI > 1.00 h) + per-station level renormalisation; isolates encounter timing from detection-count level",
+      "encounter_gap_hours": 1.0,
+      "pooled_n": 354,
+      "pooled_mean": 1.013206265458832,
+      "pooled_ks_exp_pval": 7.464361732396692e-22,
+      "pooled_pass_exp": false,
+      "pooled_frac_under_0p05": 0.20056497175141244
+    },
     "time_rescaling_pooled_pass_exp": false,
     "time_rescaling_pooled_ks_exp_pval": 0.0,
     "beats_climatology": true,
     "confidence_unpromoted": 0.5,
-    "provenance": "EXPERIMENT: not the production fit; mixes the production haro_strait stream with the cached OrcaHello index for the other nodes; no store write; no confidence promotion."
+    "provenance": "EXPERIMENT: not the production fit; mixes the production haro_strait stream with the cached OrcaHello index for the other nodes; write_outputs=False, S3 upload disabled; no store write; no confidence promotion."
   },
-  "reason": "Level 2 still not met with multi-station data: cross-station now testable (4 stations); held-out skill 0.07779744481420332 (single-station baseline -0.04730031489935951); time-rescaling KS still fails. Confidence unchanged at 0% (honest). Cross-station test is now unblocked, which is the methodological gain; positive skill still pending (more/cleaner stations, effort model).",
-  "generated_at": "2026-06-27T07:15:41.379468+00:00"
+  "reason": "Level 2 still not met with multi-station data: held-out skill 0.07779744481420332 (single-station baseline -0.04730031489935951, beats climatology=True); time-rescaling withheld (event-level KS p=0.0, encounter-level KS p=7.464361732396692e-22); cross-station NOT consistent (4 stations; noise-bound=['diel', 'tide'], coverage-confounded=['season']). Effective confidence unchanged at 0% (honest, experiment unpromoted: write_outputs=False, no supervisor decision). Held-out skill is positive, but time-rescaling is withheld on the clustered detection stream and cross-station kernel consistency is bounded by per-station sample size (both need the 3-node production ingest).",
+  "generated_at": "2026-06-27T08:19:54.620196+00:00"
 }

@@ -48,26 +48,28 @@
     },
     "k_salmon": {
       "status": "withheld",
-      "source": "climatology_fallback",
+      "source": "dart",
       "source_by_year": {
-        "2020": "climatology_fallback",
-        "2021": "climatology_fallback",
-        "2022": "climatology_fallback",
-        "2023": "climatology_fallback",
-        "2024": "climatology_fallback",
-        "2025": "climatology_fallback",
-        "2026": "climatology_fallback"
+        "2020": "dart",
+        "2021": "dart",
+        "2022": "dart",
+        "2023": "dart",
+        "2024": "dart",
+        "2025": "dart",
+        "2026": "dart"
       },
+      "real_feed_only": true,
+      "stock_aligned": false,
       "lag_scan": {
-        "best_lag_days": -30,
-        "best_correlation": -0.101659,
-        "p_value": 0.333666,
+        "best_lag_days": -24,
+        "best_correlation": -0.06096,
+        "p_value": 0.699301,
         "permutations": 1000,
         "null_model": "circular_shift_presence",
-        "effect_size_delta_abs": 0.011772
+        "effect_size_delta_abs": -0.015537
       },
-      "reason": "Lag scan is informational only because salmon source includes climatology fallback; signal may be suggestive but cannot earn k_salmon gate credit on a placeholder feed.",
-      "honesty_note": "If source is climatology_fallback, this lag scan is only suggestive and cannot earn k_salmon gate credit."
+      "reason": "Lag scan ran on a REAL feed (source=dart) (best lag -24 days, r=-0.061, p=0.6993), and it does NOT beat the permutation null (p=0.6993 >= 0.05), the feed is STOCK-MISMATCHED: DART (Columbia/Bonneville) is dominated by the Columbia FALL Chinook run, a different stock than the Fraser SUMMER Chinook that SRKW chiefly target. A Columbia-fall proxy cannot earn k_salmon credit; L3 stays withheld pending a stock-aligned (Fraser) feed.",
+      "honesty_note": "k_salmon credit requires BOTH a real feed (not climatology_fallback) AND a stock-aligned Fraser-summer-Chinook source. DART (Columbia/Bonneville) is a real but stock-mismatched fall-run proxy, so it cannot earn credit on its own."
     },
     "gate_requirements_unmet": [
       "held-out skill vs the recent-detection-density baseline (needs the spatial fit + effort model)",
@@ -76,5 +78,5 @@
     ]
   },
   "reason": "s_space precursor assembled from the CAND set (density grid + depth) with an explicit effort-confound warning. k_salmon now includes an informational lag scan summary, but Level 3 remains withheld pending held-out skill vs density baseline, reliability/PIT, a validated effort model, and held-out visual validation. No confidence promoted.",
-  "generated_at": "2026-06-27T06:13:44.204796+00:00"
+  "generated_at": "2026-06-27T14:12:41.895569+00:00"
 }

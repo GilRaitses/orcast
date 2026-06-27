@@ -1,0 +1,351 @@
+{
+  "status": "diagnosed",
+  "generated_at": "2026-06-27T07:56:08.414743+00:00",
+  "provenance": "EXPERIMENT diagnostic: 4-station memory store (production haro_strait acoustic_detections from S3 + cached OrcaHello index for orcasound_lab/north_san_juan_channel/andrews_bay + S3 env_currents/station_uptime); NB2 joint GLM identical to level2_multistation; no fit artifact written, no production store/model bucket touched.",
+  "agent_a_effort_module": {
+    "effort_py_present": true,
+    "wiring_md_present": true,
+    "note": "modeling/effort.py (agent A) is present and used for the effort probe (C2) via its cross-namespace uptime resolver and relative_effort/station_log_effort API; WIRING-effort.md was not yet in the tree at run time."
+  },
+  "fit_context": {
+    "tide_model": "harmonic",
+    "covariates_fit": [
+      "diel",
+      "tide",
+      "lunar",
+      "season"
+    ],
+    "family": "negbin",
+    "bin_hours": 1.0,
+    "min_ieis": 20,
+    "n_stations_acoustic": 4
+  },
+  "A_B_per_station_baseline": {
+    "andrews_bay": {
+      "n_events": 265,
+      "ks_exp_pval": 2.3989290457223453e-279,
+      "ks_exp_stat": 0.9122110552568781,
+      "pass_exp": false,
+      "n_rescaled_ieis": 264,
+      "rescaled_iei_mean": 0.7615079218229326,
+      "rescaled_iei_std": 5.03883547770955,
+      "intensity_modulation_maxmin": 20.460574355289015,
+      "fitted_intensity_mean_per_h": 0.1721140458035505,
+      "raw_iei": {
+        "n_iei": 264,
+        "span_hours": 3106.497222222213,
+        "raw_iei_median_h": 0.016666666662786156,
+        "raw_iei_mean_h": 11.767034932659898,
+        "raw_iei_cv": 8.455423349808212,
+        "frac_iei_under_6min": 0.9053030303030303,
+        "frac_iei_over_1day": 0.03409090909090909
+      }
+    },
+    "haro_strait": {
+      "n_events": 761,
+      "ks_exp_pval": 0.0,
+      "ks_exp_stat": 0.7253138539486421,
+      "pass_exp": false,
+      "n_rescaled_ieis": 760,
+      "rescaled_iei_mean": 0.9853145308077507,
+      "rescaled_iei_std": 3.5284539361578164,
+      "intensity_modulation_maxmin": 36.11232215851933,
+      "fitted_intensity_mean_per_h": 0.2268503617551831,
+      "raw_iei": {
+        "n_iei": 760,
+        "span_hours": 5358.754910639371,
+        "raw_iei_median_h": 0.01962652348447591,
+        "raw_iei_mean_h": 7.050993303472857,
+        "raw_iei_cv": 4.146354467925139,
+        "frac_iei_under_6min": 0.7039473684210527,
+        "frac_iei_over_1day": 0.06973684210526315
+      }
+    },
+    "north_san_juan_channel": {
+      "n_events": 34,
+      "ks_exp_pval": 3.448064212144516e-33,
+      "ks_exp_stat": 0.8983466031192939,
+      "pass_exp": false,
+      "n_rescaled_ieis": 33,
+      "rescaled_iei_mean": 1.1651221262966196,
+      "rescaled_iei_std": 6.262576635363721,
+      "intensity_modulation_maxmin": 4.10074281162823,
+      "fitted_intensity_mean_per_h": 0.005562047808233812,
+      "raw_iei": {
+        "n_iei": 33,
+        "span_hours": 8346.858960629732,
+        "raw_iei_median_h": 0.016666666662786156,
+        "raw_iei_mean_h": 252.93512001908277,
+        "raw_iei_cv": 5.3784430716715335,
+        "frac_iei_under_6min": 0.7575757575757576,
+        "frac_iei_over_1day": 0.09090909090909091
+      }
+    },
+    "orcasound_lab": {
+      "n_events": 1029,
+      "ks_exp_pval": 0.0,
+      "ks_exp_stat": 0.7710675894898013,
+      "pass_exp": false,
+      "n_rescaled_ieis": 1028,
+      "rescaled_iei_mean": 1.0248586325281326,
+      "rescaled_iei_std": 5.8265144967666345,
+      "intensity_modulation_maxmin": 211.8449747182299,
+      "fitted_intensity_mean_per_h": 0.03933254825991032,
+      "raw_iei": {
+        "n_iei": 1028,
+        "span_hours": 50079.23097336083,
+        "raw_iei_median_h": 0.03494827207759954,
+        "raw_iei_mean_h": 48.715205227004695,
+        "raw_iei_cv": 5.528628978653681,
+        "frac_iei_under_6min": 0.6264591439688716,
+        "frac_iei_over_1day": 0.10700389105058365
+      }
+    }
+  },
+  "pooled_baseline": {
+    "pooled_n": 2085,
+    "pooled_ks_exp_pval": 0.0,
+    "pooled_ks_exp_stat": 0.7726948964830356,
+    "pooled_pass_exp": false,
+    "pooled_rescaled_iei_mean": 0.9793193473294262,
+    "frac_rescaled_under_0p05": 0.8163069544364508
+  },
+  "B_leave_one_out_pooled": {
+    "drop_andrews_bay": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 1821
+    },
+    "drop_haro_strait": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 1325
+    },
+    "drop_north_san_juan_channel": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2052
+    },
+    "drop_orcasound_lab": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 1057
+    }
+  },
+  "C1_level_only_fix": {
+    "andrews_bay": {
+      "rescaled_iei_mean_before": 0.7615079218229326,
+      "ks_exp_pval_after_level_fix": 1.1105098250846365e-271
+    },
+    "haro_strait": {
+      "rescaled_iei_mean_before": 0.9853145308077507,
+      "ks_exp_pval_after_level_fix": 0.0
+    },
+    "north_san_juan_channel": {
+      "rescaled_iei_mean_before": 1.1651221262966196,
+      "ks_exp_pval_after_level_fix": 2.099031910364119e-33
+    },
+    "orcasound_lab": {
+      "rescaled_iei_mean_before": 1.0248586325281326,
+      "ks_exp_pval_after_level_fix": 0.0
+    },
+    "_pooled": {
+      "pooled_ks_exp_pval_after_level_fix": 0.0,
+      "pooled_n": 2085
+    }
+  },
+  "C2_effort_gated_intensity": {
+    "andrews_bay": {
+      "effort_uptime_binds_window": false,
+      "ks_exp_pval": 2.3989290457223453e-279,
+      "pass_exp": false,
+      "rescaled_iei_mean": 0.7615079218229326,
+      "n_rescaled_ieis": 264
+    },
+    "haro_strait": {
+      "effort_uptime_binds_window": false,
+      "ks_exp_pval": 0.0,
+      "pass_exp": false,
+      "rescaled_iei_mean": 0.9853145308077507,
+      "n_rescaled_ieis": 760
+    },
+    "north_san_juan_channel": {
+      "effort_uptime_binds_window": false,
+      "ks_exp_pval": 3.448064212144516e-33,
+      "pass_exp": false,
+      "rescaled_iei_mean": 1.1651221262966196,
+      "n_rescaled_ieis": 33
+    },
+    "orcasound_lab": {
+      "effort_uptime_binds_window": false,
+      "ks_exp_pval": 0.0,
+      "pass_exp": false,
+      "rescaled_iei_mean": 1.0248586325281326,
+      "n_rescaled_ieis": 1028
+    },
+    "_pooled": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085,
+      "effort_module": "modeling.effort (agent A)",
+      "any_station_uptime_binds": false,
+      "uptime_stream_keys": [
+        "das_possession_bar",
+        "rpi_andrews_bay",
+        "rpi_bush_point",
+        "rpi_mast_center",
+        "rpi_north_sjc",
+        "rpi_orcasound_lab",
+        "rpi_point_robinson",
+        "rpi_port_townsend",
+        "rpi_sunset_bay"
+      ],
+      "effort_summary": {
+        "fallback": "continuous",
+        "bin_hours": 1.0,
+        "min_effort_fraction": 0.001,
+        "any_station_uptime_binds": false,
+        "per_station": {
+          "andrews_bay": {
+            "n_detections": 265,
+            "n_bins": 3108,
+            "uptime_resolved": true,
+            "uptime_binds_window": false,
+            "effort_assumed_continuous": true,
+            "mean_effort_fraction": 1.0,
+            "min_effort_fraction": 1.0,
+            "max_effort_fraction": 1.0,
+            "frac_bins_down": 0.0,
+            "log_effort_mean": 0.0,
+            "log_effort_min": 0.0,
+            "log_effort_max": 0.0,
+            "log_effort_std": 0.0,
+            "log_effort_degenerate": true,
+            "n_uptime_samples": 347,
+            "uptime_up_fraction_mean": 0.0,
+            "uptime_constant_in_window": true
+          },
+          "haro_strait": {
+            "n_detections": 761,
+            "n_bins": 5361,
+            "uptime_resolved": false,
+            "uptime_binds_window": false,
+            "effort_assumed_continuous": true,
+            "mean_effort_fraction": 1.0,
+            "min_effort_fraction": 1.0,
+            "max_effort_fraction": 1.0,
+            "frac_bins_down": 0.0,
+            "log_effort_mean": 0.0,
+            "log_effort_min": 0.0,
+            "log_effort_max": 0.0,
+            "log_effort_std": 0.0,
+            "log_effort_degenerate": true
+          },
+          "north_san_juan_channel": {
+            "n_detections": 34,
+            "n_bins": 8349,
+            "uptime_resolved": true,
+            "uptime_binds_window": false,
+            "effort_assumed_continuous": true,
+            "mean_effort_fraction": 1.0,
+            "min_effort_fraction": 1.0,
+            "max_effort_fraction": 1.0,
+            "frac_bins_down": 0.0,
+            "log_effort_mean": 0.0,
+            "log_effort_min": 0.0,
+            "log_effort_max": 0.0,
+            "log_effort_std": 0.0,
+            "log_effort_degenerate": true,
+            "n_uptime_samples": 346,
+            "uptime_up_fraction_mean": 1.0,
+            "uptime_constant_in_window": true
+          },
+          "orcasound_lab": {
+            "n_detections": 1029,
+            "n_bins": 50081,
+            "uptime_resolved": true,
+            "uptime_binds_window": false,
+            "effort_assumed_continuous": true,
+            "mean_effort_fraction": 1.0,
+            "min_effort_fraction": 1.0,
+            "max_effort_fraction": 1.0,
+            "frac_bins_down": 0.0,
+            "log_effort_mean": 0.0,
+            "log_effort_min": 0.0,
+            "log_effort_max": 0.0,
+            "log_effort_std": 0.0,
+            "log_effort_degenerate": true,
+            "n_uptime_samples": 346,
+            "uptime_up_fraction_mean": 1.0,
+            "uptime_constant_in_window": true
+          }
+        }
+      },
+      "note": "Effort via agent A's cross-namespace resolver; cached OrcaHello nodes have no station_uptime and there is no haro_strait uptime node, so effort is flat where it does not bind (stated per station)."
+    }
+  },
+  "D_grid_resolution_sweep": {
+    "grid_step_0.05": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085
+    },
+    "grid_step_0.1": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085
+    },
+    "grid_step_0.25": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085
+    },
+    "grid_step_0.5": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085
+    },
+    "grid_step_1.0": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085
+    }
+  },
+  "E_intensity_construction_constant_rate": {
+    "andrews_bay": {
+      "constant_rate_per_h": 0.08530508191165673,
+      "ks_exp_pval": 3.306139664635223e-297,
+      "pass_exp": false,
+      "rescaled_iei_mean": 1.0037878787878718,
+      "n_rescaled_ieis": 264
+    },
+    "haro_strait": {
+      "constant_rate_per_h": 0.14201059997894222,
+      "ks_exp_pval": 0.0,
+      "pass_exp": false,
+      "rescaled_iei_mean": 1.0013157894736255,
+      "n_rescaled_ieis": 760
+    },
+    "north_san_juan_channel": {
+      "constant_rate_per_h": 0.004073388583702013,
+      "ks_exp_pval": 9.43418498136483e-34,
+      "pass_exp": false,
+      "rescaled_iei_mean": 1.030303030302998,
+      "n_rescaled_ieis": 33
+    },
+    "orcasound_lab": {
+      "constant_rate_per_h": 0.02054744012637428,
+      "ks_exp_pval": 0.0,
+      "pass_exp": false,
+      "rescaled_iei_mean": 1.0009727626465394,
+      "n_rescaled_ieis": 1028
+    },
+    "_pooled_constant_rate": {
+      "pooled_ks_exp_pval": 0.0,
+      "pooled_n": 2085
+    }
+  },
+  "recommended_fix": {
+    "primary_fix": "model_the_clustering_or_score_at_bin_level",
+    "rationale": "The acoustic stream is clustered (median raw-IEI CV=5.453536025162608, 82% of rescaled IEIs <0.05 vs ~5% for Exp(1)); a constant-rate homogeneous Poisson fails identically (pooled p=0), so the smooth Fourier kernels are NOT the cause. A smooth Poisson/NB conditional intensity cannot pass event-level time-rescaling on a bursty detection stream regardless of effort or grid. The honest fix is to either model the self-excitation (history/refractory term or a Hawkes-type intensity), or evaluate GOF at the bin-count level (the NB PIT/dispersion already gated) and deduplicate bursts to encounter-onset events for time-rescaling, NOT to tune the gate. Effort correction (agent A) reduces the long-gap tail but will not remove the near-zero spike from within-burst detections.",
+    "evidence": {
+      "median_raw_iei_cv": 5.453536025162608,
+      "frac_rescaled_under_0p05": 0.8163069544364508,
+      "constant_rate_pooled_ks_pval": 0.0,
+      "level_fix_pooled_ks_pval": 0.0,
+      "effort_gated_pooled_ks_pval": 0.0,
+      "best_grid_pooled_ks_pval": 0.0
+    },
+    "honesty": "If the only thing that 'passes' is constant-rescaling the level or tuning the grid while the process is demonstrably clustered, that is gate-tuning, not a fix: report L2 time-rescaling withheld with the clustering reason (charter B.3)."
+  }
+}

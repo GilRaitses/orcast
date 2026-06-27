@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import csv
+import io
 import math
+import time
 from datetime import date, timedelta
 from typing import Dict, List, Optional, Tuple
 
@@ -18,24 +21,52 @@ from .base import SourceAdapter, SourceFetchResult
 # Source-pluggable + robust by design:
 #   1. Primary live source: Albion Chinook test fishery (Fraser River, DFO
 #      Canada) - daily CPUE (catch-per-unit-effort) during the run season.
+#      UNAVAILABLE as a machine-readable feed (see _fetch_fraser).
 #   2. Secondary live source: Columbia River DART Bonneville Dam Chinook
-#      passage counts (Columbia Basin Research).
+#      passage counts (Columbia Basin Research). CONFIRMED + parsed (CSV).
 #   3. Documented climatology FALLBACK (see _climatology_series): if every live
 #      source is unavailable, return a smooth seasonal Chinook run-timing curve
 #      so the covariate is ALWAYS available while real feeds are being wired.
 #
-# IMPORTANT: the exact live endpoints/payload formats below are best-effort and
-# UNCONFIRMED. The Albion and DART feeds are published as HTML tables / CSV that
-# vary year to year and may require scraping. Until those feeds are confirmed
-# and parsed against real responses, the climatology fallback is the documented
-# placeholder that keeps k_salmon usable. Do not treat 'albion'/'dart' live
-# parsing as validated yet.
+# Feed status (validated 2026-06-27 by sources/salmon_validation.py):
+#   - DART (Columbia/Bonneville) is CONFIRMED and parsed: the feed is CSV (not
+#     JSON), requires year + outputFormat=csv (csvSingle returns an HTML error
+#     page), and the adult-Chinook column is "Chin". 269 daily rows for 2025,
+#     dominant peak 2025-09-07. _fetch_columbia parses it.
+#   - Albion (Fraser/DFO) remains UNAVAILABLE as a machine-readable feed: the
+#     live page publishes daily CPUE only as JPG graph images (no HTML table /
+#     CSV / JSON), and the historical FOS host no longer resolves. _fetch_fraser
+#     stays disabled (returns {}) so the adapter falls through to DART.
+#
+# BIOLOGICAL CAVEAT: DART's dominant peak is the Columbia FALL Chinook run, a
+# different stock than the Fraser SUMMER Chinook that SRKW chiefly target. DART
+# is a real, parseable proxy/SECONDARY source, not the Fraser primary; whether
+# it aligns with SRKW presence is the L3 lag-scan's call (salmon_lag.py).
 
-# Albion test fishery (Fraser River, DFO). Placeholder endpoint - UNCONFIRMED.
+# Albion test fishery (Fraser River, DFO). Redirect stub to albion-eng.html, a
+# descriptive page with daily CPUE only as JPG images (no machine-readable
+# series). Kept for reference; _fetch_fraser is disabled.
 _ALBION_URL = "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/docs/commercial/albionchinook-quinnat"
 
-# Columbia River DART Bonneville Dam adult Chinook passage. UNCONFIRMED params.
+# Columbia River DART Bonneville Dam adult Chinook passage (Columbia Basin
+# Research). Returns CSV with year + outputFormat=csv; adult Chinook = "Chin"
+# column, full-ISO "Date" column. Validated 2026-06-27.
 _DART_URL = "https://www.cbr.washington.edu/dart/cs/php/rpt/adult_daily.php"
+
+# DART adult-daily report query that returns CSV. outputFormat=csvSingle returns
+# an HTML error page; a yearless query returns the err-adultdaily HTML wrapper.
+_DART_PARAMS = {
+    "sc": "1",
+    "mgconfig": "adult",
+    "outputFormat": "csv",
+    "proj": "BON",
+    "span": "no",
+    "startdate": "1/1",
+    "enddate": "12/31",
+    "run": "",
+}
+# Adult-Chinook column in the DART CSV (NOT count/passage/chinook); JChin = jacks.
+_DART_VALUE_KEYS = ("Chin", "chin", "Chinook", "chinook")
 
 _HTTP_TIMEOUT = 10
 
@@ -120,34 +151,39 @@ class SalmonRunAdapter(SourceAdapter):
 
     # -- Live fetchers ----------------------------------------------------------
     def _fetch_fraser(self, year: int) -> Dict[str, float]:
-        """Fetch Albion (Fraser) daily Chinook CPUE -> {ISO date: cpue}."""
-        response = requests.get(
-            self.albion_url,
-            params={"year": year, "format": "json"},
-            timeout=_HTTP_TIMEOUT,
-        )
-        if getattr(response, "status_code", None) != 200:
-            return {}
-        return _parse_daily_payload(
-            response.json(),
-            value_keys=("cpue", "CPUE", "catch", "index", "value", "count"),
-            year=year,
-        )
+        """Albion (Fraser) daily Chinook CPUE.
+
+        DISABLED: the live DFO Albion page publishes daily CPUE only as JPG graph
+        images (no HTML table / CSV / JSON), and the historical machine-readable
+        FOS endpoint host (www-ops2.pac.dfo-mpo.gc.ca) no longer resolves.
+        Returning {} lets fetch_run_index fall through to the real DART (Columbia)
+        feed instead of climatology. Re-enable if/when a machine-readable Fraser
+        feed is identified. Validated 2026-06-27, sources/salmon_validation.py.
+        """
+        return {}
 
     def _fetch_columbia(self, year: int) -> Dict[str, float]:
-        """Fetch DART Bonneville daily Chinook passage -> {ISO date: count}."""
-        response = requests.get(
-            self.dart_url,
-            params={"year": year, "outputFormat": "csvSingle", "proj": "BON", "species": "chin"},
-            timeout=_HTTP_TIMEOUT,
-        )
-        if getattr(response, "status_code", None) != 200:
-            return {}
-        return _parse_daily_payload(
-            response.json(),
-            value_keys=("count", "passage", "chinook", "adult", "value", "index"),
-            year=year,
-        )
+        """Fetch DART Bonneville daily adult Chinook passage -> {ISO date: count}.
+
+        The DART adult-daily report is CSV (csvSingle returns an HTML error page)
+        and is built on the first request for a query, so a transient err- HTML
+        wrapper can precede the CSV; retry past it. Adult Chinook is the "Chin"
+        column. Validated 2026-06-27, sources/salmon_validation.py.
+        """
+        params = {**_DART_PARAMS, "year": str(year)}
+        for _attempt in range(4):
+            response = requests.get(self.dart_url, params=params, timeout=_HTTP_TIMEOUT)
+            if getattr(response, "status_code", None) != 200:
+                return {}
+            ctype = (response.headers.get("content-type") or "").lower()
+            if "csv" in ctype:
+                return _parse_daily_payload(
+                    _csv_text_to_rows(response.text),
+                    value_keys=_DART_VALUE_KEYS,
+                    year=year,
+                )
+            time.sleep(2)  # transient DART err- HTML wrapper; retry until CSV
+        return {}
 
     # -- Series assembly --------------------------------------------------------
     def _build_series(
@@ -279,6 +315,22 @@ def _extract_rows(payload: object) -> List[object]:
             if isinstance(value, list):
                 return value
     return []
+
+
+def _csv_text_to_rows(text: str) -> List[Dict[str, object]]:
+    """Parse DART-style CSV text into a list of row dicts.
+
+    DART appends free-text footnote lines after the table; csv.DictReader keeps
+    them as rows with mostly-empty values, which _row_date/_row_value reject
+    harmlessly. Returns [] on empty/garbage input.
+    """
+    if not isinstance(text, str) or not text.strip():
+        return []
+    reader = csv.DictReader(io.StringIO(text))
+    rows: List[Dict[str, object]] = []
+    for row in reader:
+        rows.append({k: v for k, v in row.items() if k is not None})
+    return rows
 
 
 _DATE_KEYS = ("t", "date", "Date", "day", "Day", "obs_date", "mm-dd")

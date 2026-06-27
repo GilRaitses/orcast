@@ -101,8 +101,145 @@ consistent with L2 fail). Effective confidence unchanged at 0%.
 - This study imports the heavy fit pipeline, so it runs under .venv-modeling and is NOT added to
   run_studies / mlops-gate (which stay pure stdlib). mlops-gate remains green; served confidence 0.0.
 
+## 2026-06-27 (frontier externalized as a parallel-subagent waveset)
+
+- Operator asked to externalize the L2/L3 frontier as a waveset for parallel subagents, mirroring
+  the terrain-bathymetry project home. Confirmed scope: Wave 1 = the L2-unblock modules (effort/log E
+  for time-rescaling, cross-station consistency) PLUS the disjoint backend tracks (3-node ingest
+  recipe, Albion/DART salmon validation), all in parallel; home = extend this existing
+  `20260627_mlops/`; model = inherit.
+- Wrote, into this home: `WAVESET_CHARTER.md` (parallel-dispatch canon; execution model with the
+  convergence files named, refit-upload-disable, env split, no-agent-commits; the three waves; the
+  per-agent prompt skeleton; gates + return contract; restated locked B-items), `DECISION_RECORD.md`
+  (code surface verified from the repo + confirmed decisions + risks), `WAVE1_DISPATCH.md` (five
+  self-contained agent prompts A-E, READY not launched), and a navigation `README.md`. Extended
+  `wave_shape.yml` with a `frontier_dispatch:` block (W1/W2/W3 execution waves) alongside the
+  existing `families:` level ladder (gate definition), without overwriting it.
+- Convergence files for collision control: modeling `fit_kernels.py` + `studies/level2_multistation.py`;
+  backend `sources/salmon.py` + `ingest_timeseries.py`. Wave 1 agents own only NEW files
+  (`modeling/effort.py`, `modeling/studies/time_rescaling_diag.py`,
+  `modeling/studies/cross_station_consistency.py`, `src/aws_backend/ingest_multistation.py`,
+  `src/aws_backend/sources/salmon_validation.py`) and never edit a convergence file.
+- No agents launched, no commit, no push. Wave 1 launch is the next operator gate.
+
+## 2026-06-27 (Wave 1 launched + completed, operator go "execute")
+
+Five parallel subagents ran (inherit model, none edited a convergence file, validate-only, no
+agent commits, no production store / model-bucket write, S3 upload disabled). All five returned
+honest measured results. New files owned (all local-only/untracked except the catalogue specs):
+
+- A effort/log E (`modeling/effort.py` + `modeling/WIRING-effort.md`): built a per-station effort
+  -> `log E` offset + exposure with a cross-namespace key resolver (`rpi_*` uptime keys vs acoustic
+  station keys; that mismatch was the real cause of `effort_assumed_continuous=True`). Module is
+  correct on synthetic transitioning uptime (log E std 3.26). But the REAL data is degenerate:
+  `station_uptime` covers 2026-06-20..27 only, detections are 2020-2021 (zero overlap), constant
+  within window, and `haro_strait` has no uptime node, so real per-station `log E` is flat.
+  Conclusion: wiring effort is correct but a no-op today; it will not move time-rescaling.
+- B time-rescaling diagnostic (`modeling/studies/time_rescaling_diag.py` + report): pinned the cause
+  of pooled KS p=0.0. It is point-process burstiness/clustering, NOT effort, grid, or the kernels.
+  All 4 stations fail individually; a constant-rate Poisson fails identically; 82% of pooled
+  rescaled IEIs ~0; 63-91% of detections within 6 min of the prior one. Recommended fix: dedupe
+  bursts to encounter-onset events or score GOF at the bin level (which NB PIT/dispersion already
+  covers); honest outcome may be time-rescaling WITHHELD with the clustering reason, not a tuned gate.
+- C cross-station consistency (`modeling/studies/cross_station_consistency.py` + report): per-kernel
+  cross-station mean PSTH corr diel 0.336 / tide 0.136 / lunar 0.166 / season 0.159 (matches the
+  0.14-0.34, all < 0.5). Diagnosis: a sparse-count artifact, not demonstrated heterogeneity, because
+  within-station split-half reliability is itself below 0.5 for diel/tide/lunar (the PSTHs cannot
+  reproduce themselves); season is reproducible-but-coverage-confounded. Effort normalization is a
+  no-op (confirms A). `can_clear_0p5_bar_honestly = false` today; path = more detections/station
+  (D's ingest) + coarser bins + partial-pooling scoring with split-half as the ceiling.
+- D multi-station ingest dry-run (`src/aws_backend/ingest_multistation.py` + `WIRING-ingest.md`):
+  dry-run counts orcasound_lab 1029, andrews_bay 296 raw / 265 after (t,id) dedupe,
+  north_san_juan_channel 34 (total 1359 raw / 1328 stored). Reuses `_put_grouped_by_station`,
+  `dry_run=True` default; `dry_run=False` is the operator/deploy-gated production write.
+- E salmon Albion/DART (`src/aws_backend/sources/salmon_validation.py` + `PATCH-salmon.md` +
+  `salmon_validation_findings.json`): DART (Columbia/Bonneville) reachable + parseable (269 daily
+  rows, peak 2025-09-07, BEATS climatology); current `_fetch_columbia` fails only because it calls
+  `.json()` on CSV, uses `outputFormat=csvSingle`, omits `year`, and misses the `Chin` column.
+  Albion (Fraser/DFO) reachable but NOT machine-readable (daily CPUE published only as JPGs), so
+  Fraser stays honestly disabled. Patch spec makes `_fetch_columbia` parse DART CSV and leaves
+  `_fetch_fraser` returning `{}`. Caveat: DART's dominant peak is the Columbia FALL run, a different
+  stock than the Fraser summer Chinook SRKW target; the Wave 3 lag scan must confirm alignment or
+  L3 stays withheld.
+
+Cross-agent conclusion (the honest headline): both L2 blockers are now DIAGNOSED, and neither is
+clearable by Wave 2 wiring alone. Time-rescaling is bounded by detection burstiness (a modeling
+change: burst-dedup / bin-level scoring, likely still withheld); cross-station consistency is bounded
+by per-station sample size (needs D's production ingest to land and accumulate). Effort wiring is
+correct but a no-op on the current disjoint uptime data. The one clean forward step is the DART
+parser, which unblocks a REAL L3 lag scan in Wave 3. Effective confidence stays 0% (honest); no
+promotion occurred.
+
+## 2026-06-27 (Wave 2 integrated, operator-approved narrowed scope; feeds-down pause then resume)
+
+Two integrators ran in parallel (single convergence-file editor per file; modeling vs backend,
+disjoint), validate-only, no agent commits, no production store / model-bucket write, no promotion.
+The operator stopped both mid-run while the DART/Albion feeds were in a maintenance window and
+resumed them once the feeds were back online.
+
+- Modeling integrator (sole editor of the modeling fit pipeline + L2 study/reports): wired Agent A's
+  effort/log E into design.py build_design and fit_kernels.py _station_intensity_fn /
+  _time_rescaling_report (VERIFIED no-op on the disjoint 2026 uptime vs 2020-2021 detections:
+  effort_assumed_continuous stays true, log E flat); implemented Agent B's burst-dedup / encounter-
+  onset time-rescaling re-score; applied Agent C's coarser-bin + split-half-ceiling cross-station
+  scoring. Multi-station S3 refit (write_outputs=False, _maybe_write_s3 disabled) reproduced held-out
+  skill +0.0778 (4/5 folds, beats climatology). Verdicts, honest: time-rescaling WITHHELD (event-level
+  pooled KS p=0; encounter-onset re-score recenters mean to ~1.01 but pooled KS still p~7.5e-22, the
+  onset process is itself clustered); cross-station NOT consistent (diel/tide noise-bound vs their own
+  split-half, season coverage-confounded, lunar genuine heterogeneity to model later). mlops-gate exit
+  0 (ALL PASS), served confidence 0.0 consistent with l2_gate=fail. data/models/fit_report.json
+  untouched (confidence 0.0, n_stations 1).
+- Backend integrator (sole editor of salmon.py + the L3 lag scan): applied PATCH-salmon.md to
+  salmon.py (_fetch_columbia now parses DART CSV via a new _csv_text_to_rows helper + outputFormat=csv
+  + year + retry past the err-/maintenance wrapper + `Chin` value key; _fetch_fraser returns {} since
+  Albion is image-only/host-dead). Live re-validation through the real code path: DART 269 rows, peak
+  2025-09-07=22928, fetch_run_index source=dart (not climatology_fallback). Real L3 lag scan over all
+  detection years (real_feed_only): best lag -24 d, r -0.061, permutation p 0.699 -> does NOT beat the
+  null AND stock-mismatched (DART Columbia fall vs Fraser summer Chinook). L3 WITHHELD. Added a
+  stock-alignment guard (_STOCK_ALIGNED_SOURCES = {"albion"}) so a real-but-mismatched feed can never
+  auto-PASS L3. salmon_lag.json + level3_prey_space.json updated with the honest verdict.
+
+Ladder after Wave 2: L0 PASS, L1 PASS (diel; cross-station consistency not met), L2 FAIL
+(time-rescaling withheld, cross-station not consistent), L3 WITHHELD (real DART feed now exercised
+but fails the null and is the wrong stock). Effective confidence stays 0% (honest). No promotion.
+
+Honest conclusion: the frontier did NOT move off 0%, and that is the correct outcome. The binding
+constraints are now precisely characterized and DATA-bound, not wiring-bound:
+1. L2 time-rescaling: detection-stream burstiness; a smooth NB intensity cannot pass event-level
+   Exp(1) rescaling, and encounter-onset dedup still fails. Needs a clustering/self-excitation model
+   or a bin-level GOF decision, not a tuned gate.
+2. L2 cross-station consistency: per-station sample size; sparse nodes cannot even split-half-reproduce.
+   Needs the operator/deploy-gated 3-node production ingest to land and accumulate.
+3. L3: needs a stock-aligned Fraser-summer Chinook feed. DART (Columbia fall) is real but fails the
+   null and is the wrong stock; Albion is not machine-readable.
+
+Uncommitted local state (nothing committed, per B.10): modeling pipeline edits are local-only/untracked
+(design.py, fit_kernels.py, effort.py). Tracked files now modified: salmon.py, salmon_lag.py,
+level3_prey_space.py, level2_multistation.py, and the studies/reports/*.json verdicts. Report
+timestamp-only churn (level0/1/2_joint/3/salmon_lag regenerated by the gate) should be restored before
+any commit.
+
 ## Open / awaiting operator
 
+- Wave 2 -> Wave 3 gate: Wave 3 as chartered (gate + L3 + promotion prep) has NO promotable gate, so
+  there is no promotion packet to prepare. The remaining moves are data-bound and operator/deploy-gated,
+  not a code wave: (a) land the 3-node production acoustic_detections ingest (Agent D's
+  ingest_multistation.py, dry-run validated 1029/265/34) to give L2 cross-station the sample size it
+  needs; (b) source a stock-aligned Fraser-summer Chinook feed for L3 (Albion is image-only; an
+  alternative DFO/PSC machine-readable source is needed). Neither earns confidence by itself; each is a
+  precondition.
+- Optional now: a surgical commit of the Wave 1/2 deliverables (restore report timestamp churn first,
+  stage only the intended files) on an explicit operator ask.
+- The original Wave 1 -> Wave 2 recommendation block below is superseded (Wave 2 is complete).
+
+### (superseded) Original Wave 1 -> Wave 2 recommendation
+  scope is narrower than the original "wire effort + pass the gate": (1) land Agent A's effort wiring
+  (correct regardless, fixes the key mismatch, no-op today); (2) land the burst-dedup / bin-level
+  time-rescaling scoring change and report the L2 timing verdict honestly (likely withheld with the
+  clustering reason); (3) land the DART parser patch to enable a real L3 lag scan; (4) treat the
+  3-node production ingest as the data dependency for both L2 blockers (operator/deploy-gated). A
+  passing L2 gate is NOT expected from Wave 2 integration alone on the current data.
+- The original Wave 1 launch line is superseded by the above (Wave 1 is complete).
 - M-L2 to a real pass: ingest the additional Orcasound nodes into the production acoustic_detections
   stream (the experiment used the cached index), tighten per-station effort/log E so time-rescaling
   passes, and lift cross-station kernel consistency. Multi-station already flips held-out skill

@@ -105,10 +105,17 @@ def run() -> GateResult:
     tr = rep.get("time_rescaling", {}) or {}
     skill = cv.get("mean_deviance_skill")
     beats_climatology = isinstance(skill, (int, float)) and skill > 0.0
+    # The time-rescaling gate is the strict EVENT-level pooled KS (a smooth
+    # intensity cannot reproduce within-burst IEIs); the burst-deduped
+    # encounter-level re-score and the honest verdict are reported alongside.
     tr_pass = bool(tr.get("pooled_pass_exp"))
+    tr_verdict = tr.get("verdict")
+    enc = tr.get("encounter_level", {}) or {}
 
     metrics = {
-        "experiment": "multi-station (haro_strait stream + cached OrcaHello index for 3 nodes)",
+        "experiment": "multi-station (haro_strait stream + cached OrcaHello index for 3 nodes); "
+                      "Wave 2 integration: effort/log E wired (modeling.effort), time-rescaling "
+                      "re-scored with burst-dedup, cross-station scored with coarser bins + split-half ceiling",
         "stations_acoustic": rep.get("n_stations_acoustic"),
         "n_detections": rep.get("n_detections"),
         "per_station_detections": {st: len(mem.get_series(ACOUSTIC, st, _WIDE0, _WIDE1))
@@ -117,35 +124,64 @@ def run() -> GateResult:
         "covariates_excluded": rep.get("covariates_excluded"),
         "phase_coverage": rep.get("phase_coverage"),
         "tide_model": rep.get("tide_model"),
+        # Effort wiring: with the current disjoint/constant station_uptime, no
+        # station's uptime binds the detection window, so effort is honestly
+        # assumed continuous and log E is flat (a verified no-op this wave).
+        "effort_assumed_continuous": rep.get("effort_assumed_continuous"),
         "level1_cross_station": xstn,
+        "cross_station_consistent": xstn.get("consistent"),
+        "cross_station_can_clear_0p5_bar_honestly": xstn.get("can_clear_0p5_bar_honestly"),
+        "cross_station_noise_artifact_kernels": xstn.get("noise_artifact_kernels"),
+        "cross_station_coverage_confounded_kernels": xstn.get("coverage_confounded_kernels"),
+        "cross_station_genuine_heterogeneity_kernels": xstn.get("genuine_heterogeneity_kernels"),
         "cv_mean_deviance_skill_multistation": skill,
         "cv_mean_deviance_skill_singlestation_baseline": base_cv,
         "cv_folds_passing": f"{cv.get('n_pass')}/{cv.get('n_folds')}",
+        "time_rescaling_verdict": tr_verdict,
+        "time_rescaling_verdict_scope": tr.get("verdict_scope"),
+        "time_rescaling_verdict_reason": tr.get("verdict_reason"),
+        "time_rescaling_event_level": {
+            "pooled_pass_exp": tr.get("pooled_pass_exp"),
+            "pooled_ks_exp_pval": tr.get("pooled_ks_exp_pval"),
+            "pooled_mean": tr.get("pooled_mean"),
+            "pooled_frac_under_0p05": tr.get("pooled_frac_under_0p05"),
+            "pooled_n": tr.get("pooled_n"),
+        },
+        "time_rescaling_encounter_level": enc,
+        # Back-compat headline (event-level gate).
         "time_rescaling_pooled_pass_exp": tr_pass,
         "time_rescaling_pooled_ks_exp_pval": tr.get("pooled_ks_exp_pval"),
         "beats_climatology": beats_climatology,
         "confidence_unpromoted": rep.get("confidence"),
-        "provenance": "EXPERIMENT: not the production fit; mixes the production haro_strait stream with the cached OrcaHello index for the other nodes; no store write; no confidence promotion.",
+        "provenance": "EXPERIMENT: not the production fit; mixes the production haro_strait stream with the cached OrcaHello index for the other nodes; write_outputs=False, S3 upload disabled; no store write; no confidence promotion.",
     }
 
     cross_testable = bool(xstn.get("testable"))
-    if beats_climatology and tr_pass and cross_testable:
+    cross_consistent = bool(xstn.get("consistent"))
+    if beats_climatology and tr_pass and cross_testable and cross_consistent:
         status = GATE_PASS
         reason = (
             f"Multi-station joint fit beats climatology (skill={skill}) with cross-station "
-            f"consistency testable across {xstn.get('n_stations')} stations and time-rescaling passing."
+            f"consistency met across {xstn.get('n_stations')} stations and time-rescaling passing."
         )
     else:
         status = GATE_FAIL
-        bits = [f"cross-station now {'testable' if cross_testable else 'NOT testable'} "
-                f"({xstn.get('n_stations')} stations)"]
-        bits.append(f"held-out skill {skill} (single-station baseline {base_cv})")
-        if not tr_pass:
-            bits.append("time-rescaling KS still fails")
+        bits = [f"held-out skill {skill} (single-station baseline {base_cv}, beats climatology={beats_climatology})"]
+        bits.append(
+            f"time-rescaling {tr_verdict or 'fail'} (event-level KS p={tr.get('pooled_ks_exp_pval')}, "
+            f"encounter-level KS p={enc.get('pooled_ks_exp_pval')})"
+        )
+        bits.append(
+            f"cross-station {'consistent' if cross_consistent else 'NOT consistent'} "
+            f"({xstn.get('n_stations')} stations; noise-bound={xstn.get('noise_artifact_kernels')}, "
+            f"coverage-confounded={xstn.get('coverage_confounded_kernels')})"
+        )
         reason = (
             "Level 2 still not met with multi-station data: " + "; ".join(bits)
-            + ". Confidence unchanged at 0% (honest). Cross-station test is now unblocked, which "
-            "is the methodological gain; positive skill still pending (more/cleaner stations, effort model)."
+            + ". Effective confidence unchanged at 0% (honest, experiment unpromoted: write_outputs=False, "
+            "no supervisor decision). Held-out skill is positive, but time-rescaling is withheld on the "
+            "clustered detection stream and cross-station kernel consistency is bounded by per-station "
+            "sample size (both need the 3-node production ingest)."
         )
     return GateResult(level=2, name="multistation", status=status, metrics=metrics, reason=reason)
 
