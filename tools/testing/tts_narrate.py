@@ -30,48 +30,48 @@ NARRATION: dict[str, str] = {
     "beat-01": (
         "Wildlife forecasts usually show a confident map that hides how thin the evidence is. "
         "For endangered orcas watched from shore and kayak, that's misleading. "
-        "orcast always shows the forecast — but only the confidence its gates have earned."
+        "orcast always shows the forecast, but only the confidence its gates have earned."
     ),
     "beat-02": (
         "Every cell traces back to the kernels, gate verdicts, and detections that earned it. "
-        "Each claim is bound to its evidence — no number floats free. "
+        "Each claim is bound to its evidence. No number floats free. "
         "Outside the pilot region it says so honestly."
     ),
     "beat-03": (
-        "These are fitness gates on a negative-binomial fit — "
-        "phase-shuffled null tests, held-out skill, calibration. "
+        "These are fitness gates on a negative-binomial fit. "
+        "Phase-shuffled null tests, held-out skill, calibration. "
         "When skill is negative, displayed confidence is zero. "
         "That's the honest answer, not a broken system."
     ),
     "beat-04": (
-        "Central Casting plans which panels to open before narration — "
-        "same prepare-then-narrate pattern, keyed surface planner. "
+        "Central Casting plans which panels to open before narration. "
+        "Same prepare-then-narrate pattern, keyed surface planner. "
         "The orchestrator dispatches only allow-listed, tier-verified skills. "
         "Every claim is bound to its producing skill and artifact."
     ),
     "beat-05": (
         "Sighting check separates what the temporal model knows "
         "from whether your dorsal fin was an orca. "
-        "It's grounded in the same gates — not a yes-or-no oracle."
+        "It's grounded in the same gates, not a yes-or-no oracle."
     ),
     "beat-06-journal": (
         "Field notes stay private in a per-user journal in DynamoDB until you publish. "
-        "Shore reports hit a moderation queue — "
-        "signed-in reviewers approve before low-weight attribution."
+        "Shore reports hit a moderation queue. "
+        "Signed-in reviewers approve before low-weight attribution."
     ),
     "beat-06-moderation": (
         "One click. The decision record is immutable. "
         "That approval lives in DynamoDB alongside every gate verdict."
     ),
     "beat-07": (
-        "DynamoDB is the backbone: nine on-demand tables including managed agent configs. "
+        "DynamoDB is the backbone. Nine on-demand tables including managed agent configs. "
         "The approval I just made lives here."
     ),
     "beat-08": (
         "Vercel frontend, App Runner API, DynamoDB system of record, "
         "Central Casting interactions, Step Functions orchestrator, "
         "Bedrock for sighting narration. "
-        "orcast — a forecast you can use in the field and defend in public."
+        "orcast is a forecast you can use in the field and defend in public."
     ),
 }
 
@@ -159,7 +159,7 @@ def openai_tts(text: str, out_mp3: Path, api_key: str) -> None:
 def process_beat_openai(slug: str, api_key: str) -> None:
     text = NARRATION.get(slug, "")
     if not text:
-        print(f"  {slug}: no narration — skip")
+        print(f"  {slug}: no narration, skip")
         return
     dur = get_beat_duration(slug)
     print(f"  {slug}: {dur:.0f}s  generating via OpenAI TTS-1-HD...", flush=True)
@@ -182,7 +182,7 @@ async def edge_tts_generate(text: str, out: Path, voice: str, rate: str) -> None
 async def process_beat_edge(slug: str, voice: str, rate: str) -> None:
     text = NARRATION.get(slug, "")
     if not text:
-        print(f"  {slug}: no narration — skip")
+        print(f"  {slug}: no narration, skip")
         return
     dur = get_beat_duration(slug)
     print(f"  {slug}: {dur:.0f}s  generating via Edge TTS...", flush=True)
@@ -216,7 +216,7 @@ def coqui_xtts(text: str, out_wav: Path, ref_wav: Path) -> None:
 def process_beat_xtts(slug: str) -> None:
     text = NARRATION.get(slug, "")
     if not text:
-        print(f"  {slug}: no narration — skip")
+        print(f"  {slug}: no narration, skip")
         return
     dur = get_beat_duration(slug)
     print(f"  {slug}: {dur:.0f}s  generating via Coqui XTTS-v2 (cloned)...", flush=True)
