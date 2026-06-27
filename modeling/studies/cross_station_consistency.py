@@ -1,12 +1,16 @@
 """M-L1 diagnostic: WHY are the per-kernel cross-station PSTH correlations low?
 
-The joint fit's ``_cross_station_consistency`` (``modeling/fit_kernels.py`` ~line
-802) reports per-kernel mean PSTH correlations of 0.14-0.34 across the 4 stations,
-below the 0.5 consistency bar (the second Level 2 blocker). This is a STANDALONE
-diagnostic that MIRRORS that logic (it does not edit it) and decomposes the mean:
+The joint fit's ``_cross_station_consistency`` (``modeling/fit_kernels.py``)
+reports per-kernel cross-station PSTH correlations below the 0.5 consistency bar
+(the second Level 2 blocker). This is a STANDALONE diagnostic that MIRRORS that
+logic (it does not edit it) and decomposes the mean. Per W4 item 1 (RE/RB) it
+scores at the COARSER headline resolution (12 bins, was 24) with a minimum
+per-bin count, mirroring ``fit_kernels.XSTN_HEADLINE_BINS`` / the masked
+correlation, and reports:
 
-* per-kernel, per-station effort-normalized PSTH log-rate curves,
-* the full per-kernel pairwise cross-station correlation matrix,
+* per-kernel, per-station effort-normalized PSTH log-rate curves (+ per-bin counts),
+* the full per-kernel pairwise MASKED cross-station correlation matrix (only bins
+  with >= MIN_BIN_COUNT counts in both stations enter the correlation),
 * which station pairs and which kernels drag the mean down,
 * the effect of effort normalization (flat vs ``exposure``; Agent A's
   ``modeling/effort.py`` is consumed IF present, otherwise stated unavailable),
@@ -15,7 +19,10 @@ diagnostic that MIRRORS that logic (it does not edit it) and decomposes the mean
   cross-station correlation, so it is not a clean "fix",
 * a within-station split-half reliability ceiling and a bin-count sensitivity
   sweep, which together separate GENUINE station heterogeneity from a sparse-count
-  / small-sample PSTH-noise artifact.
+  / small-sample PSTH-noise artifact,
+* a burst-dedup encounter-onset re-score (one onset per run of consecutive
+  occupied bins) reported alongside as the harder, per-encounter honesty check
+  (U3 -- it reduces effective N and so cannot inflate the bar).
 
 It builds the SAME multi-station memory store as
 ``modeling/studies/level2_multistation.py`` (production ``haro_strait`` stream
@@ -57,8 +64,16 @@ CURRENTS = "env_currents"
 UPTIME = "station_uptime"
 
 CONSISTENCY_BAR = 0.5
-N_BINS = 24           # mirrors _cross_station_consistency
+# W4 item 1 (RE/RB): a COARSER headline PSTH resolution than the old 24 bins,
+# with a minimum per-bin count, so empty-bin -log floors stop dominating the
+# correlation on sparse per-station data. Mirrors fit_kernels.XSTN_HEADLINE_BINS.
+N_BINS = 12           # mirrors fit_kernels._cross_station_consistency (was 24)
+MIN_BIN_COUNT = 1.0   # minimum per-bin count for a bin to enter the correlation
+BIN_SWEEP = (8, 12, 24)
 MIN_STATION_ROWS = 24  # mirrors _cross_station_consistency
+# Encounter-onset (burst-dedup) window: runs of consecutive occupied bins within
+# this gap collapse to one onset (mirrors fit_kernels.ENCOUNTER_GAP_HOURS = 1.0).
+ENCOUNTER_GAP_HOURS = 1.0
 N_SPLIT_HALF = 200    # bootstrap reps for the within-station reliability ceiling
 REPORT_PATH = Path(__file__).resolve().parent / "reports" / "cross_station_consistency.json"
 
@@ -145,10 +160,58 @@ def _select_tide(currents: List[dict]):
 # --------------------------------------------------------------------------- #
 # PSTH curve helpers (mirror the _cross_station_consistency log-rate curve)
 # --------------------------------------------------------------------------- #
-def _log_rate_curve(phase: np.ndarray, y: np.ndarray, exposure: np.ndarray, n_bins: int) -> np.ndarray:
-    """log of the effort-normalized PSTH rate -- exactly what _cross_station_consistency correlates."""
-    out = psth(phase, y, exposure, n_bins=n_bins, n_boot=1)
-    return np.log(np.clip(out["rate"], 1e-9, None))
+def _log_rate_curve(phase: np.ndarray, y: np.ndarray, exposure: np.ndarray, n_bins: int):
+    """Effort-normalized binned log-rate curve + per-bin count.
+
+    Mirrors ``fit_kernels._binned_log_rate``: returns ``(log_rate, counts)`` so
+    the correlation can be masked to bins with a minimum per-bin count (W4 item
+    1), instead of letting empty-bin -log floors create spurious correlation.
+    """
+    phase = np.asarray(phase, dtype=float) % 1.0
+    y = np.asarray(y, dtype=float)
+    exposure = np.asarray(exposure, dtype=float)
+    idx = np.clip((phase * n_bins).astype(int), 0, n_bins - 1)
+    counts = np.zeros(n_bins, dtype=float)
+    expo = np.zeros(n_bins, dtype=float)
+    np.add.at(counts, idx, y)
+    np.add.at(expo, idx, exposure)
+    rate = np.where(expo > 0, counts / np.maximum(expo, 1e-9), 0.0)
+    return np.log(np.clip(rate, 1e-9, None)), counts
+
+
+def _masked_corr(c1, n1, c2, n2, min_count: float = MIN_BIN_COUNT) -> Optional[float]:
+    """Correlation over bins with >= ``min_count`` counts in BOTH stations."""
+    mask = (np.asarray(n1) >= min_count) & (np.asarray(n2) >= min_count)
+    if int(mask.sum()) < 3:
+        return None
+    a, b = np.asarray(c1)[mask], np.asarray(c2)[mask]
+    if np.std(a) <= 1e-9 or np.std(b) <= 1e-9:
+        return None
+    return float(np.corrcoef(a, b)[0, 1])
+
+
+def _onset_y(sub) -> np.ndarray:
+    """Bin-level burst-dedup weights aligned to ``sub`` row order (W4 item 1).
+
+    1.0 on the ONSET bin of each run of consecutive occupied bins (gap <=
+    ``ENCOUNTER_GAP_HOURS``), else 0.0. Mirrors ``fit_kernels._xstn_onset_y``:
+    reliability is then measured per independent encounter, not per bursty hour
+    (U3). It reduces effective N, so it makes the bar HARDER -- an honesty
+    correction reported alongside the raw-count headline.
+    """
+    t = sub["t"].to_numpy(dtype=float)
+    y = sub["y"].to_numpy(dtype=float)
+    order = np.argsort(t, kind="stable")
+    occ = y[order] > 0
+    w_sorted = np.zeros(order.shape[0], dtype=float)
+    occ_pos = np.flatnonzero(occ)
+    if occ_pos.size:
+        occ_t = t[order][occ_pos]
+        keep = np.concatenate(([True], np.diff(occ_t) > float(ENCOUNTER_GAP_HOURS)))
+        w_sorted[occ_pos[keep]] = 1.0
+    w = np.empty(w_sorted.shape[0], dtype=float)
+    w[order] = w_sorted
+    return w
 
 
 def _corr(a: np.ndarray, b: np.ndarray) -> Optional[float]:
@@ -163,10 +226,15 @@ def _mean_offdiag(matrix: Dict[str, Dict[str, Optional[float]]]) -> Optional[flo
 
 
 def _station_curves(
-    df, cov: str, stations: List[str], n_bins: int, flat_effort: bool = False
-) -> Dict[str, np.ndarray]:
-    """Per-station log-rate curves for one covariate (>= MIN_STATION_ROWS rows)."""
-    curves: Dict[str, np.ndarray] = {}
+    df, cov: str, stations: List[str], n_bins: int, flat_effort: bool = False,
+    onset: bool = False,
+) -> Dict[str, tuple]:
+    """Per-station ``(log_rate, counts)`` curves for one covariate (>= MIN_STATION_ROWS rows).
+
+    With ``onset=True`` the detection vector is burst-deduped to encounter onsets
+    (W4 item 1) before binning.
+    """
+    curves: Dict[str, tuple] = {}
     for st in stations:
         sub = df[df["station"].astype(str) == st]
         if len(sub) < MIN_STATION_ROWS:
@@ -174,9 +242,8 @@ def _station_curves(
         exposure = sub["exposure"].to_numpy(dtype=float)
         if flat_effort:
             exposure = np.ones_like(exposure)
-        curves[st] = _log_rate_curve(
-            sub[cov].to_numpy(dtype=float), sub["y"].to_numpy(dtype=float), exposure, n_bins
-        )
+        y = _onset_y(sub) if onset else sub["y"].to_numpy(dtype=float)
+        curves[st] = _log_rate_curve(sub[cov].to_numpy(dtype=float), y, exposure, n_bins)
     return curves
 
 
@@ -190,7 +257,7 @@ def _effort_a_curves(
     binding + the chosen fallback) instead of build_design's exposure column, so we
     can measure whether a real effort model moves the cross-station correlation.
     """
-    curves: Dict[str, np.ndarray] = {}
+    curves: Dict[str, tuple] = {}
     for st in stations:
         sub = df[df["station"].astype(str) == st]
         if len(sub) < MIN_STATION_ROWS:
@@ -205,11 +272,13 @@ def _effort_a_curves(
     return curves
 
 
-def _pairwise_matrix(curves: Dict[str, np.ndarray]) -> Dict[str, Dict[str, Optional[float]]]:
+def _pairwise_matrix(curves: Dict[str, tuple]) -> Dict[str, Dict[str, Optional[float]]]:
+    """Pairwise masked cross-station correlation (>= MIN_BIN_COUNT in both)."""
     stations = sorted(curves)
     matrix: Dict[str, Dict[str, Optional[float]]] = {a: {} for a in stations}
     for a, b in combinations(stations, 2):
-        c = _corr(curves[a], curves[b])
+        (ca, na), (cb, nb) = curves[a], curves[b]
+        c = _masked_corr(ca, na, cb, nb, MIN_BIN_COUNT)
         matrix[a][b] = c
         matrix[b].setdefault(a, c)
     return matrix
@@ -239,12 +308,16 @@ def _per_station_mean_corr(matrix: Dict[str, Dict[str, Optional[float]]]) -> Dic
 # --------------------------------------------------------------------------- #
 # Diagnostics that separate heterogeneity from a small-sample artifact
 # --------------------------------------------------------------------------- #
-def _split_half_reliability(df, cov: str, stations: List[str], n_bins: int, seed: int = 0) -> Dict[str, object]:
+def _split_half_reliability(
+    df, cov: str, stations: List[str], n_bins: int, seed: int = 0, onset: bool = False
+) -> Dict[str, object]:
     """Within-station split-half PSTH correlation: the reproducibility CEILING.
 
     If a single station cannot reproduce its OWN PSTH shape across two random
     halves of its data, the cross-station correlation is bounded below by noise,
-    not by genuine heterogeneity. This is the key artifact discriminator.
+    not by genuine heterogeneity. This is the key artifact discriminator. Scored
+    with the same coarse-bin + min-per-bin-count mask as the cross-station
+    correlation (W4 item 1); ``onset=True`` burst-dedups to encounter onsets.
     """
     rng = np.random.default_rng(seed)
     per_station: Dict[str, Optional[float]] = {}
@@ -254,16 +327,16 @@ def _split_half_reliability(df, cov: str, stations: List[str], n_bins: int, seed
             per_station[st] = None
             continue
         phase = sub[cov].to_numpy(dtype=float)
-        y = sub["y"].to_numpy(dtype=float)
+        y = _onset_y(sub) if onset else sub["y"].to_numpy(dtype=float)
         exposure = sub["exposure"].to_numpy(dtype=float)
         n = len(sub)
         reps = []
         for _ in range(N_SPLIT_HALF):
             perm = rng.permutation(n)
             h1, h2 = perm[: n // 2], perm[n // 2:]
-            c1 = _log_rate_curve(phase[h1], y[h1], exposure[h1], n_bins)
-            c2 = _log_rate_curve(phase[h2], y[h2], exposure[h2], n_bins)
-            c = _corr(c1, c2)
+            c1, n1 = _log_rate_curve(phase[h1], y[h1], exposure[h1], n_bins)
+            c2, n2 = _log_rate_curve(phase[h2], y[h2], exposure[h2], n_bins)
+            c = _masked_corr(c1, n1, c2, n2, MIN_BIN_COUNT)
             if c is not None:
                 reps.append(c)
         per_station[st] = round(float(np.mean(reps)), 4) if reps else None
@@ -283,19 +356,26 @@ def _shrinkage_corr(curves: Dict[str, np.ndarray], counts: Dict[str, float]) -> 
     """
     stations = sorted(curves)
     if len(stations) < 2:
-        return {"mean_corr": None, "note": "needs >= 2 stations"}
+        return {"mean_corr": None, "note": "needs >= 2 stations", "caveat": "shrinkage inflates correlation"}
+    logr = {s: np.asarray(curves[s][0], dtype=float) for s in stations}
+    bincounts = {s: np.asarray(curves[s][1], dtype=float) for s in stations}
     n = np.array([max(counts.get(s, 0.0), 0.0) for s in stations])
     w_target = n / n.sum() if n.sum() > 0 else np.ones(len(stations)) / len(stations)
-    grand = np.zeros_like(next(iter(curves.values())))
+    grand = np.zeros_like(logr[stations[0]])
     for s, w in zip(stations, w_target):
-        grand = grand + w * curves[s]
+        grand = grand + w * logr[s]
     k = float(np.median(n)) if n.size else 0.0  # pooling constant ~ typical station size
     shrunk = {}
     for s in stations:
         w_s = counts.get(s, 0.0) / (counts.get(s, 0.0) + k) if (counts.get(s, 0.0) + k) > 0 else 0.0
-        shrunk[s] = w_s * curves[s] + (1.0 - w_s) * grand
+        shrunk[s] = (w_s * logr[s] + (1.0 - w_s) * grand, bincounts[s])
     matrix = _pairwise_matrix(shrunk)
-    return {"mean_corr": _mean_offdiag(matrix), "pooling_constant_k": round(k, 2)}
+    return {
+        "mean_corr": _mean_offdiag(matrix),
+        "pooling_constant_k": round(k, 2),
+        "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; "
+                  "not evidence of agreement, read against the split-half ceiling",
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -360,12 +440,20 @@ def run() -> Dict[str, object]:
 
         # Bin-count sensitivity: coarser bins reduce per-bin sampling noise.
         bin_sweep = {}
-        for nb in (8, 12, 24):
+        for nb in BIN_SWEEP:
             cs = _station_curves(df, cov, stations, nb)
             bin_sweep[str(nb)] = _mean_offdiag(_pairwise_matrix(cs)) if len(cs) >= 2 else None
 
         split_half = _split_half_reliability(df, cov, stations, N_BINS)
         shrink = _shrinkage_corr(curves, {s: float(per_station_detections.get(s, 0)) for s in curves})
+
+        # Burst-dedup (encounter-onset) re-score: same coarse-bin / masked
+        # correlation + split-half, but one onset per run of consecutive occupied
+        # bins (W4 item 1 / U3). Reduces effective N -> harder; honesty check.
+        onset_curves = _station_curves(df, cov, stations, N_BINS, onset=True)
+        onset_mean = _mean_offdiag(_pairwise_matrix(onset_curves)) if len(onset_curves) >= 2 else None
+        onset_split = _split_half_reliability(df, cov, stations, N_BINS, onset=True)
+        onset_counts = {st: int(_onset_y(df[df["station"].astype(str) == st]).sum()) for st in stations}
 
         # Per-station phase coverage: a covariate (esp. season) whose observed phase
         # support differs across stations makes the cross-station PSTH compare
@@ -384,6 +472,8 @@ def run() -> Dict[str, object]:
         kernels[cov] = {
             "testable": True,
             "n_stations": len(curves),
+            "headline_bins": N_BINS,
+            "min_bin_count": MIN_BIN_COUNT,
             "mean_psth_correlation": None if mean_corr is None else round(mean_corr, 4),
             "correlation_matrix": {
                 a: {b: (None if c is None else round(c, 4)) for b, c in row.items()}
@@ -403,6 +493,17 @@ def run() -> Dict[str, object]:
             "bin_count_sensitivity": {k: (None if v is None else round(v, 4)) for k, v in bin_sweep.items()},
             "split_half_reliability": split_half,
             "partial_pooling_shrinkage": shrink,
+            "burst_dedup_onset": {
+                "method": (
+                    "bin-level burst-dedup: runs of consecutive occupied %g h bins collapsed to one "
+                    "encounter onset; reliability per encounter not per bursty hour (U3). Reduces "
+                    "effective N -> makes the bar HARDER; honesty check alongside the headline."
+                    % ENCOUNTER_GAP_HOURS
+                ),
+                "n_onsets_per_station": onset_counts,
+                "mean_psth_correlation": None if onset_mean is None else round(onset_mean, 4),
+                "split_half_reliability": onset_split,
+            },
             "verdict_code": code,
             "verdict": label,
         }
@@ -468,8 +569,20 @@ def _classify(
     """
     if mean_corr is None:
         return "not_testable", "not testable"
+    # Honesty (mirrors fit_kernels._xstn_classify): a coverage confound (stations
+    # span different parts of the cycle) is checked BEFORE the bar, because the
+    # masked correlation is then computed over a shared sub-window only, not the
+    # full kernel -- so a high value must NOT be reported as clean consistency.
+    if coverage_confound:
+        return (
+            "reproducible_divergent_coverage",
+            "per-station phase coverage differs (the stations span different parts of the cycle), so the "
+            "cross-station correlation is over the shared window only -> observation-window confound, NOT "
+            "demonstrated full-cycle consistency (mean corr=%s is not creditable)"
+            % (None if mean_corr is None else round(mean_corr, 4)),
+        )
     if mean_corr >= CONSISTENCY_BAR:
-        return "consistent", "consistent (clears the 0.5 bar)"
+        return "consistent", "consistent (clears the 0.5 bar with comparable per-station coverage)"
     if split_half_mean is None:
         return "uncertain", "below bar; reliability ceiling unavailable (too few rows to split)"
     if split_half_mean < CONSISTENCY_BAR:
@@ -478,14 +591,6 @@ def _classify(
             "below bar, but within-station split-half reliability is ALSO below the bar: the PSTH is "
             "too noisy to reproduce within a single station -> sparse-count / small-sample artifact, "
             "not demonstrated genuine heterogeneity",
-        )
-    if coverage_confound:
-        return (
-            "reproducible_divergent_coverage",
-            "below bar while within-station split-half reliability clears it, BUT the per-station phase "
-            "coverage differs (the stations span different parts of the cycle) -> reproducible-but-"
-            "divergent shapes are confounded by observation window, NOT demonstrated biological "
-            "heterogeneity",
         )
     return (
         "reproducible_divergent",

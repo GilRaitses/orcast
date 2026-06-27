@@ -31,7 +31,7 @@
       "testable": true,
       "n_stations": 4,
       "consistency_bar": 0.5,
-      "scoring": "coarser PSTH (12 bins, min per-bin count 1) with within-station split-half reliability as the ceiling and partial-pooling reported with its inflation caveat (agent C)",
+      "scoring": "coarser PSTH (12 bins, min per-bin count 1) with within-station split-half reliability as the ceiling, partial-pooling reported with its inflation caveat (agent C), and a burst-dedup encounter-onset re-score per kernel as the harder honesty check (U3)",
       "mean_psth_correlation": {
         "diel": 0.053,
         "tide": 0.2626,
@@ -81,6 +81,25 @@
             "pooling_constant_k": 513.0,
             "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
           },
+          "burst_dedup_onset": {
+            "method": "bin-level burst-dedup: runs of consecutive occupied 1 h bins collapsed to one encounter onset; reliability measured per encounter, not per bursty hour (U3). Reduces effective N -> makes the bar HARDER; honesty check alongside the headline.",
+            "n_onsets_per_station": {
+              "andrews_bay": 13,
+              "haro_strait": 140,
+              "north_san_juan_channel": 5,
+              "orcasound_lab": 201
+            },
+            "mean_psth_correlation": 0.3324,
+            "split_half_reliability": {
+              "per_station": {
+                "andrews_bay": null,
+                "haro_strait": 0.2522,
+                "north_san_juan_channel": null,
+                "orcasound_lab": 0.3163
+              },
+              "mean": 0.2842
+            }
+          },
           "verdict_code": "noise_artifact",
           "verdict": "below bar, but within-station split-half reliability is ALSO below 0.5: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated heterogeneity"
         },
@@ -96,12 +115,12 @@
           },
           "split_half_reliability": {
             "per_station": {
-              "andrews_bay": 0.2589,
-              "haro_strait": 0.142,
+              "andrews_bay": 0.2624,
+              "haro_strait": 0.1594,
               "north_san_juan_channel": null,
-              "orcasound_lab": -0.5091
+              "orcasound_lab": -0.4863
             },
-            "mean": -0.0361
+            "mean": -0.0215
           },
           "per_station_phase_coverage": {
             "andrews_bay": 1.0,
@@ -114,6 +133,25 @@
             "mean_corr": 0.8307,
             "pooling_constant_k": 513.0,
             "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "burst_dedup_onset": {
+            "method": "bin-level burst-dedup: runs of consecutive occupied 1 h bins collapsed to one encounter onset; reliability measured per encounter, not per bursty hour (U3). Reduces effective N -> makes the bar HARDER; honesty check alongside the headline.",
+            "n_onsets_per_station": {
+              "andrews_bay": 13,
+              "haro_strait": 140,
+              "north_san_juan_channel": 5,
+              "orcasound_lab": 201
+            },
+            "mean_psth_correlation": 0.561,
+            "split_half_reliability": {
+              "per_station": {
+                "andrews_bay": -0.9927,
+                "haro_strait": 0.3895,
+                "north_san_juan_channel": null,
+                "orcasound_lab": 0.458
+              },
+              "mean": -0.0484
+            }
           },
           "verdict_code": "noise_artifact",
           "verdict": "below bar, but within-station split-half reliability is ALSO below 0.5: the PSTH is too noisy to reproduce within a single station -> sparse-count / small-sample artifact, not demonstrated heterogeneity"
@@ -130,12 +168,12 @@
           },
           "split_half_reliability": {
             "per_station": {
-              "andrews_bay": 0.8129,
-              "haro_strait": 0.6724,
+              "andrews_bay": 0.793,
+              "haro_strait": 0.6516,
               "north_san_juan_channel": null,
-              "orcasound_lab": 0.5427
+              "orcasound_lab": 0.5373
             },
-            "mean": 0.676
+            "mean": 0.6606
           },
           "per_station_phase_coverage": {
             "andrews_bay": 1.0,
@@ -148,6 +186,25 @@
             "mean_corr": 0.8372,
             "pooling_constant_k": 513.0,
             "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "burst_dedup_onset": {
+            "method": "bin-level burst-dedup: runs of consecutive occupied 1 h bins collapsed to one encounter onset; reliability measured per encounter, not per bursty hour (U3). Reduces effective N -> makes the bar HARDER; honesty check alongside the headline.",
+            "n_onsets_per_station": {
+              "andrews_bay": 13,
+              "haro_strait": 140,
+              "north_san_juan_channel": 5,
+              "orcasound_lab": 201
+            },
+            "mean_psth_correlation": 0.1933,
+            "split_half_reliability": {
+              "per_station": {
+                "andrews_bay": null,
+                "haro_strait": 0.2744,
+                "north_san_juan_channel": null,
+                "orcasound_lab": -0.0187
+              },
+              "mean": 0.1278
+            }
           },
           "verdict_code": "reproducible_divergent",
           "verdict": "below bar while within-station split-half clears it and coverage is comparable -> consistent with GENUINE station heterogeneity (model with a station random effect)"
@@ -164,12 +221,12 @@
           },
           "split_half_reliability": {
             "per_station": {
-              "andrews_bay": 0.129,
-              "haro_strait": 0.5161,
+              "andrews_bay": 0.2028,
+              "haro_strait": 0.4746,
               "north_san_juan_channel": null,
-              "orcasound_lab": 0.782
+              "orcasound_lab": 0.7717
             },
-            "mean": 0.4757
+            "mean": 0.483
           },
           "per_station_phase_coverage": {
             "andrews_bay": 0.4167,
@@ -182,6 +239,25 @@
             "mean_corr": 0.7894,
             "pooling_constant_k": 513.0,
             "caveat": "shrinkage toward a shared target mechanically inflates cross-station correlation; not evidence of agreement, read against the split-half ceiling"
+          },
+          "burst_dedup_onset": {
+            "method": "bin-level burst-dedup: runs of consecutive occupied 1 h bins collapsed to one encounter onset; reliability measured per encounter, not per bursty hour (U3). Reduces effective N -> makes the bar HARDER; honesty check alongside the headline.",
+            "n_onsets_per_station": {
+              "andrews_bay": 13,
+              "haro_strait": 140,
+              "north_san_juan_channel": 5,
+              "orcasound_lab": 201
+            },
+            "mean_psth_correlation": 0.9181,
+            "split_half_reliability": {
+              "per_station": {
+                "andrews_bay": -0.62,
+                "haro_strait": 0.7721,
+                "north_san_juan_channel": null,
+                "orcasound_lab": 0.7849
+              },
+              "mean": 0.3124
+            }
           },
           "verdict_code": "coverage_confounded",
           "verdict": "per-station phase coverage differs (stations span different parts of the cycle), so the cross-station correlation is over the shared window only -> observation-window confound, NOT demonstrated full-cycle consistency (mean corr=0.7017 is not creditable)"
@@ -230,5 +306,5 @@
     "provenance": "EXPERIMENT: not the production fit; mixes the production haro_strait stream with the cached OrcaHello index for the other nodes; write_outputs=False, S3 upload disabled; no store write; no confidence promotion."
   },
   "reason": "Level 2 still not met with multi-station data: held-out skill 0.07779744481420332 (single-station baseline -0.04730031489935951, beats climatology=True); time-rescaling withheld (event-level KS p=0.0, encounter-level KS p=7.464361732396692e-22); cross-station NOT consistent (4 stations; noise-bound=['diel', 'tide'], coverage-confounded=['season']). Effective confidence unchanged at 0% (honest, experiment unpromoted: write_outputs=False, no supervisor decision). Held-out skill is positive, but time-rescaling is withheld on the clustered detection stream and cross-station kernel consistency is bounded by per-station sample size (both need the 3-node production ingest).",
-  "generated_at": "2026-06-27T08:19:54.620196+00:00"
+  "generated_at": "2026-06-27T16:11:22.400296+00:00"
 }

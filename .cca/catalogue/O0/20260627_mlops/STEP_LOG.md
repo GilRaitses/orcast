@@ -360,17 +360,86 @@ research-findings commit.
   do not promote.
 - Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
   W1-W2-W3-done-W4-chartered).
-- 2b decision (mine): the agents' untracked scratch drivers (modeling/studies/_ra_response_scratch.py,
+## 2026-06-27 (supervisor decision: ADOPT bin-level L2 timing gate -- still 0.0, now armed)
+
+Operator: "commit and approved adoption". Recorded the B.1 supervisor decision to adopt the W4 item-3
+bin-level timing gate. Full record in DECISION_RECORD.md section 4.
+
+- Flipped ADOPT_BIN_LEVEL_TIMING_GATE False->True in modeling/fit_kernels.py (local-only/untracked, B.6;
+  the decision itself is recorded in the tracked DECISION_RECORD.md).
+- Honest framing recorded as such: event-level Exp(1) is inappropriate for a detector-chatter stream
+  (Hawkes branching 0.79-0.96, pooled KS p=3.3e-33); GOF scored at the served per-bin-count target
+  (held-out NB PIT calibrated AND held-out CV-skill > climatology; CV-skill is the load-bearing half).
+- VERIFIED EMPIRICALLY (flag ON): served single-station fit (haro_strait, n=761) has CV mean-deviance-skill
+  = -0.047 (< 0), so the load-bearing CV-skill half FAILS -> bin_level_verdict=fail, timing_gate=False,
+  _confidence_from_gates = 0.0. mlops-gate = ALL PASS, honesty guard served_confidence=0.0 l2_gate=fail OK.
+  NO promotion. Adoption is data-earned, not automatic.
+- ARMED (risk recorded): if a SERVED fit had CV-skill +0.078 (the 4-station EXPERIMENT value, not served),
+  _confidence_from_gates would jump to 1.0 (all four 0.25 quarters) -- a hard cliff from the pre-existing
+  scoring. The +0.078 becomes served only after the deploy-gated 3-node production ingest. Until then
+  served confidence stays 0.0.
+- L3: NOT promoted. The summer-conditioned held-out flag stays FLAGGED-FOR-DECISION; L3 WITHHELD.
+- Committed the W4 tracked deliverables on this operator ask (surgical staging, B.10); fit_kernels.py +
+  the served fit_report.json stay local/untracked (B.6).
+
+## 2026-06-27 (W4 build wave EXECUTED -- both integrators returned; confidence still 0.0)
+
+Operator: "execute". Launched both W4 integrators in parallel (disjoint files); both returned honest.
+
+- Modeling integrator (fit_kernels.py + cross_station_consistency.py):
+  - ITEM 1 (UNGATED, APPLIED) cross-station consistency re-scored at 12 bins + min per-bin count +
+    partial pooling + burst-dedup-to-encounter-onset, plus a latent ordering-bug fix so a
+    coverage-confounded kernel is no longer mislabeled "consistent". 4-station memory store
+    (prod haro_strait from S3 + cached OrcaHello for the 3 nodes): diel dense split-half 0.04->0.37,
+    lunar clears 0.5 (haro 0.67, andrews 0.81), tide unstable -> KEPT FLAGGED (not forced), season
+    coverage_confound. Overall verdict still NO (4-stn bar not cleared honestly). Reproducibility-criterion
+    fix; does NOT promote.
+  - ITEM 3 (GATED, WRITTEN, NOT ADOPTED): Hawkes self-exciting event-level GOF diagnostic in
+    _time_rescaling_report (branching ratios haro 0.79 / orcasound 0.80 / andrews 0.96 / nsj 0.91;
+    pooled KS recenters 0.979->1.002 but pooled KS p=3.3e-33 still fails) -> event-level Exp(1) verdict
+    stays WITHHELD, flagged diagnostic_only. Bin-level timing gate (held-out NB PIT p=0.364 calibrated
+    AND CV mean-deviance-skill +0.078 > climatology; bin_level_verdict=pass) defined behind
+    ADOPT_BIN_LEVEL_TIMING_GATE=False in _confidence_from_gates; served timing_gate = tr_pass OR (FLAG AND
+    bin_level), so with the flag OFF it equals the event-level pass and confidence is UNCHANGED. Flag NOT
+    flipped; adoption is a recorded supervisor decision (B.1).
+- Study integrator (salmon_lag.py): ITEM 2 (UNGATED, APPLIED) additive, separately-labeled exploratory
+  section; full-span scan + ladder-consumed keys untouched.
+  - Pre-registered Jun-Sep window + +lag (run leads presence) fixed BEFORE scanning. In-sample (all years):
+    best lag +20d, r=0.251, p=0.013 (matches RB). Held-out year = 2021 (richest, 9 summer presence-days),
+    lag fixed from training years = +17d; out-of-sample r=0.390, p=0.027 -> BEATS the pre-registered null.
+  - Verdict: FLAGGED-FOR-DECISION (flag_for_operator_decision=true); L3 status = WITHHELD. Per B.1 the
+    held-out hit is surfaced for an operator/supervisor decision, NOT self-promoted. Risk: LOYO only 2/5
+    single-year held-outs clear (2021, 2023), 5-9 presence-days/year, multiplicity -- the flag is genuine
+    but fragile.
+  - Optional (informational): summer-window daily counts r=0.221, p=0.009 (counts dead-end pooled but help
+    within the conditioned window; did NOT feed verdict logic).
+- W4 exit: tools/waves/run-gate.sh mlops-gate = ALL PASS; honesty guard served_confidence=0.0 l2_gate=fail
+  OK; served fit_report.json confidence 0.0 (untouched). Tracked diffs: cross_station_consistency.py +193,
+  salmon_lag.py +350, plus refreshed study report JSONs. NOTHING committed (no operator ask, B.10).
+  level0/1/2_joint report churn is timestamp-only from the gate run -- restore before any commit.
+- frontier_state in wave_shape.yml updated (L2 FAIL with bin-level gate OFF; L3 WITHHELD/flagged); W3 + W4
+  marked done; top-level status W1-W2-W3-W4-done. Effective confidence remains 0.0.
+- Next operator gates: (1) supervisor decision on ITEM 3 (flip ADOPT_BIN_LEVEL_TIMING_GATE -> would
+  promote L2 timing) -- requires promotion/supervisor.py record; (2) supervisor decision on the L3
+  summer-conditioned held-out flag; (3) the 3-node production acoustic_detections ingest (deploy-gated)
+  for L2 sample size; (4) a surgical commit of the W4 deliverables on an explicit ask.
+- 2b decision (carried from charter): the agents' untracked scratch drivers (modeling/studies/_ra_response_scratch.py,
   _rb_conditioning.py, l2_data_volume_power.py) are NOT committed -- one-off reproducibility scripts
   that would pollute the tracked study tree; the findings docs + report JSONs + the figure are the
   durable deliverables. They remain locally untracked.
 
 ## Open / awaiting operator
 
-- W4 launch is the next operator gate (two integrators; prompts in W4_BUILD_DISPATCH.md). The cheapest
-  high-value UNGATED move within it is ITEM 1 (cross-station consistency re-score).
-- Item 3 (bin-level timing gate) adoption needs a recorded supervisor decision; that is the only path
-  that moves effective_confidence off 0%.
+- W4 has RUN (both integrators returned; see the W4 EXECUTED entry above). Items 1+2 landed; mlops-gate
+  green at served confidence 0.0. Two supervisor decisions are now waiting:
+  - ITEM 3 (bin-level timing gate, written OFF as ADOPT_BIN_LEVEL_TIMING_GATE=False): adoption needs a
+    recorded supervisor decision via promotion/supervisor.py; that is the only code path that moves
+    effective_confidence off 0% for L2 timing.
+  - L3 summer-conditioned held-out flag (2021 out-of-sample r=0.390, p=0.027): FLAGGED-FOR-DECISION,
+    fragile (LOYO 2/5). Operator decides whether to pursue (more presence-years / live 2026 feed) or
+    keep WITHHELD.
+- Still data/deploy-bound: the 3-node production acoustic_detections ingest for L2 sample size; a surgical
+  commit of the W4 deliverables on an explicit ask (restore level0/1/2_joint timestamp churn first).
 - (historical) Decide which graduated items become a W4 build/integrate wave. The cheapest high-value UNGATED move
   is U1 (re-score cross-station consistency at coarser bins + partial pooling): it makes diel
   reproducible and lunar clear at current volume, no ingest needed. None promotes confidence by

@@ -48,27 +48,27 @@
     },
     "k_salmon": {
       "status": "withheld",
-      "source": "dart",
+      "source": "albion",
       "source_by_year": {
-        "2020": "dart",
-        "2021": "dart",
-        "2022": "dart",
-        "2023": "dart",
-        "2024": "dart",
-        "2025": "dart",
-        "2026": "dart"
+        "2020": "albion",
+        "2021": "albion",
+        "2022": "albion",
+        "2023": "albion",
+        "2024": "albion",
+        "2025": "albion",
+        "2026": "albion"
       },
       "real_feed_only": true,
-      "stock_aligned": false,
+      "stock_aligned": true,
       "lag_scan": {
-        "best_lag_days": -24,
-        "best_correlation": -0.06096,
-        "p_value": 0.699301,
+        "best_lag_days": 20,
+        "best_correlation": 0.075692,
+        "p_value": 0.393606,
         "permutations": 1000,
         "null_model": "circular_shift_presence",
-        "effect_size_delta_abs": -0.015537
+        "effect_size_delta_abs": -0.005188
       },
-      "reason": "Lag scan ran on a REAL feed (source=dart) (best lag -24 days, r=-0.061, p=0.6993), and it does NOT beat the permutation null (p=0.6993 >= 0.05), the feed is STOCK-MISMATCHED: DART (Columbia/Bonneville) is dominated by the Columbia FALL Chinook run, a different stock than the Fraser SUMMER Chinook that SRKW chiefly target. A Columbia-fall proxy cannot earn k_salmon credit; L3 stays withheld pending a stock-aligned (Fraser) feed.",
+      "reason": "Lag scan did not beat the permutation null at p<0.05 with real-feed-only criteria; k_salmon remains withheld. PRE-REGISTERED SUMMER (EXPLORATORY, FLAG-FOR-DECISION): the held-out year 2021 beat the pre-registered Jun-Sep null at the training-fixed lag 17d (r=0.389951, p=0.026973). This does NOT self-promote; it is surfaced for an operator/supervisor decision (B.1). L3 stays WITHHELD pending that decision.",
       "honesty_note": "k_salmon credit requires BOTH a real feed (not climatology_fallback) AND a stock-aligned Fraser-summer-Chinook source. DART (Columbia/Bonneville) is a real but stock-mismatched fall-run proxy, so it cannot earn credit on its own."
     },
     "gate_requirements_unmet": [
@@ -78,5 +78,5 @@
     ]
   },
   "reason": "s_space precursor assembled from the CAND set (density grid + depth) with an explicit effort-confound warning. k_salmon now includes an informational lag scan summary, but Level 3 remains withheld pending held-out skill vs density baseline, reliability/PIT, a validated effort model, and held-out visual validation. No confidence promoted.",
-  "generated_at": "2026-06-27T14:12:41.895569+00:00"
+  "generated_at": "2026-06-27T16:27:11.944538+00:00"
 }

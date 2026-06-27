@@ -84,3 +84,34 @@ AND the ingest dry-run + salmon validation report honest findings.
   one shared fit report, or stagger the reads. No production write in any case.
 - The modeling pipeline is local-only/untracked (B.6); a fresh actor must reproduce the fit from S3
   (B.4) before Wave 2 integration is meaningful.
+
+## 4. Recorded supervisor decision -- adopt the bin-level L2 timing gate (2026-06-27)
+
+Operator instruction: "commit and approved adoption". This is the recorded supervisor decision
+required by HANDOFF_CHARTER B.1 for the W4 item-3 bin-level timing gate.
+
+- DECISION: ADOPT the bin-level timing criterion as the served L2 timing gate. In
+  `modeling/fit_kernels.py`, `ADOPT_BIN_LEVEL_TIMING_GATE` flipped `False -> True` (local-only/untracked,
+  B.6; the flip is recorded here, which IS tracked).
+- HONEST FRAMING (recorded as such, not as "time-rescaling passed"): event-level Exp(1) time-rescaling
+  is inappropriate for a detector-chatter stream. The self-exciting Hawkes branching ratio is 0.79-0.96
+  across stations and the pooled compensator KS p=3.3e-33, i.e. the event-level timing is dominated by
+  self-excited detector repeat-triggering, not the animal signal. The GOF is therefore scored at the
+  served per-bin-count target: held-out NB PIT calibrated (ks_pval 0.85 on the served fit) AND held-out
+  CV mean-deviance-skill > climatology. The CV-skill half is load-bearing and non-automatic.
+- EFFECT ON CONFIDENCE (verified empirically 2026-06-27, flag ON):
+  - Served single-station fit (haro_strait, n=761): CV mean-deviance-skill = -0.047 (< 0), so the
+    load-bearing CV-skill half FAILS, `bin_level_verdict = fail`, `timing_gate = False`, and
+    `_confidence_from_gates` returns **0.0**. `mlops-gate` = ALL PASS, honesty guard
+    `served_confidence=0.0 l2_gate=fail OK`. NO promotion occurred. Adoption is data-earned, not
+    automatic.
+  - Counterfactual: if a SERVED fit had CV mean-deviance-skill = +0.078 (the value the 4-station
+    EXPERIMENT shows, NOT served), `_confidence_from_gates` would jump to **1.0** (all four 0.25
+    quarters). The +0.078 only exists in `level2_multistation.json`; it becomes served only after the
+    deploy-gated 3-node production acoustic_detections ingest lands.
+- CONSEQUENCE / RISK now armed: with the flag ON, the NEXT served fit whose held-out CV-skill is
+  positive will auto-promote to confidence 1.0 (100%) -- a hard cliff from the pre-existing 4-quarter
+  scoring, not introduced by W4. Until then served confidence stays 0.0. The remaining precondition is
+  data/deploy-bound (3-node ingest), not a code gate.
+- NOT decided here: the L3 summer-conditioned held-out flag (2021 OOS r=0.390, p=0.027) remains
+  FLAGGED-FOR-DECISION and L3 stays WITHHELD; the operator did not approve an L3 promotion.

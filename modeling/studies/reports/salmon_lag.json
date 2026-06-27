@@ -2196,8 +2196,141 @@
         "2026-06-15": 68,
         "2026-06-16": 3
       }
+    },
+    "summer_conditioned_prereg": {
+      "label": "PRE-REGISTERED summer-conditioned scan (EXPLORATORY, separate from the full-span scan above)",
+      "exploratory": true,
+      "pre_registration": {
+        "window_months": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "window_label": "Jun-Sep (SRKW core-summer presence window)",
+        "lag_sign": "run_leads_presence_nonnegative",
+        "lag_range_days": [
+          0,
+          30
+        ],
+        "fixed_before_scan": true,
+        "response_variable": "binary daily presence",
+        "null_model": "circular_shift_presence_masked",
+        "permutations": 1000,
+        "seed": 20260627,
+        "caveats": [
+          "window multiplicity (Jun-Sep is one biological window; pre-registration is what makes it honest)",
+          "small support: 36-63 summer presence-days, mostly orcasound_lab 2020-2021",
+          "still binary presence; provenance-mixed mosaic; +lag direction is shape-driven, not a resolved interval"
+        ]
+      },
+      "in_sample_all_years": {
+        "best_lag_days": 20,
+        "best_correlation": 0.251458,
+        "best_abs_correlation": 0.251458,
+        "p_value": 0.012987,
+        "beats_null_p05": true,
+        "null_abs_mean": 0.113155,
+        "null_abs_std": 0.040685,
+        "effect_z": 3.399368,
+        "inseason_days": 629,
+        "summer_presence_days": 36
+      },
+      "held_out_year_eval": {
+        "held_out_year": 2021,
+        "selection_rule": "most data-rich summer-detection year (max Jun-Sep presence-days)",
+        "summer_presence_days_by_year": {
+          "2020": 3,
+          "2021": 9,
+          "2022": 7,
+          "2023": 8,
+          "2024": 5,
+          "2025": 2,
+          "2026": 2
+        },
+        "lag_fixed_from_training_years_days": 17,
+        "lag_selection": "lag chosen out-of-sample on TRAINING years (all summer days except held-out); held-out evaluated at that fixed lag",
+        "training_best_correlation": 0.166193,
+        "training_summer_presence_days": 27,
+        "out_of_sample_correlation": 0.389951,
+        "out_of_sample_abs_correlation": 0.389951,
+        "out_of_sample_p_value": 0.026973,
+        "null_abs_mean": 0.104022,
+        "null_abs_std": 0.094427,
+        "effect_z": 3.028032,
+        "held_out_summer_presence_days": 9,
+        "held_out_inseason_days": 122,
+        "beats_null_p05": true,
+        "low_power_note": "held-out summer presence-day count is small; a single-year, single-lag out-of-sample test has low power, so a non-significant result is expected and does not refute the in-sample signal."
+      },
+      "held_out_loyo_sensitivity": {
+        "informational_only": true,
+        "min_summer_presence_days": 3,
+        "n_years_evaluated": 5,
+        "n_years_beat_null_p05": 2,
+        "per_year": [
+          {
+            "held_out_year": 2020,
+            "summer_presence_days": 3,
+            "lag_fixed_from_training_years_days": 20,
+            "out_of_sample_correlation": 0.0,
+            "out_of_sample_p_value": 1.0,
+            "beats_null_p05": false
+          },
+          {
+            "held_out_year": 2021,
+            "summer_presence_days": 9,
+            "lag_fixed_from_training_years_days": 17,
+            "out_of_sample_correlation": 0.389951,
+            "out_of_sample_p_value": 0.026973,
+            "beats_null_p05": true
+          },
+          {
+            "held_out_year": 2022,
+            "summer_presence_days": 7,
+            "lag_fixed_from_training_years_days": 20,
+            "out_of_sample_correlation": 0.003945,
+            "out_of_sample_p_value": 0.953047,
+            "beats_null_p05": false
+          },
+          {
+            "held_out_year": 2023,
+            "summer_presence_days": 8,
+            "lag_fixed_from_training_years_days": 21,
+            "out_of_sample_correlation": 0.26545,
+            "out_of_sample_p_value": 0.043956,
+            "beats_null_p05": true
+          },
+          {
+            "held_out_year": 2024,
+            "summer_presence_days": 5,
+            "lag_fixed_from_training_years_days": 20,
+            "out_of_sample_correlation": -0.09666,
+            "out_of_sample_p_value": 0.386613,
+            "beats_null_p05": false
+          }
+        ],
+        "note": "leave-one-year-out robustness check for the FLAG; does not change the verdict (verdict rests on the stated primary held-out year). Few summer presence-days per year means most single-year tests are low-power."
+      },
+      "optional_counts_summer": {
+        "informational_only": true,
+        "response_variable": "daily counts (raw)",
+        "best_lag_days": 23,
+        "best_correlation": 0.221023,
+        "p_value": 0.008991,
+        "beats_null_p05": true,
+        "effect_z": 3.090053,
+        "note": "RA summer re-test; does NOT change the verdict logic (pooled counts dead-end, L3_response_variable.md)."
+      },
+      "verdict": {
+        "eligible_for_flag": true,
+        "held_out_beats_null_p05": true,
+        "flag_for_operator_decision": true,
+        "l3_status": "withheld",
+        "note": "FLAG-FOR-DECISION: held-out year beat the pre-registered null; this does NOT self-promote -- it is surfaced for an operator/supervisor decision (B.1)."
+      }
     }
   },
-  "reason": "Lag scan did not beat the permutation null at p<0.05 with real-feed-only criteria; k_salmon remains withheld.",
-  "generated_at": "2026-06-27T14:57:00.631074+00:00"
+  "reason": "Lag scan did not beat the permutation null at p<0.05 with real-feed-only criteria; k_salmon remains withheld. PRE-REGISTERED SUMMER (EXPLORATORY, FLAG-FOR-DECISION): the held-out year 2021 beat the pre-registered Jun-Sep null at the training-fixed lag 17d (r=0.389951, p=0.026973). This does NOT self-promote; it is surfaced for an operator/supervisor decision (B.1). L3 stays WITHHELD pending that decision.",
+  "generated_at": "2026-06-27T16:27:11.943852+00:00"
 }

@@ -73,14 +73,14 @@ reuse:
 # not new levels). Canonical prose: WAVESET_CHARTER.md. Decision record:
 # DECISION_RECORD.md (operator-confirmed 2026-06-27). Wave 1 prompts: WAVE1_DISPATCH.md.
 frontier_dispatch:
-  status: W1-W2-W3-done-W4-chartered  # 2026-06-27: W1+W2 ran; W3 L3 real Albion wired (withheld); W4 build wave chartered from the research findings (READY)
+  status: W1-W2-W3-W4-done  # 2026-06-27: W1+W2 ran; W3 L3 real Albion wired (withheld); W4 build wave ran -> consistency re-scored, bin-level timing gate written OFF, L3 summer-conditioned held-out FLAGGED-FOR-DECISION (still withheld); confidence still 0.0
   model: inherit                   # operator default
   frontier_state:
     effective_confidence: 0.0      # unchanged; no promotion
     L0: PASS                       # ROC AUC 0.879
     L1: PASS                       # diel; cross-station consistency NOT met (sparse-count artifact, W1/W2)
-    L2: FAIL                       # multi-station skill +0.078 stands, but time-rescaling WITHHELD (burstiness, not effort/grid/kernels) and cross-station not consistent; both data-bound (need 3-node production ingest)
-    L3: WITHHELD                   # real stock-aligned Albion (Fraser) feed now wired all years 2020-2026 (source=albion); lag scan p=0.394 does not beat the null -> honest withhold, not a wiring gap
+    L2: FAIL                       # served single-station fit CV-skill -0.047 (negative) -> still FAIL at 0.0. Bin-level timing gate ADOPTED 2026-06-27 (supervisor decision, ADOPT_BIN_LEVEL_TIMING_GATE=True; event-level Exp(1) inappropriate for detector-chatter: Hawkes branching 0.79-0.96, pooled KS p=3.3e-33), but its load-bearing CV-skill half fails on the served single station so timing_gate=False and confidence stays 0.0; ARMED -> a served fit with +CV-skill (4-stn experiment is +0.078, needs the deploy-gated 3-node ingest) would jump confidence to 1.0. Cross-station re-scored at 12 bins (diel dense split-half 0.04->0.37, lunar clears 0.5) but 4-stn mean bar still not cleared honestly
+    L3: WITHHELD                   # real stock-aligned Albion (Fraser) feed wired all years 2020-2026 (source=albion); full-span lag scan p=0.394; W4 pre-registered Jun-Sep summer conditioning in-sample r=0.251 p=0.013 and held-out year 2021 out-of-sample r=0.390 p=0.027 -> FLAGGED-FOR-DECISION (not self-promoted; LOYO only 2/5 years clear); stays WITHHELD pending supervisor decision
   execution_model:
     one_file_one_owner: true
     single_convergence_file_editor_per_wave: true
@@ -126,7 +126,7 @@ frontier_dispatch:
     - id: W3
       name: gate-L3-promotion-prep
       depends_on: [W2]
-      status: in-progress                       # 2026-06-27: l3-chinook-lag done (real Albion all years, WITHHELD p=0.394); gate-rerun + promotion-packet pending (no gate passes, so no promotion packet)
+      status: done                              # 2026-06-27: l3-chinook-lag done (real Albion all years, WITHHELD p=0.394); gate-rerun green at served confidence 0.0; no gate passed so no promotion packet
       agents:
         - { role: l3-chinook-lag,     owns: modeling/studies/salmon_lag.py, status: done, deliverable: "re-run lag scan on the validated real Chinook feed; verdict pass or withheld -> real stock-aligned Albion (Fraser) wired all years 2020-2026 via aimez EC2 FOS fetch; WITHHELD (lag +20d, r=0.076, p=0.394, does not beat null)" }
         - { role: gate-rerun,         owns: tools/waves/run-gate.sh, deliverable: "mlops-gate + honesty guard re-run; served confidence must not exceed earned" }
@@ -136,13 +136,13 @@ frontier_dispatch:
     - id: W4
       name: graduate-research-findings
       depends_on: [W3, research_dispatch]
-      status: dispatch-ready                     # READY; launch is the next operator gate. Charter: W4_BUILD_CHARTER.md; prompts: W4_BUILD_DISPATCH.md
+      status: done                               # ran 2026-06-27; both integrators returned; mlops-gate green at served confidence 0.0; bin-level timing gate present but OFF; L3 flagged-for-decision (still withheld)
       single_convergence_file_editor_per_file: true
       agents:
-        - { role: modeling-integrator, owns: [modeling/fit_kernels.py, modeling/studies/cross_station_consistency.py], deliverable: "ITEM1 (ungated) re-score cross-station consistency at 8-12 bins + min per-bin count + partial pooling + burst-dedup (diel 0.08->0.42, lunar clears 0.5); ITEM3 (gated, WRITE-ONLY) Hawkes diagnostic + bin-level timing gate (NB PIT + CV-skill) behind a default-OFF flag, do NOT adopt/promote" }
-        - { role: study-integrator,     owns: modeling/studies/salmon_lag.py, deliverable: "ITEM2 (ungated) pre-registered SRKW-summer (Jun-Sep, +lag) L3 conditioning + held-out year on the real Albion feed; L3 stays WITHHELD unless the held-out year also beats the null; optional summer-only counts re-test (RA)" }
-      gate: "items 1+2 landed; mlops-gate green; served confidence still 0.0; bin-level timing gate present but OFF"
-      confidence_gate: "item 3 adoption (bin-level timing gate) is a recorded supervisor decision via promotion/supervisor.py; effective_confidence rises ONLY on that decision (B.1)"
+        - { role: modeling-integrator, owns: [modeling/fit_kernels.py, modeling/studies/cross_station_consistency.py], status: done, deliverable: "ITEM1 (ungated) re-scored cross-station consistency at 12 bins + min per-bin count + partial pooling + burst-dedup (diel dense split-half 0.04->0.37, lunar clears 0.5, tide kept flagged unstable); verdict still NO (4-stn bar not cleared honestly). ITEM3 (gated, WRITE-ONLY) Hawkes diagnostic (branching 0.79-0.96, pooled KS p=3.3e-33, event-level WITHHELD) + bin-level timing gate (NB PIT p=0.364 AND CV-skill +0.078, verdict pass) behind ADOPT_BIN_LEVEL_TIMING_GATE=False; flag NOT flipped, confidence unchanged 0.0" }
+        - { role: study-integrator,     owns: modeling/studies/salmon_lag.py, status: done, deliverable: "ITEM2 (ungated) pre-registered SRKW-summer (Jun-Sep, +lag run-leads-presence) L3 conditioning on real Albion: in-sample r=0.251 p=0.013; held-out year 2021 out-of-sample at training lag +17d r=0.390 p=0.027 BEATS null -> FLAGGED-FOR-DECISION (not self-promoted; LOYO 2/5 years clear, fragile); summer counts r=0.221 p=0.009 (informational). L3 stays WITHHELD" }
+      gate: "PASSED: items 1+2 landed; mlops-gate green; served confidence still 0.0"
+      confidence_gate: "ADOPTED 2026-06-27 (operator 'approved adoption', recorded in DECISION_RECORD.md sec 4): ADOPT_BIN_LEVEL_TIMING_GATE=True. Verified data-earned, not automatic -- served single-station CV-skill -0.047 so timing_gate=False and effective_confidence stays 0.0; mlops-gate green. Now ARMED: the next served fit with +CV-skill auto-promotes (to 1.0); the remaining precondition is the deploy-gated 3-node ingest."
 
   out_of_scope:
     - "MLO platform (FEAT/REG/SCHED/MON/CI): chartered in MLO_CHARTER.md, operator/deploy-gated, a later track"
