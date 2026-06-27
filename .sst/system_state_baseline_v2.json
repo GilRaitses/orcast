@@ -1,0 +1,75 @@
+{
+  "decision_identity": {
+    "artifact_kind": "system_state_baseline",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "baseline_version": "v2",
+    "baseline_date": "2026-06-27",
+    "backend_host_commit": "5a7e2e8",
+    "frontend_vercel_commit": "77d4d0c",
+    "topology": "selfhost_cotenant"
+  },
+  "generated_at": "2026-06-27",
+  "supersedes": "system_state_baseline_v1 (95a6d95)",
+  "summary": "Post-DD-4 platform state: explore3d backend shipped (ONC relay + public-route planner), DD-5/DD-6 backend fixes live, host access moved to SSM-only (inbound SSH closed), App Runner retained as rollback.",
+  "frontend": {
+    "host": "vercel",
+    "project": "orcast-h0",
+    "production_alias": "orcast-h0.vercel.app",
+    "commit": "77d4d0c",
+    "proxy_upstream_env": "ORCAST_API_BASE",
+    "proxy_upstream_value": "https://orcast-api.aimez.ai",
+    "explore3d_landing_deployed": false
+  },
+  "backend": {
+    "mode": "selfhost_cotenant",
+    "shared_host_instance": "i-04a649f91274e9fce",
+    "service_unit": "orcast-api.service",
+    "bind": "127.0.0.1:8090",
+    "python": "python3.12",
+    "checkout_path": "/opt/orcast",
+    "checkout_commit": "5a7e2e8",
+    "co_tenants": ["pax-infer.service:8077", "pax-shade.service:8078"]
+  },
+  "access": {
+    "method": "ssm_session_manager",
+    "ssm_status": "Online",
+    "inbound_ssh": "closed (no port 22 ingress)",
+    "host_role_policies": ["aimez-host-s3", "orcast-backend-data-access", "AmazonSSMManagedInstanceCore"]
+  },
+  "reach": {
+    "tunnel_id": "e1ce3073-0588-4125-9f6a-cff5fb2a7d3d",
+    "hostname": "orcast-api.aimez.ai",
+    "auth_model": "ORCAST_API_KEY via X-ORCAST-Key injected by the Vercel proxy"
+  },
+  "features_shipped": {
+    "dd5_interest_raw_payload": "fixed + verified (S3 objects written)",
+    "dd6_explore_graceful_503": "fixed + verified",
+    "dd4_explore3d_backend": "shipped (onc relay + public_route planner)",
+    "dd4_proxy_allowlist": "shipped (onc + interactions/plan public)"
+  },
+  "rollback": {
+    "apprunner_service": "orcast-aws-backend",
+    "apprunner_status": "RUNNING",
+    "revert": "set Vercel ORCAST_API_BASE to the App Runner URL and redeploy"
+  },
+  "verification": {
+    "selfhost_gate": "PASS",
+    "onc_signal_proxy": 200,
+    "onc_archive_proxy": 503,
+    "interest_persist": "verified (S3)",
+    "explore_sessions": 503
+  },
+  "tracked_limits": [
+    "RDS explore unreachable from host (DD-6, medium)",
+    "ONC disabled in prod: metadata-only/503 (DD-9, low, enable-on-demand)",
+    "explore3d frontend not deployed (DD-4/DD-9, medium, decision)",
+    "App Runner rollback cost until post-submission (DD-3, low)",
+    "host access SSM-only, no SSH fallback (GP-B4, low)",
+    "SDR O-2/O-3/O-4 drift (low/medium)",
+    "demo GIFs open (DD-7, medium)"
+  ],
+  "submission_gate": "P1 (DynamoDB screenshot, Devpost, arXiv) parked until adversarial wavesets are clean and all limits above are operator-approved"
+}

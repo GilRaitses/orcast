@@ -1,0 +1,73 @@
+decision_id: orcast_system_state_baseline_v2_20260627
+title: orcast platform system-state baseline v2 (post explore3d-backend ship)
+status: ratified
+date: "2026-06-27"
+patch_type: system_state_baseline
+supersedes: orcast_system_state_baseline_v1_20260626
+
+registry:
+  registry_decision_id: 57853cfb36d2cf41f35191cfc46cee443410460a7a88a53e2097c41176dc5e34
+  artifact_path: .sst/system_state_baseline_v2.json
+  kind: system_state_baseline
+  scope:
+    platform: orcast
+    env: production
+
+statement:
+  - >-
+    Updated platform baseline after shipping the explore3d backend and the
+    pre-submission hardening. Backend host runs main @ 5a7e2e8 (ONC hydrophone
+    relay + public-route surface planner + DD-5/DD-6 fixes); the Vercel proxy
+    runs @ 77d4d0c (ONC + interactions/plan public allow-list).
+  - >-
+    Host access is now SSM Session Manager only; inbound SSH is fully closed
+    (no port 22 ingress). The host role carries aimez-host-s3,
+    orcast-backend-data-access, and AmazonSSMManagedInstanceCore.
+  - >-
+    DD-5 (interest raw-payload persistence) and DD-6 (graceful 503 on
+    RDS-unreachable explore) are fixed and verified in production.
+  - >-
+    ONC is shipped but DISABLED in production (ORCAST_ENABLE_ONC=false,
+    ONC_API_TOKEN unset): hydrophone-signal returns metadata-only (200),
+    archivefile returns 503. The explore3d FRONTEND (3D landing) is not deployed.
+  - >-
+    App Runner orcast-aws-backend stays RUNNING as rollback.
+
+tracked_limits:
+  - RDS explore unreachable from host (DD-6)
+  - ONC disabled in prod, enable-on-demand (DD-9)
+  - explore3d frontend not deployed (DD-4/DD-9)
+  - App Runner rollback cost until post-submission (DD-3)
+  - host access SSM-only, no SSH fallback (GP-B4)
+  - SDR O-2/O-3/O-4 drift
+  - demo GIFs open (DD-7)
+
+verification:
+  selfhost_gate: PASS
+  onc_signal_proxy: 200
+  onc_archive_proxy: 503
+  interest_persist: verified_s3
+  explore_sessions: 503
+
+repo_anchoring:
+  branch: main
+  backend_host_commit: 5a7e2e8
+  frontend_vercel_commit: 77d4d0c
+
+non_claims:
+  - Does not enable ONC in production (token + flag remain unset).
+  - Does not deploy the explore3d frontend.
+  - Does not lift the P1 submission gate, which is parked pending adversarial-wave
+    clearance and operator approval of the tracked limits.
+
+related:
+  deploy_demo_decisions: .cca/DEPLOY_DEMO_DECISIONS.md
+  previous_baseline: .ddb/decisions/orcast_system_state_baseline_v1_20260626.yaml
+  gp_pass: .ddb/decisions/orcast_gp_preflight_v1_20260626.yaml
+
+subordinate_mirror_path: .ddb/receipts/orcast_system_state_baseline_v2_20260627.md
+
+authority_note: >-
+  Authoritative structured registration lives in this YAML decision plus the
+  registered .sst artifact (supersedes v1). The markdown receipt is a subordinate
+  mirror.

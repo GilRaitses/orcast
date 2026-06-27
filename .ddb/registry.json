@@ -31,7 +31,7 @@
         "lifecycle_id": "orcast_platform",
         "platform": "orcast"
       },
-      "status": "active"
+      "status": "superseded"
     },
     {
       "artifact_hash": "06bdf575d0698c41ba7e25e8c8147b0d1beddd7c74ecea9c18d63ada3f88c71a",
@@ -64,6 +64,43 @@
         "platform": "orcast"
       },
       "status": "active"
+    },
+    {
+      "artifact_hash": "cd0a9b218906895b94f86102d13d289768d2ec83993141338b8be8bd0f6f498f",
+      "artifact_path": ".sst/system_state_baseline_v2.json",
+      "decision_id": "57853cfb36d2cf41f35191cfc46cee443410460a7a88a53e2097c41176dc5e34",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "backend_host_commit": "5a7e2e8",
+        "baseline_date": "2026-06-27",
+        "baseline_version": "v2",
+        "frontend_vercel_commit": "77d4d0c",
+        "topology": "selfhost_cotenant"
+      },
+      "kind": "system_state_baseline",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-27T02:25:58.686566+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active",
+      "supersedes": [
+        "8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b"
+      ]
     }
   ],
   "schema_version": "0.1"

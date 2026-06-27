@@ -78,6 +78,36 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
   recorded in the SDR.
 - **Status:** open (tracked in SDR §3).
 
+## DD-9 — Explore3d backend shipped; ONC disabled in production
+- **Decision:** The explore3d backend (ONC hydrophone relay + public-route surface
+  planner) is shipped to the host (`5a7e2e8`) and the proxy allow-list (`77d4d0c`).
+  ONC is intentionally DISABLED in production: `ORCAST_ENABLE_ONC` is false and
+  `ONC_API_TOKEN` is unset, so `/api/onc/hydrophone-signal` returns `enabled:false`
+  metadata-only (200) and `/api/onc/archivefile` returns 503.
+- **Rationale:** Ship the code path now (additive, import-preflighted, graceful
+  degradation) without committing to a live ONC token before it is vetted.
+- **Status:** open limit. To enable: set `ONC_API_TOKEN` (secret) + `ORCAST_ENABLE_ONC=true`
+  in the host env file and `systemctl restart orcast-api` (via SSM). The explore3d
+  FRONTEND (3D landing) remains unshipped (separate demo decision).
+
+---
+
+## Tracked limits register (for the pre-submission approval gate)
+
+P1 submission is parked until these are reviewed and approved by the operator.
+
+| Limit | State | Severity | Tracked in |
+|---|---|---|---|
+| RDS explore unreachable from host (explore-session writes 503) | accepted (parity) | medium | DD-6 |
+| ONC disabled in prod (metadata-only / 503) | open, enable-on-demand | low | DD-9 |
+| explore3d FRONTEND (3D landing) not deployed | open decision | medium | DD-4/DD-9 |
+| App Runner kept RUNNING as rollback (~$70-85/mo) | intentional until post-submission | low | DD-3 |
+| Host access SSM-only; inbound SSH closed | hardened (no fallback if SSM down) | low | GP-B4 |
+| SDR O-2/O-3/O-4 drift | open | low/medium | SDR §3 |
+| Demo GIFs (Wave Set MX) | open | medium | DD-7 |
+| interest raw-payload | FIXED + verified | resolved | DD-5 |
+| explore generic 500 -> 503 | FIXED + verified | resolved | DD-6 |
+
 ---
 
 ## Operator-gated (OX) — unchanged, human credentials required
