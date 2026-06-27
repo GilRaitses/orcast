@@ -1148,14 +1148,14 @@ waves:
     status: chartered
     depends_on: [M-L1]
     scope_globs: [modeling/studies/level2_joint.py, modeling/studies/tide_coverage.py, modeling/tide_harmonic.py, modeling/fit_kernels.py, modeling/design.py]
-    note: "FAIL (frontier) - harmonic k_tide lifts phase coverage 0.42->1.00 (R^2 0.97); joint refit with k_tide pending AWS timeseries store"
+    note: "FAIL (frontier) - harmonic k_tide refit ran on AWS store: tide now FITTED (coverage 0.42->1.00, R^2 0.85), but held-out skill -0.047 + time-rescaling fail, confidence 0%. Binding constraint is single-station, not covariates; needs multi-station acoustic"
   - id: M-L3
     family: MLM
     type: implement
     status: chartered
     depends_on: [M-L2]
     scope_globs: [modeling/studies/level3_prey_space.py, modeling/studies/salmon_lag.py]
-    note: "WITHHELD - salmon lag scan added (climatology placeholder); needs real run-timing feed + effort model + held-out visual validation"
+    note: "WITHHELD - salmon lag scan on climatology placeholder; WILDLIFE waveset researched real Chinook + prey-base sources to aggregate (see family WILDLIFE)"
 
   - id: MLO-FEAT
     family: MLO
@@ -1184,6 +1184,34 @@ waves:
     status: chartered
     gate: mlops-gate
     depends_on: [M-L3]
+
+  - id: WL-PREY
+    family: WILDLIFE
+    type: research
+    status: done
+    home: .cca/catalogue/O0/20260627_wildlife-sources/
+    note: "8 Chinook/salmonid prey-index sources for k_salmon (Albion/PSC/DART replace the salmon.py climatology placeholder); literature-grounded"
+  - id: WL-SRKW
+    family: WILDLIFE
+    type: research
+    status: done
+    note: "10 SRKW occurrence/photo-ID/census sources, validation + s_space only (CWR, Whale Museum Orca Master, Happywhale, OBIS-SEAMAP/GBIF)"
+  - id: WL-ACOUSTIC
+    family: WILDLIFE
+    type: research
+    status: done
+    note: "8 PAM networks; multi-station coverage is the L2 unlock (DFO OPP-MEQ moorings, OrcaHello all nodes, ONC)"
+  - id: WL-PREYBASE
+    family: WILDLIFE
+    type: research
+    status: done
+    note: "8 prey-base/competitor/indicator sources (productivity, pinnipeds per Chasco 2017, herring), labeled slow covariates, never temporal heat"
+  - id: WL-SYNTH
+    family: WILDLIFE
+    type: synthesize
+    status: done
+    depends_on: [WL-PREY, WL-SRKW, WL-ACOUSTIC, WL-PREYBASE]
+    note: "WILDLIFE_SOURCES_REGISTER.md: ranked by gate impact (multi-station acoustic > real Chinook index > held-out visual), P0/P1/P2 acquisition order"
 
 next_wave_set: U
 

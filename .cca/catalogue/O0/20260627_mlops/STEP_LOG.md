@@ -55,10 +55,40 @@ Ladder after the waves: L0 PASS, L1 PASS (diel), L2 FAIL (frontier), L3 WITHHELD
 `./tools/waves/run-gate.sh mlops-gate` returns zero; honesty guard holds (served confidence 0.0
 consistent with L2 fail). Effective confidence unchanged at 0%.
 
+## 2026-06-27 (L2 follow-up: harmonic k_tide refit, operator-approved)
+
+- Resolved the AWS store access: the timeseries data is in bucket
+  `198456344617-us-west-2-orcast-aws-backend-raw-payloads` (region us-west-2), not the config
+  default `orcast-raw-payloads` (that mismatch was the M-TIDE NoSuchBucket). acoustic_detections
+  has haro_strait; env_currents has pug1701/1702/1703.
+- Integrated the harmonic tide into the fit pipeline (local-only modeling tree, like the rest of
+  it): added `HarmonicTidalPhase` to `modeling/tide_phase.py` (drop-in for the TidalPhase
+  interface, backed by `modeling/tide_harmonic.HarmonicTide`), and `modeling/fit_kernels.py` now
+  prefers the harmonic phase when currents exist (reconstruction R^2 > 0.5), falling back to the
+  onset-interpolation TidalPhase otherwise. Recorded `tide_model` + `tide_reconstruction_r2`.
+- Refit against the real S3 store (production model-artifact upload disabled: a confidence change
+  is a recorded supervisor decision, not a refit side effect). Result, honest:
+  - `k_tide` NOW ENTERS the joint fit: covariates_fit = [diel, tide, lunar]; tide phase coverage
+    0.42 -> 1.00 (harmonic R^2 0.847 on the pooled pug170x current series; 18,480 current records).
+  - L2 still FAILS: held-out CV mean deviance skill -0.047 (slightly worse than the -0.018 without
+    tide), time-rescaling KS still fails, confidence stays 0.0. Adding k_tide did not earn skill.
+    Season still excluded (0.75 coverage).
+  - Takeaway matches NOTES section 4: the single-station sparse-count regime, not the covariate
+    list, is the binding constraint. The harmonic model removed the coverage blocker so k_tide is
+    now a fair test; the data on one station does not support positive skill.
+- Updated `modeling/studies/reports/level2_joint_temporal.json` (now shows tide fitted, season
+  withheld) and fixed `level2_joint.py` to name the actual excluded covariate(s) rather than the
+  stale "tide/season" string. mlops-gate stays green; honesty guard holds (served confidence 0.0).
+
 ## Open / awaiting operator
 
-- M-L2 off 0%: run the joint refit with the harmonic k_tide against the AWS timeseries store
-  (NoSuchBucket locally this session); season still needs fuller annual coverage.
-- M-L3 needs a real Chinook run-timing feed (Albion/DART) to replace the climatology placeholder.
+- M-L2 off 0% now needs multi-station acoustic coverage, not more covariates (see the WILDLIFE
+  register `.cca/catalogue/O0/20260627_wildlife-sources/WILDLIFE_SOURCES_REGISTER.md`): fit
+  OrcaHello on all in-region Orcasound nodes is the cheapest unlock.
+- M-L3 needs a real Chinook run-timing feed: validate the Albion/DART parsers in
+  `src/aws_backend/sources/salmon.py` (both wired, both fall through to climatology today).
+- The harmonic integration lives in the local modeling pipeline (untracked, like fit_kernels.py
+  and design.py); only `tide_harmonic.py` and the study reports are tracked. Reproduce with
+  `ORCAST_STORAGE_BACKEND=aws ORCAST_RAW_PAYLOAD_BUCKET=198456344617-us-west-2-orcast-aws-backend-raw-payloads AWS_REGION=us-west-2 PYTHONPATH=. .venv-modeling/bin/python -m modeling.fit_kernels`.
 - MLO scheduling/monitoring AWS infra is operator/deploy-gated.
 - A confidence promotion still requires a passing gate + a recorded supervisor decision.

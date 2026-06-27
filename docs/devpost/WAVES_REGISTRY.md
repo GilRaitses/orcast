@@ -374,8 +374,12 @@ Operationalizes the kernel methodology ([FORECAST_KERNELS.md](../methodology/FOR
 |----|--------|------|------|
 | M-L0 | done (PASS) | detector ROC/d' + per-station effort | ROC AUC 0.879 (CI 0.856-0.902), d' 1.62 from live confidence cache (758 paired labels) |
 | M-L1 | done (PASS) | PSTH k_diel vs phase-shuffle null | diel modulation 1.79, p=0.0005 |
-| M-L2 | chartered (FAIL, frontier) | joint LNP (tide+diel+lunar+season) | harmonic k_tide lifts phase coverage 0.42→1.00 (R² 0.97); joint refit with k_tide pending AWS store |
-| M-L3 | chartered (WITHHELD) | k_salmon (lag scan) + s_space (bathymetry + CAND density) | lag scan added on climatology placeholder; needs real run-timing feed + effort model |
+| M-L2 | chartered (FAIL, frontier) | joint LNP (tide+diel+lunar+season) | harmonic k_tide refit ran on AWS store: tide now fitted (coverage 0.42→1.00, R² 0.85) but held-out skill −0.047 + time-rescaling fail, confidence 0%; binding constraint is single-station, not covariates |
+| M-L3 | chartered (WITHHELD) | k_salmon (lag scan) + s_space (bathymetry + CAND density) | lag scan on climatology placeholder; WILDLIFE waveset researched the real Chinook + prey-base sources to aggregate |
+
+### Wildlife-source research family (WILDLIFE) — Wave Set WILDLIFE
+
+Literature-grounded research waveset (`.cca/catalogue/O0/20260627_wildlife-sources/`) that surveyed the wildlife data sources worth aggregating for the SRKW forecast. Four parallel read-only research subagents (WL-PREY, WL-SRKW, WL-ACOUSTIC, WL-PREYBASE) each returned sources in the procurement output template with a verified literature citation and the model role, and the orchestrator synthesized `WILDLIFE_SOURCES_REGISTER.md`. Ranked by gate impact: multi-station acoustic coverage (the L2 unlock), a real Chinook prey index (replaces the `salmon.py` climatology placeholder, unblocks M-L3), then held-out visual validation and effort-corrected `s_space`. Discovery only: no ingest, no promotion. Extends `docs/data-procurement/`.
 | MLO-FEAT/REG/SCHED/MON/CI | chartered | feature store + GE, registry, scheduled gated retrain, drift monitoring, `mlops-gate` CI | `./tools/waves/run-gate.sh mlops-gate` |
 
 Home: [.cca/catalogue/O0/20260627_mlops/](../../.cca/catalogue/O0/20260627_mlops/). Covariate priority (literature): k_salmon (Chinook, strongest non-tidal driver), k_tide (Haro Strait fronts), s_space (habitat), k_season. Studies under `modeling/studies/`; tide/season/prey gates may report `withheld` until acoustic coverage clears.

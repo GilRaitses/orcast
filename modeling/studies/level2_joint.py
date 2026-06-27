@@ -79,7 +79,8 @@ def run() -> GateResult:
         if single_cov != "live":
             reasons.append(f"single-covariate baseline {single_cov}")
         if excluded:
-            reasons.append(f"tide/season withheld by phase coverage (<{COVERAGE_THRESHOLD})")
+            names = "/".join(sorted(excluded))
+            reasons.append(f"{names} withheld by phase coverage (<{COVERAGE_THRESHOLD})")
         reason = "Level 2 gate not met: " + "; ".join(reasons) + ". Confidence stays 0% (honest)."
     return GateResult(level=2, name="joint_temporal", status=status, metrics=metrics, reason=reason)
 

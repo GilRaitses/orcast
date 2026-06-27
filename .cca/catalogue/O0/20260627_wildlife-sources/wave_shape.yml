@@ -1,0 +1,80 @@
+# WILDLIFE, wildlife-source research waveset, machine-readable shape
+# Home: .cca/catalogue/O0/20260627_wildlife-sources/
+# Canonical prose: WILDLIFE_SOURCES_CHARTER.md
+# Output template: docs/data-procurement/PROCUREMENT_CHARTER.md (Agent Output Template)
+
+version: 1
+family: WILDLIFE
+label: wildlife-source-research
+home: .cca/catalogue/O0/20260627_wildlife-sources/
+status: chartered
+mode: discovery
+readonly: true   # subagents research + write only their one report file; no ingest, no commits
+
+model: "log lambda = b0 + s_space + k_tide + k_diel + k_lunar + k_season + k_salmon + log E"
+
+honesty:
+  - effort_bias: acoustic-first temporal estimation; visual sightings are validation + s_space only
+  - label_roles: tag each source by model role; never mix an effort covariate with an ecological one
+  - acoustic_not_visual: acoustic presence is not visual encounter
+  - no_climatology_as_truth: a climatology fallback is not a validated ecological covariate
+  - cite_or_omit: every source justification names a study (author, year, venue) + mechanism; verify before quoting
+  - research_only: no ingest, no store writes, no commits; each subagent writes only its named file
+
+literature_anchors:
+  in_references_bib: [olson2018, thornton2022]
+  verify_before_quoting: [ford2010, hanson2010, chasco2017, pfmc_chinook]
+
+already_wired:
+  note: "grep src/aws_backend/sources/ to mark sources already adapted"
+  sources: [obis, inaturalist, orcahello, orcahello_history, orcasound, onc, salmon, ais, ferries, community, local_obis]
+
+output_template: docs/data-procurement/PROCUREMENT_CHARTER.md  # Agent Output Template (YAML) + add literature_grounding per source
+
+lanes:
+  - id: WL-PREY
+    parallel_group: 1
+    model_role: k_salmon
+    scope: Chinook and salmonid prey run-timing, abundance, stock-specific indices
+    examples: [DFO Albion test fishery, PSC, Fraser panel, Columbia DART Bonneville, WDFW, PFMC, Fish Passage Center, Hanson genetic stock ID]
+    output: WL-PREY.md
+    exit: ">=6 sources in template with verified citations + mechanism; k_salmon relevance explicit"
+
+  - id: WL-SRKW
+    parallel_group: 1
+    model_role: validation + s_space
+    scope: SRKW occurrence, photo-ID, census, demographic records
+    examples: [Center for Whale Research census, Orca Network, The Whale Museum, Happywhale, Acartia, OBIS-SEAMAP, GBIF, BCCSN, DFO/NOAA surveys]
+    output: WL-SRKW.md
+    exit: ">=6 sources; effort-bias caveat per source; role = validation/s_space only"
+
+  - id: WL-ACOUSTIC
+    parallel_group: 1
+    model_role: presence_spike_train + log_E
+    scope: passive acoustic detection networks beyond OrcaHello
+    examples: [Orcasound, Ocean Networks Canada hydrophones, NOAA SanctSound, JASCO, SMRU, Beam Reach/Lime Kiln, DFO PAM]
+    output: WL-ACOUSTIC.md
+    exit: ">=6 sources; station coordinates + effort/uptime availability noted; multi-station coverage emphasis"
+
+  - id: WL-PREYBASE
+    parallel_group: 1
+    model_role: prey_base_covariate (labeled)
+    scope: forage fish, pinnipeds, seabirds, productivity (prey base, competitors, indicators)
+    examples: [WDFW/DFO herring spawn, eulachon, sand lance, harbor seal/sea lion counts, seabird colony surveys, Chl-a/productivity, PSP/eulachon]
+    output: WL-PREYBASE.md
+    exit: ">=6 sources; trophic mechanism cited; role labeled prey-base/competitor/indicator (not temporal-kernel heat)"
+
+synthesis:
+  owner: orchestrator
+  output: WILDLIFE_SOURCES_REGISTER.md
+  contract: >
+    Merge the four lane reports into one ranked register keyed to model term + integrity
+    condition, with availability/license/access/literature, and a P0/P1/P2 acquisition order
+    targeting the gate blockers (real Chinook index, multi-station acoustic, held-out visual
+    validation). Cross-link docs/data-procurement/ and the MLM frontier.
+
+cross_links:
+  procurement: docs/data-procurement/PROCUREMENT_CHARTER.md
+  source_decisions: docs/data-procurement/SOURCE_DECISIONS.md
+  mlm: .cca/catalogue/O0/20260627_mlops/
+  methodology: [docs/methodology/FORECAST_KERNELS.md, docs/methodology/CALIBRATION_STUDIES.md]
