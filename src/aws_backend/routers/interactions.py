@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import logging
+import uuid
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, model_validator
 
-from ..auth import require_api_key
+from ..auth import ReviewerIdentity, require_api_key, reviewer_identity
 from ..casting.concierge import prepare_interaction, run_interaction
 from ..casting.planner import DEFAULT_PLANNER_ID, plan_interaction
 from ..casting.registry import build_managed_agent_store
@@ -18,6 +20,7 @@ from ..exploration.session_store import SessionStore, exploration_status
 
 router = APIRouter()
 _store = build_managed_agent_store()
+logger = logging.getLogger(__name__)
 
 
 class InlineAgentSpec(BaseModel):
@@ -149,9 +152,22 @@ def _plan_response(result) -> Dict[str, Any]:
 
 
 @router.post("/api/interactions/plan", dependencies=[Depends(require_api_key)])
-def plan_cast_interaction(payload: PlanRequest) -> Dict[str, Any]:
-    """Keyed surface planner — validated ui_intent + executed skill_plan."""
+def plan_cast_interaction(
+    payload: PlanRequest,
+    identity: ReviewerIdentity = Depends(reviewer_identity),
+) -> Dict[str, Any]:
+    """Surface planner — validated ui_intent + executed skill_plan.
+
+    Exposed publicly via the same-origin proxy for anonymous-first access
+    (HANDOFF_CHARTER B2). Anonymous turns (no proxy-stamped reviewer identity)
+    are restricted to public T0/T1 skills; keyed T2/T3 skills require a
+    signed-in reviewer, so the public planner simply omits those panels.
+    """
     _require_aurora()
+    # public_route=True forbids T2/T3 skills even if a crafted inline agent or
+    # message tries to request them. Reviewers stamped by the trusted proxy keep
+    # full keyed access.
+    public_route = identity.reviewer_id is None
     store = SessionStore()
     if not store.session_exists(payload.session_id):
         raise HTTPException(status_code=404, detail="Session not found")
@@ -167,6 +183,7 @@ def plan_cast_interaction(payload: PlanRequest) -> Dict[str, Any]:
             viewport=payload.viewport,
             focus=payload.focus,
             inline_agent=inline,
+            public_route=public_route,
         )
     except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
@@ -209,6 +226,27 @@ def plan_cast_interaction(payload: PlanRequest) -> Dict[str, Any]:
         response["reply"] = guide.reply
         response["source"] = guide.source
         response["model"] = guide.model
+
+        # Durability (ORCHESTRATOR_NARRATOR_FRAMEWORK.md sec 5): persist the
+        # planned ui_intent turn so planner mode has multi-turn history and the
+        # step trace is replayable. Persistence failure must not fail the turn.
+        interaction_id = str(uuid.uuid4())
+        response["interaction_id"] = interaction_id
+        try:
+            store.save_interaction_exchange(
+                payload.session_id,
+                payload.message,
+                guide,
+                interaction_id=interaction_id,
+                managed_agent_id=prep.managed_agent_id,
+                agent_version=prep.agent_version,
+                resolved_spec_hash=result.resolved_spec_hash,
+                hydration_mode=prep.hydration_mode,
+                skills_invoked=list(result.ui_intent.get("skill_plan") or []),
+                interaction_steps=prep.steps,
+            )
+        except Exception as exc:  # noqa: BLE001 - persistence is best-effort
+            logger.warning("plan turn persistence failed: %s", exc)
 
     return response
 

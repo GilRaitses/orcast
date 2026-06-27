@@ -124,13 +124,15 @@ def panel_ids_fallback() -> List[str]:
     return panel_ids()
 
 
-def validate_ui_intent(agent: ManagedAgent, ui_intent: Dict[str, Any]) -> None:
+def validate_ui_intent(
+    agent: ManagedAgent, ui_intent: Dict[str, Any], *, public_route: bool = False
+) -> None:
     if not agent.policy.planner_mode:
         raise ValueError("agent_not_planner")
     skill_plan = [str(s) for s in (ui_intent.get("skill_plan") or [])]
     if not skill_plan:
         raise ValueError("empty_skill_plan")
-    validate_skill_plan(skill_plan, public_route=False)
+    validate_skill_plan(skill_plan, public_route=public_route)
     allowed = set(agent.policy.allowed_panels) if agent.policy.allowed_panels else None
     validate_panels(list(ui_intent.get("panels") or []), allowed=allowed)
 
@@ -145,6 +147,7 @@ def plan_interaction(
     viewport: Optional[Dict[str, Any]] = None,
     focus: Optional[Dict[str, Any]] = None,
     inline_agent: Optional[Dict[str, Any]] = None,
+    public_route: bool = False,
 ):
     from .concierge import _resolve_cast_agent, prepare_interaction_with_skills
 
@@ -159,7 +162,7 @@ def plan_interaction(
         raise ValueError("agent_not_planner")
 
     ui_intent = draft_ui_intent(agent, message, viewport=viewport, focus=focus)
-    validate_ui_intent(agent, ui_intent)
+    validate_ui_intent(agent, ui_intent, public_route=public_route)
 
     skill_plan = list(ui_intent["skill_plan"])
     deep_links = filter_deep_links(agent, list(ui_intent.get("deep_links") or []))
@@ -171,6 +174,7 @@ def plan_interaction(
         skill_plan,
         viewport=viewport,
         focus=focus,
+        public_route=public_route,
     )
 
     plan_step = {

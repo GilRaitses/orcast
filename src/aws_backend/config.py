@@ -29,6 +29,7 @@ class Settings:
     enable_live_inaturalist: bool = os.getenv("ORCAST_ENABLE_LIVE_INATURALIST", "true").lower() == "true"
     enable_live_noaa: bool = os.getenv("ORCAST_ENABLE_LIVE_NOAA", "true").lower() == "true"
     enable_orcahello: bool = os.getenv("ORCAST_ENABLE_ORCAHELLO", "true").lower() == "true"
+    enable_onc: bool = os.getenv("ORCAST_ENABLE_ONC", "false").lower() == "true"
     enable_community: bool = os.getenv("ORCAST_ENABLE_COMMUNITY", "true").lower() == "true"
     enable_bedrock: bool = os.getenv("ORCAST_ENABLE_BEDROCK", "false").lower() == "true"
     bedrock_model_id: str = os.getenv("ORCAST_BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
@@ -53,6 +54,12 @@ class Settings:
     @property
     def api_key(self) -> str:
         return os.getenv("ORCAST_API_KEY", "")
+
+    @property
+    def onc_api_token(self) -> str:
+        """Ocean Networks Canada Oceans 3.0 token — env/secret only, never logged
+        or written to a tracked file (HANDOFF_CHARTER B5)."""
+        return os.getenv("ONC_API_TOKEN", "")
 
     @property
     def models_bucket(self) -> str:

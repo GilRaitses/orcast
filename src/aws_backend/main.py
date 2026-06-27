@@ -17,6 +17,7 @@ from .routers import (
     interest,
     kernel,
     managed_agents,
+    onc,
     promotion,
     read,
     reports,
@@ -80,6 +81,7 @@ def create_app() -> FastAPI:
     app.include_router(explore.router)
     app.include_router(managed_agents.router)
     app.include_router(interactions.router)
+    app.include_router(onc.router)
     app.include_router(reports.router)
     app.include_router(timeseries.router)
     app.include_router(deprecated.router)
