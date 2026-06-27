@@ -208,7 +208,7 @@ research_dispatch:
 # that gates three downstream waves (W6 deploy, W7 promote, W8 L3). Nothing here promotes;
 # build is gated; promotion needs a passing gate on SERVED data + a recorded supervisor decision.
 forward_path_campaign:
-  status: P0-W5-W6-done-W7-ready   # 2026-06-27: P0 + W5 grounding + W6 ingest DEPLOYED (served store 4-station, confidence still 0.0); W7 (refit + promotion decision) is the next gate
+  status: P0-W5-W6-done-W7-measured-HOLD   # 2026-06-27: through W6 ingest DEPLOYED; W7 served 4-station refit MEASURED skill +0.078 -> conf 0.49 HOLD (< 0.6); NOT promoted; confidence stays 0.0
   model: inherit
   w5_findings:                          # the three grounding go/no-go calls (research/forward/*.md)
     G1_ingest_deploy: "GO on the plumbing (operator-gated): one-shot idempotent write of the 3 cached nodes (orcasound_lab +1029, andrews_bay +265, nsj +34 = +1328) into the SERVED store; reads cache (no fetch_history/403 surface), ~180 S3 ops, reversible (rollback never touches haro_strait). Flips served CV-skill -0.047 -> ~+0.078 (4/5 folds). NO-GO on calling it a consistency fix or a promotion: +1328 to the SERVED store but 0 net-new to the analysis universe (same cached rows). orcasound_lab is load-bearing; nsj negligible."
@@ -255,7 +255,19 @@ forward_path_campaign:
     - id: W7
       name: promote-multistation
       depends_on: [W6]
-      status: ready                              # W6 done (store is 4-station); next gate. Refit SERVED + apply the two-band decision + recorded supervisor decision (B.1)
+      status: measured-HOLD                       # 2026-06-27: served 4-station refit measured; supervisor recommends HOLD; NOT promoted; confidence stays 0.0
+      measured:
+        n_stations_acoustic: 4
+        n_detections: 2089
+        cv_mean_deviance_skill: 0.0778            # needs >=+0.144 to reach conf 0.6; FAIL
+        cv_folds: "4/5"                            # but fold null-test p=0.1875 (pass-rate NOT distinguishable from chance)
+        pit_calibrated: true                       # ks_pval 0.364
+        level1_beats_null: [diel, lunar, season]
+        time_rescaling: withheld                   # event-level Exp(1) fails (detector chatter)
+        mapped_confidence: 0.49                     # P0 map; HOLD band (< 0.6 supervisor threshold)
+        supervisor_recommendation: hold            # "Confidence 0.49 (< 0.6 threshold). Recommend HOLD."
+        promoted: false                            # NOT promoted; write_outputs=False so served fit_report.json untouched, served confidence 0.0
+        refit_safety: "fk._maybe_write_s3=lambda:None; write_outputs=False (B.5)"
       objective: O3
       decision_bands:                            # G2: do not conflate
         hold:    "served skill>0, >=4/5 folds -> conf in (0,0.6); +0.078 -> 0.49. supervisor HOLDs. Default for the ingest-alone case = WAIT for ~+0.144, OR operator records an explicit B.1 decision to serve a sub-0.6 caveated confidence."

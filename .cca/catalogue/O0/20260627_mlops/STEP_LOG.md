@@ -360,6 +360,31 @@ research-findings commit.
   do not promote.
 - Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
   W1-W2-W3-done-W4-chartered).
+## 2026-06-27 (W7 MEASURED: served 4-station refit -> 0.49 HOLD, NOT promoted)
+
+Operator: "get the number for the decision and if it passes a very good threshold and it's reasonable to
+promote it now then we do it and ratify it in the decision database."
+
+- Ran the SERVED multi-station refit against the production store (now 4-station) under .venv-modeling
+  with fk._maybe_write_s3=lambda:None and write_outputs=False (B.5) -- measurement only, served
+  fit_report.json untouched.
+- Result: n_stations=4, n_detections=2089; held-out CV mean-deviance-skill = +0.0778 (4/5 folds, but the
+  fold null-test p=0.1875 -> pass-rate NOT distinguishable from chance); PIT calibrated (ks_pval 0.364);
+  L1 beats null on diel/lunar/season; time-rescaling withheld (event-level). Under the P0 map this maps
+  to confidence 0.49.
+- G2 PROMOTE gate: skill +0.078 < the +0.144 needed for conf 0.6 -> FAIL. confidence 0.49 < 0.6
+  supervisor threshold -> HOLD. promotion/supervisor.py draft_decision = HOLD ("Confidence 0.49 (< 0.6
+  threshold). Recommend HOLD.").
+- DECISION: HOLD. Does NOT pass a very good threshold, so NOT promoted and NOT ratified in the decision
+  database (the operator's condition was conditional on passing). Nothing written; effective_confidence
+  stays 0.0; L2 still FAIL.
+- This is exactly G2's predicted HOLD case: the ingest reproduces the +0.078 experiment (0 new
+  observations), which is below the promote bar. To clear 0.6 honestly the served fit needs skill
+  ~+0.144 (more independent signal: accruing summers / additional in-region nodes / a stronger covariate),
+  not a re-run of the same cached data. The alternative is an explicit operator B.1 decision to serve a
+  caveated sub-0.6 confidence -- not taken.
+- Registry: W7 -> measured-HOLD (measured block recorded); campaign status P0-W5-W6-done-W7-measured-HOLD.
+
 ## 2026-06-27 (W6 DEPLOYED: 3-node multi-station ingest landed in the SERVED store)
 
 Operator: "push push push / w6 deploy!!". Pushed the 4 pending commits to origin/main (CI re-runs with
