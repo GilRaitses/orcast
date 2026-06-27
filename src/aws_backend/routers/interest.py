@@ -67,4 +67,4 @@ def register_interest(payload: InterestSignup):
     except Exception as exc:
         log.warning("Interest signup storage failed (non-fatal): %s", exc)
 
-    return {"status": "ok", "message": "Thanks — you'll hear from us when the papers are ready."}
+    return {"status": "ok", "message": "Thanks. You'll hear from me when the papers are ready."}

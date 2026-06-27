@@ -147,7 +147,7 @@ export default function JournalPage() {
           </p>
           {entry.community_submission_id ? (
             <p className="badge ok">
-              Published —{" "}
+              Published{" "}
               <Link href="/moderation">moderation queue</Link> ({entry.community_submission_id.slice(0, 8)}…)
             </p>
           ) : (

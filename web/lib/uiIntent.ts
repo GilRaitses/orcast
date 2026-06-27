@@ -47,6 +47,7 @@ const PANEL_LABELS: Record<string, string> = {
   review_dossier: "Review dossier",
   moderation_queue: "Moderation queue",
   provenance_graph: "Metric provenance graph",
+  hydrophone_signal: "Hydrophone signal",
 };
 
 export function panelLabel(id: string): string {

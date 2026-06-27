@@ -7,7 +7,7 @@ export default function AskPage() {
         Sighting check
       </h1>
       <p className="hero-subtitle">
-        Drop a pin where you were, describe what you saw, and see encounter likelihood vs sighting verification — grounded in the same gates and provenance as the forecast.
+        Drop a pin where you were, describe what you saw, and see encounter likelihood vs sighting verification grounded in the same gates and provenance as the forecast.
       </p>
       <SightingCheckPanel />
     </main>

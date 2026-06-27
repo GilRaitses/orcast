@@ -129,8 +129,8 @@ export default function ProvenanceGraph({ metric, steps, annotations }: Provenan
       {resolveStep && (
         <div className="pg-row pg-resolve" style={{ marginTop: "0.5rem" }}>
           <span className="muted" style={{ fontSize: "0.8rem" }}>
-            Cast: <code>{resolveStep.managed_agent_id ?? "—"}</code>
-            {" "}v{resolveStep.agent_version ?? "—"}
+            Cast: <code>{resolveStep.managed_agent_id ?? "n/a"}</code>
+            {" "}v{resolveStep.agent_version ?? "n/a"}
             {resolveStep.resolved_spec_hash && (
               <span className="pg-hash"> #{resolveStep.resolved_spec_hash.slice(0, 8)}</span>
             )}

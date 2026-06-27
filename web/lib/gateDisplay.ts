@@ -33,7 +33,7 @@ export function cvDisplayLabel(status: GateDisplayStatus): string {
 
 export function cvDisplayExplainer(status: GateDisplayStatus): string | null {
   if (status !== "caution") return null;
-  return "Fold majority passed, but mean held-out deviance skill is negative — treat as marginal; see integrity conditions.";
+  return "Fold majority passed, but mean held-out deviance skill is negative. Treat as marginal. See integrity conditions.";
 }
 
 export function computeCvDisplayPass(cv: CvGateInput | null | undefined): boolean | null {

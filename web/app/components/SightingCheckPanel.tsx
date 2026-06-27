@@ -7,9 +7,9 @@ import { postJSON, getJSON, SightingAssistResponse, SightingAssistStatus } from 
 
 const SAN_JUAN_CENTER = { lat: 48.55, lng: -123.05 };
 const EXAMPLE_PROMPTS = [
-  "I saw a black dorsal fin from shore — could it have been an orca?",
-  "Heard a ping on the hydrophone network — how often are those false alarms?",
-  "Kayaking in Haro Strait at sunset — are encounters likely today?",
+  "I saw a black dorsal fin from shore. Could it have been an orca?",
+  "Heard a ping on the hydrophone network. How often are those false alarms?",
+  "Kayaking in Haro Strait at sunset. Are encounters likely today?",
 ];
 
 interface UploadedAsset {
@@ -222,7 +222,7 @@ export default function SightingCheckPanel() {
         )}
         <p className="muted" style={{ fontSize: "0.85rem", margin: "0.75rem 0 0" }}>
           {pick
-            ? `Pin: ${pick.lat.toFixed(4)}, ${pick.lng.toFixed(4)} — click the map to move it.`
+            ? `Pin ${pick.lat.toFixed(4)}, ${pick.lng.toFixed(4)}. Click the map to move it.`
             : "Click the map where you were observing."}
         </p>
       </div>
@@ -232,7 +232,7 @@ export default function SightingCheckPanel() {
           <div>
             <h2 style={{ marginTop: 0 }}>Was that an orca?</h2>
             <p className="muted" style={{ marginBottom: 0, fontSize: "0.92rem" }}>
-              Evidence-backed interpretation — not a yes/no oracle. Answers cite gates, provenance, and Level 0 QC.
+              Evidence-backed interpretation, not a yes/no oracle. Answers cite gates, provenance, and Level 0 QC.
             </p>
           </div>
           {llm && (
@@ -421,7 +421,7 @@ export default function SightingCheckPanel() {
           <details className="explainer" style={{ marginTop: "1rem" }}>
             <summary>Enable Bedrock narration on AWS</summary>
             <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "0.5rem" }}>
-              Production uses Amazon Bedrock (Claude Haiku) via IAM — no public LLM URL, pay-per-request.
+              Production uses Amazon Bedrock Claude Haiku via IAM, no public LLM URL, pay-per-request.
               Set <code>ORCAST_ENABLE_BEDROCK=true</code> on App Runner and redeploy.
             </p>
             <p className="muted" style={{ fontSize: "0.85rem" }}>

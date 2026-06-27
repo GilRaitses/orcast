@@ -282,7 +282,7 @@ function ExploreGuidePanelInner() {
           <p className="muted">Set NEXT_PUBLIC_MAPS_KEY for map context, or ask gate questions without a pin.</p>
         )}
         <p className="muted" style={{ fontSize: "0.85rem", marginTop: "0.75rem" }}>
-          Pin optional — adds cell provenance to the guide context. Same gates as the forecast.{" "}
+          Pin optional. It adds cell provenance to the guide context. Same gates as the forecast.{" "}
           {pick && (
             <Link href={provenanceHref(pick)} className="chip">
               Trace provenance on map →
@@ -297,7 +297,7 @@ function ExploreGuidePanelInner() {
         </p>
         {plannerMode && (
           <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "0.75rem" }}>
-            Surface planner mode — requires reviewer sign-in. Renders active panels from{" "}
+            Surface planner mode requires reviewer sign-in. Renders active panels from{" "}
             <code>ui_intent</code>.
           </p>
         )}

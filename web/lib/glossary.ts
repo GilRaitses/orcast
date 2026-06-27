@@ -14,14 +14,14 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     term: "Fitness gates",
     tooltip: "Statistical checks the model must pass before confidence increases.",
     body:
-      "Fitness gates are explicit statistical tests run after each kernel fit. They are not warnings — they are the contract for what confidence the forecast is allowed to show. Level 1 tests whether each cyclic covariate beats a phase-shuffled null; Level 2 tests out-of-sample skill and calibration.",
+      "Fitness gates are explicit statistical tests run after each kernel fit. They are not warnings. They are the contract for what confidence the forecast is allowed to show. Level 1 tests whether each cyclic covariate beats a phase-shuffled null. Level 2 tests out-of-sample skill and calibration.",
     usedIn: ["Gates dashboard", "Provenance modal", "Review dossier"],
     seeAlso: ["level1-psth", "integrity-conditions"],
   },
   "integrity-conditions": {
     id: "integrity-conditions",
     term: "Integrity conditions",
-    tooltip: "Required disclosures about evidence scope — not optional caveats.",
+    tooltip: "Required disclosures about evidence scope, not optional caveats.",
     body:
       "Integrity conditions state what the current fit can and cannot claim: single-station coverage, tide overlap, unreviewed acoustic candidates, marginal cross-validation skill, and similar scope limits. They exist so the UI never oversells precision.",
     usedIn: ["Forecast confidence meter", "Gates dashboard", "Provenance modal"],
@@ -87,7 +87,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "level0-detector-qc": {
     id: "level0-detector-qc",
     term: "Level 0 detector QC",
-    tooltip: "Reviewed OrcaHello outcome mix — separate from the acoustic spike-train fit.",
+    tooltip: "Reviewed OrcaHello outcome mix, separate from the acoustic spike-train fit.",
     body:
       "Level 0 summarizes human-reviewed detector labels (confirmed, false positive, unknown, unreviewed) from OrcaHello. It characterizes the acoustic detector without treating every candidate as a confirmed whale event.",
     usedIn: ["Gates dashboard"],

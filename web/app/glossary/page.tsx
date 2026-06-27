@@ -2,7 +2,7 @@ import Link from "next/link";
 import { GLOSSARY, GLOSSARY_ORDER } from "@/lib/glossary";
 
 export const metadata = {
-  title: "Glossary — orcast",
+  title: "orcast Glossary",
   description: "Ontology, provenance, and plain-language definitions for forecast gates and integrity conditions.",
 };
 

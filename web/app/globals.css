@@ -463,3 +463,125 @@ details.explainer p { color: var(--text-muted); font-size: 0.9rem; line-height: 
   font-size: 0.82rem;
   overflow-x: auto;
 }
+
+/* ── Explore-first 3D shell ───────────────────────────────────────────── */
+.explore-shell { max-width: 1400px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+.explore-header { margin-bottom: 1.25rem; }
+.explore-header .hero-title { margin-bottom: 0.25rem; }
+.explore-anon-note {
+  font-size: 0.85rem;
+  border-left: 2px solid var(--accent);
+  padding-left: 0.6rem;
+  margin-top: 0.6rem;
+}
+.explore-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (max-width: 980px) {
+  .explore-grid { grid-template-columns: 1fr; }
+}
+.explore-scene {
+  height: 560px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #08263d;
+  position: relative;
+}
+.explore-console { display: flex; flex-direction: column; gap: 1rem; }
+.explore-replies { display: flex; flex-direction: column; gap: 0.75rem; max-height: 320px; overflow-y: auto; }
+
+.scene-host, .scene-fallback { width: 100%; height: 100%; }
+.scene-host { width: 100%; height: 100%; }
+.scene-loading, .scene-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+.scene-fallback-note { font-size: 0.8rem; text-align: center; }
+.scene-beacon-label {
+  background: rgba(8, 38, 61, 0.92);
+  color: #ffe9a8;
+  border: 1px solid var(--warn);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+/* ── Adaptive console panels ──────────────────────────────────────────── */
+.console-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 0.6rem;
+}
+.console-panel-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+.console-panel-title { font-size: 0.95rem; margin: 0 0 0.4rem; }
+.console-metrics { display: flex; flex-direction: column; gap: 0.35rem; }
+.console-metric-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; }
+.console-gate-list { list-style: none; margin: 0.3rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.84rem; }
+.console-gate-list li { display: flex; align-items: center; gap: 0.45rem; }
+.gate-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+.gate-dot.ok { background: var(--pass); }
+.gate-dot.fail { background: var(--fail); }
+.gate-dot.unknown { background: var(--warn); }
+.hydrophone-spectrogram {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin: 0.4rem 0;
+  background: var(--bg);
+}
+
+/* ── Orchestrator-in-the-loop trace ───────────────────────────────────── */
+.orchestrator-trace { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.trace-step { display: flex; align-items: flex-start; gap: 0.5rem; }
+.trace-index {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; color: var(--text-muted);
+}
+.trace-body { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-size: 0.82rem; }
+.trace-type { font-weight: 600; }
+.trace-skill { color: var(--accent); font-size: 0.78rem; }
+.trace-meta { color: var(--text-muted); font-size: 0.75rem; }
+.trace-status { font-size: 0.72rem; padding: 0.05rem 0.4rem; border-radius: 4px; background: var(--surface); color: var(--text-muted); }
+.trace-status.ok { color: var(--pass); }
+.trace-status.error { color: var(--fail); }
+
+/* ── Tooltip primitive + gated actions ────────────────────────────────── */
+.tooltip-trigger { display: inline-flex; outline: none; }
+.tooltip-pop {
+  z-index: 1000;
+  max-width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  font-size: 0.82rem;
+}
+.gated-button { opacity: 0.7; cursor: not-allowed; }
+.gated-lock { font-size: 0.75rem; color: var(--text-muted); }
+.gated-tip-reason { margin: 0 0 0.45rem; }
+.gated-tip-links { display: flex; gap: 0.35rem; flex-wrap: wrap; }

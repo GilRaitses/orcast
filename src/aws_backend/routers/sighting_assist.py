@@ -38,7 +38,7 @@ def sighting_assist(payload: SightingAssistRequest) -> Dict[str, Any]:
             kind = a.get("kind", "file")
             name = a.get("filename", "upload")
             parts.append(f"{kind}: {name}")
-        evidence_note = "Observer uploaded evidence — " + "; ".join(parts) + ". "
+        evidence_note = "Observer uploaded evidence, " + ", ".join(parts) + ". "
 
     augmented_message = evidence_note + payload.message if evidence_note else payload.message
 

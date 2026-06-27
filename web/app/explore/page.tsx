@@ -7,7 +7,7 @@ export default function ExplorePage() {
         Exploration guide
       </h1>
       <p className="hero-subtitle">
-        Navigate gates and provenance — grounded in the same fitness records as the forecast, not a separate AI oracle.
+        Navigate gates and provenance grounded in the same fitness records as the forecast, not a separate AI oracle.
       </p>
       <ExploreGuidePanel />
     </main>

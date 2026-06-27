@@ -88,7 +88,7 @@ export default function ProvenanceModal({
             )}
             {data.spatial && data.spatial.modeled === false && (
               <div className="callout">
-                <p className="callout-title">Temporal-only — latitude not modeled</p>
+                <p className="callout-title">Temporal-only. Latitude not modeled</p>
                 <p className="muted" style={{ margin: 0, fontSize: "0.88rem" }}>
                   {data.spatial.note ??
                     "This forecast models timing, not space. The same intensity applies across the region; the marker location does not change the prediction."}

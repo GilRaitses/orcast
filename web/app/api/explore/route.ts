@@ -7,7 +7,7 @@ const GATEWAY_KEY = process.env.AI_GATEWAY_API_KEY ?? "";
 const DEFAULT_MODEL =
   process.env.ORCAST_EXPLORE_GATEWAY_MODEL ?? "anthropic/claude-haiku-4.5";
 
-const SYSTEM_PROMPT = `You are the ORCAST Exploration Guide — you help users navigate gates, provenance, and map context.
+const SYSTEM_PROMPT = `You are the ORCAST Exploration Guide. You help users navigate gates, provenance, and map context.
 
 Rules (never break these):
 1. You are NOT a forecast oracle. You explain what the gates and provenance already show.

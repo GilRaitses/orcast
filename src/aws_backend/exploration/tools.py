@@ -127,7 +127,7 @@ def fetch_forecast_cell(
         "when": moment.isoformat(),
         "intensity": intensity,
         "effective_confidence": effective_confidence(report, promotion),
-        "note": "Temporal model only — does not verify sightings at this pin.",
+        "note": "Temporal model only. Does not verify sightings at this pin.",
     }
 
 
