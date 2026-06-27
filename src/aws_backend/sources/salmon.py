@@ -5,6 +5,7 @@ import io
 import math
 import time
 from datetime import date, timedelta
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import requests
@@ -33,20 +34,37 @@ from .base import SourceAdapter, SourceFetchResult
 #     JSON), requires year + outputFormat=csv (csvSingle returns an HTML error
 #     page), and the adult-Chinook column is "Chin". 269 daily rows for 2025,
 #     dominant peak 2025-09-07. _fetch_columbia parses it.
-#   - Albion (Fraser/DFO) remains UNAVAILABLE as a machine-readable feed: the
-#     live page publishes daily CPUE only as JPG graph images (no HTML table /
-#     CSV / JSON), and the historical FOS host no longer resolves. _fetch_fraser
-#     stays disabled (returns {}) so the adapter falls through to DART.
+#   - Albion (Fraser/DFO) is WIRED from a cached real FOS export: the live page
+#     serves CPUE only as JPG images and the FOS report host is DNS-blocked from
+#     this host, so the real daily FOS Chinook CPUE is cached per year under
+#     data/salmon/albion_fos/fosYYYY.csv and read by _fetch_fraser. This is the
+#     stock-aligned Fraser-summer Chinook signal (years not cached fall to DART).
 #
 # BIOLOGICAL CAVEAT: DART's dominant peak is the Columbia FALL Chinook run, a
 # different stock than the Fraser SUMMER Chinook that SRKW chiefly target. DART
 # is a real, parseable proxy/SECONDARY source, not the Fraser primary; whether
 # it aligns with SRKW presence is the L3 lag-scan's call (salmon_lag.py).
 
-# Albion test fishery (Fraser River, DFO). Redirect stub to albion-eng.html, a
-# descriptive page with daily CPUE only as JPG images (no machine-readable
-# series). Kept for reference; _fetch_fraser is disabled.
+# Albion test fishery (Fraser River, DFO). The live daily CPUE is served only as
+# JPG graph images on the descriptive page; the machine-readable daily series is
+# the DFO FOS "Catch Summary by Date" report (stat=CPTFM, fsub_id=242), a
+# Selenium-driven JS form whose host (www-ops2.pac.dfo-mpo.gc.ca) is DNS-blocked
+# from this host / CI. We therefore cache the real Albion FOS Chinook CPUE per
+# year under data/salmon/albion_fos/fosYYYY.csv and read it here; refresh the
+# cache from a DFO-reachable host with the FOS report (see WIRING-salmon-albion).
 _ALBION_URL = "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/docs/commercial/albionchinook-quinnat"
+
+# Real Albion FOS Chinook CPUE cache (provenance: DFO FOS report stat=CPTFM,
+# fsub_id=242, "CHINOOK SALMON"; columns day,mon,year,netlen,catch1,sets1,
+# effort1,cpue1,catch2,sets2,effort2,cpue2). cpue1 is the standard 8-inch gillnet
+# CPUE used as the Fraser run-timing index. This is REAL data (the Fraser-summer
+# Chinook stock SRKW target), not climatology.
+_ALBION_FOS_CACHE_DIR = Path(__file__).resolve().parents[3] / "data" / "salmon" / "albion_fos"
+_ALBION_FOS_VALUE_KEY = "cpue1"
+_MONTH_ABBR = {
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+}
 
 # Columbia River DART Bonneville Dam adult Chinook passage (Columbia Basin
 # Research). Returns CSV with year + outputFormat=csv; adult Chinook = "Chin"
@@ -151,16 +169,17 @@ class SalmonRunAdapter(SourceAdapter):
 
     # -- Live fetchers ----------------------------------------------------------
     def _fetch_fraser(self, year: int) -> Dict[str, float]:
-        """Albion (Fraser) daily Chinook CPUE.
+        """Albion (Fraser) daily Chinook CPUE -> {ISO date: cpue1}.
 
-        DISABLED: the live DFO Albion page publishes daily CPUE only as JPG graph
-        images (no HTML table / CSV / JSON), and the historical machine-readable
-        FOS endpoint host (www-ops2.pac.dfo-mpo.gc.ca) no longer resolves.
-        Returning {} lets fetch_run_index fall through to the real DART (Columbia)
-        feed instead of climatology. Re-enable if/when a machine-readable Fraser
-        feed is identified. Validated 2026-06-27, sources/salmon_validation.py.
+        REAL stock-aligned Fraser-summer Chinook signal. The live DFO Albion page
+        serves CPUE only as JPG images, and the machine-readable FOS report
+        (stat=CPTFM, fsub_id=242) is a Selenium-driven JS form whose host is
+        DNS-blocked from this host / CI, so we read the cached real FOS CSV at
+        data/salmon/albion_fos/fosYYYY.csv (provenance in the module header).
+        Returns {} when the year is not cached, so fetch_run_index falls through
+        to DART. Refresh the cache from a DFO-reachable host.
         """
-        return {}
+        return _load_albion_fos(year, self.albion_url)
 
     def _fetch_columbia(self, year: int) -> Dict[str, float]:
         """Fetch DART Bonneville daily adult Chinook passage -> {ISO date: count}.
@@ -249,6 +268,47 @@ class SalmonRunAdapter(SourceAdapter):
 
 
 # -- Module helpers -------------------------------------------------------------
+def _load_albion_fos(year: int, albion_url: str = _ALBION_URL) -> Dict[str, float]:
+    """Read cached real Albion FOS Chinook CPUE for ``year`` -> {ISO date: cpue1}.
+
+    Parses data/salmon/albion_fos/fosYYYY.csv (DFO FOS report export). Each row
+    is day,mon(3-letter),year,...,cpue1,...; cpue1 is the standard 8-inch gillnet
+    CPUE. Returns {} if the cache file is missing or unparseable so the caller can
+    fall through. REAL data, not climatology.
+    """
+    path = _ALBION_FOS_CACHE_DIR / f"fos{year}.csv"
+    if not path.exists():
+        return {}
+    out: Dict[str, float] = {}
+    try:
+        reader = csv.DictReader(io.StringIO(path.read_text(encoding="utf-8")))
+        for row in reader:
+            mon = str(row.get("mon", "")).strip().lower()[:3]
+            month = _MONTH_ABBR.get(mon)
+            try:
+                day = int(str(row.get("day", "")).strip())
+                row_year = int(str(row.get("year", year)).strip())
+            except (TypeError, ValueError):
+                continue
+            if month is None:
+                continue
+            value = row.get(_ALBION_FOS_VALUE_KEY)
+            if value is None or str(value).strip() == "":
+                continue
+            try:
+                cpue = float(str(value).replace(",", "").strip())
+            except (TypeError, ValueError):
+                continue
+            try:
+                iso = date(row_year, month, day).isoformat()
+            except ValueError:
+                continue
+            out[iso] = cpue
+    except OSError:
+        return {}
+    return out
+
+
 def _climatology_shape(doy: int) -> float:
     primary = _gaussian(doy, _PRIMARY_PEAK_DOY, _PRIMARY_WIDTH)
     secondary = _SECONDARY_WEIGHT * _gaussian(doy, _SECONDARY_PEAK_DOY, _SECONDARY_WIDTH)
