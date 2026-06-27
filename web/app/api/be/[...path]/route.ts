@@ -32,6 +32,8 @@ const PUBLIC_GET_PATHS = [
   "api/verified-sightings",
   "api/environmental",
   "api/live-hydrophones",
+  "api/onc/hydrophone-signal",
+  "api/onc/archivefile",
   "forecast",
 ];
 
@@ -59,6 +61,10 @@ function isPublicRequest(method: string, path: string): boolean {
   if (method === "POST" && (path === "api/explore/sessions" || path === "api/explore/turn")) return true;
   if (method === "POST" && path === "api/interactions") return true;
   if (method === "POST" && path === "api/interactions/prepare") return true;
+  // Anonymous-first: the adaptive planner/console is usable without sign-in.
+  // Keyed T2/T3 skills stay server-side gated, so a public planner simply omits
+  // those panels (HANDOFF_CHARTER B2).
+  if (method === "POST" && path === "api/interactions/plan") return true;
   if (method === "POST" && path === "api/interest") return true;
   return isPublicGet(method, path);
 }
@@ -92,6 +98,7 @@ function explorePathLimit(path: string): { limit: number; suffix: string } | nul
   if (path === "api/explore/turn") return { limit: EXPLORE_TURN_LIMIT, suffix: "explore-turn" };
   if (path === "api/interactions") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions" };
   if (path === "api/interactions/prepare") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions-prepare" };
+  if (path === "api/interactions/plan") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions-plan" };
   if (path === "api/explore/sessions") return { limit: EXPLORE_SESSION_LIMIT, suffix: "explore-session" };
   return null;
 }
