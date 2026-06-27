@@ -14,8 +14,16 @@ ALLOW=".cca/prose_gate_allowlist.txt"
 
 # Surfaces. Class A frontend + class B docs/outreach. Backend prose strings are
 # reported separately (mixed with docstrings) and triaged in the CX inventory.
+# Audience-facing surfaces only (the prose-gate scope). Internal research notes,
+# gap registers, and working charters are out of scope.
 A_GLOBS=(web/app web/lib)
-B_GLOBS=(docs/whitepaper docs/whitepaper2 docs/devpost .cca/outreach_drafts docs/field-campaign)
+B_GLOBS=(
+  docs/whitepaper/LX/Sections docs/whitepaper2/LX/Sections
+  docs/devpost/submission/audit-deck/LX/Sections
+  .cca/outreach_drafts docs/field-campaign/SUMMIT_DEMO_SCRIPT.md
+  docs/devpost/DEMO_STORYBOARD.md docs/devpost/DEMO_NO_CRED_STORYBOARD.md
+  docs/devpost/DEVPOST_DRAFT.md docs/devpost/SUBMISSION.md
+)
 EXT='--include=*.tsx --include=*.ts --include=*.md --include=*.tex --include=*.mdx'
 
 scan() { # single fixed-string-or-BRE pattern
