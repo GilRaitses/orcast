@@ -15,7 +15,12 @@ directory holds two complementary things, which it is important not to confuse:
   `research_dispatch:` block of `wave_shape.yml` charter six parallel research agents to find ways to
   push L2 and L3 off their honest blockers (counts vs binary presence, conditioning, temperature,
   burstiness/Hawkes timing fix, the data-volume dependency). Findings land under `research/` as
-  decision aids; nothing promotes confidence. READY, not launched.
+  decision aids; nothing promotes confidence. RAN 2026-06-27; graduated to W4.
+- The forward-path campaign (ground + activate). `CAMPAIGN_CHARTER.md`, `CAMPAIGN_DISPATCH.md`, and the
+  `forward_path_campaign:` block of `wave_shape.yml` structure the path off 0% after the W4 adoption:
+  one parallel deploy (P0, the confidence-cliff fix, code-only) + a research/grounding wave (W5) that
+  gates three downstream waves (W6 deploy the 3-node ingest, W7 promote multi-station, W8 L3 live feed +
+  re-test). Grounding docs land under `research/forward/`. Nothing promotes; build/promotion are gated.
 
 ## Files
 
@@ -25,18 +30,22 @@ directory holds two complementary things, which it is important not to confuse:
 - `DECISION_RECORD.md`: the verified code surface + operator-confirmed decisions + risks.
 - `WAVE1_DISPATCH.md`: the five ready-to-launch Wave 1 agent prompts (ran 2026-06-27).
 - `RESEARCH_CHARTER.md` + `RESEARCH_DISPATCH.md`: the L2/L3 push research waveset (six agents, ran). Findings under `research/`.
-- `W4_BUILD_CHARTER.md` + `W4_BUILD_DISPATCH.md`: the build wave graduating the research findings (consistency re-score, summer-conditioned L3, gated bin-level timing gate), READY.
+- `W4_BUILD_CHARTER.md` + `W4_BUILD_DISPATCH.md`: the build wave graduating the research findings (consistency re-score, summer-conditioned L3, bin-level timing gate). RAN; the bin-level gate was then ADOPTED by recorded supervisor decision (DECISION_RECORD.md sec 4).
+- `CAMPAIGN_CHARTER.md` + `CAMPAIGN_DISPATCH.md`: the forward-path campaign (P0 confidence-cliff fix + W5 grounding -> W6 deploy / W7 promote / W8 L3). Grounding docs under `research/forward/`.
 - `WIRING-ingest.md`, `PATCH-salmon.md`, `WIRING-salmon-albion.md`: wiring/patch/provenance specs.
 - `wave_shape.yml`: machine-readable shape (the `families:` level ladder, the `frontier_dispatch:`
-  W1/W2/W3 execution plan, and the `research_dispatch:` research wave).
+  W1-W4 execution plan, the `research_dispatch:` research wave, and the `forward_path_campaign:`).
 - `STEP_LOG.md`: the running synthesis trace (newest last).
 
 ## State (2026-06-27)
 
-Effective confidence 0%. L0 PASS, L1 PASS, L2 FAIL (multi-station skill +0.078 but time-rescaling
-KS p=0.0 and cross-station PSTH corr 0.14-0.34), L3 WITHHELD (climatology salmon placeholder). The
-frontier waveset is written and READY. No agents launched, no commit, no push. The next gate is the
-operator's go to launch Wave 1.
+Effective confidence 0%. L0 PASS, L1 PASS, L2 FAIL, L3 WITHHELD. W1-W4 ran. The bin-level L2 timing
+gate is ADOPTED (recorded supervisor decision) but does NOT promote: the served single-station fit has
+held-out CV-skill -0.047, so the load-bearing CV-skill half fails and confidence stays 0.0. L3's real
+Albion (Fraser) feed is wired all years; the pre-registered summer held-out result is FLAGGED-FOR-
+DECISION (not promoted). The path off 0% is the deploy-gated 3-node ingest (flips served CV-skill
+positive); the forward-path campaign grounds it. Next gate: launch W5 (research-grounding); P0
+(confidence-cliff fix) is executing in parallel.
 
 ## Authority / lineage
 

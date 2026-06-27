@@ -79,7 +79,7 @@ frontier_dispatch:
     effective_confidence: 0.0      # unchanged; no promotion
     L0: PASS                       # ROC AUC 0.879
     L1: PASS                       # diel; cross-station consistency NOT met (sparse-count artifact, W1/W2)
-    L2: FAIL                       # served single-station fit CV-skill -0.047 (negative) -> still FAIL at 0.0. Bin-level timing gate ADOPTED 2026-06-27 (supervisor decision, ADOPT_BIN_LEVEL_TIMING_GATE=True; event-level Exp(1) inappropriate for detector-chatter: Hawkes branching 0.79-0.96, pooled KS p=3.3e-33), but its load-bearing CV-skill half fails on the served single station so timing_gate=False and confidence stays 0.0; ARMED -> a served fit with +CV-skill (4-stn experiment is +0.078, needs the deploy-gated 3-node ingest) would jump confidence to 1.0. Cross-station re-scored at 12 bins (diel dense split-half 0.04->0.37, lunar clears 0.5) but 4-stn mean bar still not cleared honestly
+    L2: FAIL                       # served single-station fit CV-skill -0.047 (negative) -> still FAIL at 0.0. Bin-level timing gate ADOPTED 2026-06-27 (supervisor decision, ADOPT_BIN_LEVEL_TIMING_GATE=True; event-level Exp(1) inappropriate for detector-chatter: Hawkes branching 0.79-0.96, pooled KS p=3.3e-33), but its load-bearing CV-skill half fails on the served single station so timing_gate=False and confidence stays 0.0. ARMED but cliff MITIGATED by P0: confidence is now effect-size-scaled + capped at 0.75, so a served +0.078 fit maps to 0.49 (HOLD, < 0.6 supervisor threshold); 0.6 needs CV-skill ~+0.144. The 3-node ingest lifts served toward 0.49 but does NOT auto-promote. Cross-station re-scored at 12 bins (diel dense split-half 0.04->0.37, lunar clears 0.5) but 4-stn mean bar still not cleared honestly
     L3: WITHHELD                   # real stock-aligned Albion (Fraser) feed wired all years 2020-2026 (source=albion); full-span lag scan p=0.394; W4 pre-registered Jun-Sep summer conditioning in-sample r=0.251 p=0.013 and held-out year 2021 out-of-sample r=0.390 p=0.027 -> FLAGGED-FOR-DECISION (not self-promoted; LOYO only 2/5 years clear); stays WITHHELD pending supervisor decision
   execution_model:
     one_file_one_owner: true
@@ -201,3 +201,68 @@ research_dispatch:
     - graduating a finding to a build/integrate wave (W4)
     - any commit or push
     - any confidence promotion (unchanged)
+
+# Forward-path campaign: ground + activate the path off 0% after the W4 adoption.
+# Canonical prose: CAMPAIGN_CHARTER.md. W5 grounding prompts: CAMPAIGN_DISPATCH.md.
+# One parallel deploy (P0, executing now, code-only) + a research/grounding wave (W5)
+# that gates three downstream waves (W6 deploy, W7 promote, W8 L3). Nothing here promotes;
+# build is gated; promotion needs a passing gate on SERVED data + a recorded supervisor decision.
+forward_path_campaign:
+  status: chartered-P0-done-W5-ready   # 2026-06-27: charter written; P0 confidence-cliff fix DONE; W5 launch is the next operator gate
+  model: inherit
+  premise: "after the W4 adoption, the served L2 timing gate earns credit once the SERVED fit's held-out CV-skill turns positive (served single-station -0.047 vs 4-station experiment +0.078); closing that gap is the deploy-gated 3-node ingest. UPDATED by P0: confidence is now effect-size-scaled + capped at 0.75, so the +0.078 margin maps to 0.49 (HOLD, < the 0.6 supervisor threshold); crossing 0.6 needs CV-skill ~+0.144. The ingest alone lifts served confidence to ~0.49 but does NOT auto-promote -- W7 needs larger/robust skill or an explicit operator decision on a sub-0.6 display."
+  objectives:
+    O1_ingest:        "land orcasound_lab/andrews_bay/north_san_juan_channel into the SERVED acoustic_detections stream (ingest_multistation.py, dry-run validated); binding dep for BOTH L2 blockers; deploy-gated"
+    O2_confidence_fix: "graduate _confidence_from_gates so a +skill multi-station fit promotes to an effect-size-scaled, capped value, not a binary 1.0; code-only, local, no deploy -> P0 (running now)"
+    O3_promotion:     "after O1, refit multi-station SERVED + re-score cross-station consistency + route supervisor promotion ONLY on fold-stable +CV-skill"
+    O4_l3:            "extend the real Fraser-summer Chinook series (live 2026 Albion via aimez EC2) + re-test the pre-registered Jun-Sep window before any decision on the FLAGGED-FOR-DECISION L3 result"
+  parallel_deploy:
+    - { id: P0, role: confidence-cliff-fix, owns: modeling/fit_kernels.py, env: system-python3, status: done, gate: "served confidence stays 0.0; mlops-gate green; mapping documented; local-only/untracked; no commit", deliverable: "DONE: evidence-scaled saturating map (0.50*gate_factor*(1-exp(-skill/0.12)) + 0.15 PIT + 0.10 level1, cap 0.75); served stays 0.0; +0.078 -> 0.49 (HOLD); 0.6 crossing at skill ~+0.144" }
+  waves:
+    - id: W5
+      name: research-grounding
+      parallelism: 3
+      status: dispatch-ready                     # READY; launch is the next operator gate. Charter: CAMPAIGN_CHARTER.md; prompts: CAMPAIGN_DISPATCH.md
+      investigation_first: true
+      no_convergence_file_edits: true
+      no_deploy: true
+      no_promotion: true
+      findings_dir: .cca/catalogue/O0/20260627_mlops/research/forward/
+      agents:
+        - { role: ingest-deploy-grounding,    owns: research/forward/G1_ingest_deploy.md,      grounds: W6, deliverable: "production deploy runbook (idempotency/dedup, backfill, schema, cost, 403/rate-limit, observability, ROLLBACK) + pre-deploy gate + net-new-detection estimate per node + go/no-go" }
+        - { role: promotion-protocol-grounding, owns: research/forward/G2_promotion_protocol.md, grounds: W7, deliverable: "robustly-positive CV-skill definition (folds/stability/margin) + multi-station SERVED refit spec + supervisor decision-record format + consistency-after-ingest projection + go/no-go template" }
+        - { role: l3-grounding,                owns: research/forward/G3_l3_grounding.md,        grounds: W8, deliverable: "live 2026 Albion fetch design + presence-year power analysis + explicit out-of-sample decision bar for the L3 flag + go/no-go" }
+      gate: "G1/G2/G3 each land a grounding doc with measured numbers + runbook/spec + go/no-go; no deploy, no promotion"
+    - id: W6
+      name: deploy-multistation-ingest
+      depends_on: [W5]
+      status: gated                              # gated by G1 PASS + operator deploy approval + production store write
+      objective: O1
+      agents:
+        - { role: ingest-deploy, owns: src/aws_backend/ingest_multistation.py, deliverable: "land the 3 nodes into the SERVED acoustic_detections stream per G1's runbook; production store write is operator/deploy-gated" }
+      gate: "G1 PASS AND operator deploy approval AND the production write done; served store now 4-station"
+    - id: W7
+      name: promote-multistation
+      depends_on: [W6]
+      status: gated                              # gated by W6 done + G2 PASS + fold-stable +CV-skill + recorded supervisor decision
+      objective: O3
+      agents:
+        - { role: multistation-refit,   owns: [modeling/fit_kernels.py, modeling/studies/level2_multistation.py], deliverable: "refit multi-station SERVED (upload disabled, write_outputs=False); report fold-stable held-out CV-skill" }
+        - { role: consistency-rescore,  owns: modeling/studies/cross_station_consistency.py, deliverable: "re-score cross-station consistency at 12 bins on the denser served data" }
+        - { role: supervisor-promotion, owns: src/aws_backend/promotion/supervisor.py, deliverable: "route promotion ONLY if CV-skill is robustly positive per G2; the recorded human decision finalizes it (B.1)" }
+      gate: "a SERVED multi-station fit with fold-stable +CV-skill AND a recorded supervisor decision -> effective_confidence rises (to the P0-graduated value); otherwise stays 0%"
+    - id: W8
+      name: l3-live-feed-and-retest
+      depends_on: [W5]
+      status: gated                              # gated by G3 PASS + extended series clears the decision bar + operator decision
+      objective: O4
+      agents:
+        - { role: albion-live-feed, owns: src/aws_backend/sources/salmon.py, deliverable: "wire the live 2026 Albion feed per G3 (via aimez EC2); extend data/salmon/albion_fos/" }
+        - { role: l3-retest,        owns: modeling/studies/salmon_lag.py, deliverable: "re-run the pre-registered Jun-Sep held-out test on the extended series; verdict against G3's decision bar" }
+      gate: "extended series clears G3's out-of-sample bar AND operator decides -> L3 graduates; otherwise stays WITHHELD"
+  operator_gates:
+    - W5 research-grounding launch (next)
+    - W6 ingest deploy (G1 PASS + deploy approval + production store write)
+    - W7 promotion (fold-stable +CV-skill + recorded supervisor decision)
+    - W8 L3 decision (extended series clears the bar + operator decision)
+    - any commit or push (unchanged)

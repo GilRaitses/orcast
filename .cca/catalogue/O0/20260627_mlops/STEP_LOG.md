@@ -360,6 +360,49 @@ research-findings commit.
   do not promote.
 - Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
   W1-W2-W3-done-W4-chartered).
+## 2026-06-27 (forward-path campaign chartered; P0 confidence-cliff fix dispatched in parallel)
+
+Operator: "charter a multi wave research campaign to structure and ground the forward path ... if there's
+something that you can already deploy ... deploy it in the parallel subagent and begin charting what the
+research will need for everything else."
+
+- Premise: after the W4 adoption, the path off 0% collapses to one binding fact -- the served L2 timing
+  gate earns credit the moment the SERVED fit's held-out CV-skill turns positive (served single-station
+  -0.047 vs 4-station experiment +0.078); closing that gap is the deploy-gated 3-node ingest; on current
+  scoring it would slam confidence to 1.0.
+- Wrote CAMPAIGN_CHARTER.md + CAMPAIGN_DISPATCH.md. Structure: one parallel deploy (P0) + a
+  research/grounding wave (W5) that gates three downstream waves (W6 deploy ingest, W7 promote
+  multi-station, W8 L3 live feed + re-test). Nothing promotes; build is gated; promotion needs a passing
+  gate on SERVED data + a recorded supervisor decision (B.1).
+- Objectives mapped: O1 production multi-station ingest (deploy-gated), O2 confidence-cliff fix
+  (code-only -> P0, running now), O3 honest multi-station promotion (gated), O4 L3 grounding (gated).
+- PARALLEL DEPLOY (P0, executing now): a modeling subagent graduates _confidence_from_gates so a +skill
+  multi-station fit promotes to an effect-size-scaled, sub-1.0 value instead of a binary 1.0; invariants
+  = served confidence stays EXACTLY 0.0, mlops-gate green, local-only/untracked (B.6), no commit. Safe:
+  it only makes promotion MORE conservative and nothing is promoted today.
+- W5 grounding agents (dispatch-ready, launch is the next operator gate): G1 ingest-deploy grounding
+  (runbook + pre-deploy gate + net-new-detection estimate, grounds W6), G2 promotion-protocol grounding
+  (robust-skill definition + served refit spec + supervisor decision-record format + consistency-after-
+  ingest projection, grounds W7), G3 L3 grounding (live 2026 Albion fetch + presence-year power analysis
+  + decision bar, grounds W8). Findings under research/forward/.
+- Added forward_path_campaign block to wave_shape.yml (P0 running; W5 dispatch-ready; W6/W7/W8 gated).
+- Effective confidence unchanged 0.0.
+
+- P0 DONE (confidence-cliff fix landed, local-only modeling/fit_kernels.py, not committed): replaced the
+  flat 0.25-per-quarter sum in _confidence_from_gates with an evidence-scaled, saturating map past the
+  0.0 floor: evidence = 0.50 * (0.5*cv_pass + 0.5*timing_gate) * (1 - exp(-max(skill,0)/0.12)), + 0.15
+  PIT (timing-gated) + 0.10 level1, capped at 0.75. Gate pass/fail definitions untouched.
+  - Served confidence stays EXACTLY 0.0 (served CV-skill -0.047 fails the floor). mlops-gate ALL PASS,
+    honesty guard served_confidence=0.0 l2_gate=fail OK. Timestamp-only ladder churn restored.
+  - CONSEQUENCE for the forward path: the +0.078 multi-station EXPERIMENT margin now maps to 0.49 (HOLD,
+    not promoted) instead of the old binary 1.0; crossing the supervisor 0.6 threshold now requires CV
+    mean-deviance-skill ~+0.144 (about double +0.078). So the 3-node ingest ALONE (which flips served
+    skill toward the experiment's +0.078) would lift served confidence to ~0.49 but NOT auto-promote.
+    W7 promotion now needs either larger/robust skill or an explicit operator decision about a sub-0.6
+    served display. This is the key thing G2 must ground.
+  - The "armed 1.0 cliff" risk recorded in DECISION_RECORD sec 4 is now MITIGATED: promotion is
+    effect-size-scaled and capped at 0.75, and 0.6 means robust skill, not one lucky fold.
+
 ## 2026-06-27 (supervisor decision: ADOPT bin-level L2 timing gate -- still 0.0, now armed)
 
 Operator: "commit and approved adoption". Recorded the B.1 supervisor decision to adopt the W4 item-3

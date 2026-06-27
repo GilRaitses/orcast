@@ -110,8 +110,11 @@ required by HANDOFF_CHARTER B.1 for the W4 item-3 bin-level timing gate.
     quarters). The +0.078 only exists in `level2_multistation.json`; it becomes served only after the
     deploy-gated 3-node production acoustic_detections ingest lands.
 - CONSEQUENCE / RISK now armed: with the flag ON, the NEXT served fit whose held-out CV-skill is
-  positive will auto-promote to confidence 1.0 (100%) -- a hard cliff from the pre-existing 4-quarter
-  scoring, not introduced by W4. Until then served confidence stays 0.0. The remaining precondition is
-  data/deploy-bound (3-node ingest), not a code gate.
+  positive will earn timing credit. On the original 4-quarter scoring that meant a hard cliff to 1.0.
+  MITIGATED 2026-06-27 by P0 (forward-path campaign): `_confidence_from_gates` is now effect-size-scaled
+  and capped at 0.75, so a served +0.078 fit maps to 0.49 (HOLD, below the supervisor 0.6 threshold) and
+  crossing 0.6 requires CV-skill ~+0.144. Until a served fit earns it, confidence stays 0.0. The
+  remaining precondition is data/deploy-bound (3-node ingest), not a code gate; and the ingest alone
+  (~+0.078) lifts served confidence to ~0.49 but does NOT auto-promote.
 - NOT decided here: the L3 summer-conditioned held-out flag (2021 OOS r=0.390, p=0.027) remains
   FLAGGED-FOR-DECISION and L3 stays WITHHELD; the operator did not approve an L3 promotion.
