@@ -13,7 +13,21 @@ from ..exploration.guide import compose_guide_reply
 from ..exploration.limits import ExploreLimitError, assert_session_quota, assert_turn_quota
 from ..exploration.session_store import SessionStore, exploration_status
 
+try:  # connection-level failures (e.g. RDS unreachable from this host) -> 503, not 500
+    import psycopg
+
+    _DB_UNREACHABLE: tuple = (psycopg.OperationalError, psycopg.InterfaceError)
+except Exception:  # pragma: no cover - psycopg optional
+    _DB_UNREACHABLE = ()
+
 router = APIRouter()
+
+
+def _db_unavailable(exc: Exception) -> HTTPException:
+    return HTTPException(
+        status_code=503,
+        detail="Exploration database is temporarily unreachable; explore history is unavailable right now.",
+    )
 
 
 class CreateSessionRequest(BaseModel):
@@ -42,7 +56,11 @@ def explore_prepare(payload: ExploreTurnRequest) -> Dict[str, Any]:
     """Return grounded tool context for Vercel AI Gateway narration (no LLM)."""
     _require_aurora()
     store = SessionStore()
-    if not store.session_exists(payload.session_id):
+    try:
+        session_exists = store.session_exists(payload.session_id)
+    except _DB_UNREACHABLE as exc:
+        raise _db_unavailable(exc) from exc
+    if not session_exists:
         raise HTTPException(status_code=404, detail="Session not found")
     from ..exploration.guide import build_exploration_context
 
@@ -82,7 +100,10 @@ def create_session(payload: CreateSessionRequest, request: Request) -> Dict[str,
     except ExploreLimitError as exc:
         raise HTTPException(status_code=429, detail={"error": exc.code, "message": exc.message}) from exc
     store = SessionStore()
-    session_id = store.create_session(title=payload.title, client_ip=client_ip)
+    try:
+        session_id = store.create_session(title=payload.title, client_ip=client_ip)
+    except _DB_UNREACHABLE as exc:
+        raise _db_unavailable(exc) from exc
     return {"status": "success", "session_id": session_id}
 
 
@@ -90,7 +111,11 @@ def create_session(payload: CreateSessionRequest, request: Request) -> Dict[str,
 def explore_turn(payload: ExploreTurnRequest) -> Dict[str, Any]:
     _require_aurora()
     store = SessionStore()
-    if not store.session_exists(payload.session_id):
+    try:
+        session_exists = store.session_exists(payload.session_id)
+    except _DB_UNREACHABLE as exc:
+        raise _db_unavailable(exc) from exc
+    if not session_exists:
         raise HTTPException(status_code=404, detail="Session not found")
     try:
         assert_turn_quota(payload.session_id)
@@ -104,7 +129,10 @@ def explore_turn(payload: ExploreTurnRequest) -> Dict[str, Any]:
         gateway_reply=payload.gateway_reply,
         gateway_model=payload.gateway_model,
     )
-    store.save_exchange(payload.session_id, payload.message, guide)
+    try:
+        store.save_exchange(payload.session_id, payload.message, guide)
+    except _DB_UNREACHABLE as exc:
+        raise _db_unavailable(exc) from exc
 
     return {
         "status": "success",

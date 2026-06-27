@@ -53,7 +53,7 @@ def register_interest(payload: InterestSignup):
     }
 
     try:
-        bucket = storage.raw_payload_bucket  # reuse existing bucket
+        bucket = settings.raw_payload_bucket  # reuse existing bucket (config, not storage)
         if hasattr(storage, "s3") and storage.s3 is not None:
             storage.s3.put_object(
                 Bucket=bucket,
