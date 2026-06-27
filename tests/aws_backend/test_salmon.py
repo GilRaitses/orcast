@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+from src.aws_backend.sources import salmon as salmon_mod
 from src.aws_backend.sources.salmon import SalmonRunAdapter
 
 
@@ -16,14 +17,40 @@ class _JsonResponse:
         return self._payload
 
 
+class _CsvResponse:
+    """A DART-style CSV HTTP response (content-type csv, ``.text`` body)."""
+
+    status_code = 200
+    headers = {"content-type": "text/csv"}
+
+    def __init__(self, text):
+        self.text = text
+
+    def json(self):  # pragma: no cover - DART path reads .text, not .json()
+        raise ValueError("csv response has no json")
+
+
 def _all_run_indices_valid(series):
     return all(0.0 <= rec["run_index"] <= 1.0 for rec in series)
 
 
-def test_climatology_fallback_when_live_sources_fail(monkeypatch):
+@pytest.fixture
+def empty_albion_cache(monkeypatch, tmp_path):
+    """Point the Albion FOS cache at an empty dir so _fetch_fraser returns {}.
+
+    The real adapter reads the stock-aligned Fraser signal from cached FOS CSVs
+    (data/salmon/albion_fos/fosYYYY.csv), not from requests.get. To exercise the
+    DART/climatology fallback paths a test must make that cache empty.
+    """
+    monkeypatch.setattr(salmon_mod, "_ALBION_FOS_CACHE_DIR", tmp_path)
+    return tmp_path
+
+
+def test_climatology_fallback_when_live_sources_fail(empty_albion_cache, monkeypatch):
     def boom(*_args, **_kwargs):
         raise RuntimeError("network down")
 
+    # Albion cache empty (fixture) + DART (requests.get) down -> climatology.
     monkeypatch.setattr("src.aws_backend.sources.salmon.requests.get", boom)
 
     series = SalmonRunAdapter().fetch_run_index(2024)
@@ -39,7 +66,7 @@ def test_climatology_fallback_when_live_sources_fail(monkeypatch):
     assert peak["run_index"] == pytest.approx(1.0)
 
 
-def test_climatology_fallback_on_non_200(monkeypatch):
+def test_climatology_fallback_on_non_200(empty_albion_cache, monkeypatch):
     class _ServerError:
         status_code = 500
         headers = {"content-type": "text/html"}
@@ -59,21 +86,25 @@ def test_climatology_fallback_on_non_200(monkeypatch):
     assert _all_run_indices_valid(series)
 
 
-def test_live_albion_payload_is_used_and_normalized(monkeypatch):
-    payload = {
-        "data": [
-            {"date": "2024-07-01", "cpue": 2.0},
-            {"date": "2024-07-10", "cpue": 8.0},
-            {"date": "2024-07-20", "cpue": 20.0},  # season peak
-            {"date": "2024-08-01", "cpue": 6.0},
-            {"date": "2024-08-15", "cpue": 1.0},
-        ]
-    }
+def test_cached_albion_is_used_and_normalized(empty_albion_cache, monkeypatch):
+    # The real Fraser signal is the cached FOS CSV. Write a controlled one
+    # (provenance columns day,mon,year,...,cpue1,...) and assert it is read,
+    # normalized within season, and preferred over Columbia.
+    (empty_albion_cache / "fos2024.csv").write_text(
+        "day,mon,year,netlen,catch1,sets1,effort1,cpue1,catch2,sets2,effort2,cpue2\n"
+        "1,Jul,2024,91,2,1,1,2.0,0,0,0,0\n"
+        "10,Jul,2024,91,8,1,1,8.0,0,0,0,0\n"
+        "20,Jul,2024,91,20,1,1,20.0,0,0,0,0\n"  # season peak
+        "1,Aug,2024,91,6,1,1,6.0,0,0,0,0\n"
+        "15,Aug,2024,91,1,1,1,1.0,0,0,0,0\n",  # season trough
+        encoding="utf-8",
+    )
 
-    def fake_get(url, *_args, **_kwargs):
-        return _JsonResponse(payload)
+    # Even if a network feed were reachable, the cached Fraser signal wins.
+    def boom(*_args, **_kwargs):
+        raise RuntimeError("network must not be hit on the Albion path")
 
-    monkeypatch.setattr("src.aws_backend.sources.salmon.requests.get", fake_get)
+    monkeypatch.setattr("src.aws_backend.sources.salmon.requests.get", boom)
 
     series = SalmonRunAdapter().fetch_run_index(2024)
 
@@ -91,26 +122,15 @@ def test_live_albion_payload_is_used_and_normalized(monkeypatch):
     assert all(rec["columbia_index"] is None for rec in series)
 
 
-def test_columbia_fallback_when_fraser_empty(monkeypatch):
-    # First call (Fraser) returns an empty/unparseable payload, second call
-    # (Columbia/DART) returns usable passage counts.
-    calls = {"n": 0}
+def test_columbia_fallback_when_fraser_empty(empty_albion_cache, monkeypatch):
+    # Albion cache empty (fixture) -> Fraser returns {}. DART returns a real CSV
+    # (the adapter parses CSV, not JSON; the adult-Chinook column is "Chin").
+    dart_csv = "Date,Chin\n2024-07-05,1000\n2024-07-25,5000\n2024-08-20,500\n"
 
-    def fake_get(url, *_args, **_kwargs):
-        calls["n"] += 1
-        if calls["n"] == 1:
-            return _JsonResponse({"data": []})
-        return _JsonResponse(
-            {
-                "data": [
-                    {"date": "2024-07-05", "count": 1000},
-                    {"date": "2024-07-25", "count": 5000},
-                    {"date": "2024-08-20", "count": 500},
-                ]
-            }
-        )
-
-    monkeypatch.setattr("src.aws_backend.sources.salmon.requests.get", fake_get)
+    monkeypatch.setattr(
+        "src.aws_backend.sources.salmon.requests.get",
+        lambda *a, **k: _CsvResponse(dart_csv),
+    )
 
     series = SalmonRunAdapter().fetch_run_index(2024)
 
@@ -125,6 +145,8 @@ def test_columbia_fallback_when_fraser_empty(monkeypatch):
 
 
 def test_run_index_always_within_unit_interval(monkeypatch):
+    # With the real cache present, cached years return the Fraser signal even
+    # when the network is down; uncached years fall through to climatology.
     monkeypatch.setattr(
         "src.aws_backend.sources.salmon.requests.get",
         lambda *a, **k: (_ for _ in ()).throw(ConnectionError("offline")),
