@@ -18,18 +18,22 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.134",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@vis.gl/react-google-maps": "^1.5.0",
     "@workos-inc/authkit-nextjs": "^4.1.1",
     "ai": "^6.0.209",
     "next": "^14.2.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.169.0",
     "typescript": "^5.5.3"
   }
 }
