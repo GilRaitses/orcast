@@ -1,0 +1,51 @@
+{
+  "level": 2,
+  "name": "multistation",
+  "status": "fail",
+  "metrics": {
+    "experiment": "multi-station (haro_strait stream + cached OrcaHello index for 3 nodes)",
+    "stations_acoustic": 4,
+    "n_detections": 2089,
+    "per_station_detections": {
+      "andrews_bay": 265,
+      "haro_strait": 761,
+      "north_san_juan_channel": 34,
+      "orcasound_lab": 1029
+    },
+    "covariates_fit": [
+      "diel",
+      "tide",
+      "lunar",
+      "season"
+    ],
+    "covariates_excluded": {},
+    "phase_coverage": {
+      "diel": 1.0,
+      "tide": 1.0,
+      "lunar": 1.0,
+      "season": 1.0
+    },
+    "tide_model": "harmonic",
+    "level1_cross_station": {
+      "testable": true,
+      "n_stations": 4,
+      "mean_psth_correlation": {
+        "diel": 0.33606293921082514,
+        "tide": 0.1364130760715123,
+        "lunar": 0.1660812532470315,
+        "season": 0.15893289487753845
+      },
+      "consistent": false
+    },
+    "cv_mean_deviance_skill_multistation": 0.07779744481420332,
+    "cv_mean_deviance_skill_singlestation_baseline": -0.04730031489935951,
+    "cv_folds_passing": "4/5",
+    "time_rescaling_pooled_pass_exp": false,
+    "time_rescaling_pooled_ks_exp_pval": 0.0,
+    "beats_climatology": true,
+    "confidence_unpromoted": 0.5,
+    "provenance": "EXPERIMENT: not the production fit; mixes the production haro_strait stream with the cached OrcaHello index for the other nodes; no store write; no confidence promotion."
+  },
+  "reason": "Level 2 still not met with multi-station data: cross-station now testable (4 stations); held-out skill 0.07779744481420332 (single-station baseline -0.04730031489935951); time-rescaling KS still fails. Confidence unchanged at 0% (honest). Cross-station test is now unblocked, which is the methodological gain; positive skill still pending (more/cleaner stations, effort model).",
+  "generated_at": "2026-06-27T07:15:41.379468+00:00"
+}

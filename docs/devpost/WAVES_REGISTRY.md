@@ -374,7 +374,7 @@ Operationalizes the kernel methodology ([FORECAST_KERNELS.md](../methodology/FOR
 |----|--------|------|------|
 | M-L0 | done (PASS) | detector ROC/d' + per-station effort | ROC AUC 0.879 (CI 0.856-0.902), d' 1.62 from live confidence cache (758 paired labels) |
 | M-L1 | done (PASS) | PSTH k_diel vs phase-shuffle null | diel modulation 1.79, p=0.0005 |
-| M-L2 | chartered (FAIL, frontier) | joint LNP (tide+diel+lunar+season) | harmonic k_tide refit ran on AWS store: tide now fitted (coverage 0.42→1.00, R² 0.85) but held-out skill −0.047 + time-rescaling fail, confidence 0%; binding constraint is single-station, not covariates |
+| M-L2 | chartered (FAIL, frontier, improving) | joint LNP (tide+diel+lunar+season) | multi-station experiment (4 Orcasound nodes, 2089 det) flips held-out skill POSITIVE (+0.078 vs −0.047 single-station) and fits all four kernels; still 0% because time-rescaling fails and cross-station kernels not yet consistent. Confirms single-station was the binding constraint |
 | M-L3 | chartered (WITHHELD) | k_salmon (lag scan) + s_space (bathymetry + CAND density) | lag scan on climatology placeholder; WILDLIFE waveset researched the real Chinook + prey-base sources to aggregate |
 
 ### Wildlife-source research family (WILDLIFE) — Wave Set WILDLIFE

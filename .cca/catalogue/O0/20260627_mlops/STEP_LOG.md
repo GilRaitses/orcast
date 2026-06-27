@@ -80,11 +80,34 @@ consistent with L2 fail). Effective confidence unchanged at 0%.
   withheld) and fixed `level2_joint.py` to name the actual excluded covariate(s) rather than the
   stale "tide/season" string. mlops-gate stays green; honesty guard holds (served confidence 0.0).
 
+## 2026-06-27 (multi-station experiment, WILDLIFE recommendation #1)
+
+- Acted on the WILDLIFE register's top recommendation (fit OrcaHello on all in-region Orcasound
+  nodes). The production acoustic_detections stream has only haro_strait (761); the cached
+  OrcaHello index carries three more in-region nodes (orcasound_lab 1029, andrews_bay 265,
+  north_san_juan_channel 34). Built `modeling/studies/level2_multistation.py`: combine the
+  production haro_strait stream with the cached nodes into a local memory store (no production
+  store write), add the S3 harmonic-tide currents + uptime, and run the standard joint fit.
+- Result (EXPERIMENT, not promoted): 4 stations, 2089 detections. All four temporal kernels now
+  fit (diel/tide/lunar/season, phase coverage 1.0 each). Held-out CV mean deviance skill flips
+  POSITIVE: +0.078 (4/5 folds) vs the single-station baseline -0.047. This is the first time the
+  model beats climatology out of sample, and it confirms the binding constraint was the
+  single-station regime, not the covariate list.
+- Still FAIL / confidence stays 0% (honest): time-rescaling pooled KS still fails (p=0.0), and the
+  L1 cross-station consistency is now testable (4 stations) but NOT yet consistent (per-kernel PSTH
+  correlations 0.14-0.34, below the 0.5 bar). The experiment's internal gate score would be 0.5,
+  but it is explicitly unpromoted (write_outputs disabled, mixed-provenance spike train, no
+  supervisor decision). `modeling/studies/reports/level2_multistation.json` records this.
+- This study imports the heavy fit pipeline, so it runs under .venv-modeling and is NOT added to
+  run_studies / mlops-gate (which stay pure stdlib). mlops-gate remains green; served confidence 0.0.
+
 ## Open / awaiting operator
 
-- M-L2 off 0% now needs multi-station acoustic coverage, not more covariates (see the WILDLIFE
-  register `.cca/catalogue/O0/20260627_wildlife-sources/WILDLIFE_SOURCES_REGISTER.md`): fit
-  OrcaHello on all in-region Orcasound nodes is the cheapest unlock.
+- M-L2 to a real pass: ingest the additional Orcasound nodes into the production acoustic_detections
+  stream (the experiment used the cached index), tighten per-station effort/log E so time-rescaling
+  passes, and lift cross-station kernel consistency. Multi-station already flips held-out skill
+  positive, so this is the path off 0% (a passing gate + a recorded supervisor decision would then
+  promote confidence; not done here).
 - M-L3 needs a real Chinook run-timing feed: validate the Albion/DART parsers in
   `src/aws_backend/sources/salmon.py` (both wired, both fall through to climatology today).
 - The harmonic integration lives in the local modeling pipeline (untracked, like fit_kernels.py

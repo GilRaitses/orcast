@@ -1147,8 +1147,8 @@ waves:
     type: implement
     status: chartered
     depends_on: [M-L1]
-    scope_globs: [modeling/studies/level2_joint.py, modeling/studies/tide_coverage.py, modeling/tide_harmonic.py, modeling/fit_kernels.py, modeling/design.py]
-    note: "FAIL (frontier) - harmonic k_tide refit ran on AWS store: tide now FITTED (coverage 0.42->1.00, R^2 0.85), but held-out skill -0.047 + time-rescaling fail, confidence 0%. Binding constraint is single-station, not covariates; needs multi-station acoustic"
+    scope_globs: [modeling/studies/level2_joint.py, modeling/studies/level2_multistation.py, modeling/studies/tide_coverage.py, modeling/tide_harmonic.py, modeling/fit_kernels.py, modeling/design.py]
+    note: "FAIL (frontier) but improving - multi-station experiment (4 nodes, 2089 det) flips held-out skill POSITIVE (+0.078 vs -0.047 single-station) and fits all 4 kernels; still 0% because time-rescaling fails + cross-station kernels not yet consistent. Single-station was the binding constraint, now confirmed"
   - id: M-L3
     family: MLM
     type: implement
