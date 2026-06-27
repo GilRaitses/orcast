@@ -1,7 +1,7 @@
 {
   "level": 0,
   "name": "detector",
-  "status": "withheld",
+  "status": "pass",
   "metrics": {
     "stations": 3,
     "total_records": 1359,
@@ -32,9 +32,21 @@
       }
     },
     "detector_precision_overall": 0.7114,
-    "roc_auc": null,
-    "roc_status": "withheld: needs per-detection confidence scores paired with labels (not in cached index)"
+    "confidence_cache_path": ".cca/catalogue/O0/20260627_forecast-candidates/orcahello_index.confidence.cache.json",
+    "confidence_pairs_total": 758,
+    "confidence_pairs_confirmed": 423,
+    "confidence_pairs_false_positive": 335,
+    "roc_auc": 0.87939,
+    "roc_auc_ci95": [
+      0.856347,
+      0.902262
+    ],
+    "roc_bootstrap_samples": 1000,
+    "roc_status": "computed: confidence cache paired with confirmed/false_positive labels",
+    "d_prime": 1.6197,
+    "d_prime_threshold": 0.681415,
+    "d_prime_threshold_rule": "median confidence of confirmed+false_positive rows; score >= threshold counts as detector-positive"
   },
-  "reason": "Per-station effort and detector precision computed; ROC AUC withheld until the confidence-scored detection feed is paired with labels. Effort portion is satisfied.",
-  "generated_at": "2026-06-27T05:34:58.404674+00:00"
+  "reason": "Per-station effort is known and detector ROC AUC is reported with a bootstrap 95% CI.",
+  "generated_at": "2026-06-27T06:13:15.848194+00:00"
 }

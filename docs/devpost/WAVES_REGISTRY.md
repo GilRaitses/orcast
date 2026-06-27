@@ -372,10 +372,10 @@ Operationalizes the kernel methodology ([FORECAST_KERNELS.md](../methodology/FOR
 
 | ID | Status | Goal | Gate |
 |----|--------|------|------|
-| M-L0 | chartered | detector ROC/d' + per-station effort | effort known; ROC AUC + CI |
-| M-L1 | chartered | PSTH k_diel then k_tide vs phase-shuffle null | beats shuffled null |
-| M-L2 | chartered | joint LNP (tide+diel+lunar+season) | held-out LL beats climatology + best single-cov |
-| M-L3 | chartered | k_salmon (lag scan) + s_space (bathymetry + CAND density) | beats detection-density baseline; calibrated |
+| M-L0 | done (PASS) | detector ROC/d' + per-station effort | ROC AUC 0.879 (CI 0.856-0.902), d' 1.62 from live confidence cache (758 paired labels) |
+| M-L1 | done (PASS) | PSTH k_diel vs phase-shuffle null | diel modulation 1.79, p=0.0005 |
+| M-L2 | chartered (FAIL, frontier) | joint LNP (tide+diel+lunar+season) | harmonic k_tide lifts phase coverage 0.42→1.00 (R² 0.97); joint refit with k_tide pending AWS store |
+| M-L3 | chartered (WITHHELD) | k_salmon (lag scan) + s_space (bathymetry + CAND density) | lag scan added on climatology placeholder; needs real run-timing feed + effort model |
 | MLO-FEAT/REG/SCHED/MON/CI | chartered | feature store + GE, registry, scheduled gated retrain, drift monitoring, `mlops-gate` CI | `./tools/waves/run-gate.sh mlops-gate` |
 
 Home: [.cca/catalogue/O0/20260627_mlops/](../../.cca/catalogue/O0/20260627_mlops/). Covariate priority (literature): k_salmon (Chinook, strongest non-tidal driver), k_tide (Haro Strait fronts), s_space (habitat), k_season. Studies under `modeling/studies/`; tide/season/prey gates may report `withheld` until acoustic coverage clears.

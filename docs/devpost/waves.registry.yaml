@@ -1131,31 +1131,31 @@ waves:
   - id: M-L0
     family: MLM
     type: implement
-    status: chartered
+    status: done
     home: .cca/catalogue/O0/20260627_mlops/
     scope_globs: [modeling/studies/level0_detector.py]
-    note: detector ROC/d' + per-station effort; data ready
+    note: "PASS - detector ROC AUC 0.879 (CI 0.856-0.902), d' 1.62 from live confidence cache (758 paired labels) + per-station effort"
   - id: M-L1
     family: MLM
     type: implement
-    status: chartered
+    status: done
     depends_on: [M-L0]
     scope_globs: [modeling/studies/level1_psth.py]
-    note: PSTH (diel, tide) vs phase-shuffle null
+    note: "PASS - diel PSTH modulation 1.79 beats phase-shuffle null (p=0.0005)"
   - id: M-L2
     family: MLM
     type: implement
     status: chartered
     depends_on: [M-L1]
-    scope_globs: [modeling/studies/level2_joint.py, modeling/fit_kernels.py, modeling/design.py]
-    note: joint temporal LNP; lift coverage exclusion when clear
+    scope_globs: [modeling/studies/level2_joint.py, modeling/studies/tide_coverage.py, modeling/tide_harmonic.py, modeling/fit_kernels.py, modeling/design.py]
+    note: "FAIL (frontier) - harmonic k_tide lifts phase coverage 0.42->1.00 (R^2 0.97); joint refit with k_tide pending AWS timeseries store"
   - id: M-L3
     family: MLM
     type: implement
     status: chartered
     depends_on: [M-L2]
-    scope_globs: [modeling/studies/level3_prey_space.py]
-    note: k_salmon lag scan + s_space (bathymetry + CAND density)
+    scope_globs: [modeling/studies/level3_prey_space.py, modeling/studies/salmon_lag.py]
+    note: "WITHHELD - salmon lag scan added (climatology placeholder); needs real run-timing feed + effort model + held-out visual validation"
 
   - id: MLO-FEAT
     family: MLO

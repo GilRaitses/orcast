@@ -46,13 +46,35 @@
       },
       "effort_warning": "Density is effort-confounded: candidates concentrate near hydrophones and observer routes. An explicit effort model is required before this density becomes s_space."
     },
-    "k_salmon": "withheld: needs an assembled Chinook run-timing series (WDFW/PSC/Albion/Fraser/Bonneville) aligned with a lag scan to acoustic presence. salmon.py currently provides only a climatology fallback.",
+    "k_salmon": {
+      "status": "withheld",
+      "source": "climatology_fallback",
+      "source_by_year": {
+        "2020": "climatology_fallback",
+        "2021": "climatology_fallback",
+        "2022": "climatology_fallback",
+        "2023": "climatology_fallback",
+        "2024": "climatology_fallback",
+        "2025": "climatology_fallback",
+        "2026": "climatology_fallback"
+      },
+      "lag_scan": {
+        "best_lag_days": -30,
+        "best_correlation": -0.101659,
+        "p_value": 0.333666,
+        "permutations": 1000,
+        "null_model": "circular_shift_presence",
+        "effect_size_delta_abs": 0.011772
+      },
+      "reason": "Lag scan is informational only because salmon source includes climatology fallback; signal may be suggestive but cannot earn k_salmon gate credit on a placeholder feed.",
+      "honesty_note": "If source is climatology_fallback, this lag scan is only suggestive and cannot earn k_salmon gate credit."
+    },
     "gate_requirements_unmet": [
       "held-out skill vs the recent-detection-density baseline (needs the spatial fit + effort model)",
       "calibration: reliability diagram + PIT on the spatial field",
       "held-out visual sightings as the independent validation set"
     ]
   },
-  "reason": "s_space precursor assembled from the CAND set (density grid + depth); k_salmon and the spatial fit are withheld pending an effort model, a prey run-timing series, and held-out visual validation. No confidence promoted.",
-  "generated_at": "2026-06-27T05:34:58.729392+00:00"
+  "reason": "s_space precursor assembled from the CAND set (density grid + depth) with an explicit effort-confound warning. k_salmon now includes an informational lag scan summary, but Level 3 remains withheld pending held-out skill vs density baseline, reliability/PIT, a validated effort model, and held-out visual validation. No confidence promoted.",
+  "generated_at": "2026-06-27T06:13:44.204796+00:00"
 }
