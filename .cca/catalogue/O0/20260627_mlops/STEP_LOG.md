@@ -360,6 +360,29 @@ research-findings commit.
   do not promote.
 - Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
   W1-W2-W3-done-W4-chartered).
+## 2026-06-27 (W6 DEPLOYED: 3-node multi-station ingest landed in the SERVED store)
+
+Operator: "push push push / w6 deploy!!". Pushed the 4 pending commits to origin/main (CI re-runs with
+the salmon fix) and executed the W6 production ingest.
+
+- Pre-flight (read-only, all G1 pre-deploy gate items green): creds = account 198456344617; pre-write
+  store.list_stations(acoustic_detections) == ['haro_strait'] (rollback target recorded); dry-run
+  reproduced 1029/265/34 = 1328; mlops-gate green; no fit bundled.
+- WRITE executed: ingest_multistation_acoustic(store, dry_run=False) against bucket B.4 (us-west-2),
+  put_grouped_result records=1359. POST store.list_stations = [andrews_bay, haro_strait,
+  north_san_juan_channel, orcasound_lab] (4 stations). Per-station get_series: orcasound_lab 1029,
+  andrews_bay 265, nsj 34; haro_strait 761 UNCHANGED (verified pre==post). Idempotent (station,t,id);
+  reversible (rollback deletes only the 3 new prefixes).
+- HONEST STATE: the served STORE is now 4-station, but the served FIT is still single-station (no refit
+  ran). No supervisor call, no promotion -> effective_confidence stays 0.0; L2 still FAIL. This is
+  plumbing/forward-accumulation, NOT an L2 pass and NOT a confidence change (RF C2).
+- Registry: W6 -> done (deployed block recorded); W7 -> ready (next gate); campaign status
+  P0-W5-W6-done-W7-ready.
+- NEXT (W7, gated): refit SERVED multi-station (upload disabled, write_outputs=False) to MEASURE served
+  held-out CV-skill. Per G2 it should land ~+0.078 -> confidence 0.49 = HOLD (below the 0.6 supervisor
+  threshold), so it does NOT promote: the operator either WAITS for skill ~+0.144 or records an explicit
+  B.1 decision to serve a sub-0.6 caveated confidence. Promotion is never automatic.
+
 ## 2026-06-27 (W5 grounding wave DONE; W6/W7/W8 conditions now grounded)
 
 Operator: "launch it, then commit but check why git build is failing." Launched W5 (G1/G2/G3) in
