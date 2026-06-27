@@ -284,7 +284,7 @@ def test_live_obis_fetch_queries_occurrence_api(monkeypatch):
     assert captured["url"] == "https://api.obis.org/v3/occurrence"
     assert captured["params"]["scientificname"] == "Orcinus orca"
     assert captured["params"]["geometry"].startswith("POLYGON((")
-    assert captured["params"]["size"] == 1000
+    assert captured["params"]["size"] == 200
 
 
 def test_live_obis_normalize_drops_out_of_region():
