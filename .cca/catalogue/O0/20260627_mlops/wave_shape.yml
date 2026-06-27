@@ -208,8 +208,12 @@ research_dispatch:
 # that gates three downstream waves (W6 deploy, W7 promote, W8 L3). Nothing here promotes;
 # build is gated; promotion needs a passing gate on SERVED data + a recorded supervisor decision.
 forward_path_campaign:
-  status: chartered-P0-done-W5-ready   # 2026-06-27: charter written; P0 confidence-cliff fix DONE; W5 launch is the next operator gate
+  status: P0-done-W5-done-W6789-gated   # 2026-06-27: P0 DONE; W5 grounding (G1/G2/G3) DONE; W6/W7/W8 gated on operator + grounded conditions below
   model: inherit
+  w5_findings:                          # the three grounding go/no-go calls (research/forward/*.md)
+    G1_ingest_deploy: "GO on the plumbing (operator-gated): one-shot idempotent write of the 3 cached nodes (orcasound_lab +1029, andrews_bay +265, nsj +34 = +1328) into the SERVED store; reads cache (no fetch_history/403 surface), ~180 S3 ops, reversible (rollback never touches haro_strait). Flips served CV-skill -0.047 -> ~+0.078 (4/5 folds). NO-GO on calling it a consistency fix or a promotion: +1328 to the SERVED store but 0 net-new to the analysis universe (same cached rows). orcasound_lab is load-bearing; nsj negligible."
+    G2_promotion_protocol: "Two bands, do not conflate. LIFTS/HOLD (0<conf<0.6): served skill>0, >=4/5 folds -> +0.078 maps to 0.49 -> supervisor HOLDs, no auto-promotion. PROMOTES (conf>=0.6): served skill >=+0.144 AND >=4/5 folds AND across-fold lower bound (mean - t*SE) >=+0.078 AND PIT calibrated AND a beaten L1 null. Curve: +0.078->0.49, +0.120->0.57, +0.144->0.60, +0.200->0.66, cap 0.75. If PIT not calibrated, max reachable conf 0.35 (never promotes). Ingest ALONE does NOT promote. Consistency is NOT a confidence-map input, so conf can reach 0.49 while consistency stays unmet; consistency gains come from the coarser-bin re-score, not the ingest."
+    G3_l3_grounding: "GO now on wiring the live 2026 Albion fetch (safe, necessary -- the cache stops 2026-06-26, before the summer peak; via aimez EC2 i-04a649f91274e9fce). NO-GO on any L3 promotion. The L3 lever is summer PRESENCE-DAYS (the W6 ingest accruing summers), NOT the salmon feed. Decision bar (all required, all fail today): stock-aligned + frozen pre-registration + FRESH OOS replication on NEW data + LOYO >=3-of-n at n>=8 (~10 presence-days/yr) + multiplicity-clean p (<0.0125 or accepted pre-reg) + consistent counts. Bonferroni x4 pushes in-sample p 0.013->0.052 (fails); only pre-registration rescues it -- PREREG_* must stay frozen. L3 stays WITHHELD-with-flag."
   premise: "after the W4 adoption, the served L2 timing gate earns credit once the SERVED fit's held-out CV-skill turns positive (served single-station -0.047 vs 4-station experiment +0.078); closing that gap is the deploy-gated 3-node ingest. UPDATED by P0: confidence is now effect-size-scaled + capped at 0.75, so the +0.078 margin maps to 0.49 (HOLD, < the 0.6 supervisor threshold); crossing 0.6 needs CV-skill ~+0.144. The ingest alone lifts served confidence to ~0.49 but does NOT auto-promote -- W7 needs larger/robust skill or an explicit operator decision on a sub-0.6 display."
   objectives:
     O1_ingest:        "land orcasound_lab/andrews_bay/north_san_juan_channel into the SERVED acoustic_detections stream (ingest_multistation.py, dry-run validated); binding dep for BOTH L2 blockers; deploy-gated"
@@ -222,47 +226,51 @@ forward_path_campaign:
     - id: W5
       name: research-grounding
       parallelism: 3
-      status: dispatch-ready                     # READY; launch is the next operator gate. Charter: CAMPAIGN_CHARTER.md; prompts: CAMPAIGN_DISPATCH.md
+      status: done                               # ran 2026-06-27; G1/G2/G3 returned grounding docs + go/no-go (see w5_findings above)
       investigation_first: true
       no_convergence_file_edits: true
       no_deploy: true
       no_promotion: true
       findings_dir: .cca/catalogue/O0/20260627_mlops/research/forward/
       agents:
-        - { role: ingest-deploy-grounding,    owns: research/forward/G1_ingest_deploy.md,      grounds: W6, deliverable: "production deploy runbook (idempotency/dedup, backfill, schema, cost, 403/rate-limit, observability, ROLLBACK) + pre-deploy gate + net-new-detection estimate per node + go/no-go" }
-        - { role: promotion-protocol-grounding, owns: research/forward/G2_promotion_protocol.md, grounds: W7, deliverable: "robustly-positive CV-skill definition (folds/stability/margin) + multi-station SERVED refit spec + supervisor decision-record format + consistency-after-ingest projection + go/no-go template" }
-        - { role: l3-grounding,                owns: research/forward/G3_l3_grounding.md,        grounds: W8, deliverable: "live 2026 Albion fetch design + presence-year power analysis + explicit out-of-sample decision bar for the L3 flag + go/no-go" }
-      gate: "G1/G2/G3 each land a grounding doc with measured numbers + runbook/spec + go/no-go; no deploy, no promotion"
+        - { role: ingest-deploy-grounding,    owns: research/forward/G1_ingest_deploy.md,      grounds: W6, status: done, deliverable: "deploy runbook + pre-deploy gate + net-new estimate (+1328 served / 0 analysis) + GO-on-plumbing/NO-GO-on-fix" }
+        - { role: promotion-protocol-grounding, owns: research/forward/G2_promotion_protocol.md, grounds: W7, status: done, deliverable: "two-band promote protocol (HOLD <0.6 vs PROMOTE >=0.6 needs skill>=+0.144 + folds + lower-bound + PIT + L1) + W7 go/no-go template (ingest alone -> 0.49 HOLD)" }
+        - { role: l3-grounding,                owns: research/forward/G3_l3_grounding.md,        status: done, grounds: W8, deliverable: "live 2026 Albion fetch design + power analysis (need n>=8 seasons, ~10 presence-days/yr) + decision bar (all fail today) + GO-on-fetch/NO-GO-on-promotion" }
+      gate: "PASSED: G1/G2/G3 landed grounding docs with measured numbers + runbook/spec + go/no-go; no deploy, no promotion"
     - id: W6
       name: deploy-multistation-ingest
       depends_on: [W5]
-      status: gated                              # gated by G1 PASS + operator deploy approval + production store write
+      status: gated-operator-deploy              # G1 PASS (GO on plumbing); awaits ONLY operator deploy approval + the production store write
       objective: O1
+      caveat: "honest framing required (RF C2): this is PLUMBING, not a fix. It flips served CV-skill -0.047 -> ~+0.078 (conf 0.49 HOLD), does NOT pass L2 (consistency unmet) and does NOT promote. It is also the L3 lever (accrues summer presence-days over time)."
       agents:
-        - { role: ingest-deploy, owns: src/aws_backend/ingest_multistation.py, deliverable: "land the 3 nodes into the SERVED acoustic_detections stream per G1's runbook; production store write is operator/deploy-gated" }
-      gate: "G1 PASS AND operator deploy approval AND the production write done; served store now 4-station"
+        - { role: ingest-deploy, owns: src/aws_backend/ingest_multistation.py, deliverable: "ingest_multistation_acoustic(store, dry_run=False): one-shot idempotent (station,t,id) write of the 3 cached nodes into the SERVED acoustic_detections store per G1's runbook; pre-write assert list_stations==[haro_strait]; rollback deletes only the 3 new prefixes" }
+      gate: "G1 PASS (done) AND operator deploy approval AND the production write done; served store becomes 4-station"
     - id: W7
       name: promote-multistation
       depends_on: [W6]
-      status: gated                              # gated by W6 done + G2 PASS + fold-stable +CV-skill + recorded supervisor decision
+      status: gated                              # gated by W6 done + G2 protocol + the two-band decision below + recorded supervisor decision (B.1)
       objective: O3
+      decision_bands:                            # G2: do not conflate
+        hold:    "served skill>0, >=4/5 folds -> conf in (0,0.6); +0.078 -> 0.49. supervisor HOLDs. Default for the ingest-alone case = WAIT for ~+0.144, OR operator records an explicit B.1 decision to serve a sub-0.6 caveated confidence."
+        promote: "served skill >=+0.144 AND >=4/5 folds AND across-fold lower bound (mean-t*SE) >=+0.078 AND PIT calibrated AND a beaten L1 null -> conf >=0.6 -> supervisor may PROMOTE on a recorded decision."
+        no_go:   "served skill <=0 -> conf 0.0."
       agents:
-        - { role: multistation-refit,   owns: [modeling/fit_kernels.py, modeling/studies/level2_multistation.py], deliverable: "refit multi-station SERVED (upload disabled, write_outputs=False); report fold-stable held-out CV-skill" }
-        - { role: consistency-rescore,  owns: modeling/studies/cross_station_consistency.py, deliverable: "re-score cross-station consistency at 12 bins on the denser served data" }
-        - { role: supervisor-promotion, owns: src/aws_backend/promotion/supervisor.py, deliverable: "route promotion ONLY if CV-skill is robustly positive per G2; the recorded human decision finalizes it (B.1)" }
-      gate: "a SERVED multi-station fit with fold-stable +CV-skill AND a recorded supervisor decision -> effective_confidence rises (to the P0-graduated value); otherwise stays 0%"
+        - { role: multistation-refit,   owns: [modeling/fit_kernels.py, modeling/studies/level2_multistation.py], deliverable: "refit multi-station SERVED (upload disabled, write_outputs=False); report fold-stable held-out CV-skill + across-fold lower bound" }
+        - { role: consistency-rescore,  owns: modeling/studies/cross_station_consistency.py, deliverable: "re-score cross-station consistency at 12 bins on the served data (NOTE G2: ingest adds 0 analysis observations; gains come from the coarser-bin re-score, not the ingest)" }
+        - { role: supervisor-promotion, owns: src/aws_backend/promotion/supervisor.py, deliverable: "route promotion ONLY in the PROMOTE band per G2; the recorded human decision finalizes it (B.1)" }
+      gate: "PROMOTE band met (skill>=+0.144 etc.) AND a recorded supervisor decision -> effective_confidence rises to the P0-graduated value; HOLD band -> WAIT or caveated sub-0.6 by explicit decision; otherwise 0%"
     - id: W8
       name: l3-live-feed-and-retest
-      depends_on: [W5]
-      status: gated                              # gated by G3 PASS + extended series clears the decision bar + operator decision
+      depends_on: [W5, W6]                        # G3: the L3 lever is summer presence-days (W6), not the salmon feed
+      status: gated                              # GO on the fetch now; NO-GO on L3 promotion; re-test gates on W6 + >=1 fresh powered summer
       objective: O4
       agents:
-        - { role: albion-live-feed, owns: src/aws_backend/sources/salmon.py, deliverable: "wire the live 2026 Albion feed per G3 (via aimez EC2); extend data/salmon/albion_fos/" }
-        - { role: l3-retest,        owns: modeling/studies/salmon_lag.py, deliverable: "re-run the pre-registered Jun-Sep held-out test on the extended series; verdict against G3's decision bar" }
-      gate: "extended series clears G3's out-of-sample bar AND operator decides -> L3 graduates; otherwise stays WITHHELD"
+        - { role: albion-live-feed, owns: src/aws_backend/sources/salmon.py, deliverable: "wire the live 2026 Albion fetch per G3 (via aimez EC2; overwrite-in-place fos2026.csv, weekly Jun-Oct + Nov freeze; no _load_albion_fos change). SAFE/GO now -- the cache stops 2026-06-26 before the peak. Keep PREREG_* frozen." }
+        - { role: l3-retest,        owns: modeling/studies/salmon_lag.py, deliverable: "re-run the FROZEN pre-registered Jun-Sep held-out test on the extended series; verdict against G3's decision bar (all criteria fail today -> WITHHELD)" }
+      gate: "G3 decision bar cleared (FRESH OOS replication on NEW data + LOYO >=3-of-n at n>=8 + multiplicity-clean p) AND operator decides -> L3 graduates; otherwise stays WITHHELD-with-flag"
   operator_gates:
-    - W5 research-grounding launch (next)
-    - W6 ingest deploy (G1 PASS + deploy approval + production store write)
-    - W7 promotion (fold-stable +CV-skill + recorded supervisor decision)
-    - W8 L3 decision (extended series clears the bar + operator decision)
+    - W6 ingest deploy (G1 PASS done; awaits ONLY operator deploy approval + production store write) <- NEXT
+    - W7 promotion (PROMOTE band: served skill >=+0.144 + folds + lower-bound + PIT + L1, + recorded supervisor decision; ingest alone is HOLD at 0.49)
+    - W8 L3 decision (depends on W6 + a fresh powered summer; G3 decision bar + operator decision)
     - any commit or push (unchanged)

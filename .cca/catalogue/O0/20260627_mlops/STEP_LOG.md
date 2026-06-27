@@ -360,6 +360,45 @@ research-findings commit.
   do not promote.
 - Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
   W1-W2-W3-done-W4-chartered).
+## 2026-06-27 (W5 grounding wave DONE; W6/W7/W8 conditions now grounded)
+
+Operator: "launch it, then commit but check why git build is failing." Launched W5 (G1/G2/G3) in
+parallel; all three returned grounding docs under research/forward/. Also diagnosed + fixed the red CI
+(see the CI note below).
+
+- G1 ingest-deploy (research/forward/G1_ingest_deploy.md): GO on the plumbing, operator-gated. One-shot
+  idempotent (station,t,id) write of the 3 cached nodes (orcasound_lab +1029, andrews_bay +265, nsj +34
+  = +1328) into the SERVED store; reads the cache (no fetch_history/403 surface), ~180 S3 ops, reversible
+  (rollback never touches haro_strait). Flips served CV-skill -0.047 -> ~+0.078 (4/5 folds). NO-GO on
+  calling it a consistency fix or a promotion: +1328 to the SERVED store but 0 net-new to the analysis
+  universe (same cached rows). orcasound_lab load-bearing; nsj negligible.
+- G2 promotion-protocol (research/forward/G2_promotion_protocol.md): two bands, do not conflate. HOLD
+  (0<conf<0.6): served skill>0, >=4/5 folds -> +0.078 maps to 0.49 -> supervisor HOLDs. PROMOTE
+  (conf>=0.6): served skill >=+0.144 AND >=4/5 folds AND across-fold lower bound (mean-t*SE) >=+0.078 AND
+  PIT calibrated AND a beaten L1 null. Curve +0.078->0.49, +0.144->0.60, cap 0.75; if PIT not calibrated
+  max reachable 0.35. The ingest ALONE does NOT promote (lands at 0.49 HOLD). Consistency is NOT a
+  confidence-map input; its gains come from the coarser-bin re-score, not the ingest. W7 Case 2 default =
+  WAIT for ~+0.144, or the operator records an explicit B.1 sub-0.6 caveated display.
+- G3 L3 (research/forward/G3_l3_grounding.md): GO now on wiring the live 2026 Albion fetch (cache stops
+  2026-06-26, before the peak; via aimez EC2). NO-GO on any L3 promotion. The L3 lever is summer
+  PRESENCE-DAYS (the W6 ingest accruing summers), NOT the salmon feed. Power: Bonferroni x4 pushes
+  in-sample p 0.013->0.052 (fails); only frozen pre-registration rescues it. Need n>=8 seasons, ~10-15
+  presence-days/yr, LOYO >=3-of-n, fresh OOS on NEW data. All fail today -> L3 stays WITHHELD-with-flag.
+- KEY CROSS-CUT: the W6 ingest is worth deploying (safe, reversible, near-zero cost, and the L3 lever),
+  but it lands served confidence at 0.49 HOLD -- it is NOT an L2 pass and NOT a promotion. The honest
+  framing (plumbing, not a fix) is the top residual risk to manage.
+- Registry: W5 marked done; w5_findings block added; W6 -> gated-operator-deploy (awaits ONLY operator
+  approval + the production write); W7 -> two-band decision gate; W8 -> depends_on W6 (the real L3 lever).
+- Effective confidence unchanged 0.0. Grounding docs committed; nothing promoted.
+
+## 2026-06-27 (CI red fixed: stale salmon tests vs the real Albion cached-feed path)
+
+Operator asked to check why the git build is failing. AWS Backend CI was red on main since the real
+Fraser feed was wired: tests/aws_backend/test_salmon.py had 4 tests mocking requests.get and the old
+climatology/DART-JSON fallback, but _fetch_fraser now reads cached FOS CSVs and DART parses CSV. Fixed
+the tests (empty_albion_cache fixture controlling _ALBION_FOS_CACHE_DIR; cached-CSV Albion test; DART
+CSV fallback). 225 tests/aws_backend pass, compileall clean. Committed f3eff79. (Not pushed unless asked.)
+
 ## 2026-06-27 (forward-path campaign chartered; P0 confidence-cliff fix dispatched in parallel)
 
 Operator: "charter a multi wave research campaign to structure and ground the forward path ... if there's
