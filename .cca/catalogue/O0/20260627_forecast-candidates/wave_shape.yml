@@ -1,0 +1,83 @@
+# CAND, forecast candidate-preparation waveset, machine-readable shape
+# Home: .cca/catalogue/O0/20260627_forecast-candidates/
+# Canonical prose: CANDIDATE_CHARTER.md
+
+version: 1
+family: CAND
+label: forecast-candidate-preparation
+home: .cca/catalogue/O0/20260627_forecast-candidates/
+status: chartered
+target_count: 40
+
+region_bounds: { lat_min: 48.40, lat_max: 48.70, lng_min: -123.25, lng_max: -122.75 }
+
+hydrophones:
+  - { name: Orcasound Lab, lat: 48.5583362, lng: -123.1735774, station_key: orcasound_lab }
+  - { name: North San Juan Channel, lat: 48.591294, lng: -123.058779, station_key: north_san_juan_channel }
+  - { name: Andrews Bay, lat: 48.5500299, lng: -123.1666492, station_key: andrews_bay }
+  - { name: Lime Kiln / Haro Strait, lat: 48.516, lng: -123.152, station_key: haro_strait, note: ONC LKWA; OrcaHello acoustic history key }
+
+annotation_records:
+  reviewed_labels_cached: 334
+  reviewed_label_stations: [andrews_bay, haro_strait, north_san_juan_channel, orcasound_lab]
+  acoustic_detection_history: { station: haro_strait, records: 761, span: "2020..2021" }
+  source_paths:
+    - data/models/snapshot_manifest.json
+    - src/aws_backend/sources/orcahello_history.py
+
+sighting_sources:
+  - { id: obis, path: src/aws_backend/sources/obis.py, kind: visual, live: true, fallback: src/aws_backend/sources/local_obis.py }
+  - { id: inaturalist, path: src/aws_backend/sources/inaturalist.py, kind: visual, live: true }
+  - { id: orcahello, path: src/aws_backend/sources/orcahello.py, kind: acoustic, live: true, note: hydrophone position not whale GPS }
+  - { id: community, path: src/aws_backend/sources/community.py, kind: visual, live: false, gate: moderator approved }
+
+covariates_computable:
+  - { id: diel, path: src/aws_backend/covariates.py, fitted: true }
+  - { id: lunar, path: src/aws_backend/covariates.py, fitted: true }
+  - { id: season, path: modeling/design.py, fitted: false }
+  - { id: depth_m, path: src/aws_backend/sources/bathymetry.py, fitted: false }
+  - { id: shore_m, path: src/aws_backend/spatial_enrichment.py, fitted: false }
+  - { id: tide, path: src/aws_backend/sources/noaa.py, fitted: false }
+  - { id: salmon_index, path: src/aws_backend/sources/salmon.py, fitted: false }
+
+waves:
+  - id: C-GAP
+    mode: discovery
+    readonly: true
+    surface: [.cca/catalogue/O0/20260627_forecast-candidates/GAP_COVERAGE.md]
+    parallelism: 1
+    inputs:
+      - src/aws_backend/sources/
+      - data/models/snapshot_manifest.json
+      - src/integrations/orcasound_hydrophones_for_orcast.json
+    exit: Coverage table of reachable confirmed sightings per source, spatial spread vs the four hydrophones, OrcaHello annotation/detection spans, NOAA coverage spans, and a tier-A feasibility count.
+
+  - id: C-BUILD
+    mode: build
+    depends_on: [C-GAP]
+    surface: [.cca/catalogue/O0/20260627_forecast-candidates/candidates.targets.json]
+    parallelism: 1
+    operator_gate: live OBIS/iNaturalist/OrcaHello ingest needs approval
+    exit: ">=40 candidates with required join keys; >=20 tier-A. Validated by the exit check in CANDIDATE_CHARTER.md."
+
+  - id: C-VERIFY
+    mode: verify
+    depends_on: [C-BUILD]
+    surface: [.cca/catalogue/O0/20260627_forecast-candidates/CAND_VERIFY.md]
+    parallelism: 1
+    exit: Join and scoring re-check passes; tier-A count and join-key completeness confirmed; every acoustic-sourced candidate labeled source_kind acoustic.
+
+priority_scoring:
+  tiers:
+    A: within 5 km of a hydrophone AND overlaps an OrcaHello annotation or detection window
+    B: within 10 km of a hydrophone OR overlaps the NOAA tide/current span with full covariate computability
+    C: in-region with full covariate computability, no hydrophone or annotation overlap
+  weights:
+    hydrophone_proximity: 0.40
+    orcahello_overlap: 0.30
+    noaa_coverage: 0.10
+    source_quality: 0.15   # verified > likely
+    recency: 0.05
+
+cross_links:
+  demo_beat: .cca/catalogue/O0/20260627_demo-waveset/W-STORY.md (B-DATA)

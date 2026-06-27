@@ -1,0 +1,5837 @@
+{
+  "_meta": {
+    "family": "CAND",
+    "schema": "candidate_targets.schema.yml",
+    "status": "populated",
+    "populated_by": "C-BUILD (tools/forecast_candidates/build_candidates.py)",
+    "target_count": 40,
+    "min_tier_a": 20,
+    "confirmed_filter": "cross_validation.status in [verified, likely]; OrcaHello history requires reviewed-confirmed",
+    "honesty": [
+      "Acoustic-sourced candidates (orcahello, orcahello_history) carry source_kind=acoustic; hydrophone position, not whale GPS.",
+      "Source alignment counts only real external overlaps (hydrophone proximity, OrcaHello annotation/detection window, NOAA span). Universally computable covariates do not count.",
+      "No model is trained here; effective confidence remains 0% with the gate caveat.",
+      "noaa_tide_coverage=true reflects NOAA CO-OPS tide/current prediction availability for the pilot region (PUG1701-1703), not an observed-current span."
+    ],
+    "stats": {
+      "ingestion_run": "ingest_5adfbd2254e2",
+      "store_in_region": 93,
+      "store_confirmed": 91,
+      "orcahello_index_records": 1359,
+      "orcahello_index_provenance": "live",
+      "orcahello_confirmed_acoustic": 166,
+      "pool_total": 257,
+      "candidates": 200,
+      "tier_a": 166,
+      "tier_b": 34,
+      "tier_c": 0,
+      "near5km": 184,
+      "near10km": 200,
+      "live": true,
+      "window_h": 24
+    },
+    "generated_at": "2026-06-27T05:09:12.702077+00:00"
+  },
+  "candidates": [
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1781550655",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-06-15T19:10:55+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4571,
+        "lunar_phase": 0.0236,
+        "season_phase": 0.4521,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9998,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1781489399",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-06-15T02:09:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 65,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7481,
+        "lunar_phase": 0.9996,
+        "season_phase": 0.4521,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9998,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1781552039",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-06-15T19:33:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 68,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4731,
+        "lunar_phase": 0.0241,
+        "season_phase": 0.4521,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9998,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1781577899",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-06-16T02:44:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 18,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7724,
+        "lunar_phase": 0.0343,
+        "season_phase": 0.4548,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9998,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1776135239",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-04-14T02:53:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7787,
+        "lunar_phase": 0.9011,
+        "season_phase": 0.2822,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.999,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1776135959",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-04-14T03:05:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.787,
+        "lunar_phase": 0.9014,
+        "season_phase": 0.2822,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.999,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_north_san_juan_channel_1774815119",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.591294,
+      "longitude": -123.058779,
+      "timestamp": "2026-03-29T20:11:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 6,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4998,
+        "lunar_phase": 0.3837,
+        "season_phase": 0.2384,
+        "depth_m": -40.0,
+        "shore_m": 874.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9988,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_north_san_juan_channel_1774820339",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.591294,
+      "longitude": -123.058779,
+      "timestamp": "2026-03-29T21:38:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 6,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5602,
+        "lunar_phase": 0.3857,
+        "season_phase": 0.2384,
+        "depth_m": -40.0,
+        "shore_m": 874.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9988,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1774833179",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-30T01:12:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 15,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7086,
+        "lunar_phase": 0.3908,
+        "season_phase": 0.2411,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9988,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1774836059",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-30T02:00:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 15,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7419,
+        "lunar_phase": 0.3919,
+        "season_phase": 0.2411,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9988,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1775056979",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-04-01T15:22:59+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 6,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2988,
+        "lunar_phase": 0.4785,
+        "season_phase": 0.2466,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9988,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1774487510",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-26T01:11:50+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 27,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7078,
+        "lunar_phase": 0.2553,
+        "season_phase": 0.2301,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9987,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1774490510",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-26T02:01:50+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 27,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7425,
+        "lunar_phase": 0.2565,
+        "season_phase": 0.2301,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9987,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1773876859",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-18T23:34:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 68,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.64,
+        "lunar_phase": 0.016,
+        "season_phase": 0.2082,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9986,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1773878419",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-19T00:00:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 68,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6581,
+        "lunar_phase": 0.0166,
+        "season_phase": 0.211,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9986,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1773882019",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-19T01:00:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 68,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6998,
+        "lunar_phase": 0.018,
+        "season_phase": 0.211,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9986,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_north_san_juan_channel_1773365789",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.591294,
+      "longitude": -123.058779,
+      "timestamp": "2026-03-13T01:36:29+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 25,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7252,
+        "lunar_phase": 0.8157,
+        "season_phase": 0.1945,
+        "depth_m": -40.0,
+        "shore_m": 874.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9985,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_north_san_juan_channel_1773371969",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.591294,
+      "longitude": -123.058779,
+      "timestamp": "2026-03-13T03:19:29+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 25,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7967,
+        "lunar_phase": 0.8181,
+        "season_phase": 0.1945,
+        "depth_m": -40.0,
+        "shore_m": 874.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9985,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_north_san_juan_channel_1773374849",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.591294,
+      "longitude": -123.058779,
+      "timestamp": "2026-03-13T04:07:29+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 25,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.83,
+        "lunar_phase": 0.8192,
+        "season_phase": 0.1945,
+        "depth_m": -40.0,
+        "shore_m": 874.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9985,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1772399821",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-03-01T21:17:01+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 9,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5447,
+        "lunar_phase": 0.4371,
+        "season_phase": 0.1616,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9984,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1772403001",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-03-01T22:10:01+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 9,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5815,
+        "lunar_phase": 0.4383,
+        "season_phase": 0.1616,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9984,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1772399800",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-03-01T21:16:40+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5444,
+        "lunar_phase": 0.4371,
+        "season_phase": 0.1616,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9984,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1771311019",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-02-17T06:50:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 101,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9428,
+        "lunar_phase": 0.0103,
+        "season_phase": 0.1288,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9982,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1771311919",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-02-17T07:05:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 101,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9532,
+        "lunar_phase": 0.0107,
+        "season_phase": 0.1288,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9982,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1771315459",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-02-17T08:04:19.030000+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 101,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9942,
+        "lunar_phase": 0.0121,
+        "season_phase": 0.1288,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9982,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1771322539",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-02-17T10:02:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 101,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0761,
+        "lunar_phase": 0.0148,
+        "season_phase": 0.1288,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9982,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1771326619",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-02-17T11:10:19+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 101,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1234,
+        "lunar_phase": 0.0164,
+        "season_phase": 0.1288,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9982,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1770394709",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-02-06T16:18:29+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3374,
+        "lunar_phase": 0.6512,
+        "season_phase": 0.0986,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9981,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1768990561",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-01-21T10:16:01+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 16,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0856,
+        "lunar_phase": 0.1009,
+        "season_phase": 0.0548,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9979,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1768993381",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-01-21T11:03:01+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 16,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1183,
+        "lunar_phase": 0.102,
+        "season_phase": 0.0548,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9979,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1769196131",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-01-23T19:22:11+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 39,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4649,
+        "lunar_phase": 0.1814,
+        "season_phase": 0.0603,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9979,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1769202191",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-01-23T21:03:11+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 39,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5351,
+        "lunar_phase": 0.1838,
+        "season_phase": 0.0603,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9979,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1769205611",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-01-23T22:00:11+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 39,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5746,
+        "lunar_phase": 0.1851,
+        "season_phase": 0.0603,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9979,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1769212991",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2026-01-24T00:03:11+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 39,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6601,
+        "lunar_phase": 0.188,
+        "season_phase": 0.063,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9979,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1765951471",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-12-17T06:04:31+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 23,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.911,
+        "lunar_phase": 0.9097,
+        "season_phase": 0.9589,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9974,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1765955551",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-12-17T07:12:31+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 23,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9582,
+        "lunar_phase": 0.9113,
+        "season_phase": 0.9589,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9974,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1745454004",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-24T00:20:04.043692+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 8,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6718,
+        "lunar_phase": 0.876,
+        "season_phase": 0.3096,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9941,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1745456915",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-24T01:08:35.952666+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 8,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7055,
+        "lunar_phase": 0.8772,
+        "season_phase": 0.3096,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9941,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1745461097",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-24T02:18:17.957275+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 8,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7539,
+        "lunar_phase": 0.8788,
+        "season_phase": 0.3096,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9941,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1744846743",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-16T23:39:03.903884+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 14,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6433,
+        "lunar_phase": 0.638,
+        "season_phase": 0.2877,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.994,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1743983443",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-06T23:50:43.243927+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6514,
+        "lunar_phase": 0.2997,
+        "season_phase": 0.2603,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9939,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1743986796",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-07T00:46:36.923215+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6902,
+        "lunar_phase": 0.301,
+        "season_phase": 0.263,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9939,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1743987925",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-04-07T01:05:25.865846+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7033,
+        "lunar_phase": 0.3014,
+        "season_phase": 0.263,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9939,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719504642",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-27T16:10:42.386618+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.332,
+        "lunar_phase": 0.7056,
+        "season_phase": 0.4863,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.99,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719511836",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-27T18:10:36.875457+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4152,
+        "lunar_phase": 0.7084,
+        "season_phase": 0.4863,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.99,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719528182",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-27T22:43:02.972150+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6044,
+        "lunar_phase": 0.7148,
+        "season_phase": 0.4863,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.99,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719031282",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-22T04:41:22.696347+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8533,
+        "lunar_phase": 0.5201,
+        "season_phase": 0.4727,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9899,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719032808",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-22T05:06:48.360724+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8709,
+        "lunar_phase": 0.5207,
+        "season_phase": 0.4727,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9899,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719036865",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-22T06:14:25.861281+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9179,
+        "lunar_phase": 0.5222,
+        "season_phase": 0.4727,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9899,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1718327634",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-14T01:13:54.473233+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7092,
+        "lunar_phase": 0.2443,
+        "season_phase": 0.4508,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9898,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1708125676",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-02-16T23:21:16.121633+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.631,
+        "lunar_phase": 0.2458,
+        "season_phase": 0.1257,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9882,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1708136495",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-02-17T02:21:35.017280+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7562,
+        "lunar_phase": 0.25,
+        "season_phase": 0.1284,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9882,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1694696403",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-09-14T13:00:03.187638+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1996,
+        "lunar_phase": 0.9824,
+        "season_phase": 0.7014,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9861,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1694739548",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-09-15T00:59:08.009407+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6989,
+        "lunar_phase": 0.9993,
+        "season_phase": 0.7041,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9861,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1692318532",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-08-18T00:28:52.920737+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6779,
+        "lunar_phase": 0.0504,
+        "season_phase": 0.6274,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9857,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1680079235",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-29T08:40:35.851033+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0194,
+        "lunar_phase": 0.2534,
+        "season_phase": 0.2384,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9838,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1680080620",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-29T09:03:40.839620+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0354,
+        "lunar_phase": 0.2539,
+        "season_phase": 0.2384,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9838,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1679759071",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-25T15:44:31.756451+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 12,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3138,
+        "lunar_phase": 0.1279,
+        "season_phase": 0.2274,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9837,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1679760006",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-25T16:00:06.573649+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 12,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3246,
+        "lunar_phase": 0.1283,
+        "season_phase": 0.2274,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9837,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1679763943",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-25T17:05:43.859009+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 12,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3702,
+        "lunar_phase": 0.1298,
+        "season_phase": 0.2274,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9837,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1679769952",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-25T18:45:52.412876+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 12,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4397,
+        "lunar_phase": 0.1322,
+        "season_phase": 0.2274,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9837,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1678689981",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-13T06:46:21.257155+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.94,
+        "lunar_phase": 0.7089,
+        "season_phase": 0.1945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9835,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1678690940",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-13T07:02:20.857668+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9511,
+        "lunar_phase": 0.7093,
+        "season_phase": 0.1945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9835,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1678694664",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-03-13T08:04:24.958765+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9943,
+        "lunar_phase": 0.7107,
+        "season_phase": 0.1945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9835,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1662576942",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-09-07T18:55:42.043337+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4465,
+        "lunar_phase": 0.3936,
+        "season_phase": 0.6822,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.981,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1662586002",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-09-07T21:26:42.849486+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5514,
+        "lunar_phase": 0.3972,
+        "season_phase": 0.6822,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.981,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1662644352",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-09-08T13:39:12.574019+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 6,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2267,
+        "lunar_phase": 0.42,
+        "season_phase": 0.6849,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.981,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1662683799",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-09-09T00:36:39.263925+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6833,
+        "lunar_phase": 0.4355,
+        "season_phase": 0.6877,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.981,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653690751",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-27T22:32:31.757890+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5971,
+        "lunar_phase": 0.9108,
+        "season_phase": 0.4,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653702702",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-28T01:51:42.639080+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 3,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7354,
+        "lunar_phase": 0.9155,
+        "season_phase": 0.4027,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653975231",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-31T05:33:51.242883+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 17,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8897,
+        "lunar_phase": 0.0223,
+        "season_phase": 0.411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653977155",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-31T06:05:55.106306+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 17,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.912,
+        "lunar_phase": 0.0231,
+        "season_phase": 0.411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653980642",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-31T07:04:02.681003+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 17,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9523,
+        "lunar_phase": 0.0244,
+        "season_phase": 0.411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653991792",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-31T10:09:52.773790+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 17,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0814,
+        "lunar_phase": 0.0288,
+        "season_phase": 0.411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1654014276",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-31T16:24:36.625664+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 17,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3416,
+        "lunar_phase": 0.0376,
+        "season_phase": 0.411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1654037430",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-31T22:50:30.965808+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 17,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6096,
+        "lunar_phase": 0.0467,
+        "season_phase": 0.411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9796,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1646163869",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-03-01T19:44:29.690466+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 10,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4804,
+        "lunar_phase": 0.9608,
+        "season_phase": 0.1616,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9784,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1646181227",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-03-02T00:33:47.170579+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 10,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6813,
+        "lunar_phase": 0.9676,
+        "season_phase": 0.1644,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9784,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1646183805",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-03-02T01:16:45.373725+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 10,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7112,
+        "lunar_phase": 0.9686,
+        "season_phase": 0.1644,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9784,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1646186427",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-03-02T02:00:27.602880+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 10,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7415,
+        "lunar_phase": 0.9696,
+        "season_phase": 0.1644,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9784,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1642703816",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-01-20T18:36:56.104564+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 7,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4335,
+        "lunar_phase": 0.6046,
+        "season_phase": 0.0521,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9778,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1640984256",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-12-31T20:57:36.550703+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 7,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5312,
+        "lunar_phase": 0.9307,
+        "season_phase": 0.9973,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9776,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1640984820",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-12-31T21:07:00.026216+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 7,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5377,
+        "lunar_phase": 0.9309,
+        "season_phase": 0.9973,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9776,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1640989340",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-12-31T22:22:20.120560+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 7,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.59,
+        "lunar_phase": 0.9327,
+        "season_phase": 0.9973,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9776,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1640991973",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-12-31T23:06:13.400154+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 7,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6205,
+        "lunar_phase": 0.9337,
+        "season_phase": 0.9973,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9776,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1637099695",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-11-16T21:54:55.162463+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.571,
+        "lunar_phase": 0.4082,
+        "season_phase": 0.874,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9769,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1637100090",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-11-16T22:01:30.416451+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5756,
+        "lunar_phase": 0.4083,
+        "season_phase": 0.874,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9769,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1633376567",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-10-04T19:42:47.888921+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 19,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4792,
+        "lunar_phase": 0.949,
+        "season_phase": 0.7562,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9764,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1633049583",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-10-01T00:53:03.072201+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 25,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6947,
+        "lunar_phase": 0.8208,
+        "season_phase": 0.7479,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9763,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1633050005",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-10-01T01:00:05.976253+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 25,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6996,
+        "lunar_phase": 0.821,
+        "season_phase": 0.7479,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9763,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631655004",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-14T21:30:04.466298+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 54,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5537,
+        "lunar_phase": 0.2742,
+        "season_phase": 0.7014,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631656803",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-14T22:00:03.573234+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 54,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5746,
+        "lunar_phase": 0.2749,
+        "season_phase": 0.7014,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631721369",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-15T15:56:09.663751+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 63,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3219,
+        "lunar_phase": 0.3002,
+        "season_phase": 0.7041,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631722473",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-15T16:14:33.868605+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 63,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3346,
+        "lunar_phase": 0.3007,
+        "season_phase": 0.7041,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631725318",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-15T17:01:58.613606+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 63,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3676,
+        "lunar_phase": 0.3018,
+        "season_phase": 0.7041,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631729089",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-15T18:04:49.896572+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 63,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4112,
+        "lunar_phase": 0.3033,
+        "season_phase": 0.7041,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631743559",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-15T22:05:59.597786+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 57,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5787,
+        "lunar_phase": 0.3089,
+        "season_phase": 0.7041,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631887125",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-17T13:58:45.696719+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 16,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2403,
+        "lunar_phase": 0.3652,
+        "season_phase": 0.7096,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631887251",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-17T14:00:51.870856+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 16,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2418,
+        "lunar_phase": 0.3653,
+        "season_phase": 0.7096,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1632015078",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-19T01:31:18.889801+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 24,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7213,
+        "lunar_phase": 0.4154,
+        "season_phase": 0.7151,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1632020347",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-19T02:59:07.131582+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 24,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7822,
+        "lunar_phase": 0.4174,
+        "season_phase": 0.7151,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1632020471",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-19T03:01:11.611936+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 24,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7837,
+        "lunar_phase": 0.4175,
+        "season_phase": 0.7151,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1632086957",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-19T21:29:17.424174+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 24,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5532,
+        "lunar_phase": 0.4435,
+        "season_phase": 0.7151,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9761,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1630894595",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-06T02:16:35.723365+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 30,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7527,
+        "lunar_phase": 0.9762,
+        "season_phase": 0.6795,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1630897826",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-06T03:10:26.987243+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 30,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7901,
+        "lunar_phase": 0.9775,
+        "season_phase": 0.6795,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1630936339",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-06T13:52:19.172224+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 30,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2359,
+        "lunar_phase": 0.9926,
+        "season_phase": 0.6795,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1630937056",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-06T14:04:16.297203+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 30,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2442,
+        "lunar_phase": 0.9928,
+        "season_phase": 0.6795,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631169554",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-09T06:39:14.504618+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 27,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9351,
+        "lunar_phase": 0.084,
+        "season_phase": 0.6877,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631170801",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-09T07:00:01.181942+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 27,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9495,
+        "lunar_phase": 0.0845,
+        "season_phase": 0.6877,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631234475",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-10T00:41:15.217684+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 27,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6865,
+        "lunar_phase": 0.1094,
+        "season_phase": 0.6904,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631235613",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-10T01:00:13.390536+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 27,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6997,
+        "lunar_phase": 0.1099,
+        "season_phase": 0.6904,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631466478",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-12T17:07:58.973533+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 12,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3717,
+        "lunar_phase": 0.2003,
+        "season_phase": 0.6959,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1631469797",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-09-12T18:03:17.902182+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 12,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4101,
+        "lunar_phase": 0.2016,
+        "season_phase": 0.6959,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.976,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1629944707",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-08-26T02:25:07.732765+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 20,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7586,
+        "lunar_phase": 0.6039,
+        "season_phase": 0.6493,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9758,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1629946896",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-08-26T03:01:36.149241+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 20,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.784,
+        "lunar_phase": 0.6048,
+        "season_phase": 0.6493,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9758,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1615400429",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-03-10T18:20:29.882961+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 5,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4221,
+        "lunar_phase": 0.9035,
+        "season_phase": 0.1863,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9735,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1613577267",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-02-17T15:54:27.198632+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3207,
+        "lunar_phase": 0.1889,
+        "season_phase": 0.1288,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9732,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1613578178",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-02-17T16:09:38.392013+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3312,
+        "lunar_phase": 0.1893,
+        "season_phase": 0.1288,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9732,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1612491364",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-02-05T02:16:04.043704+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 6,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7523,
+        "lunar_phase": 0.7633,
+        "season_phase": 0.0959,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.973,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1611179321",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-01-20T21:48:41.933966+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 30,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5667,
+        "lunar_phase": 0.2491,
+        "season_phase": 0.0521,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9728,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1608777450",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-12-24T02:37:30.389593+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 54,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7672,
+        "lunar_phase": 0.3077,
+        "season_phase": 0.9781,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9725,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1608779597",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-12-24T03:13:17.512740+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 54,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7921,
+        "lunar_phase": 0.3086,
+        "season_phase": 0.9781,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9725,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1608782427",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-12-24T04:00:27.951468+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 54,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8248,
+        "lunar_phase": 0.3097,
+        "season_phase": 0.9781,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9725,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1606858170",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-12-01T21:29:30.126938+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 4,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5533,
+        "lunar_phase": 0.5555,
+        "season_phase": 0.9153,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9721,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1603166927",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-10-20T04:08:47.697855+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 13,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8306,
+        "lunar_phase": 0.1088,
+        "season_phase": 0.8005,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9716,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1603171468",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-10-20T05:24:28.827255+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 13,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8832,
+        "lunar_phase": 0.1105,
+        "season_phase": 0.8005,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9716,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1603177348",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-10-20T07:02:28.827255+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 13,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9512,
+        "lunar_phase": 0.1128,
+        "season_phase": 0.8005,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9716,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1601836142",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-10-04T18:29:02.011151+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 8,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.428,
+        "lunar_phase": 0.5872,
+        "season_phase": 0.7568,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9714,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1601463116",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-09-30T10:51:56.057346+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 37,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1106,
+        "lunar_phase": 0.441,
+        "season_phase": 0.7459,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9713,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1601463836",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-09-30T11:03:56.057346+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 37,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1189,
+        "lunar_phase": 0.4412,
+        "season_phase": 0.7459,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9713,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1601467556",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-09-30T12:05:56.057346+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 36,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.162,
+        "lunar_phase": 0.4427,
+        "season_phase": 0.7459,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.9713,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_andrews_bay_1770394749",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.55003,
+      "longitude": -123.166649,
+      "timestamp": "2026-02-06T16:19:09+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3378,
+        "lunar_phase": 0.6512,
+        "season_phase": 0.0986,
+        "depth_m": -8.0,
+        "shore_m": 0.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8981,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1758516876",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-09-22T04:54:36.792772+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8624,
+        "lunar_phase": 0.9958,
+        "season_phase": 0.7233,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8962,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1758517607",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-09-22T05:06:47.741423+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8709,
+        "lunar_phase": 0.9961,
+        "season_phase": 0.7233,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8962,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1757471570",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-09-10T02:32:50.470160+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.764,
+        "lunar_phase": 0.5862,
+        "season_phase": 0.6904,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.896,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1741861989",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-03-13T10:33:09.888337+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0975,
+        "lunar_phase": 0.4682,
+        "season_phase": 0.1945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8936,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1741864482",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-03-13T11:14:42.405117+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1264,
+        "lunar_phase": 0.4692,
+        "season_phase": 0.1945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8936,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1741276071",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-03-06T15:47:51.833964+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3161,
+        "lunar_phase": 0.2386,
+        "season_phase": 0.1753,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8935,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1741277198",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-03-06T16:06:38.796733+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3291,
+        "lunar_phase": 0.239,
+        "season_phase": 0.1753,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8935,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1728419136",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-10-08T20:25:36.687338+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.509,
+        "lunar_phase": 0.1995,
+        "season_phase": 0.7678,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8914,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1727829198",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-10-02T00:33:18.723261+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.681,
+        "lunar_phase": 0.9683,
+        "season_phase": 0.7514,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8913,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1727831219",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-10-02T01:06:59.339177+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7044,
+        "lunar_phase": 0.9691,
+        "season_phase": 0.7514,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8913,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1711135608",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-03-22T19:26:48.506137+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4681,
+        "lunar_phase": 0.4255,
+        "season_phase": 0.2213,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8887,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1694460984",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-09-11T19:36:24.144737+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4748,
+        "lunar_phase": 0.8901,
+        "season_phase": 0.6932,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.886,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1668185349",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-11-11T16:49:09.031547+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3587,
+        "lunar_phase": 0.5918,
+        "season_phase": 0.8603,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8819,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1668270869",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-11-12T16:34:29.572204+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3485,
+        "lunar_phase": 0.6253,
+        "season_phase": 0.863,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8819,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1644651642",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-02-12T07:40:42.380386+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9778,
+        "lunar_phase": 0.3681,
+        "season_phase": 0.1151,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8781,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1615571456",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-03-12T17:50:56.089769+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 2,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4016,
+        "lunar_phase": 0.9705,
+        "season_phase": 0.1918,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.8735,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_north_san_juan_channel_1744771646",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.591294,
+      "longitude": -123.058779,
+      "timestamp": "2025-04-16T02:47:26.741733+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7745,
+        "lunar_phase": 0.6086,
+        "season_phase": 0.2877,
+        "depth_m": -40.0,
+        "shore_m": 874.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.794,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1739082443",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2025-02-09T06:27:23.504246+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9269,
+        "lunar_phase": 0.3788,
+        "season_phase": 0.1068,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7931,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1722238354",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-07-29T07:32:34.813531+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9721,
+        "lunar_phase": 0.777,
+        "season_phase": 0.5738,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7904,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1719778606",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-06-30T20:16:46.219435+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5028,
+        "lunar_phase": 0.813,
+        "season_phase": 0.4945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.79,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1712887657",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-04-12T02:07:37.960044+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7465,
+        "lunar_phase": 0.1122,
+        "season_phase": 0.2787,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.789,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1709863810",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2024-03-08T02:10:10.711508+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7483,
+        "lunar_phase": 0.927,
+        "season_phase": 0.1831,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7885,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1695100989",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-09-19T05:23:09.987962+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8823,
+        "lunar_phase": 0.1409,
+        "season_phase": 0.7151,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7861,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1692534996",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-08-20T12:36:36.676521+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1833,
+        "lunar_phase": 0.1352,
+        "season_phase": 0.6329,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7857,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1685985752",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2023-06-05T17:22:32.926246+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3818,
+        "lunar_phase": 0.5684,
+        "season_phase": 0.4247,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7847,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1669083551",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-11-22T02:19:11.128653+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7545,
+        "lunar_phase": 0.9438,
+        "season_phase": 0.8904,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.782,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1661286413",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-08-23T20:26:53.104029+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5099,
+        "lunar_phase": 0.8878,
+        "season_phase": 0.6411,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7808,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1659763646",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-08-06T05:27:26.122519+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.8852,
+        "lunar_phase": 0.291,
+        "season_phase": 0.5945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7805,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1657564677",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-07-11T18:37:57.413447+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4342,
+        "lunar_phase": 0.4291,
+        "season_phase": 0.5233,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7802,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1653441875",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-05-25T01:24:35.847091+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7166,
+        "lunar_phase": 0.8133,
+        "season_phase": 0.3945,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7795,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1646038751",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2022-02-28T08:59:11.278711+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0323,
+        "lunar_phase": 0.9117,
+        "season_phase": 0.1589,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7784,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1637268455",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-11-18T20:47:35.984089+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5242,
+        "lunar_phase": 0.4743,
+        "season_phase": 0.8795,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.777,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1616961163",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2021-03-28T19:52:43.389203+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4861,
+        "lunar_phase": 0.5152,
+        "season_phase": 0.2356,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7737,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "orcahello_hist_orcasound_lab_1602065423",
+      "source": "orcahello_history",
+      "source_kind": "acoustic",
+      "source_id": null,
+      "latitude": 48.558336,
+      "longitude": -123.173577,
+      "timestamp": "2020-10-07T10:10:23.093566+00:00",
+      "cross_validation_status": "verified",
+      "data_quality_score": null,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 0.0,
+      "orcahello_overlap_count": 1,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.0817,
+        "lunar_phase": 0.677,
+        "season_phase": 0.765,
+        "depth_m": 5.0,
+        "shore_m": 86.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.7714,
+      "priority_tier": "A"
+    },
+    {
+      "sighting_id": "obis:16e8fa99-6e32-44c4-aeec-0228602ff1fa",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "16e8fa99-6e32-44c4-aeec-0228602ff1fa",
+      "latitude": 48.514486,
+      "longitude": -123.155386,
+      "timestamp": "2024-05-29T16:44:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 0.301,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3551,
+        "lunar_phase": 0.7243,
+        "season_phase": 0.4071,
+        "depth_m": -49.0,
+        "shore_m": 250.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.6176,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:6828e90e-c3ec-415b-a210-3cc5beab5010",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "6828e90e-c3ec-415b-a210-3cc5beab5010",
+      "latitude": 48.595108,
+      "longitude": -123.053932,
+      "timestamp": "2024-05-26T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 0.554,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6582,
+        "lunar_phase": 0.5991,
+        "season_phase": 0.3989,
+        "depth_m": -128.0,
+        "shore_m": 1409.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.6074,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:392d2821-e977-4f81-84f7-3c6f6fd5de98",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "392d2821-e977-4f81-84f7-3c6f6fd5de98",
+      "latitude": 48.519992,
+      "longitude": -123.16965,
+      "timestamp": "2025-09-27T19:57:09+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 1.374,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4892,
+        "lunar_phase": 0.1864,
+        "season_phase": 0.737,
+        "depth_m": -258.0,
+        "shore_m": 937.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.5813,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:65795df4-6328-439b-907a-da8661c54a52",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "65795df4-6328-439b-907a-da8661c54a52",
+      "latitude": 48.515,
+      "longitude": -123.155,
+      "timestamp": "2015-07-17T19:45:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 0.247,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4808,
+        "lunar_phase": 0.0457,
+        "season_phase": 0.5397,
+        "depth_m": -49.0,
+        "shore_m": 195.6,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.5801,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:084813f6-924a-482c-aa7a-1cff9f9f2e22",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "084813f6-924a-482c-aa7a-1cff9f9f2e22",
+      "latitude": 48.515336,
+      "longitude": -123.155456,
+      "timestamp": "2007-09-23T15:22:06+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 0.265,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2982,
+        "lunar_phase": 0.394,
+        "season_phase": 0.726,
+        "depth_m": -49.0,
+        "shore_m": 213.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.5794,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:2bc87ea9-1bed-4185-8db7-f25cc402492c",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "2bc87ea9-1bed-4185-8db7-f25cc402492c",
+      "latitude": 48.536457,
+      "longitude": -123.179398,
+      "timestamp": "2023-06-04T12:28:50+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "andrews_bay",
+      "nearest_hydrophone_km": 1.777,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1779,
+        "lunar_phase": 0.5276,
+        "season_phase": 0.4219,
+        "depth_m": -247.0,
+        "shore_m": 1118.7,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.5536,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:321ae2b0-20e2-4c49-b8f9-07c489aa6e21",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "321ae2b0-20e2-4c49-b8f9-07c489aa6e21",
+      "latitude": 48.505593,
+      "longitude": -123.162973,
+      "timestamp": "2003-09-26T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 1.412,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6579,
+        "lunar_phase": 0.9998,
+        "season_phase": 0.7342,
+        "depth_m": -264.0,
+        "shore_m": 1299.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.5335,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:86fa0c1e-9bf4-4049-8605-7bce3eafa1d9",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "86fa0c1e-9bf4-4049-8605-7bce3eafa1d9",
+      "latitude": 48.493758,
+      "longitude": -123.138882,
+      "timestamp": "2022-05-31T13:23:22+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 2.655,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2158,
+        "lunar_phase": 0.0333,
+        "season_phase": 0.411,
+        "depth_m": -59.0,
+        "shore_m": 667.8,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.5134,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:9ef9bc46-1bb6-43fe-94ee-ef9d2ac41e01",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "9ef9bc46-1bb6-43fe-94ee-ef9d2ac41e01",
+      "latitude": 48.526277,
+      "longitude": -123.183372,
+      "timestamp": "2017-06-25T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 2.578,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6578,
+        "lunar_phase": 0.0268,
+        "season_phase": 0.4795,
+        "depth_m": -247.0,
+        "shore_m": 1527.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4918,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:a2ead80b-4e6d-4914-b8c0-ff2316824cc0",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "a2ead80b-4e6d-4914-b8c0-ff2316824cc0",
+      "latitude": 48.520151,
+      "longitude": -123.185545,
+      "timestamp": "2014-10-10T13:02:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 2.513,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2009,
+        "lunar_phase": 0.5545,
+        "season_phase": 0.7726,
+        "depth_m": -244.0,
+        "shore_m": 1942.8,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4895,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:0fae20bf-787e-44ca-9548-ad6aff1acb08",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "0fae20bf-787e-44ca-9548-ad6aff1acb08",
+      "latitude": 48.493459,
+      "longitude": -123.18872,
+      "timestamp": "2024-05-31T18:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 3.688,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.4078,
+        "lunar_phase": 0.7938,
+        "season_phase": 0.4126,
+        "depth_m": -231.0,
+        "shore_m": 3606.9,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4821,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:388b1ccb-2c7a-481b-a548-7a1bb2579f28",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "388b1ccb-2c7a-481b-a548-7a1bb2579f28",
+      "latitude": 48.557348,
+      "longitude": -123.22788,
+      "timestamp": "2025-12-19T21:55:05+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 3.998,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.571,
+        "lunar_phase": 0.9998,
+        "season_phase": 0.9644,
+        "depth_m": -150.0,
+        "shore_m": 3816.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4775,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:2a1b79d7-fff6-4226-8169-ffa9084b0df2",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "2a1b79d7-fff6-4226-8169-ffa9084b0df2",
+      "latitude": 48.56,
+      "longitude": -123.23,
+      "timestamp": "2021-04-13T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 4.156,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6577,
+        "lunar_phase": 0.029,
+        "season_phase": 0.2795,
+        "depth_m": -230.0,
+        "shore_m": 3701.2,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4477,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:0388d688-0a64-4054-b0c5-64124a11fb41",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "0388d688-0a64-4054-b0c5-64124a11fb41",
+      "latitude": 48.56,
+      "longitude": -123.23,
+      "timestamp": "2020-08-19T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 4.156,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6577,
+        "lunar_phase": 0.0034,
+        "season_phase": 0.6311,
+        "depth_m": -230.0,
+        "shore_m": 3701.2,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4445,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:a0cf434b-a4b3-4111-8f2c-72bd844d728d",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "a0cf434b-a4b3-4111-8f2c-72bd844d728d",
+      "latitude": 48.56,
+      "longitude": -123.23,
+      "timestamp": "2015-08-17T17:18:31+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 4.156,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3789,
+        "lunar_phase": 0.092,
+        "season_phase": 0.6247,
+        "depth_m": -230.0,
+        "shore_m": 3701.2,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4238,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:2db904ba-e872-4aeb-a1dc-e1a910890611",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "2db904ba-e872-4aeb-a1dc-e1a910890611",
+      "latitude": 48.590278,
+      "longitude": -122.994167,
+      "timestamp": "2019-08-07T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 4.753,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6583,
+        "lunar_phase": 0.2031,
+        "season_phase": 0.5973,
+        "depth_m": -1.0,
+        "shore_m": 261.8,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4154,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:3a07330c-a147-43fc-a241-c0a2b4987071",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "3a07330c-a147-43fc-a241-c0a2b4987071",
+      "latitude": 48.48109,
+      "longitude": -123.108788,
+      "timestamp": "2021-06-09T13:38:15+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 5.021,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2263,
+        "lunar_phase": 0.9784,
+        "season_phase": 0.4356,
+        "depth_m": -233.0,
+        "shore_m": 943.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4139,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:066ed1d3-d4db-4e46-ba9e-937f4878b7bf",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "066ed1d3-d4db-4e46-ba9e-937f4878b7bf",
+      "latitude": 48.522593,
+      "longitude": -123.212357,
+      "timestamp": "2004-07-03T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 4.505,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6577,
+        "lunar_phase": 0.5153,
+        "season_phase": 0.5027,
+        "depth_m": -131.0,
+        "shore_m": 3699.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4098,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:002a70e8-31f8-41b7-b5ec-0f37a16c7486",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "002a70e8-31f8-41b7-b5ec-0f37a16c7486",
+      "latitude": 48.601039,
+      "longitude": -123.210414,
+      "timestamp": "2023-11-16T17:44:58+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 5.467,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3973,
+        "lunar_phase": 0.1224,
+        "season_phase": 0.874,
+        "depth_m": -262.0,
+        "shore_m": 725.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4083,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:62af630b-5174-4f39-847b-3eba361ce7ca",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "62af630b-5174-4f39-847b-3eba361ce7ca",
+      "latitude": 48.560676,
+      "longitude": -123.001556,
+      "timestamp": "2023-03-29T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 5.414,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6583,
+        "lunar_phase": 0.2411,
+        "season_phase": 0.2384,
+        "depth_m": -99.0,
+        "shore_m": 792.3,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.4072,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:13e9ff79-8ac1-4eaa-adc1-20242eec3ced",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "13e9ff79-8ac1-4eaa-adc1-20242eec3ced",
+      "latitude": 48.477583,
+      "longitude": -123.122487,
+      "timestamp": "2015-09-17T13:30:10+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 4.793,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2206,
+        "lunar_phase": 0.1364,
+        "season_phase": 0.7096,
+        "depth_m": -233.0,
+        "shore_m": 1632.8,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3983,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:1d7ad109-2c1e-47e4-92ef-dd331c8ded02",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "1d7ad109-2c1e-47e4-92ef-dd331c8ded02",
+      "latitude": 48.63487,
+      "longitude": -123.080951,
+      "timestamp": "2018-08-03T06:14:57+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 5.112,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.9185,
+        "lunar_phase": 0.7164,
+        "season_phase": 0.5863,
+        "depth_m": -187.0,
+        "shore_m": 1119.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.396,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:5503b541-fb0e-4cfa-9ade-85be5c46703c",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "5503b541-fb0e-4cfa-9ade-85be5c46703c",
+      "latitude": 48.47,
+      "longitude": -123.13,
+      "timestamp": "2019-06-08T17:07:53+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 5.366,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3718,
+        "lunar_phase": 0.1955,
+        "season_phase": 0.4329,
+        "depth_m": -215.0,
+        "shore_m": 2596.2,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3901,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:858ed716-4399-4175-b0c4-e50b660573d4",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "858ed716-4399-4175-b0c4-e50b660573d4",
+      "latitude": 48.638399,
+      "longitude": -123.099946,
+      "timestamp": "2023-05-05T16:14:32+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 6.049,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3348,
+        "lunar_phase": 0.517,
+        "season_phase": 0.3397,
+        "depth_m": -132.0,
+        "shore_m": 661.3,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3823,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:1451b4c9-e9b6-433d-a5bd-79a402bd8de7",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "1451b4c9-e9b6-433d-a5bd-79a402bd8de7",
+      "latitude": 48.627305,
+      "longitude": -123.127593,
+      "timestamp": "2026-05-04T21:58:53+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 6.452,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5739,
+        "lunar_phase": 0.6053,
+        "season_phase": 0.337,
+        "depth_m": -35.0,
+        "shore_m": 689.2,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3812,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:120ff4ae-bf3a-43a7-92bf-ef77453d6b8e",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "120ff4ae-bf3a-43a7-92bf-ef77453d6b8e",
+      "latitude": 48.64381,
+      "longitude": -123.031082,
+      "timestamp": "2023-05-17T12:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 6.184,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.1582,
+        "lunar_phase": 0.9174,
+        "season_phase": 0.3726,
+        "depth_m": -180.0,
+        "shore_m": 1016.0,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3771,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:5b9fc7d5-0312-4236-a299-79954f5c6e18",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "5b9fc7d5-0312-4236-a299-79954f5c6e18",
+      "latitude": 48.629588,
+      "longitude": -123.130989,
+      "timestamp": "2024-06-25T15:29:19+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 6.806,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3033,
+        "lunar_phase": 0.6369,
+        "season_phase": 0.4809,
+        "depth_m": -35.0,
+        "shore_m": 738.8,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3577,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:78217110-7a3f-4770-a127-88645a2ffdb1",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "78217110-7a3f-4770-a127-88645a2ffdb1",
+      "latitude": 48.540779,
+      "longitude": -123.010774,
+      "timestamp": "2022-09-14T22:19:36+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 6.635,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.5886,
+        "lunar_phase": 0.6355,
+        "season_phase": 0.7014,
+        "depth_m": 2.0,
+        "shore_m": 180.1,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3557,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:123338c2-f94d-4a5e-8c0c-5d89fbea1657",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "123338c2-f94d-4a5e-8c0c-5d89fbea1657",
+      "latitude": 48.629675,
+      "longitude": -123.13559,
+      "timestamp": "2025-07-10T14:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 7.078,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2413,
+        "lunar_phase": 0.5028,
+        "season_phase": 0.5205,
+        "depth_m": -35.0,
+        "shore_m": 762.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3521,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:a928572c-8dd1-4a84-a46b-02a4e45a7b1d",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "a928572c-8dd1-4a84-a46b-02a4e45a7b1d",
+      "latitude": 48.535903,
+      "longitude": -123.01322,
+      "timestamp": "2024-09-21T17:26:55+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "north_san_juan_channel",
+      "nearest_hydrophone_km": 7.013,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.3853,
+        "lunar_phase": 0.6196,
+        "season_phase": 0.7213,
+        "depth_m": 2.0,
+        "shore_m": 76.9,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3507,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:1ae1fd12-3cb2-4a42-aa45-9f4417d06ad8",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "1ae1fd12-3cb2-4a42-aa45-9f4417d06ad8",
+      "latitude": 48.471343,
+      "longitude": -123.100147,
+      "timestamp": "2015-09-18T14:14:45+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 6.266,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.2516,
+        "lunar_phase": 0.1713,
+        "season_phase": 0.7123,
+        "depth_m": -220.0,
+        "shore_m": 1244.5,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3394,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:48725b40-4ea2-4d6b-912a-93fedc4b8fcd",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "48725b40-4ea2-4d6b-912a-93fedc4b8fcd",
+      "latitude": 48.465421,
+      "longitude": -123.114327,
+      "timestamp": "2006-07-02T02:31:41+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.712,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 6.272,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7634,
+        "lunar_phase": 0.2052,
+        "season_phase": 0.4986,
+        "depth_m": -200.0,
+        "shore_m": 2359.7,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3391,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:30e69502-41bf-4708-a78a-843fd1bf3925",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "30e69502-41bf-4708-a78a-843fd1bf3925",
+      "latitude": 48.622928,
+      "longitude": -123.182273,
+      "timestamp": "2022-08-18T00:00:00+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "orcasound_lab",
+      "nearest_hydrophone_km": 7.211,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.6578,
+        "lunar_phase": 0.6896,
+        "season_phase": 0.6274,
+        "depth_m": -9.0,
+        "shore_m": 207.4,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3323,
+      "priority_tier": "B"
+    },
+    {
+      "sighting_id": "obis:9b60171b-6ed1-46df-b0c0-7e3e97189ed0",
+      "source": "obis_verified",
+      "source_kind": "visual",
+      "source_id": "9b60171b-6ed1-46df-b0c0-7e3e97189ed0",
+      "latitude": 48.468437,
+      "longitude": -123.096488,
+      "timestamp": "2006-08-28T02:23:20+00:00",
+      "cross_validation_status": "likely",
+      "data_quality_score": 0.693,
+      "nearest_hydrophone": "haro_strait",
+      "nearest_hydrophone_km": 6.686,
+      "orcahello_overlap_count": 0,
+      "orcahello_overlap_window_h": 24,
+      "noaa_tide_coverage": true,
+      "covariates": {
+        "diel_phase": 0.7576,
+        "lunar_phase": 0.1352,
+        "season_phase": 0.6548,
+        "depth_m": -220.0,
+        "shore_m": 1490.3,
+        "fitted_today": [
+          "diel_phase",
+          "lunar_phase"
+        ]
+      },
+      "priority_score": 0.3226,
+      "priority_tier": "B"
+    }
+  ]
+}

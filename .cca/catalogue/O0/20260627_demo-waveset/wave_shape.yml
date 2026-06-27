@@ -1,0 +1,87 @@
+# DEMO capture waveset, machine-readable shape
+# Home: .cca/catalogue/O0/20260627_demo-waveset/
+# Canonical prose: DEMO_CAPTURE_CHARTER.md
+# Design source (read-only): pax/.cca/catalogue/O0/20260626_orchestrator-rotation/
+
+version: 1
+family: DEMO
+label: demo-capture-a-side-b-side
+home: .cca/catalogue/O0/20260627_demo-waveset/
+status: in-progress
+
+capture:
+  viewport: { width: 1280, height: 900 }
+  playwright_config: web/playwright.config.ts
+  record_env: DEMO_RECORD=1
+  base_url_default: https://orcast-h0.vercel.app
+  base_url_env: PW_BASE_URL
+  voice_tool: tools/testing/tts_narrate.py
+  assembly_skill: ~/.cursor/skills/demo-video-assembly/SKILL.md
+  beats_out: docs/devpost/figures/_demo-run/beats/
+  narration_out: docs/devpost/figures/_demo-run/narration/
+
+waves:
+  - id: W-STORY
+    mode: build
+    surface: [.cca/catalogue/O0/20260627_demo-waveset/W-STORY.md]
+    parallelism: 1
+    inputs:
+      - pax/.cca/catalogue/O0/20260626_orchestrator-rotation/DEMO_WAVESET_CHARTER.md
+      - pax/.cca/catalogue/O0/20260626_orchestrator-rotation/ORCAST_BSIDE_DESIGN.md
+    exit: Beat order plus per-beat shot list, one-line narration, and on-screen honesty captions locked for B1, B2, B3.
+
+  - id: W-CAPTURE
+    mode: build
+    depends_on: [W-STORY]
+    surface:
+      - web/e2e/beats/bside-b1-console.spec.ts
+      - web/e2e/beats/bside-bdata-sources.spec.ts
+      - web/e2e/beats/bside-b2-provenance.spec.ts
+      - web/e2e/beats/bside-b3-hydrophone.spec.ts
+    parallelism: 1
+    operator_gate: pick base URL and green-light recording
+    exit: One silent webm per capturable beat at 1280x900 in beats_out, duration at least the matching narration length.
+
+  - id: W-VOICE
+    mode: build
+    depends_on: [W-STORY]
+    surface: [docs/devpost/figures/_demo-run/narration/]
+    parallelism: 1
+    exit: One mp3 per beat from the orcast XTTS voice in narration_out, each at most its beat video length.
+
+  - id: W-ASSEMBLE
+    mode: build
+    depends_on: [W-CAPTURE, W-VOICE]
+    surface: [docs/devpost/figures/_demo-run/]
+    parallelism: 1
+    exit: Two narrated videos (A-side, B-side) plus a gif-only set, A/V sync spot-checked with ffprobe.
+
+beats:
+  capturable:
+    - id: B1
+      label: ask the console
+      route: /
+      spec: web/e2e/beats/bside-b1-console.spec.ts
+      surface_components: [AdaptiveExplore, ActiveSurfaceHost, OrchestratorTrace]
+    - id: B-DATA
+      label: data sources and the feature pipeline
+      route: /
+      spec: web/e2e/beats/bside-bdata-sources.spec.ts
+      apis: [GET /api/realtime/events, GET /api/provenance]
+      honesty_caption: sources OBIS/iNaturalist/OrcaHello/community; fitted features diel and lunar only
+      depends_on_dataset: CAND (sharper once the prioritized 40 land; capturable today with live feeds)
+    - id: B2
+      label: provenance drilldown
+      route: "/?lat=48.5465&lng=-123.03&provenance=1"
+      spec: web/e2e/beats/bside-b2-provenance.spec.ts
+      honesty_caption: effective confidence 0% with gate caveat
+    - id: B3
+      label: hydrophone acoustic
+      route: /
+      spec: web/e2e/beats/bside-b3-hydrophone.spec.ts
+      surface_components: [HydrophoneSignalPanel]
+      honesty_caption: acoustic moderator labels, hydrophone position not whale GPS; live spectrogram needs ONC_API_TOKEN
+  needs_build:
+    - { id: B4, label: tag deployment and dive detection, blocked_on: bside-build-order-step-1 }
+    - { id: B5, label: 3D replay over bathymetry, blocked_on: bathymetry-viewer-upgrade }
+    - { id: B6, label: label provenance, blocked_on: annotation-store }

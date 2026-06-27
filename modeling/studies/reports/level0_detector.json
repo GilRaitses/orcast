@@ -1,0 +1,40 @@
+{
+  "level": 0,
+  "name": "detector",
+  "status": "withheld",
+  "metrics": {
+    "stations": 3,
+    "total_records": 1359,
+    "per_station_effort": {
+      "orcasound_lab": {
+        "records": 1029,
+        "span_days": 2086.6,
+        "confirmed": 572,
+        "false_positive": 363,
+        "unreviewed": 74,
+        "precision": 0.6118
+      },
+      "north_san_juan_channel": {
+        "records": 34,
+        "span_days": 347.8,
+        "confirmed": 28,
+        "false_positive": 0,
+        "unreviewed": 0,
+        "precision": 1.0
+      },
+      "andrews_bay": {
+        "records": 296,
+        "span_days": 129.4,
+        "confirmed": 295,
+        "false_positive": 0,
+        "unreviewed": 0,
+        "precision": 1.0
+      }
+    },
+    "detector_precision_overall": 0.7114,
+    "roc_auc": null,
+    "roc_status": "withheld: needs per-detection confidence scores paired with labels (not in cached index)"
+  },
+  "reason": "Per-station effort and detector precision computed; ROC AUC withheld until the confidence-scored detection feed is paired with labels. Effort portion is satisfied.",
+  "generated_at": "2026-06-27T05:34:58.404674+00:00"
+}

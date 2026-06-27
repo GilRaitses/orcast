@@ -1,0 +1,68 @@
+# MLOps wavesets (MLM + MLO), machine-readable shape
+# Home: .cca/catalogue/O0/20260627_mlops/
+# Canonical prose: MLM_CHARTER.md, MLO_CHARTER.md
+# Methodology: docs/methodology/FORECAST_KERNELS.md, CALIBRATION_STUDIES.md
+
+version: 1
+home: .cca/catalogue/O0/20260627_mlops/
+
+model: "log lambda = b0 + s_space + k_tide + k_diel + k_lunar + k_season + k_salmon + log E"
+fitted_today: [k_diel, k_lunar]
+effective_confidence_today: 0.0
+
+honesty:
+  - effort_bias: temporal kernels from continuous acoustic detections + log E offset; visual sightings are validation + s_space only
+  - no_promotion_without_gate: effective_confidence only rises on a passing gate + recorded human decision
+  - acoustic_not_visual: acoustic presence is not visual encounter
+  - coverage_honesty: insufficient coverage reports withheld, never a fabricated kernel
+
+literature:
+  - "Olson et al. 2018, Salish Sea SRKW sightings (validation + s_space)"
+  - "Thornton et al. 2022 CSAS, SRKW summer distribution and habitat use (s_space)"
+  - "FORECAST_KERNELS.md section 5: SRKW presence tracks Chinook (k_salmon strongest non-tidal driver)"
+
+families:
+  MLM:
+    label: covariate-modeling
+    status: chartered
+    runs: first
+    waves:
+      - id: M-L0
+        level: 0
+        script: modeling/studies/level0_detector.py
+        study: detector ROC/d' vs confirmed labels + per-station effort
+        gate: per-station effort known; detector ROC AUC with CI
+        data_ready: true
+      - id: M-L1
+        level: 1
+        script: modeling/studies/level1_psth.py
+        study: PSTH for k_diel then k_tide with phase-shuffle null
+        gate: PSTH beats shuffled null; shape consistent across stations
+      - id: M-L2
+        level: 2
+        script: modeling/studies/level2_joint.py
+        study: joint LNP (tide+diel+lunar+season); lift coverage exclusion when clear
+        gate: held-out Poisson LL beats climatology + best single-covariate; CV-stable
+      - id: M-L3
+        level: 3
+        script: modeling/studies/level3_prey_space.py
+        study: k_salmon (run-timing + lag scan) + s_space (bathymetry + CAND effort-corrected density)
+        gate: held-out skill beats detection-density baseline; calibration (reliability + PIT)
+
+  MLO:
+    label: production-mlops-platform
+    status: chartered
+    runs: after MLM
+    waves:
+      - { id: MLO-FEAT, scope: versioned covariate/feature store + Great Expectations checks }
+      - { id: MLO-REG, scope: model registry + reproducibility (fit_plan/snapshot/repr/run) }
+      - { id: MLO-SCHED, scope: scheduled gated retrain EventBridge -> Step Functions -> supervisor, operator-gated }
+      - { id: MLO-MON, scope: drift/monitoring (coverage, detector ROC, calibration, freshness) }
+      - { id: MLO-CI, scope: mlops-gate in tools/waves/run-gate.sh running study gates + I-suite }
+
+reuse:
+  cached_orcahello_index: .cca/catalogue/O0/20260627_forecast-candidates/orcahello_index.cache.json
+  cand_candidates: .cca/catalogue/O0/20260627_forecast-candidates/candidates.targets.json
+  fit: modeling/fit_kernels.py
+  serving: src/aws_backend/kernel_model/serve.py
+  promotion: src/aws_backend/promotion/supervisor.py

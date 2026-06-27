@@ -9,7 +9,7 @@ router = APIRouter()
 _DEPRECATED = {
     "/api/predictions": "/api/reports/probability",
     "/api/behavioral-analysis": "/api/reports/probability",
-    "/api/dtag-data": "/api/sightings",
+    "/api/dtag-data": "/api/dtag/deployments",
 }
 
 

@@ -1,0 +1,79 @@
+# BSIDE, whale-tagger B-side build order, machine-readable shape
+# Home: .cca/catalogue/O0/20260627_bside-build/
+# Canonical prose: BSIDE_CHARTER.md
+
+version: 1
+family: BSIDE
+label: whale-tagger-bside-build
+home: .cca/catalogue/O0/20260627_bside-build/
+status: in-progress
+design_source: pax/.cca/catalogue/O0/20260626_orchestrator-rotation/ORCAST_BSIDE_DESIGN.md (section 6)
+
+honesty:
+  - partnership_gated: DTAG real deployments require a data-sharing agreement; only the simulated example ships
+  - classifier: not_trained with uniform-probability caveat until weights and annotation volume exist
+  - tagtools: R/MATLAB native; any port numerically validated against CRAN before trust
+  - telemetry distinct from acoustic hydrophone context and visual sightings
+
+waves:
+  - id: B-API
+    status: done
+    surface:
+      - src/aws_backend/routers/dtag.py
+      - src/aws_backend/main.py
+      - src/aws_backend/routers/deprecated.py
+      - tests/aws_backend/test_dtag.py
+    exit: test_dtag.py green; simulated flag; feeding not_trained; supersedes 410 /api/dtag-data
+    unblocks_demo: [B4, B5, B6]
+
+  - id: B-SKILLS
+    status: chartered
+    depends_on: [B-API]
+    surface:
+      - src/aws_backend/casting/skills_manifest.json
+      - src/aws_backend/casting/skills.py
+      - src/aws_backend/casting/seeds/whale-tagger-v1.json
+      - src/aws_backend/casting/registry.py
+    exit: whale-tagger-v1 seeded and dispatchable; manifest skills resolve
+
+  - id: B-REPLAY
+    status: chartered
+    depends_on: [B-SKILLS]
+    surface: [src/aws_backend/exploration/tools.py, data/geo/san_juan_bathymetry.json]
+    exit: compute_pseudotrack numeric check; build_replay_scene contract honored
+
+  - id: B-ANNOT
+    status: chartered
+    depends_on: [B-SKILLS]
+    surface: [src/aws_backend/]
+    exit: annotation span schema validates; versioned taxonomy registry; provenance envelope on outputs
+
+  - id: B-PANELS
+    status: chartered
+    depends_on: [B-REPLAY, B-ANNOT]
+    surface:
+      - web/lib/uiIntent.ts
+      - web/app/components/ActiveSurfaceHost.tsx
+      - src/aws_backend/casting/panel_registry.json
+      - src/aws_backend/casting/planner.py
+    exit: tag_series/dive_panel/replay_scene/label-editor panels render via ui_intent
+
+  - id: B-INGEST
+    status: chartered
+    operator_gate: requires a partnership data-sharing agreement
+    depends_on: [B-API]
+    surface: [dtag_cache/]
+    exit: a real animaltags deployment ingests and validates
+
+  - id: B-MCP
+    status: chartered
+    optional: true
+    depends_on: [B-SKILLS]
+    exit: MCP tools/list + tools/call parity with the skill ids
+
+api_surface_delivered:
+  - GET /api/dtag/deployments
+  - GET /api/dtag/deployments/{id}
+  - GET /api/dtag/dives/{id}
+  - GET /api/dtag/feeding/{id}
+taxonomy_version: unratified-0

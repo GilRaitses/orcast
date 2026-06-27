@@ -1,0 +1,46 @@
+{
+  "level": 1,
+  "name": "psth_diel",
+  "status": "pass",
+  "metrics": {
+    "records": 1359,
+    "n_bins": 24,
+    "diel_binned_counts": [
+      30,
+      24,
+      61,
+      48,
+      13,
+      27,
+      9,
+      32,
+      57,
+      51,
+      32,
+      45,
+      31,
+      105,
+      80,
+      97,
+      109,
+      90,
+      158,
+      65,
+      53,
+      19,
+      47,
+      76
+    ],
+    "modulation_index": 1.7903,
+    "permutation_p": 0.0005,
+    "n_permutations": 2000,
+    "per_station_modulation": {
+      "orcasound_lab": 1.3324,
+      "north_san_juan_channel": 8.1765,
+      "andrews_bay": 5.4054
+    },
+    "tide_psth": "withheld: needs NOAA tidal-phase join per detection (not in cached index)"
+  },
+  "reason": "Diel PSTH modulation 1.79 beats the phase-randomized null (p=0.0005).",
+  "generated_at": "2026-06-27T05:34:58.727975+00:00"
+}

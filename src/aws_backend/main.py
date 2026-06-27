@@ -10,6 +10,7 @@ from .config import settings
 from .routers import (
     community,
     deprecated,
+    dtag,
     evidence,
     explore,
     forecast,
@@ -85,6 +86,7 @@ def create_app() -> FastAPI:
     app.include_router(reports.router)
     app.include_router(timeseries.router)
     app.include_router(deprecated.router)
+    app.include_router(dtag.router)
     app.include_router(interest.router)
 
     return app

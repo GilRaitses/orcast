@@ -325,6 +325,61 @@ H1 manual submit depends on S4. See [HACKATHON_SUBMIT_CHECKLIST.md](HACKATHON_SU
 
 Charter: [.cca/P2X_CLEANUP_CHARTER.md](../../.cca/P2X_CLEANUP_CHARTER.md). Register: [.cca/P2X_DEFECT_REGISTER.md](../../.cca/P2X_DEFECT_REGISTER.md). All four WP PDFs rebuilt (10/7/5/4); fig-1 + fig-3 re-exported and visually verified; both repos pushed.
 
+### Demo capture family (DEMO) — Wave Set DEMO
+
+A-side and B-side narrated demo capture. orcast-side execution mirror of the pax design charter; runs in the orcast workspace.
+
+| ID | Status | Goal | Gate |
+|----|--------|------|------|
+| W-STORY | done | Beat order + shot list + one-line narration + on-screen honesty captions for B1/B2/B3 | script lock |
+| W-CAPTURE | in_progress | Silent per-beat webms at 1280x900 (`web/e2e/beats/bside-*.spec.ts`) | operator picks base URL + green-lights recording |
+| W-VOICE | pending | Per-beat orcast XTTS narration mp3s | one mp3 per beat |
+| W-ASSEMBLE | pending | Two narrated videos (A-side, B-side) + gif-only set | ffprobe A/V sync spot-check |
+
+Home: [.cca/catalogue/O0/20260627_demo-waveset/](../../.cca/catalogue/O0/20260627_demo-waveset/) (charter, `wave_shape.yml`, `W-STORY.md`, `STEP_LOG.md`). Design source (read-only): pax orchestrator-rotation catalogue. Capturable beats B1/B-DATA/B2/B3 only; B4/B5/B6 wait on the B-side build order. B-DATA shows the sighting and grounding data sources behind the forecast.
+
+### Forecast candidate family (CAND) — Wave Set CAND
+
+Prepares ~40 candidate confirmed sightings (coordinate + timestamp) that join across the external sources, prioritizing points near in-region hydrophones with OrcaHello annotation records. Seeds the forecasting feature pipeline and the B-DATA demo beat. No model training; effective confidence stays 0%.
+
+| ID | Status | Goal | Gate |
+|----|--------|------|------|
+| C-GAP | done | Coverage: 257 pool, 166 tier-A reachable; feasibility for 40/20 confirmed | coverage table |
+| C-BUILD | done | `candidates.targets.json`: 200 candidates, 166 tier-A, live ingest | validation block prints OK |
+| C-VERIFY | done | Joins, scoring, tier-A count, acoustic labeling re-checked | PASS |
+
+Home: [.cca/catalogue/O0/20260627_forecast-candidates/](../../.cca/catalogue/O0/20260627_forecast-candidates/) (charter, `wave_shape.yml`, `candidate_targets.schema.yml`, `candidates.targets.json`, `CAND_VERIFY.md`, `GAP_COVERAGE.md`). Confirmed = `cross_validation.status` in {verified, likely}. In-region hydrophones: Orcasound Lab, North San Juan Channel, Andrews Bay, Lime Kiln/Haro Strait. Harness: `tools/forecast_candidates/build_candidates.py`. Result: 200 candidates (166 acoustic tier-A from reviewed-confirmed OrcaHello detections + 34 visual OBIS), all four hydrophones represented.
+
+### Whale-tagger B-side family (BSIDE) — Wave Set BSIDE
+
+Research-backend whale tagger on the Central Casting pattern. B-API delivered; rest sequenced.
+
+| ID | Status | Goal | Gate |
+|----|--------|------|------|
+| B-API | done | Cache-backed `/api/dtag/*` read path over the simulated example; `not_trained` classifier; supersedes 410 `/api/dtag-data` | `tests/aws_backend/test_dtag.py` |
+| B-SKILLS | chartered | Central Casting skills + seed `whale-tagger-v1` | casting gate |
+| B-REPLAY | chartered | `compute_pseudotrack` + `build_replay_scene` over bathymetry | numeric + scene contract |
+| B-ANNOT | chartered | annotation span schema + versioned taxonomy + provenance envelope | schema validates |
+| B-PANELS | chartered | tag_series/dive_panel/replay_scene/label-editor panels via ui_intent | panels render |
+| B-INGEST | chartered (partnership-gated) | populate `dtag_cache/` with real animaltags files | ingest validates |
+| B-MCP | chartered (optional) | MCP wrapper over the same tool ids | tools/list + tools/call parity |
+
+Home: [.cca/catalogue/O0/20260627_bside-build/](../../.cca/catalogue/O0/20260627_bside-build/). DTAG stays partnership-gated; classifier stays `not_trained` until weights + annotation volume exist. B-API unblocks demo beats B4/B5/B6.
+
+### Covariate modeling family (MLM) and MLOps platform (MLO) — Wave Sets MLM, MLO
+
+Operationalizes the kernel methodology ([FORECAST_KERNELS.md](../methodology/FORECAST_KERNELS.md), [CALIBRATION_STUDIES.md](../methodology/CALIBRATION_STUDIES.md)): `log λ = b0 + s_space + k_tide + k_diel + k_lunar + k_season + k_salmon + log E`. Only diel + lunar fitted today; effective confidence 0%. MLM adds the aggregated weather/wildlife covariates level by level (leveled go/no-go gates); MLO is the production platform. Effort-bias design: acoustic-first temporal estimation, visual sightings are validation + `s_space` only. No confidence promotion without a passing gate + recorded human decision.
+
+| ID | Status | Goal | Gate |
+|----|--------|------|------|
+| M-L0 | chartered | detector ROC/d' + per-station effort | effort known; ROC AUC + CI |
+| M-L1 | chartered | PSTH k_diel then k_tide vs phase-shuffle null | beats shuffled null |
+| M-L2 | chartered | joint LNP (tide+diel+lunar+season) | held-out LL beats climatology + best single-cov |
+| M-L3 | chartered | k_salmon (lag scan) + s_space (bathymetry + CAND density) | beats detection-density baseline; calibrated |
+| MLO-FEAT/REG/SCHED/MON/CI | chartered | feature store + GE, registry, scheduled gated retrain, drift monitoring, `mlops-gate` CI | `./tools/waves/run-gate.sh mlops-gate` |
+
+Home: [.cca/catalogue/O0/20260627_mlops/](../../.cca/catalogue/O0/20260627_mlops/). Covariate priority (literature): k_salmon (Chinook, strongest non-tidal driver), k_tide (Haro Strait fronts), s_space (habitat), k_season. Studies under `modeling/studies/`; tide/season/prey gates may report `withheld` until acoustic coverage clears.
+
 ## Gate command reference
 
 ```bash

@@ -1,0 +1,1296 @@
+# orcast waves registry — machine-readable index
+# Canonical prose: WAVES_REGISTRY.md
+# Updated: 2026-06-23
+
+version: 1
+
+demo_surfaces:
+  primary:
+    id: H0-web
+    url: https://orcast-h0.vercel.app
+    role: gates, moderation, provenance, partner API
+  secondary:
+    id: cloudfront-maps
+    url: https://d2gslju5drx74c.cloudfront.net
+    role: reports, historical, realtime maps
+  deprecated_for_judges:
+    id: orcast-org
+    url: https://orcast.org
+    note: Firebase may lag CloudFront
+
+waves:
+  - id: P0
+    family: P
+    type: probe
+    status: done
+    gate: null
+    scope_globs:
+      - docs/devpost/workflow-truth-table.md
+      - infra/aws/state/LANE_OWNERSHIP.md
+
+  - id: P1
+    family: P
+    type: probe
+    status: planned
+    gate: P1-gate
+    playbook: docs/devpost/ADVERSARIAL_PROBE_PLAYBOOK.md
+    panels: [P1-A, P1-B, P1-C, P1-D, P1-E, P1-F]
+
+  - id: P2
+    family: P
+    type: probe
+    status: planned
+    gate: manual
+
+  - id: P3
+    family: P
+    type: probe
+    status: planned
+    gate: manual
+    tools: [bugbot, security-review]
+
+  - id: R-Alpha
+    family: R
+    aliases: [Channel Alpha, T0-alpha]
+    type: implement
+    status: done
+    scope_globs:
+      - src/aws_backend/auth.py
+      - src/aws_backend/routers/community.py
+      - web/app/api/be/
+
+  - id: R-Beta
+    family: R
+    aliases: [Channel Beta]
+    type: implement
+    status: done
+    scope_globs:
+      - src/aws_backend/routers/partner.py
+      - web/app/api/v1/
+
+  - id: R-Gamma
+    family: R
+    aliases: [Channel Gamma]
+    type: implement
+    status: done
+    scope_globs:
+      - modeling/fit_kernels.py
+      - infra/aws/stepfunctions/
+
+  - id: R-Delta
+    family: R
+    aliases: [Channel Delta]
+    type: implement
+    status: done
+    scope_globs:
+      - docs/devpost/
+
+  - id: R-Foxtrot
+    family: R
+    aliases: [Channel Foxtrot]
+    type: deploy
+    status: done
+    scope_globs:
+      - infra/aws/
+      - tools/deployment/aws/
+
+  - id: R-Echo
+    family: R
+    aliases: [Channel Echo]
+    type: verify
+    status: done
+    gate: R-echo
+
+  - id: R-backlog
+    family: R
+    aliases: [T4]
+    type: implement
+    status: planned
+
+  - id: AT-0
+    family: AT
+    aliases: [Wave 0]
+    type: implement
+    status: done
+    scope_globs:
+      - src/aws_backend/main.py
+      - src/aws_backend/routers/
+
+  - id: AT-1
+    family: AT
+    aliases: [Wave 1]
+    type: implement
+    status: done
+    gate: AT-1
+
+  - id: AT-2
+    family: AT
+    aliases: [Wave 2]
+    type: implement
+    status: done
+
+  - id: AT-3
+    family: AT
+    aliases: [Wave 3]
+    type: implement
+    status: done
+
+  - id: AT-4
+    family: AT
+    aliases: [Wave 4]
+    type: deploy
+    status: done
+    gate: AT-4
+
+  - id: I0
+    family: I
+    type: implement
+    status: done
+
+  - id: I1
+    family: I
+    type: implement
+    status: done
+
+  - id: I2
+    family: I
+    type: implement
+    status: partial
+
+  - id: I3
+    family: I
+    type: implement
+    status: partial
+
+  - id: I4
+    family: I
+    type: implement
+    status: done
+
+  - id: I5
+    family: I
+    type: implement
+    status: partial
+
+  - id: I6
+    family: I
+    type: implement
+    status: partial
+
+  - id: I7
+    family: I
+    type: implement
+    status: done
+    note: Diagram + submission sync closed by Wave Set S2/S1; see figures/orcast-erd-workflows-page*.png
+
+  - id: D1
+    family: D
+    type: implement
+    status: planned
+    doc: docs/methodology/DATA_WIRING.md
+
+  - id: D2
+    family: D
+    type: implement
+    status: planned
+
+  - id: D3
+    family: D
+    type: implement
+    status: planned
+
+  - id: D4
+    family: D
+    type: implement
+    status: planned
+
+  - id: U1
+    family: U
+    type: implement
+    status: planned
+    doc: docs/ux/IMPLEMENTATION_BACKLOG.md
+
+  - id: U2
+    family: U
+    type: implement
+    status: planned
+
+  - id: U3
+    family: U
+    type: implement
+    status: planned
+
+  - id: U4
+    family: U
+    type: implement
+    status: planned
+
+  - id: U5
+    family: U
+    type: implement
+    status: planned
+
+  - id: U6
+    family: U
+    type: implement
+    status: planned
+
+  - id: H0
+    family: H
+    type: verify
+    status: on_demand
+    gate: H0
+
+  - id: H1
+    family: H
+    type: verify
+    status: manual
+    depends_on: [S4]
+    doc: docs/devpost/HACKATHON_SUBMIT_CHECKLIST.md
+    output: docs/devpost/submission/H1_MANUAL_SUBMIT.md
+
+  - id: E0
+    family: E
+    type: contract
+    status: done
+    doc: docs/devpost/exploration/CONTRACT.md
+
+  - id: E1
+    family: E
+    type: implement
+    status: done
+    gate: e2
+    panels: [E1-A, E1-B, E1-C, E1-D, E1-E]
+    scope_globs:
+      - src/aws_backend/exploration/
+      - src/aws_backend/routers/explore.py
+      - web/app/explore/
+      - infra/aws/template.yaml
+
+  - id: E2
+    family: E
+    type: integrate
+    status: done
+    gate: e2
+
+  - id: E3
+    family: E
+    type: docs
+    status: done
+    gate: e-doc-grep
+
+  - id: E4
+    family: E
+    type: deploy
+    status: done
+    gate: e-gate
+
+  - id: E5
+    family: E
+    type: probe
+    status: done
+    panels: [E5-A, E5-B, E5-C, E5-D, E5-E, E5-F]
+    output: docs/devpost/exploration/E5_NEXT_OBJECTIVES.md
+
+  - id: F0
+    family: F
+    type: probe
+    status: done
+    output: docs/devpost/exploration/F0_PROBE_DOSSIER.md
+
+  - id: F1
+    family: F
+    type: implement
+    status: done
+    gate: f
+
+  - id: F2
+    family: F
+    type: deploy
+    status: done
+    gate: f-gate
+
+  - id: F4
+    family: F
+    type: probe
+    status: done
+    output: docs/devpost/exploration/F4_NEXT_OBJECTIVES.md
+
+  - id: G1
+    family: G
+    type: implement
+    status: done
+    goal: Vercel AI Gateway + model picker
+    gate: g
+
+  - id: G2
+    family: G
+    type: implement
+    status: done
+    goal: Explore map deep-link UX
+
+  - id: G3
+    family: G
+    type: probe
+    status: done
+    goal: Full P1 surface probe dossier
+    output: docs/devpost/adversarial-findings-2026-06.md
+
+  - id: G4
+    family: G
+    type: implement
+    status: done
+    goal: D1-D4 data wiring
+    output: docs/devpost/G4_DATA_WIRING_STATUS.md
+
+  - id: M0
+    family: M
+    type: probe
+    status: done
+    output: docs/devpost/casting/M0_TERRAIN_DOSSIER.md
+    doc: docs/devpost/casting/MANAGED_AGENTS_CONTRACT.md
+
+  - id: M1
+    family: M
+    type: implement
+    status: done
+    gate: m
+    panels: [M1-A, M1-B, M1-C, M1-D, M1-E]
+    scope_globs:
+      - src/aws_backend/casting/
+      - src/aws_backend/routers/managed_agents.py
+      - src/aws_backend/routers/interactions.py
+
+  - id: M2
+    family: M
+    type: integrate
+    status: done
+    gate: m
+
+  - id: M3
+    family: M
+    type: deploy
+    status: done
+    gate: m-gate
+
+  - id: M4
+    family: M
+    type: probe
+    status: done
+    output: docs/devpost/casting/M4_NEXT_OBJECTIVES.md
+
+  - id: IC0
+    family: IC
+    type: probe
+    status: done
+    output: docs/devpost/casting/IC0_STEP_LOG_SYNTHESIS.md
+    doc: docs/devpost/casting/INTERACTIONS_GROUNDING_PATTERN.md
+
+  - id: IC1
+    family: IC
+    type: implement
+    status: done
+    scope_globs:
+      - src/aws_backend/exploration/migrations/004_interaction_steps.sql
+      - src/aws_backend/casting/concierge.py
+      - src/aws_backend/routers/interactions.py
+
+  - id: IC2
+    family: IC
+    type: implement
+    status: done
+    gate: ic
+    scope_globs:
+      - src/aws_backend/casting/skills_manifest.json
+      - src/aws_backend/casting/manifest.py
+      - src/aws_backend/casting/skills.py
+      - docs/devpost/casting/SKILL_CATALOG.md
+
+  - id: IC3
+    family: IC
+    type: implement
+    status: done
+    goal: Inline hydration + ExploreGuidePanel trace UI
+    scope_globs:
+      - web/app/api/interactions/route.ts
+      - web/app/components/ExploreGuidePanel.tsx
+
+  - id: IC4
+    family: IC
+    type: implement
+    status: done
+    goal: G5 remediation — gates UI honesty, docs/API truth
+    gate: ic4
+    output: docs/devpost/casting/IC4_NEXT_OBJECTIVES.md
+    scope_globs:
+      - web/app/gates/page.tsx
+      - web/lib/gateDisplay.ts
+      - docs/API.md
+      - orcast-angular/src/app/components/landing/landing.component.ts
+
+  - id: IC5
+    family: IC
+    type: deploy
+    status: done
+    gate: ic-gate
+    output: docs/devpost/casting/IC5_NEXT_OBJECTIVES.md
+
+  - id: J0
+    family: IC
+    type: probe
+    status: done
+    output: docs/devpost/casting/J0_SURFACE_PLANNER_CHARTER.md
+    doc: docs/devpost/casting/UI_INTENT_SCHEMA.md
+
+  - id: IC6
+    family: IC
+    type: implement
+    status: done
+    goal: Keyed /plan route + surface-planner-v1 + panel registry
+    gate: ic6
+    scope_globs:
+      - src/aws_backend/casting/planner.py
+      - src/aws_backend/casting/panels.py
+      - src/aws_backend/casting/panel_registry.json
+      - src/aws_backend/routers/interactions.py
+
+  - id: J1
+    family: IC
+    type: implement
+    status: done
+    goal: Enable T2/T3 skills + dossier-explainer-v1 + promotion-clerk-v1
+    gate: ic6
+
+  - id: J2
+    family: IC
+    type: implement
+    status: done
+    goal: ActiveSurfaceHost + uiIntent.ts on /explore
+    scope_globs:
+      - web/lib/uiIntent.ts
+      - web/app/components/ActiveSurfaceHost.tsx
+      - web/app/components/ExploreGuidePanel.tsx
+      - web/app/api/interactions/plan/route.ts
+
+  - id: IC7
+    family: IC
+    type: deploy
+    status: done
+    gate: ic6-gate
+    output: docs/devpost/casting/IC6_NEXT_OBJECTIVES.md
+
+  - id: S0
+    family: S
+    type: probe
+    status: done
+    output: docs/devpost/submission/S0_SUBMISSION_SYNC_CHARTER.md
+    doc: docs/devpost/submission/S0_SUBMISSION_SYNC_CHARTER.md
+
+  - id: S1
+    family: S
+    type: implement
+    status: done
+    depends_on: [S0]
+    scope_globs:
+      - docs/devpost/figures/architecture.mmd
+      - docs/devpost/figures/architecture.png
+
+  - id: S2
+    family: S
+    type: implement
+    status: done
+    depends_on: [S0]
+    scope_globs:
+      - docs/devpost/figures/orcast-erd-workflows.drawio
+      - docs/devpost/figures/orcast-erd-workflows-page*.png
+
+  - id: S3
+    family: S
+    type: implement
+    status: done
+    depends_on: [S0]
+    scope_globs:
+      - docs/devpost/SUBMISSION.md
+      - docs/devpost/DEVPOST_DRAFT.md
+      - docs/devpost/DEMO_STORYBOARD.md
+      - docs/devpost/DYNAMODB_PROOF.md
+      - docs/devpost/README.md
+      - docs/devpost/HACKATHON_SUBMIT_CHECKLIST.md
+
+  - id: S4
+    family: S
+    type: verify
+    status: done
+    depends_on: [S1, S2, S3]
+    gate: s-gate
+
+  - id: A0
+    family: A
+    type: probe
+    status: done
+    depends_on: [S4]
+    output: docs/devpost/submission/A0_AGENT_DEMO_CHARTER.md
+    doc: docs/devpost/submission/A0_AGENT_DEMO_CHARTER.md
+
+  - id: A1
+    family: A
+    type: implement
+    status: done
+    depends_on: [A0]
+    scope_globs:
+      - web/lib/agentAuth.ts
+      - web/app/api/be/
+      - web/app/api/interactions/plan/
+
+  - id: A2
+    family: A
+    type: implement
+    status: done
+    depends_on: [A1]
+    scope_globs:
+      - web/playwright.config.ts
+      - web/e2e/
+      - docs/devpost/DEMO_NO_CRED_STORYBOARD.md
+
+  - id: A3
+    family: A
+    type: implement
+    status: done
+    depends_on: [A2]
+    scope_globs:
+      - web/app/components/AuthStatus.tsx
+      - web/app/components/ExploreGuidePanel.tsx
+
+  - id: A4
+    family: A
+    type: verify
+    status: done
+    depends_on: [A1, A2, A3]
+    gate: a-gate
+
+  - id: A5
+    family: A
+    type: verify
+    status: done
+    depends_on: [A4]
+    gate: a-gate
+    scope_globs:
+      - web/public/demo-slides/
+      - tools/testing/setup_demo_maps.sh
+      - tools/waves/gates/a-maps-smoke.sh
+      - tools/waves/gates/a-video-gate.sh
+
+  - id: W0
+    family: W
+    type: probe
+    status: done
+    depends_on: [A5]
+    output: docs/whitepaper/W0_WHITEPAPER_CHARTER.md
+    doc: docs/whitepaper/W0_WHITEPAPER_CHARTER.md
+
+  - id: W1
+    family: W
+    type: implement
+    status: in_progress
+    depends_on: [W0]
+    scope_globs:
+      - docs/whitepaper/LX/
+      - docs/whitepaper/Build/
+      - docs/whitepaper/MD/
+      - docs/whitepaper/Refs/
+      - docs/whitepaper/Makefile
+
+  - id: W2
+    family: W
+    type: implement
+    status: pending
+    depends_on: [W1]
+    scope_globs:
+      - docs/whitepaper/LX/references.bib
+      - docs/whitepaper/LX/reference_audit.txt
+      - tools/testing/reference_audit.py
+
+  - id: W3
+    family: W
+    type: implement
+    status: pending
+    depends_on: [W2]
+    scope_globs:
+      - docs/whitepaper/MD/
+      - docs/whitepaper/LX/Sections/
+
+  - id: W4
+    family: W
+    type: implement
+    status: pending
+    depends_on: [W3]
+    scope_globs:
+      - docs/whitepaper/LX/Equations.tex
+      - docs/whitepaper/LX/Glossary_Content.tex
+
+  - id: W5
+    family: W
+    type: implement
+    status: pending
+    depends_on: [W4]
+    scope_globs:
+      - docs/whitepaper/LX/Figures/
+      - docs/whitepaper/LX/Appendix_Diagrams.tex
+
+  - id: W6
+    family: W
+    type: verify
+    status: done
+    depends_on: [W5]
+    gate: manual-pdf-verify
+    output: docs/whitepaper/Build/Raitses_orcast_2026.pdf
+
+  - id: W7
+    family: W
+    type: probe
+    status: done
+    depends_on: [W6]
+    output: docs/whitepaper/W7_NEXT_PHASE_CHARTER.md
+
+  - id: V0
+    family: V
+    type: probe
+    status: done
+    depends_on: [A5]
+    output: docs/devpost/submission/V0_PER_BEAT_VIDEO_CHARTER.md
+
+  - id: V1
+    family: V
+    type: implement
+    status: done
+    depends_on: [V0]
+    scope_globs:
+      - web/e2e/beats/
+      - web/package.json
+
+  - id: V2
+    family: V
+    type: verify
+    status: done
+    depends_on: [V1]
+    gate: v-beat
+
+  - id: V3
+    family: V
+    type: verify
+    status: done
+    depends_on: [V2]
+    gate: v-stitch
+    output: docs/devpost/figures/_demo-run/demo-final.webm
+
+  - id: VX0
+    family: VX
+    type: probe
+    status: done
+    depends_on: [V3]
+    output: docs/devpost/submission/VX0_VOICE_CLONE_CHARTER.md
+
+  - id: VX1
+    family: VX
+    type: implement
+    status: done
+    depends_on: [VX0]
+    note: python3.11 venv .venv-tts + pip install TTS soundfile
+
+  - id: VX2
+    family: VX
+    type: implement
+    status: done
+    depends_on: [VX1]
+    scope_globs:
+      - tools/testing/tts_clone.py
+      - tools/waves/gates/vx-render.sh
+
+  - id: VX3
+    family: VX
+    type: verify
+    status: done
+    depends_on: [VX2]
+    gate: manual
+    output: docs/devpost/figures/_demo-run/demo-final-cloned.webm
+
+  - id: MP0
+    family: MP
+    type: verify
+    status: done
+    output: docs/figures/mp-benchmark-results.json
+
+  - id: MP1
+    family: MP
+    type: implement
+    status: done
+    output: docs/figures/fig-mp1-problem-measurement/figure.png
+
+  - id: MP2
+    family: MP
+    type: implement
+    status: done
+    output: docs/figures/fig-mp2-mechanism/figure.png
+
+  - id: MP3
+    family: MP
+    type: implement
+    status: done
+    output: docs/figures/fig-mp3-benchmark-scope/figure.png
+
+  - id: MP4
+    family: MP
+    type: verify
+    status: done
+    output: docs/figures/MP4_MULTI_PANEL_REVIEW.md
+
+  - id: MP5
+    family: MP
+    type: probe
+    status: done
+    output: docs/whitepaper/MP5_SCOPE_DECISION.md
+
+  - id: FA0
+    family: FA
+    type: probe
+    status: done
+    depends_on: [W6]
+    output: docs/figures/FA0_DEFECT_REGISTER.md
+
+  - id: FA1
+    family: FA
+    type: implement
+    status: done
+    depends_on: [FA0]
+    scope_globs:
+      - docs/figures/fig-*/figure.tex
+
+  - id: FA2
+    family: FA
+    type: verify
+    status: done
+    depends_on: [FA1]
+    output: docs/figures/FA2_VALIDATION_REPORT.md
+
+  - id: FA3
+    family: FA
+    type: probe
+    status: done
+    depends_on: [FA2]
+    output: docs/figures/FA3_ADVERSARIAL_REVIEW.md
+
+  - id: R0
+    family: R
+    type: probe
+    status: done
+    depends_on: [MP5]
+    output: docs/devpost/submission/R0_RESEARCH_SYNC_CHARTER.md
+
+  - id: R1
+    family: R
+    type: implement
+    status: done
+    depends_on: [R0]
+    scope_globs:
+      - docs/whitepaper/research/SF-13-rag-quality-measurement.md
+      - docs/whitepaper/research/SF-14-steplog-world-model-eval.md
+
+  - id: R2
+    family: R
+    type: implement
+    status: done
+    depends_on: [R1]
+    scope_globs:
+      - docs/whitepaper/LX/Raitses_orcast_2026.tex
+      - docs/whitepaper/LX/Appendix_Diagrams.tex
+      - docs/whitepaper/Build/Raitses_orcast_2026.pdf
+
+  - id: R3
+    family: R
+    type: implement
+    status: done
+    depends_on: [R1]
+    scope_globs:
+      - docs/whitepaper2/
+
+  - id: R4
+    family: R
+    type: implement
+    status: done
+    depends_on: [R0]
+    scope_globs:
+      - docs/devpost/DEMO_NO_CRED_STORYBOARD.md
+      - docs/devpost/DEMO_STORYBOARD.md
+
+  - id: R5
+    family: R
+    type: implement
+    status: done
+    depends_on: [R0]
+    scope_globs:
+      - docs/devpost/DEVPOST_DRAFT.md
+      - docs/devpost/submission/H1_MANUAL_SUBMIT.md
+
+  - id: SC0
+    family: SC
+    type: probe
+    status: done
+    depends_on: [R5]
+    output: docs/devpost/submission/SC0_SEARCH_CYCLE_CHARTER.md
+
+  - id: SC1
+    family: SC
+    type: implement
+    status: done
+    depends_on: [SC0]
+    scope_globs:
+      - docs/whitepaper/research/SF-15-lecun-ami-primary.md
+      - docs/whitepaper/research/SF-16-physical-world-eval.md
+
+  - id: SC2A
+    family: SC
+    type: implement
+    status: done
+    depends_on: [SC0]
+    scope_globs:
+      - docs/whitepaper/research/SF-0[1-6]-*.md
+
+  - id: SC2B
+    family: SC
+    type: implement
+    status: done
+    depends_on: [SC0]
+    scope_globs:
+      - docs/whitepaper/research/SF-0[7-9]-*.md
+      - docs/whitepaper/research/SF-1[012]-*.md
+
+  - id: SC3
+    family: SC
+    type: implement
+    status: done
+    depends_on: [SC2A, SC2B]
+    scope_globs:
+      - docs/whitepaper/LX/Sections/*.tex
+      - docs/whitepaper/LX/references.bib
+      - docs/whitepaper/Build/Raitses_orcast_2026.pdf
+
+  - id: SC4
+    family: SC
+    type: implement
+    status: done
+    depends_on: [SC1, SC2A, SC2B]
+    scope_globs:
+      - docs/whitepaper2/LX/references2.bib
+      - docs/whitepaper2/LX/Sections/06_world_model_extension.tex
+      - docs/whitepaper2/LX/Raitses_orcast_grounding_2026.tex
+      - docs/whitepaper2/Build/Raitses_orcast_grounding_2026.pdf
+
+  - id: SC5
+    family: SC
+    type: implement
+    status: done
+    depends_on: [SC4]
+    scope_globs:
+      - docs/devpost/DEMO_NO_CRED_STORYBOARD.md
+      - docs/devpost/DEVPOST_DRAFT.md
+
+  - id: SC6
+    family: SC
+    type: gate
+    status: done
+    depends_on: [SC3, SC4, SC5]
+
+  - id: Q0
+    family: Q
+    type: probe
+    status: done
+    output: docs/devpost/submission/Q0_SCRUTINY_CHARTER.md
+
+  - id: Q1a
+    family: Q
+    type: scrutiny
+    status: done
+    scope: UI/visual layer
+
+  - id: Q1b
+    family: Q
+    type: scrutiny
+    status: done
+    scope: API/backend layer
+    output: tools/waves/gates/q1b-api-schema.sh
+
+  - id: Q1c
+    family: Q
+    type: scrutiny
+    status: done
+    scope: DynamoDB data layer
+    output: tools/waves/gates/q1c-ddb-schema.sh
+
+  - id: Q1d
+    family: Q
+    type: scrutiny
+    status: done
+    scope: Submission copy
+
+  - id: Q1e
+    family: Q
+    type: scrutiny
+    status: done
+    scope: Architecture diagram vs. deployed
+
+  - id: Q1f
+    family: Q
+    type: scrutiny
+    status: done
+    scope: Whitepaper claims vs. code
+    output: tools/waves/gates/q1f-wp-claims.sh
+
+  - id: Q2
+    family: Q
+    type: remediation
+    status: done
+    depends_on: [Q1a, Q1b, Q1c, Q1d, Q1e, Q1f]
+    gaps_closed: [Q1e-01, Q1f-07]
+
+  - id: QF
+    family: Q
+    type: gate
+    status: done
+    depends_on: [Q2]
+    output: docs/devpost/QF_ADVERSARIAL_REVIEW.md
+
+  - id: U0
+    family: U
+    type: charter
+    status: done
+    output: docs/devpost/submission/U0_UPLOADS_AND_PACKAGING_CHARTER.md
+
+  - id: U1
+    family: U
+    type: implement
+    status: in_progress
+    scope: backend evidence upload route + S3 storage
+
+  - id: U2
+    family: U
+    type: implement
+    status: pending
+    depends_on: [U1]
+    scope: EvidenceAsset model extension; account content management routes and page
+
+  - id: U3
+    family: U
+    type: implement
+    status: pending
+    depends_on: [U1]
+    scope: SightingCheckPanel media upload UI
+
+  - id: U4
+    family: U
+    type: implement
+    status: pending
+    depends_on: [U3]
+    scope: sample evidence fixtures; Playwright evidence-upload spec
+
+  - id: U5
+    family: U
+    type: gate
+    status: pending
+    depends_on: [U2, U3]
+    scope: adversarial upload and account ownership gates
+
+  - id: U6
+    family: U
+    type: implement
+    status: pending
+    scope: content-only share PDFs for both whitepapers
+
+  - id: U7
+    family: U
+    type: implement
+    status: pending
+    depends_on: [U6]
+    scope: arXiv tarballs for both whitepapers
+
+  - id: UF
+    family: U
+    type: review
+    status: pending
+    depends_on: [U5, U7]
+    output: docs/devpost/UF_UPLOADS_PACKAGING_REVIEW.md
+
+  - id: DEMO-W-STORY
+    family: DEMO
+    type: implement
+    status: done
+    home: .cca/catalogue/O0/20260627_demo-waveset/
+    output: .cca/catalogue/O0/20260627_demo-waveset/W-STORY.md
+    note: Beat order, shot lists, narration, and honesty captions locked for B1/B2/B3
+    scope_globs:
+      - .cca/catalogue/O0/20260627_demo-waveset/
+
+  - id: DEMO-W-CAPTURE
+    family: DEMO
+    type: implement
+    status: in_progress
+    depends_on: [DEMO-W-STORY]
+    operator_gate: pick base URL and green-light recording
+    scope_globs:
+      - web/e2e/beats/bside-*.spec.ts
+      - docs/devpost/figures/_demo-run/beats/
+
+  - id: DEMO-W-VOICE
+    family: DEMO
+    type: implement
+    status: pending
+    depends_on: [DEMO-W-STORY]
+    scope_globs:
+      - docs/devpost/figures/_demo-run/narration/
+
+  - id: DEMO-W-ASSEMBLE
+    family: DEMO
+    type: verify
+    status: pending
+    depends_on: [DEMO-W-CAPTURE, DEMO-W-VOICE]
+    scope_globs:
+      - docs/devpost/figures/_demo-run/
+
+  - id: C-GAP
+    family: CAND
+    type: probe
+    status: chartered
+    home: .cca/catalogue/O0/20260627_forecast-candidates/
+    output: .cca/catalogue/O0/20260627_forecast-candidates/GAP_COVERAGE.md
+    note: read-only coverage table of reachable confirmed sightings vs the four in-region hydrophones
+
+  - id: C-BUILD
+    family: CAND
+    type: implement
+    status: chartered
+    depends_on: [C-GAP]
+    operator_gate: live OBIS/iNaturalist/OrcaHello ingest needs approval
+    output: .cca/catalogue/O0/20260627_forecast-candidates/candidates.targets.json
+    note: ">=40 confirmed-sighting candidates, >=20 tier-A (near hydrophone + OrcaHello annotation overlap)"
+
+  - id: C-VERIFY
+    family: CAND
+    type: verify
+    status: done
+    depends_on: [C-BUILD]
+    output: .cca/catalogue/O0/20260627_forecast-candidates/CAND_VERIFY.md
+    note: 200 candidates, 166 tier-A; validation + adversarial checks PASS
+
+  - id: B-API
+    family: BSIDE
+    type: implement
+    status: done
+    home: .cca/catalogue/O0/20260627_bside-build/
+    scope_globs:
+      - src/aws_backend/routers/dtag.py
+      - tests/aws_backend/test_dtag.py
+    note: cache-backed /api/dtag/* read path; not_trained classifier; supersedes 410 /api/dtag-data
+
+  - id: B-SKILLS
+    family: BSIDE
+    type: implement
+    status: chartered
+    depends_on: [B-API]
+
+  - id: B-REPLAY
+    family: BSIDE
+    type: implement
+    status: chartered
+    depends_on: [B-SKILLS]
+
+  - id: B-ANNOT
+    family: BSIDE
+    type: implement
+    status: chartered
+    depends_on: [B-SKILLS]
+
+  - id: B-PANELS
+    family: BSIDE
+    type: implement
+    status: chartered
+    depends_on: [B-REPLAY, B-ANNOT]
+
+  - id: B-INGEST
+    family: BSIDE
+    type: implement
+    status: chartered
+    operator_gate: requires a partnership data-sharing agreement
+    depends_on: [B-API]
+
+  - id: B-MCP
+    family: BSIDE
+    type: implement
+    status: chartered
+    optional: true
+    depends_on: [B-SKILLS]
+
+  - id: M-L0
+    family: MLM
+    type: implement
+    status: chartered
+    home: .cca/catalogue/O0/20260627_mlops/
+    scope_globs: [modeling/studies/level0_detector.py]
+    note: detector ROC/d' + per-station effort; data ready
+  - id: M-L1
+    family: MLM
+    type: implement
+    status: chartered
+    depends_on: [M-L0]
+    scope_globs: [modeling/studies/level1_psth.py]
+    note: PSTH (diel, tide) vs phase-shuffle null
+  - id: M-L2
+    family: MLM
+    type: implement
+    status: chartered
+    depends_on: [M-L1]
+    scope_globs: [modeling/studies/level2_joint.py, modeling/fit_kernels.py, modeling/design.py]
+    note: joint temporal LNP; lift coverage exclusion when clear
+  - id: M-L3
+    family: MLM
+    type: implement
+    status: chartered
+    depends_on: [M-L2]
+    scope_globs: [modeling/studies/level3_prey_space.py]
+    note: k_salmon lag scan + s_space (bathymetry + CAND density)
+
+  - id: MLO-FEAT
+    family: MLO
+    type: implement
+    status: chartered
+    depends_on: [M-L3]
+  - id: MLO-REG
+    family: MLO
+    type: implement
+    status: chartered
+    depends_on: [M-L3]
+  - id: MLO-SCHED
+    family: MLO
+    type: implement
+    status: chartered
+    operator_gate: AWS EventBridge + Step Functions deploy
+    depends_on: [MLO-REG]
+  - id: MLO-MON
+    family: MLO
+    type: implement
+    status: chartered
+    depends_on: [MLO-SCHED]
+  - id: MLO-CI
+    family: MLO
+    type: verify
+    status: chartered
+    gate: mlops-gate
+    depends_on: [M-L3]
+
+next_wave_set: U
+
+gates:
+  H0:
+    script: tools/waves/gates/h0-hackathon.sh
+    waves: [H0]
+  P1-gate:
+    scripts:
+      - tools/waves/gates/p1-doc-grep.sh
+      - tools/waves/gates/p1-prod-curl.sh
+    waves: [P1]
+  I-suite:
+    script: tools/waves/gates/i-suite.sh
+    waves: [I0, I1, I4, I5, R-Echo]
+  AT-1:
+    script: tools/waves/gates/at-1.sh
+    waves: [AT-1]
+  AT-4:
+    scripts:
+      - tools/waves/gates/at-smoke.sh
+      - tools/waves/gates/angular-build.sh
+    waves: [AT-4]
+  R-echo:
+    script: tools/waves/gates/r-echo.sh
+    waves: [R-Echo]
+  e2:
+    script: tools/waves/gates/e2-local.sh
+    waves: [E1, E2]
+  e-gate:
+    script: tools/waves/gates/e-prod-smoke.sh
+    waves: [E4]
+  e-doc-grep:
+    script: tools/waves/gates/e-doc-grep.sh
+    waves: [E3]
+  f:
+    script: tools/waves/gates/f-local.sh
+    waves: [F1]
+  f-gate:
+    scripts:
+      - tools/waves/gates/f-prod-smoke.sh
+      - tools/waves/gates/f-network-check.sh
+    waves: [F2, F4]
+  m:
+    script: tools/waves/gates/m-local.sh
+    waves: [M1, M2]
+  m-gate:
+    script: tools/waves/gates/m-prod-smoke.sh
+    waves: [M3, M4]
+  ic:
+    script: tools/waves/gates/ic-local.sh
+    waves: [IC1, IC2]
+  ic-doc-grep:
+    script: tools/waves/gates/ic-doc-grep.sh
+    waves: [IC0]
+  ic-gate:
+    script: tools/waves/gates/ic-prod-smoke.sh
+    waves: [IC5]
+  ic4:
+    script: tools/waves/gates/ic4-local.sh
+    waves: [IC4]
+  ic4-doc-grep:
+    script: tools/waves/gates/ic4-doc-grep.sh
+    waves: [IC4]
+  ic6:
+    script: tools/waves/gates/ic6-local.sh
+    waves: [IC6, J1]
+  ic6-doc-grep:
+    script: tools/waves/gates/ic6-doc-grep.sh
+    waves: [J0, IC6]
+  ic6-gate:
+    script: tools/waves/gates/ic6-prod-smoke.sh
+    waves: [IC7]
+  s-doc-grep:
+    script: tools/waves/gates/s-doc-grep.sh
+    waves: [S0, S3]
+  s-gate:
+    scripts:
+      - tools/waves/gates/s-doc-grep.sh
+    waves: [S4]
+  a-doc-grep:
+    script: tools/waves/gates/a-doc-grep.sh
+    waves: [A0, A2, A5]
+  a-maps:
+    script: tools/waves/gates/a-maps-smoke.sh
+    waves: [A5]
+  a-video-gate:
+    script: tools/waves/gates/a-video-gate.sh
+    waves: [A5]
+  a-gate:
+    script: tools/waves/gates/a-gate.sh
+    waves: [A4, A5]
+  a-grounding:
+    script: tools/waves/gates/a-grounding.sh
+    waves: [A5]
+    note: optional — requires ORCAST_AGENT_KEY; GEMINI_API_KEY optional (skips Maps refresh if absent)
+  h1-demo:
+    script: tools/waves/gates/h1-demo-walkthrough.sh
+    waves: [A2, A5]
+  v-beat:
+    script: tools/waves/gates/v-beat-check.sh
+    waves: [V2]
+  v-stitch:
+    script: tools/waves/gates/v-stitch.sh
+    waves: [V3]
+
+quarantine:
+  paths:
+    - archive/quarantine/**
+  rule: out_of_scope unless explicitly assigned

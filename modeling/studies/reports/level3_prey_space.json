@@ -1,0 +1,58 @@
+{
+  "level": 3,
+  "name": "prey_space",
+  "status": "withheld",
+  "metrics": {
+    "s_space_precursor": {
+      "candidates": 200,
+      "occupied_cells": 15,
+      "cell_deg": 0.05,
+      "top_cells": [
+        {
+          "lat": 48.550000000000004,
+          "lng": -123.15,
+          "count": 160
+        },
+        {
+          "lat": 48.6,
+          "lng": -123.05000000000001,
+          "count": 7
+        },
+        {
+          "lat": 48.5,
+          "lng": -123.15,
+          "count": 6
+        },
+        {
+          "lat": 48.550000000000004,
+          "lng": -123.25,
+          "count": 4
+        },
+        {
+          "lat": 48.5,
+          "lng": -123.2,
+          "count": 3
+        }
+      ],
+      "depth_m_summary": {
+        "n": 200,
+        "min": -264.0,
+        "median": 5.0,
+        "max": 5.0
+      },
+      "source_mix": {
+        "visual": 34,
+        "acoustic": 166
+      },
+      "effort_warning": "Density is effort-confounded: candidates concentrate near hydrophones and observer routes. An explicit effort model is required before this density becomes s_space."
+    },
+    "k_salmon": "withheld: needs an assembled Chinook run-timing series (WDFW/PSC/Albion/Fraser/Bonneville) aligned with a lag scan to acoustic presence. salmon.py currently provides only a climatology fallback.",
+    "gate_requirements_unmet": [
+      "held-out skill vs the recent-detection-density baseline (needs the spatial fit + effort model)",
+      "calibration: reliability diagram + PIT on the spatial field",
+      "held-out visual sightings as the independent validation set"
+    ]
+  },
+  "reason": "s_space precursor assembled from the CAND set (density grid + depth); k_salmon and the spatial fit are withheld pending an effort model, a prey run-timing series, and held-out visual validation. No confidence promoted.",
+  "generated_at": "2026-06-27T05:34:58.729392+00:00"
+}

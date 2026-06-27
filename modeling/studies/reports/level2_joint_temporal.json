@@ -1,0 +1,34 @@
+{
+  "level": 2,
+  "name": "joint_temporal",
+  "status": "fail",
+  "metrics": {
+    "fitted_kernels": [
+      "diel",
+      "lunar"
+    ],
+    "withheld_kernels": {
+      "tide": "dropped: phase coverage 0.42 < 0.90 (kernel would be extrapolated)",
+      "season": "dropped: phase coverage 0.75 < 0.90 (kernel would be extrapolated)"
+    },
+    "phase_coverage": {
+      "diel": 1.0,
+      "tide": 0.4166666666666667,
+      "lunar": 1.0,
+      "season": 0.75
+    },
+    "lift_ready": {},
+    "cv_mean_deviance_skill": -0.017892075589350975,
+    "cv_folds_passing": "3/5",
+    "time_rescaling_pass": false,
+    "beats_climatology": false,
+    "single_covariate_baseline": "planned",
+    "served_confidence": 0.0,
+    "fit_plan_id": "fitplan_ada6bc2eafaeffa2",
+    "dataset_snapshot_id": "snap_7b32a8e97d9cd5d7",
+    "repr_id": "repr_46c561feb18ef281",
+    "run_id": "run_fb8f0acab5bd91ee"
+  },
+  "reason": "Level 2 gate not met: held-out skill does not beat climatology (mean_deviance_skill=-0.017892075589350975); time-rescaling KS fails (in-sample); single-covariate baseline planned; tide/season withheld by phase coverage (<0.9). Confidence stays 0% (honest).",
+  "generated_at": "2026-06-27T05:34:58.728569+00:00"
+}

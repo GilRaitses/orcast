@@ -1,0 +1,54 @@
+# Candidate target schema and scoring rubric
+# Consumed by C-BUILD (writes candidates.targets.json) and C-VERIFY (re-checks it).
+# Every field below is either read from a NormalizedSighting or computed from a wired source.
+# No field may be invented; if a source is unavailable, write null and set the matching
+# coverage flag false.
+
+version: 1
+
+candidate:
+  # --- anchor (from NormalizedSighting; the confirmed sighting itself) ---
+  sighting_id:        { type: string, required: true, from: NormalizedSighting.sighting_id }
+  source:             { type: string, required: true, enum: [obis, inaturalist, orcahello, community] }
+  source_kind:        { type: string, required: true, enum: [visual, acoustic], note: orcahello is acoustic (hydrophone position, not whale GPS) }
+  source_id:          { type: string, required: false, from: NormalizedSighting.source_id }
+  latitude:           { type: number, required: true }
+  longitude:          { type: number, required: true }
+  timestamp:          { type: string, required: true, format: iso8601-utc }
+  cross_validation_status: { type: string, required: true, enum: [verified, likely], note: confirmed filter; tentative/rejected excluded }
+  data_quality_score: { type: number, required: false, from: cross_validation.score }
+
+  # --- source alignment (REAL external overlaps; these drive priority) ---
+  nearest_hydrophone:     { type: string, required: true, enum: [orcasound_lab, north_san_juan_channel, andrews_bay, haro_strait] }
+  nearest_hydrophone_km:  { type: number, required: true, compute: haversine to nearest hydrophone in wave_shape.hydrophones }
+  orcahello_overlap_count: { type: integer, required: true, compute: count of OrcaHello reviewed labels or acoustic detections at the nearest station within +/- the overlap window }
+  orcahello_overlap_window_h: { type: integer, required: true, default: 24 }
+  noaa_tide_coverage:     { type: boolean, required: true, compute: timestamp falls within an ingested NOAA currents/water-level span }
+  in_obis:                { type: boolean, required: false }
+  in_inaturalist:         { type: boolean, required: false }
+
+  # --- computable covariates (recorded for completeness; NOT counted as source alignment) ---
+  covariates:
+    diel_phase:   { type: number, compute: covariates.diel_phase(timestamp, longitude) }
+    lunar_phase:  { type: number, compute: covariates.lunar_phase(timestamp) }
+    season_phase: { type: number, compute: modeling.design.season_phase }
+    depth_m:      { type: number, compute: bathymetry.depth_at(lat, lng) }
+    shore_m:      { type: number, compute: spatial_enrichment nearest_shore_m }
+    fitted_today: { type: array, const: [diel_phase, lunar_phase], note: only these are in the committed fit }
+
+  # --- scoring (computed by C-BUILD per wave_shape.priority_scoring) ---
+  priority_score: { type: number, required: true, range: [0, 1] }
+  priority_tier:  { type: string, required: true, enum: [A, B, C] }
+  notes:          { type: string, required: false }
+
+tier_rules:
+  A: nearest_hydrophone_km <= 5 AND orcahello_overlap_count >= 1
+  B: (nearest_hydrophone_km <= 10) OR (noaa_tide_coverage == true)
+  C: in-region, full covariate computability, otherwise
+
+exit_bar:
+  min_candidates: 40
+  min_tier_a: 20
+  required_keys: [sighting_id, source, source_kind, latitude, longitude, timestamp,
+                  cross_validation_status, nearest_hydrophone, nearest_hydrophone_km,
+                  orcahello_overlap_count, priority_tier]
