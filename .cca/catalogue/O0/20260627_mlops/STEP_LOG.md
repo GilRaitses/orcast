@@ -248,9 +248,40 @@ sourced the real Fraser-summer Chinook (Albion) feed that L3 actually needs (DAR
   data/salmon/albion_fos/fos2019-2025.csv (real cached feed), modeling/studies/reports/salmon_lag.json
   (re-run verdict). Awaiting operator ask to commit.
 
+## 2026-06-27 (W3 l3-chinook-lag: 2026 Albion via the aimez EC2; full-span stock-aligned)
+
+Operator: "check the charter ... commit what you[have] ... try using the aws box to reach the salmon
+of 2026, wire it". Confirmed we are mid the frontier_dispatch waveset (W1+W2 done); this is the W3
+l3-chinook-lag step, not a new waveset.
+
+- Committed + pushed the current real-Albion work (12e7054): salmon.py Fraser wiring +
+  data/salmon/albion_fos/fos2019-2025.csv + the re-run salmon_lag.json.
+- Reached the 2026 Albion feed via the aimez-services EC2 (i-04a649f91274e9fce; SSH
+  ubuntu@44.197.243.177). DFO resolves there (www-ops2.pac.dfo-mpo.gc.ca -> 205.193.114.62) though
+  it is DNS-blocked locally. Found the FOS form posts to rptCSbD.cfm?stat=CPTFM with
+  lboYears/lboSpecies=124/lboFsub=242/cmdRunReport; a direct curl POST returns the report HTML (no
+  Selenium needed). Parsed the 12-token rows and wrote data/salmon/albion_fos/fos2026.csv (57 rows,
+  2026-05-01..2026-06-26; season in progress, summer peak not yet). Cleaned up the EC2 /tmp. Recipe
+  recorded in WIRING-salmon-albion.md.
+- Adapter now returns source=albion for ALL detection years 2020-2026 (single source, stock-aligned).
+  Re-ran the full-span L3 lag scan: best lag +20 d, r 0.076, permutation p 0.394 -> does NOT beat
+  the null. L3 stays WITHHELD, now for the cleanest reason: a real, complete, single-source,
+  stock-aligned Fraser-summer Chinook feed shows no significant lagged correlation with SRKW
+  acoustic presence on this detection set (binary daily presence over the cached multi-station
+  OrcaHello index). This is a data/methodology result, not a wiring/stock/coverage gap. Effective
+  confidence unchanged at 0%; no promotion.
+- Refreshed wave_shape.yml frontier_dispatch (frontier_state + W1 done / W2 done / W3 in-progress);
+  added WIRING-salmon-albion.md.
+
 ## Open / awaiting operator
 
-- L3 next: the stock-aligned Fraser feed is now wired but does not earn k_salmon on daily binary
+- L3 honest state: the stock-aligned Fraser feed is now correct AND complete (2020-2026), and still
+  does not earn k_salmon on daily binary presence (p=0.394). If pursued: try detection COUNTS rather
+  than binary presence, condition on season, or accept L3 withheld as the honest state. None promotes
+  confidence by itself.
+- W3 remaining: gate-rerun (mlops-gate stays green/honest) and promotion-packet are moot while no
+  gate passes; the binding L2 dependency is still the operator/deploy-gated 3-node production ingest.
+- (superseded) earlier L3 note: the stock-aligned Fraser feed is now wired but does not earn k_salmon on daily binary
   presence. Options if pursued: use detection COUNTS (not binary presence) and/or restrict to the
   high-coverage seasons; wire the live 2026 Albion feed on a DFO-reachable host; or accept L3
   withheld as the honest state. None promotes confidence by itself.

@@ -73,14 +73,14 @@ reuse:
 # not new levels). Canonical prose: WAVESET_CHARTER.md. Decision record:
 # DECISION_RECORD.md (operator-confirmed 2026-06-27). Wave 1 prompts: WAVE1_DISPATCH.md.
 frontier_dispatch:
-  status: dispatch-ready          # operator-confirmed scope 2026-06-27; Wave 1 launch pending operator go
+  status: W1-W2-done-W3-in-progress   # 2026-06-27: W1 (de-risk) + W2 (integrate) ran; W3 L3 (real Albion feed) wired
   model: inherit                   # operator default
   frontier_state:
-    effective_confidence: 0.0
+    effective_confidence: 0.0      # unchanged; no promotion
     L0: PASS                       # ROC AUC 0.879
-    L1: PASS                       # diel
-    L2: FAIL                       # multi-station skill +0.078 (4/5 folds) but time-rescaling KS p=0.0 and cross-station PSTH corr 0.14-0.34
-    L3: WITHHELD                   # climatology salmon placeholder; needs a real Chinook feed
+    L1: PASS                       # diel; cross-station consistency NOT met (sparse-count artifact, W1/W2)
+    L2: FAIL                       # multi-station skill +0.078 stands, but time-rescaling WITHHELD (burstiness, not effort/grid/kernels) and cross-station not consistent; both data-bound (need 3-node production ingest)
+    L3: WITHHELD                   # real stock-aligned Albion (Fraser) feed now wired all years 2020-2026 (source=albion); lag scan p=0.394 does not beat the null -> honest withhold, not a wiring gap
   execution_model:
     one_file_one_owner: true
     single_convergence_file_editor_per_wave: true
@@ -104,7 +104,7 @@ frontier_dispatch:
       name: de-risk-and-characterize
       parallelism: 5
       convergence_file_edits: false
-      launch_status: pending-operator-go        # prompts ready in WAVE1_DISPATCH.md
+      launch_status: done                       # ran 2026-06-27; all 5 agents returned honest findings
       agents:
         - { role: effort-logE,        owns: modeling/effort.py,                                  env: .venv-modeling, deliverable: "per-station effort/uptime -> log E offset + exposure for the conditional intensity (ROOT CAUSE for time-rescaling) + WIRING-effort.md" }
         - { role: time-rescaling-diag, owns: modeling/studies/time_rescaling_diag.py,            env: .venv-modeling, deliverable: "characterize why pooled KS p=0.0 (per-station vs pooled, effort sensitivity, grid/bin); recommended-fix block" }
@@ -116,6 +116,7 @@ frontier_dispatch:
     - id: W2
       name: integrate
       depends_on: [W1]
+      status: done                              # ran 2026-06-27 (operator narrowed scope); effort wired, time-rescaling WITHHELD (burstiness), cross-station not consistent, DART parser landed; no promotion
       single_convergence_file_editor_per_file: true
       agents:
         - { role: modeling-integrator, owns: [modeling/fit_kernels.py, modeling/studies/level2_multistation.py], deliverable: "wire effort/logE + time-rescaling fix + cross-station change; refit S3 (upload disabled, write_outputs=False); update level2_multistation.json verdict" }
@@ -125,8 +126,9 @@ frontier_dispatch:
     - id: W3
       name: gate-L3-promotion-prep
       depends_on: [W2]
+      status: in-progress                       # 2026-06-27: l3-chinook-lag done (real Albion all years, WITHHELD p=0.394); gate-rerun + promotion-packet pending (no gate passes, so no promotion packet)
       agents:
-        - { role: l3-chinook-lag,     owns: modeling/studies/salmon_lag.py, deliverable: "re-run lag scan on the validated real Chinook feed; verdict pass or withheld" }
+        - { role: l3-chinook-lag,     owns: modeling/studies/salmon_lag.py, status: done, deliverable: "re-run lag scan on the validated real Chinook feed; verdict pass or withheld -> real stock-aligned Albion (Fraser) wired all years 2020-2026 via aimez EC2 FOS fetch; WITHHELD (lag +20d, r=0.076, p=0.394, does not beat null)" }
         - { role: gate-rerun,         owns: tools/waves/run-gate.sh, deliverable: "mlops-gate + honesty guard re-run; served confidence must not exceed earned" }
         - { role: promotion-packet,   owns: docs/promotion-packet, deliverable: "supervisor promotion packet, prepared ONLY if a gate passes; promotion is a recorded supervisor decision (operator-gated)" }
       gate: "a real gate passes AND the supervisor records the decision -> effective_confidence raised; otherwise stays 0% honestly"
