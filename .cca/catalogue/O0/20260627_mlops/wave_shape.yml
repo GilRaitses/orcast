@@ -73,7 +73,7 @@ reuse:
 # not new levels). Canonical prose: WAVESET_CHARTER.md. Decision record:
 # DECISION_RECORD.md (operator-confirmed 2026-06-27). Wave 1 prompts: WAVE1_DISPATCH.md.
 frontier_dispatch:
-  status: W1-W2-done-W3-in-progress   # 2026-06-27: W1 (de-risk) + W2 (integrate) ran; W3 L3 (real Albion feed) wired
+  status: W1-W2-W3-done-W4-chartered  # 2026-06-27: W1+W2 ran; W3 L3 real Albion wired (withheld); W4 build wave chartered from the research findings (READY)
   model: inherit                   # operator default
   frontier_state:
     effective_confidence: 0.0      # unchanged; no promotion
@@ -133,6 +133,17 @@ frontier_dispatch:
         - { role: promotion-packet,   owns: docs/promotion-packet, deliverable: "supervisor promotion packet, prepared ONLY if a gate passes; promotion is a recorded supervisor decision (operator-gated)" }
       gate: "a real gate passes AND the supervisor records the decision -> effective_confidence raised; otherwise stays 0% honestly"
 
+    - id: W4
+      name: graduate-research-findings
+      depends_on: [W3, research_dispatch]
+      status: dispatch-ready                     # READY; launch is the next operator gate. Charter: W4_BUILD_CHARTER.md; prompts: W4_BUILD_DISPATCH.md
+      single_convergence_file_editor_per_file: true
+      agents:
+        - { role: modeling-integrator, owns: [modeling/fit_kernels.py, modeling/studies/cross_station_consistency.py], deliverable: "ITEM1 (ungated) re-score cross-station consistency at 8-12 bins + min per-bin count + partial pooling + burst-dedup (diel 0.08->0.42, lunar clears 0.5); ITEM3 (gated, WRITE-ONLY) Hawkes diagnostic + bin-level timing gate (NB PIT + CV-skill) behind a default-OFF flag, do NOT adopt/promote" }
+        - { role: study-integrator,     owns: modeling/studies/salmon_lag.py, deliverable: "ITEM2 (ungated) pre-registered SRKW-summer (Jun-Sep, +lag) L3 conditioning + held-out year on the real Albion feed; L3 stays WITHHELD unless the held-out year also beats the null; optional summer-only counts re-test (RA)" }
+      gate: "items 1+2 landed; mlops-gate green; served confidence still 0.0; bin-level timing gate present but OFF"
+      confidence_gate: "item 3 adoption (bin-level timing gate) is a recorded supervisor decision via promotion/supervisor.py; effective_confidence rises ONLY on that decision (B.1)"
+
   out_of_scope:
     - "MLO platform (FEAT/REG/SCHED/MON/CI): chartered in MLO_CHARTER.md, operator/deploy-gated, a later track"
     - "confidence promotion without a passing gate + recorded supervisor decision"
@@ -144,3 +155,49 @@ frontier_dispatch:
     - the production acoustic_detections store write for the 3 nodes (deploy-gated)
     - any commit or push (explicit operator request only)
     - any confidence promotion (passing gate + recorded supervisor decision)
+
+# Investigation-first research waveset to find ways to push L2 and L3 off their honest
+# blockers. Canonical prose: RESEARCH_CHARTER.md. Agent prompts: RESEARCH_DISPATCH.md.
+# Findings are decision aids; nothing promotes confidence. The operator decides which
+# findings graduate to a future build/integrate wave (W4).
+research_dispatch:
+  status: done                       # ran 2026-06-27; RA-RF returned; findings under research/
+  model: inherit
+  blocker_map:                       # CORRECTED by the research wave (RE refutes the ingest dep)
+    l2_time_rescaling: "WITHHELD = detection burstiness (branching ratio 0.79-0.96 = detector repeat-triggering); no event-level Exp(1) fix passes (RD); honest path = bin-level GOF gate (NB PIT + CV-skill), operator-gated build wave"
+    l2_cross_station:  "NOT simply gated on the 3-node ingest (RE refutes: it moves the same cached records, adds 0 observations). Binding = scoring resolution (24-bin too fine) + burstiness; ungated fix = re-score at 8-12 bins + partial pooling + burst-dedup (diel 0.08->0.42, lunar clears 0.5 now); 24-bin target effectively unreachable for years"
+    l3_salmon:         "WITHHELD = off-season pooling, NOT the response variable (RA: counts do not help). Conditioning sharpens it (RB: SRKW-summer Jun-Sep r=0.251 p=0.013, exploratory). Temperature/diel dead-end (RC)"
+  findings:            # research/*.md (+ report JSONs)
+    - { agent: RA, doc: research/L3_response_variable.md, verdict: "counts/rate/GLM do not beat the null; response variable not the limiter (dead-end)" }
+    - { agent: RB, doc: research/L3_conditioning.md, verdict: "SRKW-summer conditioning beats the null exploratorily; real L3 lever (graduate, pre-registered)" }
+    - { agent: RC, doc: research/L3_diel_temperature.md, verdict: "time-of-day irrelevant; temperature NO-GO as animal kernel (collinear k_season) (dead-end)" }
+    - { agent: RD, doc: research/L2_burstiness_timing.md, verdict: "no event-level fix; bin-level timing gate is the honest path (graduate, operator-gated)" }
+    - { agent: RE, doc: research/L2_data_volume.md, verdict: "ingest is not the binding cross-station dep; coarser-bin + partial-pooling re-score is the ungated fix (graduate)" }
+    - { agent: RF, doc: research/SYNTHESIS_L2_L3.md, verdict: "ranked plan; ungated U1 consistency re-score + U4 summer-L3 conditioning; graduate RD/RE/RB to W4" }
+  graduate_to_w4:
+    - "RE/RB consistency re-score at 8-12 bins + min per-bin count + partial pooling + burst-dedup (UNGATED methodology change)"
+    - "RD bin-level timing-gate redefinition (NB PIT calibrated AND CV skill > climatology) + Hawkes diagnostic (operator-gated)"
+    - "RB pre-registered SRKW-summer L3 conditioning + counts + held-out year (L3 stays withheld until it holds out)"
+  dead_ends: ["RA counts response variable", "RC temperature animal kernel + diel-for-L3"]
+  execution_model:
+    investigation_first: true
+    one_findings_doc_per_agent: true
+    findings_dir: .cca/catalogue/O0/20260627_mlops/research/
+    no_convergence_file_edits: true   # salmon_lag.py / time_rescaling_diag.py / cross_station_consistency.py reused read-only
+    refit_upload_disabled: "fk._maybe_write_s3 = lambda: None; write_outputs=False"
+    no_promotion: true
+    no_agent_commits: true
+    external_feeds_via: aimez-ec2     # i-04a649f91274e9fce; see WIRING-salmon-albion.md
+  agents:
+    - { role: l3-response-variable, owns: research/L3_response_variable.md, question: "Q1 daily COUNTS / rate / count GLM vs binary presence; beats the null where binary did not?" }
+    - { role: l3-conditioning,      owns: research/L3_conditioning.md,      question: "Q2 restrict to run/summer season, per-station, SRKW window; does conditioning sharpen alignment?" }
+    - { role: diel-temperature,     owns: research/L3_diel_temperature.md,  question: "Q3 diel-window conditioning + Q5 temperature/SST sources and its honest role (effect modifier vs effort term, B.2)" }
+    - { role: l2-burstiness,        owns: research/L2_burstiness_timing.md, question: "Q4 self-excitation/Hawkes/refractory/hurdle or bin-level GOF -> does the timing gate pass honestly? (ungated L2 ammo)" }
+    - { role: l2-data-volume,       owns: research/L2_data_volume.md,       question: "Q6 power analysis: detections/station for split-half >=0.5; what the 3-node ingest adds; confirm it is the binding cross-station dep" }
+    - { role: synthesis,            owns: research/SYNTHESIS_L2_L3.md,      question: "Q7 ranked action plan: ungated vs gated, payoff, cheapest next experiment; what graduates to a W4 build wave", depends_on: [l3-response-variable, l3-conditioning, diel-temperature, l2-burstiness, l2-data-volume] }
+  gate: "each findings doc lands with measured numbers + a recommendation; synthesis produces the ranked plan; no promotion"
+  operator_gates:
+    - research wave launch
+    - graduating a finding to a build/integrate wave (W4)
+    - any commit or push
+    - any confidence promotion (unchanged)

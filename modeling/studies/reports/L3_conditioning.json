@@ -1,0 +1,185 @@
+{
+  "study": "L3_conditioning",
+  "agent": "RB",
+  "generated_at": "2026-06-27T15:16:41.211627+00:00",
+  "method": {
+    "response": "binary daily presence (matches salmon_lag.py baseline)",
+    "run_index": "Albion FOS Fraser-summer Chinook (source=albion all years), via SalmonRunAdapter",
+    "lag_range_days": [
+      -30,
+      30
+    ],
+    "null": "circular_shift of presence over full contiguous array; best |lag corr| statistic; same null family as baseline",
+    "permutations": 1000,
+    "seed": 20260627,
+    "season_restriction": "masked correlation over in-season days only (off-season zeros dropped from the correlation, lag indexing kept on full contiguous array)"
+  },
+  "results": {
+    "baseline_pooled": {
+      "label": "baseline_pooled (all days, all stations, binary presence)",
+      "best_lag_days": 20,
+      "best_correlation": 0.075692,
+      "best_abs_correlation": 0.075692,
+      "p_value": 0.393606,
+      "beats_null_p05": false,
+      "null_abs_mean": 0.08088,
+      "null_abs_std": 0.029205,
+      "effect_z": -0.177656,
+      "n_days": 2088,
+      "days_with_presence": 163,
+      "n_inseason_days": 2088
+    },
+    "season_restricted_run_active": {
+      "label": "season_restricted (corr over days with run_index>0)",
+      "best_lag_days": 20,
+      "best_correlation": 0.188247,
+      "best_abs_correlation": 0.188247,
+      "p_value": 0.14985,
+      "beats_null_p05": false,
+      "null_abs_mean": 0.137892,
+      "null_abs_std": 0.045719,
+      "effect_z": 1.101405,
+      "n_days": 2088,
+      "days_with_presence": 28,
+      "n_inseason_days": 510
+    },
+    "season_restricted_doy90_310": {
+      "label": "season_restricted (calendar DOY 90-310, Apr-Nov)",
+      "best_lag_days": 20,
+      "best_correlation": 0.158392,
+      "best_abs_correlation": 0.158392,
+      "p_value": 0.058941,
+      "beats_null_p05": false,
+      "null_abs_mean": 0.097619,
+      "null_abs_std": 0.030201,
+      "effect_z": 2.012252,
+      "n_days": 2088,
+      "days_with_presence": 76,
+      "n_inseason_days": 1222
+    },
+    "srkw_summer_jun_sep": {
+      "label": "srkw_summer_window months=[6, 7, 8, 9]",
+      "best_lag_days": 20,
+      "best_correlation": 0.251458,
+      "best_abs_correlation": 0.251458,
+      "p_value": 0.012987,
+      "beats_null_p05": true,
+      "null_abs_mean": 0.128828,
+      "null_abs_std": 0.040113,
+      "effect_z": 3.057102,
+      "n_days": 2088,
+      "days_with_presence": 36,
+      "n_inseason_days": 629
+    },
+    "srkw_summer_may_oct": {
+      "label": "srkw_summer_window months=[5, 6, 7, 8, 9, 10]",
+      "best_lag_days": 20,
+      "best_correlation": 0.182181,
+      "best_abs_correlation": 0.182181,
+      "p_value": 0.011988,
+      "beats_null_p05": true,
+      "null_abs_mean": 0.104897,
+      "null_abs_std": 0.029922,
+      "effect_z": 2.582849,
+      "n_days": 2088,
+      "days_with_presence": 63,
+      "n_inseason_days": 1001
+    },
+    "per_station": {
+      "orcasound_lab": {
+        "pooled": {
+          "label": "orcasound_lab pooled",
+          "best_lag_days": 20,
+          "best_correlation": 0.085322,
+          "best_abs_correlation": 0.085322,
+          "p_value": 0.328671,
+          "beats_null_p05": false,
+          "null_abs_mean": 0.085636,
+          "null_abs_std": 0.029732,
+          "effect_z": -0.010537,
+          "n_days": 2087,
+          "days_with_presence": 151,
+          "n_inseason_days": 2087
+        },
+        "in_season": {
+          "label": "orcasound_lab in-season",
+          "best_lag_days": 20,
+          "best_correlation": 0.194411,
+          "best_abs_correlation": 0.194411,
+          "p_value": 0.150849,
+          "beats_null_p05": false,
+          "null_abs_mean": 0.137963,
+          "null_abs_std": 0.04933,
+          "effect_z": 1.144285,
+          "n_days": 2087,
+          "days_with_presence": 27,
+          "n_inseason_days": 509
+        }
+      },
+      "andrews_bay": {
+        "pooled": {
+          "label": "andrews_bay pooled",
+          "best_lag_days": 4,
+          "best_correlation": 0.293343,
+          "best_abs_correlation": 0.293343,
+          "p_value": 0.604396,
+          "beats_null_p05": false,
+          "null_abs_mean": 0.284884,
+          "null_abs_std": 0.114584,
+          "effect_z": 0.073822,
+          "n_days": 131,
+          "days_with_presence": 12,
+          "n_inseason_days": 131
+        },
+        "in_season": {
+          "label": "andrews_bay in-season",
+          "best_lag_days": 5,
+          "best_correlation": 0.927478,
+          "best_abs_correlation": 0.927478,
+          "p_value": 0.528472,
+          "beats_null_p05": false,
+          "null_abs_mean": 0.619711,
+          "null_abs_std": 0.464738,
+          "effect_z": 0.662237,
+          "n_days": 131,
+          "days_with_presence": 1,
+          "n_inseason_days": 13
+        }
+      },
+      "north_san_juan_channel": {
+        "pooled": {
+          "label": "north_san_juan_channel pooled",
+          "best_lag_days": 0,
+          "best_correlation": -0.037877,
+          "best_abs_correlation": 0.037877,
+          "p_value": 1.0,
+          "beats_null_p05": false,
+          "null_abs_mean": 0.150087,
+          "null_abs_std": 0.159702,
+          "effect_z": -0.702623,
+          "n_days": 348,
+          "days_with_presence": 4,
+          "n_inseason_days": 348
+        },
+        "in_season": {
+          "label": "north_san_juan_channel in-season",
+          "best_lag_days": 0,
+          "best_correlation": 0.0,
+          "best_abs_correlation": 0.0,
+          "p_value": 1.0,
+          "beats_null_p05": false,
+          "null_abs_mean": 0.134757,
+          "null_abs_std": 0.187668,
+          "effect_z": -0.718058,
+          "n_days": 348,
+          "days_with_presence": 0,
+          "n_inseason_days": 103
+        }
+      },
+      "haro_strait": {
+        "n_records": 0,
+        "note": "absent from / too sparse in cached OrcaHello index; not scorable"
+      }
+    }
+  }
+}

@@ -273,8 +273,111 @@ l3-chinook-lag step, not a new waveset.
 - Refreshed wave_shape.yml frontier_dispatch (frontier_state + W1 done / W2 done / W3 in-progress);
   added WIRING-salmon-albion.md.
 
+## 2026-06-27 (chartered the L2/L3 push research waveset)
+
+Operator asked to charter a waveset to research how to push L3 (counts vs binary daily presence;
+condition on season / time of day; temperature) and find more L2 "ammo", and to clarify whether the
+L2 dependency remains the gated 3-node ingest.
+
+- Clarified the L2 blocker map: L2 has TWO blockers with different deps. Time-rescaling is detection
+  burstiness (a MODELING fix, ungated, attackable now); cross-station consistency is per-station
+  sample size (GATED on the 3-node production ingest). So "the L2 dep remains the gated 3-node ingest"
+  holds for cross-station only; time-rescaling and the L3 reformulation are ungated.
+- Wrote RESEARCH_CHARTER.md + RESEARCH_DISPATCH.md (six investigation-first parallel agents, READY,
+  not launched, model inherit): RA L3 response variable (counts/rate/count-GLM vs binary), RB L3
+  conditioning (season / per-station / SRKW window), RC diel conditioning + temperature/SST source
+  feasibility and honest role (effect modifier vs effort term per B.2), RD L2 burstiness modeling
+  (self-excitation/Hawkes/refractory/hurdle or bin-level GOF -> does the timing gate pass honestly),
+  RE L2 data-volume power analysis (detections/station for split-half >=0.5; what the 3-node ingest
+  adds; confirm the binding dep), RF synthesis + ranked action plan. Added a research_dispatch block
+  to wave_shape.yml. Findings live under .cca/catalogue/O0/20260627_mlops/research/.
+- Investigation-first: findings docs are decision aids; no convergence-file edits, refit-safety on,
+  no confidence promotion. The operator decides which findings graduate to a future W4 build wave.
+- READY, not launched. Launch is the next operator gate. Nothing committed for this charter step.
+
+## 2026-06-27 (research wave ran: RA-RF; corrected blocker map)
+
+Launched the six-agent L2/L3 push research wave (operator "execute"); all returned honest findings
+under `.cca/catalogue/O0/20260627_mlops/research/` (decision aids; no fits promoted, no convergence-
+file edits, no confidence promotion, nothing committed by agents).
+
+- RA L3 response variable: counts / rate / count-GLM do NOT beat the permutation null where binary
+  failed (best p 0.193; GLM worst at 0.681). The response variable is NOT the L3 limiter. DEAD-END.
+- RB L3 conditioning: the pooled test was diluted by off-season days (detections are fall/winter-
+  heavy; the Albion run is summer). Conditioning to SRKW summer beats the null: Jun-Sep r=0.251
+  p=0.013, May-Oct r=0.182 p=0.012 (best lag +20 d). Exploratory (window multiplicity ~Bonferroni
+  -> 0.05; 36-63 summer presence days; still binary). Real L3 lever; L3 stays WITHHELD.
+- RC diel + temperature: time-of-day irrelevant at the salmon timescale (active-window p 0.326 vs
+  full 0.394). Temperature/SST data is available (NDBC 46088, CO-OPS 9449880) but is NO-GO as an
+  animal kernel per B.2 (SST ~ f(day-of-year), collinear with k_season, redundant with k_salmon);
+  at most a minor L0 detectability term. DEAD-END for a kernel.
+- RD L2 burstiness: no ungated fix passes event-level Exp(1) time-rescaling. A Hawkes self-exciting
+  model cuts the KS spike ~5.7x (branching ratio 0.79-0.96 = detector repeat-triggering, not
+  independent animal events) but still fails (p 3.3e-33). The honest path is a BIN-LEVEL timing gate
+  (held-out NB PIT calibrated AND CV skill > climatology); event-level stays WITHHELD. Methodology
+  change to graduate via an operator-gated build wave.
+- RE L2 data volume: REFUTES that the 3-node production ingest is the binding cross-station
+  dependency -- the ingest reads the same cached OrcaHello records and adds zero new observations, so
+  post-ingest reliability equals current. The binding issue is scoring resolution (24-bin too fine)
+  + burstiness; the UNGATED fix is re-scoring consistency at 8-12 bins + partial pooling + burst-
+  dedup (diel split-half 0.08->0.42 at 12 bins; lunar clears 0.5 now on both dense stations). The
+  24-bin target (~14k-22k detections/station for diel) is effectively unreachable for years.
+- RF synthesis (research/SYNTHESIS_L2_L3.md): ranked plan. Top UNGATED: U1 consistency re-score at
+  8-12 bins + min per-bin count (highest L2 leverage), U4 pre-registered SRKW-summer L3 conditioning,
+  U2/U3 partial pooling + burst-dedup, U5 Hawkes + bin-level GOF diagnostic. Graduate to a W4 build
+  wave: (1) RD bin-level timing-gate redefinition + Hawkes diagnostic (operator-gated), (2) RE/RB
+  coarser-bin + partial-pooling consistency re-score (ungated), (3) RB pre-registered summer L3
+  conditioning + counts + held-out year. Dead-ends: RA counts, RC temperature/diel.
+
+CORRECTED blocker map (supersedes the earlier note): L2 cross-station is NOT simply gated on the
+3-node ingest; it is a scoring-resolution + burstiness problem with an ungated fix. L2 time-rescaling
+has no event-level fix (bin-level gate is the honest path). L3's limiter is off-season pooling, not
+the response variable; SRKW-summer conditioning is the lever. Effective confidence stays 0%.
+
+Uncommitted: research/*.md + research/figures/ + modeling/studies/reports/{L3_response_variable,
+L3_conditioning,L3_diel_temperature,L2_burstiness_timing,l2_data_volume}.json, plus untracked scratch
+drivers (modeling/studies/_ra_response_scratch.py, _rb_conditioning.py, l2_data_volume_power.py) the
+agents left for reproducibility. wave_shape.yml research_dispatch + STEP_LOG + README updated.
+
+## 2026-06-27 (W4 build wave chartered from the research findings)
+
+Operator: "proceed 1, 2. 2b) u decide". Chartered the W4 build/integrate wave and prepared the
+research-findings commit.
+
+- Wrote W4_BUILD_CHARTER.md + W4_BUILD_DISPATCH.md (two integrators, single convergence-file editor
+  per file, READY, not launched):
+  - Modeling integrator (sole editor of fit_kernels.py + cross_station_consistency.py): ITEM 1
+    (UNGATED) re-score cross-station consistency at 8-12 bins + min per-bin count + partial pooling +
+    burst-dedup (diel 0.08->0.42, lunar clears 0.5; tide stays flagged); ITEM 3 (GATED, WRITE-ONLY)
+    Hawkes event-level diagnostic + a bin-level timing gate (held-out NB PIT AND CV-skill>climatology)
+    behind a default-OFF flag -- do NOT adopt or promote.
+  - Study integrator (sole editor of salmon_lag.py): ITEM 2 (UNGATED) pre-registered SRKW-summer
+    (Jun-Sep, +lag) L3 conditioning + held-out year on the real Albion feed; L3 stays WITHHELD unless
+    the held-out year also beats the null.
+  - Dead-ends not built: RA counts, RC temperature/diel.
+- The one confidence-bearing change (item 3, the bin-level timing gate) is operator/supervisor-gated:
+  effective_confidence rises ONLY on a recorded supervisor decision (B.1); W4 writes it OFF. Items 1+2
+  do not promote.
+- Added W4 to wave_shape.yml frontier_dispatch (status dispatch-ready; frontier status now
+  W1-W2-W3-done-W4-chartered).
+- 2b decision (mine): the agents' untracked scratch drivers (modeling/studies/_ra_response_scratch.py,
+  _rb_conditioning.py, l2_data_volume_power.py) are NOT committed -- one-off reproducibility scripts
+  that would pollute the tracked study tree; the findings docs + report JSONs + the figure are the
+  durable deliverables. They remain locally untracked.
+
 ## Open / awaiting operator
 
+- W4 launch is the next operator gate (two integrators; prompts in W4_BUILD_DISPATCH.md). The cheapest
+  high-value UNGATED move within it is ITEM 1 (cross-station consistency re-score).
+- Item 3 (bin-level timing gate) adoption needs a recorded supervisor decision; that is the only path
+  that moves effective_confidence off 0%.
+- (historical) Decide which graduated items become a W4 build/integrate wave. The cheapest high-value UNGATED move
+  is U1 (re-score cross-station consistency at coarser bins + partial pooling): it makes diel
+  reproducible and lunar clear at current volume, no ingest needed. None promotes confidence by
+  itself.
+- Commit of the research findings is available on an explicit operator ask (surgical; decide whether
+  to keep or drop the scratch drivers).
+- (historical) Research wave launch was the prior gate; it has run.
 - L3 honest state: the stock-aligned Fraser feed is now correct AND complete (2020-2026), and still
   does not earn k_salmon on daily binary presence (p=0.394). If pursued: try detection COUNTS rather
   than binary presence, condition on season, or accept L3 withheld as the honest state. None promotes

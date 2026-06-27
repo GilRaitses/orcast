@@ -1,0 +1,235 @@
+{
+  "status": "prototyped",
+  "generated_at": "2026-06-27T15:15:58.391964+00:00",
+  "provenance": "RD prototype: 4-station memory store (production haro_strait S3 + cached OrcaHello index for orcasound_lab/north_san_juan_channel/andrews_bay); NB2 joint GLM identical to level2_multistation/time_rescaling_diag; refit-safety on; no store/model write, no promotion.",
+  "fit_context": {
+    "tide_model": "harmonic",
+    "covariates_fit": [
+      "diel",
+      "tide",
+      "lunar",
+      "season"
+    ],
+    "family": "negbin",
+    "min_ieis": 20
+  },
+  "per_station": {
+    "andrews_bay": {
+      "n_events": 265,
+      "baseline_event_level": {
+        "n": 264,
+        "mean": 0.7615079218229326,
+        "std": 5.03883547770955,
+        "ks_exp_stat": 0.9122110552568781,
+        "ks_exp_pval": 2.3989290457223453e-279,
+        "pass_exp": false,
+        "frac_under_0p05": 0.9431818181818182
+      },
+      "hawkes1_exp": {
+        "mu": 0.0043759051230099965,
+        "alpha_branching": 0.9568363645897057,
+        "beta_per_h": 12.357753096580756,
+        "negloglik": -510.95701331438465,
+        "n": 264,
+        "mean": 1.00378788459172,
+        "std": 0.9332726546853455,
+        "ks_exp_stat": 0.2520490593868727,
+        "ks_exp_pval": 2.875982057499112e-15,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0
+      },
+      "hawkes2_exp": {
+        "mu": 0.004239126742568548,
+        "a1": 0.4574065878656733,
+        "b1_per_h": 8.523589469851874,
+        "a2": 0.4899999999999209,
+        "b2_per_h": 18.165909702739334,
+        "negloglik": -512.4403425906185,
+        "n": 264,
+        "mean": 0.9928797404087675,
+        "std": 0.9163420787122191,
+        "ks_exp_stat": 0.255169682810249,
+        "ks_exp_pval": 1.2141068080397748e-15,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0
+      }
+    },
+    "haro_strait": {
+      "n_events": 761,
+      "baseline_event_level": {
+        "n": 760,
+        "mean": 0.9853145308077507,
+        "std": 3.5284539361578164,
+        "ks_exp_stat": 0.7253138539486421,
+        "ks_exp_pval": 0.0,
+        "pass_exp": false,
+        "frac_under_0p05": 0.7697368421052632
+      },
+      "hawkes1_exp": {
+        "mu": 0.029677721978112612,
+        "alpha_branching": 0.7925155871160284,
+        "beta_per_h": 11.743127017702383,
+        "negloglik": -263.04170798544544,
+        "n": 760,
+        "mean": 1.0013158068132382,
+        "std": 1.1617941918680166,
+        "ks_exp_stat": 0.1415356576101488,
+        "ks_exp_pval": 9.55654192384966e-14,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0
+      },
+      "hawkes2_exp": {
+        "mu": 0.02899121941512027,
+        "a1": 0.29836758156720206,
+        "b1_per_h": 7.085353334925462,
+        "a2": 0.4899999999999681,
+        "b2_per_h": 16.61105878317965,
+        "negloglik": -265.8806566973424,
+        "n": 760,
+        "mean": 0.9921720840102746,
+        "std": 1.142701558072212,
+        "ks_exp_stat": 0.14862841509811103,
+        "ks_exp_pval": 4.046627547477702e-15,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0
+      }
+    },
+    "north_san_juan_channel": {
+      "n_events": 34,
+      "baseline_event_level": {
+        "n": 33,
+        "mean": 1.1651221262966196,
+        "std": 6.262576635363721,
+        "ks_exp_stat": 0.8983466031192939,
+        "ks_exp_pval": 3.448064212144516e-33,
+        "pass_exp": false,
+        "frac_under_0p05": 0.9090909090909091
+      },
+      "hawkes1_exp": {
+        "mu": 0.000492226908842881,
+        "alpha_branching": 0.9068678915692496,
+        "beta_per_h": 4.707006162126038,
+        "negloglik": 11.536980250027316,
+        "n": 33,
+        "mean": 1.03030302095933,
+        "std": 1.50763781230881,
+        "ks_exp_stat": 0.2573950639726794,
+        "ks_exp_pval": 0.02043980573399995,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0
+      },
+      "hawkes2_exp": {
+        "mu": 0.0004803467066160587,
+        "a1": 0.4899999999999985,
+        "b1_per_h": 29.9375422751697,
+        "a2": 0.28555630547911043,
+        "b2_per_h": 1.4564400050769841,
+        "negloglik": -0.8846395026395371,
+        "n": 33,
+        "mean": 0.8878371361678875,
+        "std": 1.0452604733318829,
+        "ks_exp_stat": 0.21434577979649871,
+        "ks_exp_pval": 0.0825401863845513,
+        "pass_exp": true,
+        "frac_under_0p05": 0.0
+      }
+    },
+    "orcasound_lab": {
+      "n_events": 1029,
+      "baseline_event_level": {
+        "n": 1028,
+        "mean": 1.0248586325281326,
+        "std": 5.8265144967666345,
+        "ks_exp_stat": 0.7710675894898013,
+        "ks_exp_pval": 0.0,
+        "pass_exp": false,
+        "frac_under_0p05": 0.8151750972762646
+      },
+      "hawkes1_exp": {
+        "mu": 0.0042146976730226,
+        "alpha_branching": 0.7960500800116983,
+        "beta_per_h": 7.618715574388986,
+        "negloglik": 364.3021835175027,
+        "n": 1028,
+        "mean": 1.0009728155505726,
+        "std": 1.4259068480363546,
+        "ks_exp_stat": 0.1307700199621653,
+        "ks_exp_pval": 8.675088422151354e-16,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0029182879377431907
+      },
+      "hawkes2_exp": {
+        "mu": 0.0012456652543030057,
+        "a1": 0.489999999999999,
+        "b1_per_h": 8.683720250298052,
+        "a2": 0.16240412099394094,
+        "b2_per_h": 0.009412217843868514,
+        "negloglik": 258.5938038883045,
+        "n": 1028,
+        "mean": 0.7125633260428821,
+        "std": 1.0244010379850683,
+        "ks_exp_stat": 0.26592119269597436,
+        "ks_exp_pval": 1.157934298744156e-64,
+        "pass_exp": false,
+        "frac_under_0p05": 0.0038910505836575876
+      }
+    }
+  },
+  "pooled": {
+    "baseline_event_level": {
+      "n": 2085,
+      "mean": 0.9793193473294262,
+      "std": 5.011919391584318,
+      "ks_exp_stat": 0.7726948964830356,
+      "ks_exp_pval": 0.0,
+      "pass_exp": false,
+      "frac_under_0p05": 0.8163069544364508
+    },
+    "hawkes1_exp": {
+      "n": 2085,
+      "mean": 1.0019184982196268,
+      "std": 1.2809136428026267,
+      "ks_exp_stat": 0.1341991557626261,
+      "ks_exp_pval": 3.299724604201582e-33,
+      "pass_exp": false,
+      "frac_under_0p05": 0.0014388489208633094
+    },
+    "hawkes2_exp": {
+      "n": 2085,
+      "mean": 0.8527504844035234,
+      "std": 1.0659533597330308,
+      "ks_exp_stat": 0.18007157947473562,
+      "ks_exp_pval": 1.2611661976461446e-59,
+      "pass_exp": false,
+      "frac_under_0p05": 0.0019184652278177458
+    }
+  },
+  "option_D_bin_count_gof": {
+    "held_out_nb_pit_hourly": {
+      "held_out": true,
+      "family": "negbin",
+      "n": 66899,
+      "ks_stat": 0.0035581050265242053,
+      "ks_pval": 0.3644723881870062,
+      "calibrated": true
+    },
+    "held_out_poisson_pit_hourly": {
+      "held_out": true,
+      "family": "poisson",
+      "n": 66899,
+      "ks_stat": 0.016150782823329934,
+      "ks_pval": 1.3748381940799472e-15,
+      "calibrated": false
+    },
+    "overdispersion": {
+      "poisson_pearson_dispersion": 8.68543523323942,
+      "nb_dispersion_alpha": 88.11582947607083,
+      "poisson_pit_calibrated": false,
+      "nb_pit_calibrated": true,
+      "note": "Negative binomial (NB2) absorbs the count overdispersion that makes the Poisson PIT/time-rescaling gates fail on the single-station data."
+    },
+    "cv_mean_deviance_skill": 0.07779744481420332,
+    "cv_folds": "4/5",
+    "note": "Bin-count GOF is the held-out NB PIT (KS vs Uniform). This is the calibration of per-bin COUNTS, not event-level Exp(1) timing."
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "experiment": "diel_window_conditioning_of_salmon_lag",
+  "fitted_k_diel_active_window": {
+    "phase_lo": 0.405,
+    "phase_hi": 0.815,
+    "solar_hour_lo": 9.72,
+    "solar_hour_hi": 19.56,
+    "note": "active = fitted diel kernel log-rate contribution > 0 (mean-centered)"
+  },
+  "detection_split": {
+    "total": 1359,
+    "active_window": 802,
+    "inactive_window": 557,
+    "active_fraction": 0.5901
+  },
+  "diel_phase_hist_24": [
+    30,
+    24,
+    61,
+    48,
+    13,
+    27,
+    9,
+    32,
+    57,
+    51,
+    32,
+    45,
+    31,
+    105,
+    80,
+    97,
+    109,
+    90,
+    158,
+    65,
+    53,
+    19,
+    47,
+    76
+  ],
+  "run_index_source_by_year": {
+    "2020": "albion",
+    "2021": "albion",
+    "2022": "albion",
+    "2023": "albion",
+    "2024": "albion",
+    "2025": "albion",
+    "2026": "albion"
+  },
+  "n_days_span": 2088,
+  "scans": {
+    "full_unconditioned": {
+      "label": "full_unconditioned",
+      "n_days_with_presence": 163,
+      "best_lag_days": 20,
+      "best_correlation": 0.075692,
+      "best_abs_correlation": 0.075692,
+      "null_best_abs_mean": 0.08088,
+      "null_best_abs_std": 0.029205,
+      "p_value": 0.393606,
+      "beats_permutation_null": false
+    },
+    "active_window_only": {
+      "label": "active_window_only",
+      "n_days_with_presence": 105,
+      "best_lag_days": 18,
+      "best_correlation": 0.071853,
+      "best_abs_correlation": 0.071853,
+      "null_best_abs_mean": 0.071606,
+      "null_best_abs_std": 0.024922,
+      "p_value": 0.325674,
+      "beats_permutation_null": false
+    },
+    "inactive_window_only": {
+      "label": "inactive_window_only",
+      "n_days_with_presence": 82,
+      "best_lag_days": -26,
+      "best_correlation": -0.05675,
+      "best_abs_correlation": 0.05675,
+      "null_best_abs_mean": 0.067789,
+      "null_best_abs_std": 0.029758,
+      "p_value": 0.401598,
+      "beats_permutation_null": false
+    }
+  },
+  "generated_at": "2026-06-27T15:15:36.274901+00:00",
+  "temperature_survey": {
+    "s3_streams_present": [
+      "acoustic_detections",
+      "env_currents",
+      "env_water_level",
+      "noaa_ndbc_stdmet",
+      "salmon_run_index",
+      "station_uptime",
+      "spatial_grid_covariates",
+      "obis_verified",
+      "inaturalist_verified",
+      "orcahello_reviewed_detector_outcomes",
+      "ferry_effort_wa",
+      "ferry_effort_bc",
+      "protected_areas_ca",
+      "shoreline_distance"
+    ],
+    "s3_water_temperature_stream": "NONE (no dedicated SST/water_temperature stream; WTMP only inside noaa_ndbc_stdmet)",
+    "ingested_ndbc_stdmet": {
+      "station": "46088",
+      "span": [
+        "2026-05-08",
+        "2026-06-27"
+      ],
+      "records": 7215,
+      "role_in_fit": "detectability/noise metadata; not a fitted animal kernel"
+    },
+    "sources": {
+      "ndbc_46088_historical_wtmp": {
+        "station": "46088 New Dungeness (~48.33N,123.17W, E Strait of Juan de Fuca)",
+        "reachable_locally": true,
+        "dns_blocked": false,
+        "years_verified": [
+          2020,
+          2023,
+          2025
+        ],
+        "rows_per_year": 52000,
+        "cadence": "10 min",
+        "wtmp_valid_pct": 99,
+        "coverage": "full year-round 2020-2025+",
+        "dist_to_haro_km": "~20-24"
+      },
+      "coops_friday_harbor_9449880_water_temperature": {
+        "station": "9449880 Friday Harbor (48.545N,123.013W)",
+        "reachable_locally": true,
+        "dns_blocked": false,
+        "ranges_verified": [
+          "2020-01 winter",
+          "2021-05",
+          "2023-07",
+          "2026-06"
+        ],
+        "cadence": "6 min",
+        "coverage": "full year-round 2020-2026",
+        "dist_to_haro_km": "~9"
+      },
+      "coops_neah_bay_9443090": {
+        "water_temperature": true,
+        "note": "strait mouth, ~120km W; regional only"
+      }
+    },
+    "role_classification": {
+      "methodology_default_B2": "Level-0 detectability/effort term (weather/temperature), NOT an animal kernel",
+      "as_L0_detectability_effort": "defensible but weak/redundant: ambient noise + sea state (WSPD/WVHT, already ingested) dominate acoustic QC; temperature is a minor collinear addition. L0 detector already PASSES (ROC AUC 0.879).",
+      "as_animal_effect_modifier_s_space_k_salmon": "NOT defensible on this data: Salish-Sea SST over 2020-2026 is ~f(day-of-year), collinear with k_season (already withheld, no skill) and the prey pathway is already represented by k_salmon. Not separately identifiable from season.",
+      "verdict": "primarily L0 detectability/effort; NOT a standalone animal kernel without independent skill-beyond-season justification"
+    },
+    "go_no_go": "data availability GREEN (both feeds full-coverage, reachable locally, no EC2 needed); spike value NO-GO as an animal kernel (forbidden by B.2 + collinear with withheld k_season + would not move L2 burstiness/single-station or L3 absent-salmon-signal). Optional low-priority L0 detector-QC covariate only; not worth a dedicated build wave."
+  }
+}

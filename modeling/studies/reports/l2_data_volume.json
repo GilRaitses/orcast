@@ -1,0 +1,1420 @@
+{
+  "status": "ok",
+  "generated_at": "2026-06-27T15:17:59.835349+00:00",
+  "consistency_bar": 0.5,
+  "method": "Within-station split-half log-rate PSTH reliability vs detections-per-station. Rows Bernoulli-thinned to fraction f=N/N_full (co-thins detections + observation bins; rate unbiased, noise grows), then split in two and the two log-rate curves correlated; mean over draws. f=1 reproduces the gate's split-half ceiling. Reuses cross_station_consistency._log_rate_curve READ-ONLY. R(N)=N/(N+k) fit -> N*(R=0.5)=k. No fit, no store/model write, no promotion.",
+  "n_draws": 120,
+  "stations": [
+    "andrews_bay",
+    "haro_strait",
+    "north_san_juan_channel",
+    "orcasound_lab"
+  ],
+  "per_station_detections": {
+    "andrews_bay": 265,
+    "haro_strait": 761,
+    "north_san_juan_channel": 34,
+    "orcasound_lab": 1029
+  },
+  "exposure_stats": {
+    "andrews_bay": {
+      "min": 1.0,
+      "max": 1.0,
+      "mean": 1.0
+    },
+    "haro_strait": {
+      "min": 1.0,
+      "max": 1.0,
+      "mean": 1.0
+    },
+    "north_san_juan_channel": {
+      "min": 1.0,
+      "max": 1.0,
+      "mean": 1.0
+    },
+    "orcasound_lab": {
+      "min": 1.0,
+      "max": 1.0,
+      "mean": 1.0
+    }
+  },
+  "tide_model": "harmonic",
+  "tide_reconstruction_r2": 0.8470809929517612,
+  "dense_stations_analyzed": [
+    "orcasound_lab",
+    "haro_strait"
+  ],
+  "kernels": [
+    "diel",
+    "tide",
+    "lunar"
+  ],
+  "bin_grid": [
+    24,
+    12,
+    8
+  ],
+  "results": {
+    "orcasound_lab": {
+      "n_detections_full": 1029,
+      "n_bins": 50081,
+      "diel": {
+        "24": {
+          "curve": [
+            {
+              "n": 26.9,
+              "reliability": -0.0055,
+              "std": 0.2038
+            },
+            {
+              "n": 49.3,
+              "reliability": 0.0046,
+              "std": 0.2038
+            },
+            {
+              "n": 73.7,
+              "reliability": 0.0024,
+              "std": 0.2059
+            },
+            {
+              "n": 97.8,
+              "reliability": 0.0199,
+              "std": 0.189
+            },
+            {
+              "n": 152.0,
+              "reliability": 0.0243,
+              "std": 0.2147
+            },
+            {
+              "n": 194.4,
+              "reliability": 0.0342,
+              "std": 0.2222
+            },
+            {
+              "n": 306.6,
+              "reliability": 0.0346,
+              "std": 0.2035
+            },
+            {
+              "n": 399.3,
+              "reliability": -0.0325,
+              "std": 0.1765
+            },
+            {
+              "n": 500.6,
+              "reliability": -0.029,
+              "std": 0.1575
+            },
+            {
+              "n": 596.4,
+              "reliability": 0.0035,
+              "std": 0.1443
+            },
+            {
+              "n": 697.7,
+              "reliability": 0.0031,
+              "std": 0.1782
+            },
+            {
+              "n": 804.4,
+              "reliability": 0.0424,
+              "std": 0.1707
+            },
+            {
+              "n": 901.2,
+              "reliability": 0.0093,
+              "std": 0.1569
+            },
+            {
+              "n": 996.9,
+              "reliability": 0.0446,
+              "std": 0.1486
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.0823,
+              "std": 0.1363
+            }
+          ],
+          "reliability_at_full_n": 0.0823,
+          "saturating_k_detections_for_0p5": 21880.0,
+          "model_free_crossing_n": null
+        },
+        "12": {
+          "curve": [
+            {
+              "n": 24.0,
+              "reliability": 0.0136,
+              "std": 0.3092
+            },
+            {
+              "n": 53.1,
+              "reliability": 0.0368,
+              "std": 0.3116
+            },
+            {
+              "n": 77.0,
+              "reliability": 0.0155,
+              "std": 0.3503
+            },
+            {
+              "n": 101.3,
+              "reliability": 0.034,
+              "std": 0.2729
+            },
+            {
+              "n": 153.7,
+              "reliability": 0.0704,
+              "std": 0.2858
+            },
+            {
+              "n": 198.9,
+              "reliability": 0.0381,
+              "std": 0.3081
+            },
+            {
+              "n": 302.3,
+              "reliability": 0.0843,
+              "std": 0.2867
+            },
+            {
+              "n": 396.2,
+              "reliability": 0.1426,
+              "std": 0.2668
+            },
+            {
+              "n": 496.6,
+              "reliability": 0.1936,
+              "std": 0.2511
+            },
+            {
+              "n": 600.2,
+              "reliability": 0.2485,
+              "std": 0.2591
+            },
+            {
+              "n": 696.4,
+              "reliability": 0.2969,
+              "std": 0.2031
+            },
+            {
+              "n": 800.4,
+              "reliability": 0.3215,
+              "std": 0.1969
+            },
+            {
+              "n": 904.2,
+              "reliability": 0.37,
+              "std": 0.2146
+            },
+            {
+              "n": 1001.9,
+              "reliability": 0.3861,
+              "std": 0.1908
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.423,
+              "std": 0.1989
+            }
+          ],
+          "reliability_at_full_n": 0.423,
+          "saturating_k_detections_for_0p5": 1750.0,
+          "model_free_crossing_n": null
+        },
+        "8": {
+          "curve": [
+            {
+              "n": 25.4,
+              "reliability": 0.0347,
+              "std": 0.3407
+            },
+            {
+              "n": 49.6,
+              "reliability": 0.0373,
+              "std": 0.391
+            },
+            {
+              "n": 72.8,
+              "reliability": -0.0125,
+              "std": 0.3648
+            },
+            {
+              "n": 97.6,
+              "reliability": 0.024,
+              "std": 0.3651
+            },
+            {
+              "n": 153.6,
+              "reliability": 0.075,
+              "std": 0.3706
+            },
+            {
+              "n": 200.2,
+              "reliability": 0.1625,
+              "std": 0.3312
+            },
+            {
+              "n": 295.1,
+              "reliability": 0.087,
+              "std": 0.335
+            },
+            {
+              "n": 396.2,
+              "reliability": 0.1412,
+              "std": 0.337
+            },
+            {
+              "n": 492.9,
+              "reliability": 0.2215,
+              "std": 0.3081
+            },
+            {
+              "n": 597.6,
+              "reliability": 0.2543,
+              "std": 0.3013
+            },
+            {
+              "n": 698.9,
+              "reliability": 0.2655,
+              "std": 0.2788
+            },
+            {
+              "n": 812.1,
+              "reliability": 0.2963,
+              "std": 0.2339
+            },
+            {
+              "n": 895.8,
+              "reliability": 0.355,
+              "std": 0.2488
+            },
+            {
+              "n": 1000.8,
+              "reliability": 0.3806,
+              "std": 0.241
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.4044,
+              "std": 0.2183
+            }
+          ],
+          "reliability_at_full_n": 0.4044,
+          "saturating_k_detections_for_0p5": 1760.0,
+          "model_free_crossing_n": null
+        }
+      },
+      "tide": {
+        "24": {
+          "curve": [
+            {
+              "n": 23.7,
+              "reliability": -0.0125,
+              "std": 0.1944
+            },
+            {
+              "n": 49.7,
+              "reliability": 0.04,
+              "std": 0.1982
+            },
+            {
+              "n": 75.1,
+              "reliability": 0.0367,
+              "std": 0.207
+            },
+            {
+              "n": 99.1,
+              "reliability": 0.0312,
+              "std": 0.2131
+            },
+            {
+              "n": 152.6,
+              "reliability": 0.0254,
+              "std": 0.1928
+            },
+            {
+              "n": 201.2,
+              "reliability": 0.025,
+              "std": 0.2396
+            },
+            {
+              "n": 299.3,
+              "reliability": -0.0049,
+              "std": 0.198
+            },
+            {
+              "n": 396.4,
+              "reliability": 0.0796,
+              "std": 0.2482
+            },
+            {
+              "n": 499.4,
+              "reliability": 0.0672,
+              "std": 0.2329
+            },
+            {
+              "n": 609.7,
+              "reliability": 0.0947,
+              "std": 0.2481
+            },
+            {
+              "n": 705.0,
+              "reliability": 0.1248,
+              "std": 0.2168
+            },
+            {
+              "n": 790.1,
+              "reliability": 0.1279,
+              "std": 0.2252
+            },
+            {
+              "n": 899.4,
+              "reliability": 0.1063,
+              "std": 0.2063
+            },
+            {
+              "n": 1001.7,
+              "reliability": 0.1001,
+              "std": 0.198
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.1627,
+              "std": 0.1601
+            }
+          ],
+          "reliability_at_full_n": 0.1627,
+          "saturating_k_detections_for_0p5": 6140.0,
+          "model_free_crossing_n": null
+        },
+        "12": {
+          "curve": [
+            {
+              "n": 24.9,
+              "reliability": 0.0141,
+              "std": 0.2879
+            },
+            {
+              "n": 49.9,
+              "reliability": 0.0429,
+              "std": 0.2851
+            },
+            {
+              "n": 73.9,
+              "reliability": -0.0057,
+              "std": 0.2921
+            },
+            {
+              "n": 100.8,
+              "reliability": 0.0323,
+              "std": 0.3027
+            },
+            {
+              "n": 146.9,
+              "reliability": 0.0431,
+              "std": 0.308
+            },
+            {
+              "n": 197.4,
+              "reliability": -0.0007,
+              "std": 0.3101
+            },
+            {
+              "n": 301.3,
+              "reliability": -0.0687,
+              "std": 0.2823
+            },
+            {
+              "n": 400.8,
+              "reliability": -0.1141,
+              "std": 0.3027
+            },
+            {
+              "n": 499.1,
+              "reliability": -0.1476,
+              "std": 0.3245
+            },
+            {
+              "n": 594.5,
+              "reliability": -0.2102,
+              "std": 0.2751
+            },
+            {
+              "n": 698.3,
+              "reliability": -0.2813,
+              "std": 0.2625
+            },
+            {
+              "n": 797.9,
+              "reliability": -0.2573,
+              "std": 0.2523
+            },
+            {
+              "n": 901.8,
+              "reliability": -0.4192,
+              "std": 0.191
+            },
+            {
+              "n": 1001.2,
+              "reliability": -0.4843,
+              "std": 0.1682
+            },
+            {
+              "n": 1029.0,
+              "reliability": -0.5058,
+              "std": 0.1133
+            }
+          ],
+          "reliability_at_full_n": -0.5058,
+          "saturating_k_detections_for_0p5": 2740.0,
+          "model_free_crossing_n": null
+        },
+        "8": {
+          "curve": [
+            {
+              "n": 25.5,
+              "reliability": 0.0964,
+              "std": 0.4276
+            },
+            {
+              "n": 48.5,
+              "reliability": 0.0327,
+              "std": 0.3763
+            },
+            {
+              "n": 73.5,
+              "reliability": 0.0223,
+              "std": 0.3834
+            },
+            {
+              "n": 102.7,
+              "reliability": 0.0297,
+              "std": 0.3719
+            },
+            {
+              "n": 152.3,
+              "reliability": 0.0899,
+              "std": 0.3782
+            },
+            {
+              "n": 195.7,
+              "reliability": -0.0147,
+              "std": 0.4026
+            },
+            {
+              "n": 302.9,
+              "reliability": 0.0228,
+              "std": 0.4123
+            },
+            {
+              "n": 398.2,
+              "reliability": 0.0201,
+              "std": 0.4191
+            },
+            {
+              "n": 502.8,
+              "reliability": -0.0768,
+              "std": 0.3725
+            },
+            {
+              "n": 603.3,
+              "reliability": -0.1152,
+              "std": 0.4009
+            },
+            {
+              "n": 704.8,
+              "reliability": -0.0448,
+              "std": 0.3882
+            },
+            {
+              "n": 799.2,
+              "reliability": 0.0177,
+              "std": 0.3902
+            },
+            {
+              "n": 897.5,
+              "reliability": -0.0754,
+              "std": 0.336
+            },
+            {
+              "n": 1001.8,
+              "reliability": -0.1178,
+              "std": 0.2573
+            },
+            {
+              "n": 1029.0,
+              "reliability": -0.0911,
+              "std": 0.2635
+            }
+          ],
+          "reliability_at_full_n": -0.0911,
+          "saturating_k_detections_for_0p5": 16890.0,
+          "model_free_crossing_n": null
+        }
+      },
+      "lunar": {
+        "24": {
+          "curve": [
+            {
+              "n": 24.7,
+              "reliability": -0.0108,
+              "std": 0.1896
+            },
+            {
+              "n": 50.0,
+              "reliability": 0.0354,
+              "std": 0.2183
+            },
+            {
+              "n": 73.5,
+              "reliability": 0.0675,
+              "std": 0.1827
+            },
+            {
+              "n": 100.2,
+              "reliability": 0.0953,
+              "std": 0.208
+            },
+            {
+              "n": 153.6,
+              "reliability": 0.0715,
+              "std": 0.2061
+            },
+            {
+              "n": 204.7,
+              "reliability": 0.0835,
+              "std": 0.2174
+            },
+            {
+              "n": 299.9,
+              "reliability": 0.1389,
+              "std": 0.204
+            },
+            {
+              "n": 402.7,
+              "reliability": 0.1326,
+              "std": 0.2285
+            },
+            {
+              "n": 502.1,
+              "reliability": 0.1217,
+              "std": 0.2087
+            },
+            {
+              "n": 593.2,
+              "reliability": 0.1763,
+              "std": 0.2211
+            },
+            {
+              "n": 701.0,
+              "reliability": 0.2192,
+              "std": 0.1924
+            },
+            {
+              "n": 806.7,
+              "reliability": 0.2508,
+              "std": 0.1846
+            },
+            {
+              "n": 900.3,
+              "reliability": 0.3008,
+              "std": 0.1719
+            },
+            {
+              "n": 1001.9,
+              "reliability": 0.3753,
+              "std": 0.1776
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.4106,
+              "std": 0.1721
+            }
+          ],
+          "reliability_at_full_n": 0.4106,
+          "saturating_k_detections_for_0p5": 2090.0,
+          "model_free_crossing_n": null
+        },
+        "12": {
+          "curve": [
+            {
+              "n": 23.7,
+              "reliability": 0.0145,
+              "std": 0.3239
+            },
+            {
+              "n": 48.8,
+              "reliability": 0.0328,
+              "std": 0.2808
+            },
+            {
+              "n": 77.3,
+              "reliability": 0.0375,
+              "std": 0.277
+            },
+            {
+              "n": 94.6,
+              "reliability": 0.0096,
+              "std": 0.3287
+            },
+            {
+              "n": 153.8,
+              "reliability": 0.0534,
+              "std": 0.3091
+            },
+            {
+              "n": 199.8,
+              "reliability": 0.0611,
+              "std": 0.3317
+            },
+            {
+              "n": 303.1,
+              "reliability": 0.1398,
+              "std": 0.2863
+            },
+            {
+              "n": 404.6,
+              "reliability": 0.2654,
+              "std": 0.2495
+            },
+            {
+              "n": 494.0,
+              "reliability": 0.2992,
+              "std": 0.2474
+            },
+            {
+              "n": 602.9,
+              "reliability": 0.3722,
+              "std": 0.2368
+            },
+            {
+              "n": 702.4,
+              "reliability": 0.402,
+              "std": 0.2099
+            },
+            {
+              "n": 800.9,
+              "reliability": 0.458,
+              "std": 0.1794
+            },
+            {
+              "n": 902.9,
+              "reliability": 0.5027,
+              "std": 0.1775
+            },
+            {
+              "n": 997.5,
+              "reliability": 0.5424,
+              "std": 0.1633
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.5385,
+              "std": 0.1575
+            }
+          ],
+          "reliability_at_full_n": 0.5385,
+          "saturating_k_detections_for_0p5": 1070.0,
+          "model_free_crossing_n": 896.7567122001155
+        },
+        "8": {
+          "curve": [
+            {
+              "n": 26.7,
+              "reliability": 0.0239,
+              "std": 0.3553
+            },
+            {
+              "n": 49.1,
+              "reliability": 0.0143,
+              "std": 0.4002
+            },
+            {
+              "n": 74.4,
+              "reliability": 0.0709,
+              "std": 0.3909
+            },
+            {
+              "n": 98.9,
+              "reliability": 0.068,
+              "std": 0.3584
+            },
+            {
+              "n": 146.3,
+              "reliability": 0.088,
+              "std": 0.4045
+            },
+            {
+              "n": 200.6,
+              "reliability": 0.11,
+              "std": 0.3351
+            },
+            {
+              "n": 298.7,
+              "reliability": 0.1832,
+              "std": 0.3942
+            },
+            {
+              "n": 403.8,
+              "reliability": 0.2249,
+              "std": 0.3184
+            },
+            {
+              "n": 499.4,
+              "reliability": 0.2497,
+              "std": 0.3245
+            },
+            {
+              "n": 598.3,
+              "reliability": 0.311,
+              "std": 0.2989
+            },
+            {
+              "n": 695.9,
+              "reliability": 0.3245,
+              "std": 0.31
+            },
+            {
+              "n": 798.0,
+              "reliability": 0.4016,
+              "std": 0.2577
+            },
+            {
+              "n": 900.2,
+              "reliability": 0.4137,
+              "std": 0.2733
+            },
+            {
+              "n": 998.4,
+              "reliability": 0.412,
+              "std": 0.2297
+            },
+            {
+              "n": 1029.0,
+              "reliability": 0.49,
+              "std": 0.204
+            }
+          ],
+          "reliability_at_full_n": 0.49,
+          "saturating_k_detections_for_0p5": 1320.0,
+          "model_free_crossing_n": null
+        }
+      }
+    },
+    "haro_strait": {
+      "n_detections_full": 761,
+      "n_bins": 5361,
+      "diel": {
+        "24": {
+          "curve": [
+            {
+              "n": 26.4,
+              "reliability": -0.0269,
+              "std": 0.1862
+            },
+            {
+              "n": 52.7,
+              "reliability": 0.0471,
+              "std": 0.2213
+            },
+            {
+              "n": 75.7,
+              "reliability": 0.0038,
+              "std": 0.1932
+            },
+            {
+              "n": 97.9,
+              "reliability": 0.0282,
+              "std": 0.196
+            },
+            {
+              "n": 155.8,
+              "reliability": 0.0243,
+              "std": 0.1975
+            },
+            {
+              "n": 197.4,
+              "reliability": 0.0065,
+              "std": 0.2164
+            },
+            {
+              "n": 306.3,
+              "reliability": -0.029,
+              "std": 0.1864
+            },
+            {
+              "n": 404.8,
+              "reliability": 0.0085,
+              "std": 0.2154
+            },
+            {
+              "n": 496.1,
+              "reliability": 0.0142,
+              "std": 0.1734
+            },
+            {
+              "n": 592.6,
+              "reliability": 0.0243,
+              "std": 0.1441
+            },
+            {
+              "n": 699.7,
+              "reliability": 0.0759,
+              "std": 0.1525
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.0567,
+              "std": 0.1558
+            }
+          ],
+          "reliability_at_full_n": 0.0567,
+          "saturating_k_detections_for_0p5": 13920.0,
+          "model_free_crossing_n": null
+        },
+        "12": {
+          "curve": [
+            {
+              "n": 24.4,
+              "reliability": 0.054,
+              "std": 0.3409
+            },
+            {
+              "n": 49.9,
+              "reliability": 0.0568,
+              "std": 0.274
+            },
+            {
+              "n": 78.7,
+              "reliability": 0.0168,
+              "std": 0.2752
+            },
+            {
+              "n": 102.2,
+              "reliability": 0.0084,
+              "std": 0.2747
+            },
+            {
+              "n": 148.6,
+              "reliability": 0.0175,
+              "std": 0.2787
+            },
+            {
+              "n": 205.8,
+              "reliability": 0.0355,
+              "std": 0.3073
+            },
+            {
+              "n": 302.1,
+              "reliability": 0.0673,
+              "std": 0.2741
+            },
+            {
+              "n": 400.7,
+              "reliability": 0.1959,
+              "std": 0.2439
+            },
+            {
+              "n": 502.6,
+              "reliability": 0.2413,
+              "std": 0.2331
+            },
+            {
+              "n": 597.8,
+              "reliability": 0.2724,
+              "std": 0.2193
+            },
+            {
+              "n": 699.4,
+              "reliability": 0.344,
+              "std": 0.2215
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.3785,
+              "std": 0.1862
+            }
+          ],
+          "reliability_at_full_n": 0.3785,
+          "saturating_k_detections_for_0p5": 1650.0,
+          "model_free_crossing_n": null
+        },
+        "8": {
+          "curve": [
+            {
+              "n": 25.1,
+              "reliability": 0.0124,
+              "std": 0.3771
+            },
+            {
+              "n": 52.4,
+              "reliability": 0.0124,
+              "std": 0.4148
+            },
+            {
+              "n": 72.5,
+              "reliability": -0.0006,
+              "std": 0.3542
+            },
+            {
+              "n": 101.9,
+              "reliability": 0.0669,
+              "std": 0.4082
+            },
+            {
+              "n": 149.2,
+              "reliability": 0.0911,
+              "std": 0.3805
+            },
+            {
+              "n": 204.4,
+              "reliability": 0.0645,
+              "std": 0.3773
+            },
+            {
+              "n": 295.0,
+              "reliability": 0.1343,
+              "std": 0.3221
+            },
+            {
+              "n": 395.4,
+              "reliability": 0.2049,
+              "std": 0.3229
+            },
+            {
+              "n": 509.2,
+              "reliability": 0.2352,
+              "std": 0.2877
+            },
+            {
+              "n": 594.0,
+              "reliability": 0.2684,
+              "std": 0.2623
+            },
+            {
+              "n": 698.6,
+              "reliability": 0.2921,
+              "std": 0.2588
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.2911,
+              "std": 0.2456
+            }
+          ],
+          "reliability_at_full_n": 0.2911,
+          "saturating_k_detections_for_0p5": 1730.0,
+          "model_free_crossing_n": null
+        }
+      },
+      "tide": {
+        "24": {
+          "curve": [
+            {
+              "n": 28.2,
+              "reliability": 0.0104,
+              "std": 0.2168
+            },
+            {
+              "n": 49.9,
+              "reliability": 0.003,
+              "std": 0.2138
+            },
+            {
+              "n": 75.2,
+              "reliability": 0.0292,
+              "std": 0.21
+            },
+            {
+              "n": 95.4,
+              "reliability": 0.0716,
+              "std": 0.2015
+            },
+            {
+              "n": 150.4,
+              "reliability": 0.0472,
+              "std": 0.213
+            },
+            {
+              "n": 199.3,
+              "reliability": 0.065,
+              "std": 0.1976
+            },
+            {
+              "n": 305.9,
+              "reliability": 0.028,
+              "std": 0.1963
+            },
+            {
+              "n": 398.5,
+              "reliability": 0.0422,
+              "std": 0.2002
+            },
+            {
+              "n": 504.4,
+              "reliability": -0.0139,
+              "std": 0.1505
+            },
+            {
+              "n": 601.0,
+              "reliability": 0.0243,
+              "std": 0.1783
+            },
+            {
+              "n": 693.7,
+              "reliability": 0.0314,
+              "std": 0.172
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.0519,
+              "std": 0.1777
+            }
+          ],
+          "reliability_at_full_n": 0.0519,
+          "saturating_k_detections_for_0p5": 12580.0,
+          "model_free_crossing_n": null
+        },
+        "12": {
+          "curve": [
+            {
+              "n": 22.7,
+              "reliability": 0.041,
+              "std": 0.3007
+            },
+            {
+              "n": 54.0,
+              "reliability": 0.0765,
+              "std": 0.3078
+            },
+            {
+              "n": 73.2,
+              "reliability": 0.0879,
+              "std": 0.2879
+            },
+            {
+              "n": 102.6,
+              "reliability": 0.1065,
+              "std": 0.3148
+            },
+            {
+              "n": 153.4,
+              "reliability": 0.0674,
+              "std": 0.3152
+            },
+            {
+              "n": 200.6,
+              "reliability": 0.0263,
+              "std": 0.2644
+            },
+            {
+              "n": 295.4,
+              "reliability": 0.0729,
+              "std": 0.3149
+            },
+            {
+              "n": 398.4,
+              "reliability": 0.1099,
+              "std": 0.3184
+            },
+            {
+              "n": 505.5,
+              "reliability": 0.103,
+              "std": 0.3127
+            },
+            {
+              "n": 603.0,
+              "reliability": 0.1458,
+              "std": 0.2785
+            },
+            {
+              "n": 699.5,
+              "reliability": 0.1621,
+              "std": 0.2418
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.1178,
+              "std": 0.1808
+            }
+          ],
+          "reliability_at_full_n": 0.1178,
+          "saturating_k_detections_for_0p5": 3840.0,
+          "model_free_crossing_n": null
+        },
+        "8": {
+          "curve": [
+            {
+              "n": 26.9,
+              "reliability": -0.0028,
+              "std": 0.4079
+            },
+            {
+              "n": 49.5,
+              "reliability": 0.0267,
+              "std": 0.3742
+            },
+            {
+              "n": 69.9,
+              "reliability": 0.1145,
+              "std": 0.4054
+            },
+            {
+              "n": 98.1,
+              "reliability": 0.0817,
+              "std": 0.3797
+            },
+            {
+              "n": 156.8,
+              "reliability": 0.1209,
+              "std": 0.4342
+            },
+            {
+              "n": 201.5,
+              "reliability": 0.0673,
+              "std": 0.377
+            },
+            {
+              "n": 306.1,
+              "reliability": 0.1236,
+              "std": 0.3857
+            },
+            {
+              "n": 400.5,
+              "reliability": 0.1991,
+              "std": 0.3642
+            },
+            {
+              "n": 498.1,
+              "reliability": 0.1387,
+              "std": 0.3539
+            },
+            {
+              "n": 601.4,
+              "reliability": 0.2148,
+              "std": 0.324
+            },
+            {
+              "n": 700.5,
+              "reliability": 0.16,
+              "std": 0.254
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.1943,
+              "std": 0.2247
+            }
+          ],
+          "reliability_at_full_n": 0.1943,
+          "saturating_k_detections_for_0p5": 2540.0,
+          "model_free_crossing_n": null
+        }
+      },
+      "lunar": {
+        "24": {
+          "curve": [
+            {
+              "n": 24.4,
+              "reliability": 0.0292,
+              "std": 0.2395
+            },
+            {
+              "n": 48.6,
+              "reliability": 0.0574,
+              "std": 0.2197
+            },
+            {
+              "n": 71.7,
+              "reliability": 0.0247,
+              "std": 0.2037
+            },
+            {
+              "n": 100.0,
+              "reliability": 0.1263,
+              "std": 0.2079
+            },
+            {
+              "n": 150.8,
+              "reliability": 0.1424,
+              "std": 0.1863
+            },
+            {
+              "n": 204.9,
+              "reliability": 0.197,
+              "std": 0.1709
+            },
+            {
+              "n": 304.8,
+              "reliability": 0.2921,
+              "std": 0.1726
+            },
+            {
+              "n": 398.0,
+              "reliability": 0.3833,
+              "std": 0.1929
+            },
+            {
+              "n": 504.7,
+              "reliability": 0.4103,
+              "std": 0.1759
+            },
+            {
+              "n": 596.2,
+              "reliability": 0.461,
+              "std": 0.1863
+            },
+            {
+              "n": 701.2,
+              "reliability": 0.486,
+              "std": 0.1231
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.4604,
+              "std": 0.1014
+            }
+          ],
+          "reliability_at_full_n": 0.4604,
+          "saturating_k_detections_for_0p5": 760.0,
+          "model_free_crossing_n": null
+        },
+        "12": {
+          "curve": [
+            {
+              "n": 25.9,
+              "reliability": 0.0592,
+              "std": 0.3508
+            },
+            {
+              "n": 48.5,
+              "reliability": 0.0673,
+              "std": 0.2988
+            },
+            {
+              "n": 69.8,
+              "reliability": 0.053,
+              "std": 0.2742
+            },
+            {
+              "n": 96.9,
+              "reliability": 0.0543,
+              "std": 0.2772
+            },
+            {
+              "n": 151.6,
+              "reliability": 0.1028,
+              "std": 0.3134
+            },
+            {
+              "n": 203.9,
+              "reliability": 0.0988,
+              "std": 0.2991
+            },
+            {
+              "n": 301.3,
+              "reliability": 0.2911,
+              "std": 0.324
+            },
+            {
+              "n": 396.1,
+              "reliability": 0.3212,
+              "std": 0.2401
+            },
+            {
+              "n": 500.6,
+              "reliability": 0.4211,
+              "std": 0.2408
+            },
+            {
+              "n": 602.5,
+              "reliability": 0.5521,
+              "std": 0.2002
+            },
+            {
+              "n": 697.9,
+              "reliability": 0.6157,
+              "std": 0.178
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.648,
+              "std": 0.1394
+            }
+          ],
+          "reliability_at_full_n": 0.648,
+          "saturating_k_detections_for_0p5": 655.0,
+          "model_free_crossing_n": 561.9926129160668
+        },
+        "8": {
+          "curve": [
+            {
+              "n": 24.3,
+              "reliability": 0.0091,
+              "std": 0.3534
+            },
+            {
+              "n": 48.2,
+              "reliability": 0.0552,
+              "std": 0.4074
+            },
+            {
+              "n": 75.0,
+              "reliability": 0.0845,
+              "std": 0.3572
+            },
+            {
+              "n": 95.6,
+              "reliability": 0.0533,
+              "std": 0.4051
+            },
+            {
+              "n": 149.5,
+              "reliability": 0.0732,
+              "std": 0.3714
+            },
+            {
+              "n": 200.2,
+              "reliability": 0.1727,
+              "std": 0.3778
+            },
+            {
+              "n": 300.6,
+              "reliability": 0.3164,
+              "std": 0.2867
+            },
+            {
+              "n": 395.1,
+              "reliability": 0.3671,
+              "std": 0.3039
+            },
+            {
+              "n": 504.9,
+              "reliability": 0.4823,
+              "std": 0.2175
+            },
+            {
+              "n": 598.5,
+              "reliability": 0.5331,
+              "std": 0.2034
+            },
+            {
+              "n": 700.0,
+              "reliability": 0.5362,
+              "std": 0.223
+            },
+            {
+              "n": 761.0,
+              "reliability": 0.5868,
+              "std": 0.1756
+            }
+          ],
+          "reliability_at_full_n": 0.5868,
+          "saturating_k_detections_for_0p5": 653.0,
+          "model_free_crossing_n": 537.5633879341217
+        }
+      }
+    }
+  }
+}
