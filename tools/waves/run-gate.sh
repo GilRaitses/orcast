@@ -48,6 +48,7 @@ Wave IDs:
   h1-demo     Agent-automation demo screenshots (needs .agent-credentials.env)
   selfhost-preflight  GP Phase A static preflight (secret scan + syntax + .ddb verify)
   selfhost-gate       GP Phase B live battery (edge/proxy authz + co-tenant + SSH SG)
+  copy-gate           Prose gate: hard-fail em/en dash + arrows, report semicolons/colons/voice (.cca/PROSE_GATE_RULES.md)
 
 Environment (optional):
   ORCAST_WEB_BASE, ORCAST_BACKEND_URL, ORCAST_CLOUDFRONT_URL
@@ -186,6 +187,9 @@ case "$WAVE" in
     ;;
   selfhost-gate|shgate)
     run "$GATES/selfhost-gate.sh"
+    ;;
+  copy-gate|prose-gate|copygate)
+    run "$GATES/copy-gate.sh"
     ;;
   *)
     echo "Unknown wave id: $1"

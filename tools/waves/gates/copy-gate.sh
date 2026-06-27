@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# orcast copy/prose gate. Enforces .cca/PROSE_GATE_RULES.md on user-facing and
+# audience-facing copy. HARD-fails the unambiguous ornament patterns (em/en dash,
+# arrows) and REPORTS the context-dependent ones (semicolons, colons, parentheses
+# in prose, single-author voice, ', and', hedging, meta-framing) for review.
+#
+# Allowlist: .cca/prose_gate_allowlist.txt holds `path:line` or bare substrings to
+# skip (strictly-required exceptions: machine colons, LaTeX/code syntax, etc).
+set -u
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+cd "$ROOT"
+ALLOW=".cca/prose_gate_allowlist.txt"
+[ -f "$ALLOW" ] || ALLOW=/dev/null
+
+# Surfaces. Class A frontend + class B docs/outreach. Backend prose strings are
+# reported separately (mixed with docstrings) and triaged in the CX inventory.
+A_GLOBS=(web/app web/lib)
+B_GLOBS=(docs/whitepaper docs/whitepaper2 docs/devpost .cca/outreach_drafts docs/field-campaign)
+EXT='--include=*.tsx --include=*.ts --include=*.md --include=*.tex --include=*.mdx'
+
+scan() { # single fixed-string-or-BRE pattern
+  grep -rIn $EXT -e "$1" "${A_GLOBS[@]}" "${B_GLOBS[@]}" 2>/dev/null \
+    | grep -vF -f "$ALLOW" 2>/dev/null
+}
+count() { printf '%s' "$1" | grep -c . ; }
+
+hard_fail=0
+section() { echo; echo "== $1 =="; }
+
+# HARD: em dash is the unambiguous prose ornament the gate enforces. en dash and
+# arrows are REPORT (en dash has legit numeric ranges; => is JS syntax).
+section "HARD: em dash (—)"
+emd="$(scan '—')"; n_emd=$(count "$emd"); echo "count=$n_emd"; printf '%s\n' "$emd" | head -8
+[ "$n_emd" -gt 0 ] && hard_fail=1
+
+report() { local r; r="$(scan "$1")"; echo "$2: $(count "$r")"; }
+section "REPORT (review in CX inventory; not auto-fail)"
+report '–' "en-dash (incl legit numeric ranges)"
+report '→' "unicode arrow"
+report ';' "semicolons"
+report ', and' "oxford-comma (, and)"
+report '\bwe\b' "voice: we"
+report '\bour\b' "voice: our"
+report '\bmight\b\|\bcould\b\|\bseems\b' "hedging"
+report 'In this section we\|We propose\|This paper contributes\|Our approach' "meta-framing"
+
+echo
+if [ "$hard_fail" -ne 0 ]; then
+  echo "copy-gate: FAIL ($n_emd em-dash in user-facing copy; replace with period/comma or restructure)"
+  exit 1
+fi
+echo "copy-gate: PASS (no em-dash ornament); review REPORT counts above for CX remediation"
+exit 0

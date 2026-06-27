@@ -1,0 +1,50 @@
+---
+description: orcast prose gate for user-facing and audience-facing copy. No em/en dashes as ornament, no semicolons, no header/title/inline or decorative colons, no parentheses in prose, no arrows, single-author voice. Full canon in .cca/PROSE_GATE_RULES.md.
+globs:
+  - web/app/**
+  - web/lib/**
+  - docs/whitepaper/**
+  - docs/whitepaper2/**
+  - docs/devpost/**
+  - .cca/outreach_drafts/**
+alwaysApply: false
+---
+
+# orcast prose gate
+
+When writing or editing user-facing copy (web pages, components, default and
+sample text, API messages, template replies, gate and glossary labels) or
+audience-facing documents (whitepapers, demo scripts, voiceover narration, the
+presentation deck, devpost copy, outreach), follow `.cca/PROSE_GATE_RULES.md`.
+
+## Hard rules (do not emit)
+
+- No em dash or en dash as ornament: `—`, `–`, `--`. Use a period or a comma, or
+  restructure. Never substitute a colon or parentheses.
+- No semicolons. Split into sentences or use "and".
+- No colons in headers, titles, or inline, and no decorative `Label: body` colons
+  in prose. Allowed only where strictly required by machine format (clock times,
+  URLs, code, JSON or config key-values).
+- No parentheses in running prose, headings, subheads, or table cells. Use "such
+  as", "including", "for example", or separate sentences.
+- No arrows `→`, `=>`, `-->`. Use "leads to", "then", or "so that".
+- First-person singular only. No "we", "our", "us", or team framing.
+- No smug narrative devices or double-dash (filler, synthetic contrast, false
+  authority). No meta-framing ("In this section we", "We propose"). No passive
+  results voice. No hedging "might", "could", "seems". No bullet lists inside
+  body prose.
+- No forbidden claims (see `.cca/CLAIM_BOUNDARIES.md`).
+
+## Flag for review
+
+- `, and` Oxford comma. Keep only where a list genuinely needs it.
+
+## Exceptions
+
+Markdown, LaTeX, and code syntax; machine-required colons (times, URLs, code,
+config key-values); hyphens in established compounds; file paths in operator-only
+text; scientific-paper citation and abbreviation style inside whitepaper `.tex`.
+
+## Out of scope
+
+Code comments and docstrings, and LLM system-prompt instruction text.
