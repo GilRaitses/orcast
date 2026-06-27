@@ -1,4 +1,4 @@
-# AWS Summit NYC — booth demo script
+# AWS Summit NYC, booth demo script
 
 **Duration:** 2 minutes · **Audience:** AWS visitors, potential partners, technical reviewers
 
@@ -25,8 +25,8 @@ Show landing page `/`. Point out the four live demo cards and the demo disclaime
 
 - Navigate to `/reports`
 - Set confidence slider → **Generate report**
-- Point out named places (Friday Harbor, Lime Kiln, Rosario Strait) — not decimal coordinates
-- Mention CSV download as an optional export for field partners — not the hero moment
+- Point out named places (Friday Harbor, Lime Kiln, Rosario Strait), not decimal coordinates
+- Mention CSV download as an optional export for field partners, not the hero moment
 
 ### 2. Historical sightings (45 sec)
 
@@ -44,8 +44,8 @@ Show landing page `/`. Point out the four live demo cards and the demo disclaime
 
 - The chat-style map demos are scripted. The report page and CSV export call the live API on AWS.
 - Map demos (`/live-demo`, `/agent-demo`) use scripted UI; report summaries are not from a chatbot
-- `/realtime` shows recent sightings and a static hydrophone catalog — no live acoustic stream
-- Legacy Cloudflare prediction/analysis/DTAG routes return **410 Gone** on AWS — use probability reports (see [docs/API.md](../API.md))
+- `/realtime` shows recent sightings and a static hydrophone catalog, no live acoustic stream
+- Legacy Cloudflare prediction/analysis/DTAG routes return **410 Gone** on AWS, use probability reports (see [docs/API.md](../API.md))
 - Live iNaturalist ingestion may be disabled; OBIS + NOAA + hydrophones are core
 
 ## Offline fallback
@@ -61,7 +61,7 @@ cd orcast-angular && npm start
 ## After the summit
 
 ```bash
-bash scripts/teardown.sh   # optional — stop AWS charges
+bash scripts/teardown.sh   # optional, stop AWS charges
 ```
 
 See `FIELD_WEEK_RUNBOOK.md` for August prep.

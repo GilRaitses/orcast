@@ -1,11 +1,11 @@
-# GitHub release note — draft v1
+# GitHub release note, draft v1
 
 **Tag:** v0.1.0-hackathon  
 **Status:** Draft. Review against CLAIM_BOUNDARIES.md before publishing.
 
 ---
 
-## orcast v0.1.0 — AWS + Vercel hackathon submission
+## orcast v0.1.0, AWS + Vercel hackathon submission
 
 Gate-bounded encounter forecasting and community platform for field researchers.
 
@@ -19,12 +19,12 @@ Community shore sightings enter a quarantine queue. A WorkOS-authenticated revie
 
 ### Architecture
 
-- **Vercel** — Next.js frontend with agent-automation demo path
-- **App Runner** — FastAPI backend with Central Casting managed agents
-- **DynamoDB** — 9 on-demand tables (system of record)
-- **S3** — time-series + fitted kernel artifacts + evidence uploads
-- **Step Functions** — fit / gate / promote pipeline
-- **Amazon Bedrock** — sighting check narration (Claude Haiku)
+- **Vercel**, Next.js frontend with agent-automation demo path
+- **App Runner**, FastAPI backend with Central Casting managed agents
+- **DynamoDB**, 9 on-demand tables (system of record)
+- **S3**, time-series + fitted kernel artifacts + evidence uploads
+- **Step Functions**, fit / gate / promote pipeline
+- **Amazon Bedrock**, sighting check narration (Claude Haiku)
 
 ### Grounding quality benchmark
 
