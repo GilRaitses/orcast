@@ -12,10 +12,15 @@ import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
-from ..auth import ReviewerIdentity, require_signed_in
+from ..auth import ReviewerIdentity, require_api_key, require_signed_in
 from ..config import settings
 
-router = APIRouter()
+# require_api_key at the router level closes the public-tunnel bypass: the backend
+# is directly reachable at orcast-api.aimez.ai, and require_signed_in only checks a
+# spoofable X-ORCAST-Reviewer-Id header. The Vercel proxy injects X-ORCAST-Key on
+# every forwarded request, so the legitimate path is unaffected; direct callers
+# without the server-side key get 401 before any reviewer logic runs.
+router = APIRouter(dependencies=[Depends(require_api_key)])
 
 _MAX_BYTES = 25 * 1024 * 1024  # 25 MB
 _EVIDENCE_PREFIX = "evidence"

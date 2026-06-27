@@ -9,13 +9,18 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from ..auth import ReviewerIdentity, require_signed_in
+from ..auth import ReviewerIdentity, require_api_key, require_signed_in
 from ..journal import build_journal_store
 from ..models import CommunitySubmission, CommunitySubmissionStatus, JournalEntry, JournalEntryKind, utc_now
 from ..state import storage
 from ..storage import model_to_dict
 
-router = APIRouter()
+# require_api_key at the router level closes the public-tunnel bypass: the backend
+# is directly reachable, and require_signed_in only checks a spoofable
+# X-ORCAST-Reviewer-Id header. The Vercel proxy injects X-ORCAST-Key on every
+# forwarded request, so the signed-in path is unaffected; direct callers without
+# the server-side key get 401 before reviewer logic runs.
+router = APIRouter(dependencies=[Depends(require_api_key)])
 _journal = build_journal_store()
 
 _ALLOWED_BEHAVIORS = {"feeding", "traveling", "socializing", "resting", "unknown"}
