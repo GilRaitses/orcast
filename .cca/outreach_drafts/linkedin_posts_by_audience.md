@@ -4,7 +4,16 @@
 **Status:** Draft. Every claim checked against `.cca/CLAIM_BOUNDARIES.md` (capability table, exact-numbers table, forbidden list). First-person singular only, no "we/our".
 **Gate note:** Maps-only uncited baseline is **60–100% (2026-06-24)**, Scenario 1 (60%, orca evidence) to Scenario 7 (100%, trip planning) in `grounding_parallel_rag.py`. Reconciled across CLAIM_BOUNDARIES, WP1, and WP2 on 2026-06-26. The separate 3-query probe average is 85%.
 
-How to choose: post 1–2 weeks apart, lead with the audience whose feed you most want to reach first. Posts 3 (builders) and 4 (grounding) share the benchmark finding; don't run them back-to-back.
+How to choose: post 1–2 weeks apart, lead with the audience whose feed you most want to reach first. Posts 3 (builders) and 4 (grounding) share the benchmark finding, so don't run them back-to-back.
+
+## Funnels and calls to action
+
+Two funnels, one clear ask each. Lead with the benefit, use the rigor as proof, and close with a single action. Do not stack honesty disclaimers; one credibility line is enough.
+
+- Research partners (adopt): the ask is to try the live tool and start a pilot on their data or region. CTA: "Try it on your data" plus reply. Funnel option on the site: Research partner.
+- Visitors (orcast Trips early access): the ask is to join early access for San Juan Islands trip planning on an honest forecast. CTA: "Get early access". Funnel option on the site: Planning a visit.
+
+Live link for every post and the funnel: https://orcast-h0.vercel.app
 
 ---
 
@@ -24,6 +33,8 @@ This is built into orcast, a gate-bounded encounter-forecasting pilot for Southe
 
 Whitepaper 2 (grounding benchmark) and the measurement tool are reproducible.
 
+If you build human-agent systems and want to measure grounding on your own pipeline, try the live tool and reply: https://orcast-h0.vercel.app
+
 #HAII #LLM #RAG #AIevaluation #AgenticAI
 
 ---
@@ -42,6 +53,8 @@ The motivation is well documented in the literature: SRKW occurrence records are
 
 Whitepaper 1 covers the forecasting architecture.
 
+If you study Southern Resident killer whales or run a hydrophone network, I will stand up a gate-bounded forecast on your data or region. Try the live tool and reply: https://orcast-h0.vercel.app
+
 #MarineConservation #SalishSea #OrcaConservation #CitizenScience #DataIntegrity
 
 ---
@@ -58,7 +71,7 @@ The provenance panel: click any map cell and drill down to the acoustic detectio
 
 Stack: Amazon DynamoDB (9 tables, system of record), AWS Step Functions, App Runner, Amazon Bedrock, S3, Vercel, WorkOS AuthKit. Submitted to the AWS + Vercel hackathon as an aimez.ai project.
 
-Live demo and both whitepapers linked below.
+Try the live tool and tell me where it breaks: https://orcast-h0.vercel.app. Both whitepapers linked below.
 
 #AWS #DynamoDB #StepFunctions #Bedrock #Vercel #SystemDesign
 
@@ -97,6 +110,22 @@ Solo doesn't mean unrigorous. It means you are the only gate, so you write the g
 Live demo and whitepapers in comments.
 
 #BuildInPublic #SoloFounder #IndieHackers #AI #aimezai
+
+---
+
+## Post 6, Visitors / San Juan Islands trip planning (orcast Trips early access)
+
+*Audience: people planning a trip to the San Juan Islands who hope to see orcas. Benefit-led, honesty as proof, not a disclaimer stack.*
+
+Heading to the San Juan Islands and hoping to see orcas?
+
+Most whale-forecast tools show a confident map and hide the uncertainty. orcast does the opposite. It shows the Salish Sea encounter forecast together with the evidence and the gates behind it, and it says so plainly when the data does not support a confident answer. Right now it withholds confidence rather than overpromise, and that is exactly the point: a forecast you can actually trust to tell you what it does not know.
+
+I am opening early access to orcast Trips, San Juan Islands trip planning built on that honest forecast. You see the forecast, the integrity conditions, and the provenance, and you plan with a tool that will not pretend to know more than it does.
+
+Get early access (choose "Planning a visit"): https://orcast-h0.vercel.app
+
+#SanJuanIslands #PacificNorthwest #WhaleWatching #Travel #SalishSea
 
 ---
 

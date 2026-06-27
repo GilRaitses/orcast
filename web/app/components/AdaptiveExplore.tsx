@@ -148,8 +148,8 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
       <header className="explore-header">
         <h1 className="hero-title">orcast. Explore the Salish Sea</h1>
         <p className="hero-subtitle">
-          A 3D, gate-bounded encounter forecast. Click the water or a hydrophone to ask the
-          orchestrator; every panel is grounded and every step is traced.
+          A 3D, gate-bounded encounter forecast for the Salish Sea. Click the water or a hydrophone
+          to ask the orchestrator. Every panel is grounded and every step is traced.
         </p>
         {!signedIn && (
           <p className="muted explore-anon-note">

@@ -3,39 +3,23 @@
 import { useState } from "react";
 import { postJSON } from "@/lib/api";
 
-const OPTIONS: { id: string; label: string }[] = [
-  { id: "early_access", label: "Early access to try it now" },
-  { id: "whitepapers", label: "Read the whitepapers" },
-  { id: "demo", label: "Watch a demo" },
+const AUDIENCES: { id: string; label: string; blurb: string }[] = [
+  { id: "research_partner", label: "Research partner", blurb: "Use it, and stand it up on your data or region." },
+  { id: "visitor", label: "Planning a visit", blurb: "Early access to orcast Trips for the San Juan Islands." },
+  { id: "curious", label: "Just exploring", blurb: "See the live forecast and the whitepapers." },
 ];
 
-interface WhitepaperLink {
-  title: string;
-  url: string;
-}
-interface InterestLinks {
-  early_access?: string;
-  whitepapers?: WhitepaperLink[];
-  demo?: string;
-}
-interface InterestResponse {
-  status: string;
-  message: string;
-  links: InterestLinks;
-  email_delivered: boolean;
-}
+interface WhitepaperLink { title: string; url: string }
+interface InterestLinks { app?: string; whitepapers?: WhitepaperLink[]; demo?: string }
+interface InterestResponse { status: string; message: string; links: InterestLinks; email_delivered: boolean }
 
 export default function InterestForm() {
+  const [audience, setAudience] = useState("research_partner");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [interests, setInterests] = useState<string[]>(["early_access"]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InterestResponse | null>(null);
-
-  function toggle(id: string) {
-    setInterests((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  }
 
   async function submit() {
     if (!email.trim() || !email.includes("@")) {
@@ -48,7 +32,7 @@ export default function InterestForm() {
       const resp = await postJSON<InterestResponse>("api/interest", {
         email: email.trim(),
         name: name.trim(),
-        interests,
+        audience,
       });
       setResult(resp);
     } catch (e) {
@@ -64,9 +48,9 @@ export default function InterestForm() {
       <div className="card interest-card" data-demo="interest-result">
         <p>{result.message}</p>
         <div className="interest-links row" style={{ flexWrap: "wrap", gap: "0.4rem", marginTop: "0.5rem" }}>
-          {l.early_access && (
-            <a className="chip" href={l.early_access}>
-              Open the live app
+          {l.app && (
+            <a className="chip" href={l.app}>
+              Open the live forecast
             </a>
           )}
           {l.whitepapers?.map((w) => (
@@ -84,36 +68,38 @@ export default function InterestForm() {
     );
   }
 
+  const cta =
+    audience === "research_partner"
+      ? "Try it on my data"
+      : audience === "visitor"
+      ? "Get early access"
+      : "Send it to me";
+
   return (
     <div className="card interest-card" data-demo="interest-form">
       <strong>Get access</strong>
-      <p className="muted" style={{ marginTop: "0.2rem" }}>
-        It is all live. Pick what you want and it arrives right away.
-      </p>
-      <div className="interest-options" style={{ display: "flex", flexDirection: "column", gap: "0.3rem", margin: "0.5rem 0" }}>
-        {OPTIONS.map((o) => (
-          <label key={o.id} className="row" style={{ gap: "0.45rem", alignItems: "center" }}>
-            <input type="checkbox" checked={interests.includes(o.id)} onChange={() => toggle(o.id)} />
-            {o.label}
+      <p className="muted" style={{ marginTop: "0.2rem" }}>It is all live. Tell me what brings you and it arrives right away.</p>
+      <div className="interest-options" style={{ display: "flex", flexDirection: "column", gap: "0.4rem", margin: "0.5rem 0" }}>
+        {AUDIENCES.map((a) => (
+          <label key={a.id} className="row" style={{ gap: "0.45rem", alignItems: "flex-start" }}>
+            <input
+              type="radio"
+              name="audience"
+              checked={audience === a.id}
+              onChange={() => setAudience(a.id)}
+              style={{ marginTop: "0.25rem" }}
+            />
+            <span>
+              <strong>{a.label}.</strong> <span className="muted">{a.blurb}</span>
+            </span>
           </label>
         ))}
       </div>
-      <input
-        type="text"
-        placeholder="Name (optional)"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{ marginBottom: "0.4rem" }}
-      />
-      <input
-        type="email"
-        placeholder="you@example.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <input type="text" placeholder="Name (optional)" value={name} onChange={(e) => setName(e.target.value)} style={{ marginBottom: "0.4rem" }} />
+      <input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
       <div className="row" style={{ marginTop: "0.6rem" }}>
         <button type="button" onClick={submit} disabled={busy || !email.trim()}>
-          {busy ? "Sending…" : "Send it to me"}
+          {busy ? "Sending…" : cta}
         </button>
       </div>
       {error && <p className="error">{error}</p>}
