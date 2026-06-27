@@ -110,7 +110,7 @@ def _send_email(to_addr: str, subject: str, body: str) -> bool:
     try:
         import boto3
 
-        ses = boto3.client("ses", region_name=settings.region)
+        ses = boto3.client("ses", region_name=settings.aws_region)
         ses.send_email(
             Source=sender,
             Destination={"ToAddresses": [to_addr]},
