@@ -1,0 +1,82 @@
+# 3d-twin waveset, machine-readable shape template
+# Home: .cca/catalogue/O0/20260627_3d-twin/
+# Canonical prose: WAVESET_CHARTER_TEMPLATE.md
+# Reference implementation: ~/.cursor/plans/realistic_nyc_3d_viewer_c0b6b2b4.plan.md
+#
+# Copy this file, rename, and fill the <PLACEHOLDERS>. Keep the execution-model fields.
+
+version: 1
+family: 3D-TWIN
+label: <project-label>            # e.g. terrain-bathymetry-coastal-twin
+home: .cca/catalogue/O0/20260627_3d-twin/
+status: template
+
+execution_model:
+  one_file_one_owner: true
+  single_convergence_file_editor_per_wave: true
+  convergence_file: <path/to/scene-assembler>   # e.g. lib/viewer/createViewer.ts
+  single_manifest_editor_per_wave: true
+  manifest: <path/to/package.json>
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check                      # tsc --noEmit or equivalent; never a full build
+  large_artifacts_to: object-storage             # S3/CDN origin; never git
+  honesty_label: "modeled, not measured"
+
+decision_record:                                 # fill before launch (see charter section 1)
+  geometry_source: <self-hosted-owned | managed-tiles>
+  tile_format: <3d-tiles-1.1 | quantized-mesh | custom>
+  render_runtime: <extend-existing-three | new-engine>
+  single_source_of_truth: <yes | no>
+  conversion_host: <local | shared | dedicated-native-arch>
+  # terrain+bathymetry extras:
+  source_dem: <e.g. USGS-3DEP>
+  source_bathymetry: <e.g. NOAA-NCEI | GEBCO | multibeam>
+  target_crs: <e.g. EPSG:32610>
+  vertical_reference: <one metric vertical datum both layers convert to>
+
+waves:
+  - id: W1
+    name: foundation-and-de-risk
+    parallelism: 6
+    convergence_file_edits: false
+    agents:
+      - { role: realism-module,         owns: <path>, deliverable: <module + throwaway-scene validation> }
+      - { role: reproject-datum-recipe, owns: <infra/dir>, deliverable: <reproject + vertical-datum unify + mesh + seam weld> }
+      - { role: tiler-bakeoff,          owns: <infra/dir>, deliverable: <two candidates on one chunk, recommend one> }
+      - { role: optimize-assemble,      owns: <infra/dir>, deliverable: <one validated pilot tileset, real sizes> }
+      - { role: renderer-sandbox,       owns: <app/sandbox-route>, deliverable: <mounts pilot via 3d-tiles-renderer> }
+      - { role: science-spike,          owns: <infra/dir>, deliverable: <rasterize one chunk, prototype derived layer> }
+    gate: pilot tileset validates AND sandbox renders it
+
+  - id: W2
+    name: integrate-into-live-scene
+    depends_on: [W1]
+    parallelism: 6
+    single_convergence_file_editor: integrator
+    agents:
+      - { role: integrator,        owns: <convergence_file>, deliverable: <wire realism + tiles + science substrate per wiring specs> }
+      - { role: tiles-layer,       owns: <lib/.../tilesLayer>, deliverable: <reusable mount/update/dispose factory> }
+      - { role: legacy-retirement, owns: <RETIREMENT.md + patch>, deliverable: <remove placeholder geometry, keep optional fallback toggle>, edits_convergence_file: false }
+      - { role: batch-conversion,  owns: <infra/dir>, deliverable: <full-extent tileset> }
+      - { role: science-substrate, owns: <lib/.../substrate>, deliverable: <derived field to live layers> }
+      - { role: picking-perf,      owns: <lib/.../picking>, deliverable: <accelerated picking + instancing + perf harness>, manifest_editor: true }
+    gate: full-extent tiles render with upgraded realism at interactive frame rate; legacy path removed
+
+  - id: W3
+    name: scale-science-hardening
+    depends_on: [W2]
+    parallelism: 6
+    agents:
+      - { role: full-extent-host,    owns: <infra/dir>, deliverable: <bake + host on CDN origin, wire live URL> }
+      - { role: offline-science,     owns: <infra/dir>, deliverable: <calibrated science rasters> }
+      - { role: live-derived-layer,  owns: <lib/.../layer>, deliverable: <runtime derived layer> }
+      - { role: validation-prov,     owns: <docs/dir>, deliverable: <cross-check external reference + provenance + error band> }
+      - { role: perf-hardening,      owns: <lib + infra>, deliverable: <VRAM/draw-call audit, texture compression, origin-shift, optional WebGPU> }
+      - { role: optional-backdrop,   owns: <lib/.../backdrop>, deliverable: <visual-only basemap, hard-separated from science>, gated: true }
+    gate: full twin hosted and validated with provenance; perf within budget
+
+operator_gates:
+  - decision record confirmed before launch
+  - conversion host confirmed before first heavy conversion
+  - any commit or push (explicit operator request only)
+  - wave-to-wave promotion after the stated gate
