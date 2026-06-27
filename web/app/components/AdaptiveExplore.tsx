@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import SceneHost from "@/app/components/scene/SceneHost";
 import ActiveSurfaceHost from "@/app/components/ActiveSurfaceHost";
+import InterestForm from "@/app/components/InterestForm";
 import { parseViewport, type MapViewport } from "@/lib/viewport";
 import type { EventPoint } from "@/app/components/MapHero";
 import { getJSON } from "@/lib/api";
@@ -227,6 +228,8 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
                 )}
             </div>
           )}
+
+          <InterestForm />
         </aside>
       </div>
     </main>
