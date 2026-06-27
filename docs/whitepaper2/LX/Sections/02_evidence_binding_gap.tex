@@ -4,10 +4,10 @@ Orchestrator-in-the-loop agentic systems route a user's request through a lead o
 tool-bearing sub-agents and narrates a result. Magentic-UI is a
 representative instance: a lead orchestrator directs sub-agents and Model Context Protocol tools
 with the human in the loop through co-planning, action guards, and memory~\cite{magenticui2025}.
-This realizes, at agent scale, the mixed-initiative principle Horvitz set out --- coupling
+This realizes, at agent scale, the mixed-initiative principle Horvitz set out, coupling
 automated services with the user under explicit uncertainty about intent~\cite{horvitz1999}.
-Treating the human and the orchestrator as communicative agents distinguished only by function ---
-agency, interactivity, and influence --- is the agent-agnostic stance human-machine communication
+Treating the human and the orchestrator as communicative agents distinguished only by function, 
+agency, interactivity, and influence, is the agent-agnostic stance human-machine communication
 adopts for exactly this configuration~\cite{banks2020agentagnostic,walther2011cmc}, with agency and
 control continually negotiated between human and system rather than fixed~\cite{gibbs2021agency}.
 Magentic-UI is evaluated on task completion, interaction cost, and safety; it proposes no metric for
@@ -20,7 +20,7 @@ this paper defines and measures.
 
 Scientific and physical-domain outputs make claims requiring empirical grounding. On orca encounter
 likelihood at Haro Strait, a language model may name the salmon corridor, acoustic monitoring
-network, and behavioral studies --- without binding any claim to generating observations, prior
+network, and behavioral studies, without binding any claim to generating observations, prior
 analyses, or data artifacts. The response is fluent; it is not evidentially accountable. Fluency is not comprehension, and whether such systems understand what
 they emit is itself contested~\cite{mitchell2023understanding}. Fluent interfaces routinely
 manufacture an impression of accountability they have not earned, a banal deception embedded in
@@ -30,24 +30,24 @@ output-level binding criterion sidesteps the comprehension dispute by measuring 
 than adjudicating internal understanding.
 
 Formally, the gap is the structural disconnection between stated claims and the observations,
-methods, and experiments that would make them verifiable --- not factual accuracy per se, but
+methods, and experiments that would make them verifiable, not factual accuracy per se, but
 whether a judge or downstream system can trace the claim to ground-truth data versus parametric
 pattern reproduction.
 
 Prior work on RAG hallucination reduction~\cite{arxiv230915217,arxiv230514627,arxiv240115884,arxiv231109533,arxiv230514292}
 establishes that retrieval-augmented generation reduces factual error rates and that citation generation
 can be automated. However, this literature focuses on whether RAG improves accuracy, not on whether
-the improvement comes from evidence binding --- from the system's outputs being traceable to their
-generating context --- versus improved parametric knowledge activation.
+the improvement comes from evidence binding, from the system's outputs being traceable to their
+generating context, versus improved parametric knowledge activation.
 
 The geospatial grounding baseline makes this distinction concrete. Google Maps grounding achieves high
-citation density for place-of-interest queries. For marine science evidence queries --- the same domain,
-but requiring scientific rather than place-level grounding --- Maps grounding resolves 0 of 25 citations
+citation density for place-of-interest queries. For marine science evidence queries, the same domain,
+but requiring scientific rather than place-level grounding, Maps grounding resolves 0 of 25 citations
 to scientific or dataset sources. NOAA fisheries data, the Center for Whale Research census, Chinook
 salmon migration corridors, and acoustic hydrophone recordings are all generated as claims but remain
 entirely uncited. The system knows about these phenomena from training; it cannot bind its claims to
 verifiable data artifacts.
 
-$\Runcited$ --- the fraction of scientific sentences in a system's output with no bound
-citation --- is the measurement primitive that makes this gap quantitative, reproducible, and
+$\Runcited$, the fraction of scientific sentences in a system's output with no bound
+citation, is the measurement primitive that makes this gap quantitative, reproducible, and
 architecture-diagnostic.
