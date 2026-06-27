@@ -101,6 +101,38 @@
       "supersedes": [
         "8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b"
       ]
+    },
+    {
+      "artifact_hash": "a982f11672d41852c8600bdd0e675e2c6b70be1d979207f203be9b3326d8f536",
+      "artifact_path": ".sst/ax_adversarial_final_gate_v1.json",
+      "decision_id": "461ab56a443771e53d72721ae56988765e55d274f5af2406cd4cec49eb1ebf1e",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "ax_date": "2026-06-27",
+        "ax_version": "v1",
+        "backend_host_commit": "87ff466"
+      },
+      "kind": "adversarial_final_gate_result",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-27T04:03:07.992855+00:00"
+      },
+      "scope": {
+        "gate": "pre_p1",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active"
     }
   ],
   "schema_version": "0.1"

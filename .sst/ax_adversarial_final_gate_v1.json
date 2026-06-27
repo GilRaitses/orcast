@@ -1,0 +1,60 @@
+{
+  "decision_identity": {
+    "artifact_kind": "adversarial_final_gate_result",
+    "scope": { "platform": "orcast", "gate": "pre_p1" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "ax_version": "v1",
+    "ax_date": "2026-06-27",
+    "backend_host_commit": "87ff466"
+  },
+  "generated_at": "2026-06-27",
+  "summary": "Adversarial final-gate (AX) + copy/prose sweep (CX). One P0 found and fixed; all lanes clean; copy-gate green; every tracked limit dispositioned. P1 parked pending operator approval.",
+  "ax_lanes": {
+    "AX-0_recon": "PASS",
+    "AX-1_authz": "FIXED P0 (evidence/journal require_api_key; verified 401)",
+    "AX-2_onc_planner": "FLAG (SSRF inert while ONC disabled)",
+    "AX-3_abuse": "PASS (rate-limits enforce; co-tenant intact)",
+    "AX-4_resilience": "PASS (rollback intact; self-heal; DD-6 both paths 503)",
+    "AX-5_secrets": "PASS (no secrets src/history; S3 blocked; least-priv)",
+    "AX-6_data_integrity": "PASS (q1c+q1b)",
+    "AX-7_claims": "PASS (web forbidden-claims clean; a-gate PASS)",
+    "AX-8_gate_sweep": "PASS (only known O-2 reds)"
+  },
+  "cx_prose": {
+    "copy_gate": "GREEN (0 em-dash audience-facing)",
+    "whitepaper_pdfs_rebuilt": "WP1 10/7, WP2 5/4",
+    "canon": ".cca/PROSE_GATE_RULES.md + .cursor/rules/prose-gate.mdc"
+  },
+  "fixes": [
+    "P0 auth bypass (d866e48)",
+    "DD-5 interest raw-payload (fde3181)",
+    "DD-6 + completion graceful 503 (9b59e12, 87ff466)",
+    "em-dash class A+B (fde3181, 3c74c35, 644a486, 654ef0f)",
+    "adaptive interest + delivery (e1fa4fd)",
+    "SES wired aimez.ai verified+DKIM, sender noreply@aimez.ai",
+    "explore3d landing build fix (1696b1b)"
+  ],
+  "tracked_limits_dispositioned": [
+    "SES sandbox -> mitigate (prod-access request)",
+    "RDS explore -> accept (parity)",
+    "ONC disabled -> accept (enable on demand)",
+    "App Runner rollback cost -> accept until post-submission",
+    "SSM-only access -> accept",
+    "voiceover not prose-gated -> accept",
+    "audit-deck untracked -> accept",
+    "SDR O-2/O-3/O-4 -> accept (existing)",
+    "demo GIFs -> open"
+  ],
+  "open_operator_gates": [
+    "SES production-access request",
+    "P1: DynamoDB screenshot, Devpost submit, arXiv upload",
+    "post-submission: pause App Runner (DD-3)"
+  ],
+  "exit": "AX + CX clean; no open P0/P1 from the campaign; P1 parked pending operator approval of limits + OX gates",
+  "registers": {
+    "ax_register": ".cca/AX_ADVERSARIAL_REGISTER.md",
+    "prior_baseline": ".sst/system_state_baseline_v2.json"
+  }
+}

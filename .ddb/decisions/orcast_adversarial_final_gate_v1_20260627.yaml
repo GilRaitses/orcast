@@ -1,0 +1,65 @@
+decision_id: orcast_adversarial_final_gate_v1_20260627
+title: orcast adversarial final-gate (AX) + prose sweep (CX) clean pass
+status: ratified
+date: "2026-06-27"
+patch_type: adversarial_gate_result
+
+registry:
+  registry_decision_id: 461ab56a443771e53d72721ae56988765e55d274f5af2406cd4cec49eb1ebf1e
+  artifact_path: .sst/ax_adversarial_final_gate_v1.json
+  kind: adversarial_final_gate_result
+  scope:
+    platform: orcast
+    gate: pre_p1
+
+statement:
+  - >-
+    The extensive adversarial campaign (AX-0..AX-8) and the copy/prose sweep (CX)
+    completed. One P0 was found and fixed: evidence and journal endpoints were
+    reachable on the public cloudflared tunnel by spoofing a non-secret
+    X-ORCAST-Reviewer-Id header (200, PII exposure). Router-level require_api_key
+    closed it; re-verified 401 with no regression.
+  - >-
+    All other lanes are clean: rate limits enforce and pax co-tenant survives load
+    (AX-3); rollback is intact, the service self-heals, and the RDS path degrades
+    to a graceful 503 on both keyed and unkeyed paths after the DD-6 completion
+    (AX-4); no secrets in source or git history and data buckets are public-blocked
+    (AX-5); q1c/q1b pass (AX-6); web forbidden-claims clean and a-gate stays PASS
+    (AX-7); the gate sweep shows only the known SDR O-2 reds (AX-8).
+  - >-
+    The prose gate is enforced: copy-gate is green with zero em-dashes across all
+    audience-facing surfaces (web, whitepaper and deck sections, outreach, demo
+    scripts, SUBMISSION), with the canon in .cca/PROSE_GATE_RULES.md and the Cursor
+    rule .cursor/rules/prose-gate.mdc. The four whitepaper PDFs were rebuilt via
+    the SD-019 sequence.
+  - >-
+    Every tracked limit is dispositioned in .cca/AX_ADVERSARIAL_REGISTER.md. P1
+    remains parked pending operator approval of those limits and the OX submission
+    gates.
+
+verification:
+  ax_lanes: "AX-0..AX-8 clean (AX-1 P0 fixed+verified)"
+  cx_copy_gate: GREEN
+  ddb_verify: "ok (3 active)"
+  backend_host_commit: 87ff466
+
+repo_anchoring:
+  branch: main
+  repo_state_verified_against: 87ff466
+
+non_claims:
+  - This pass does not unpark P1; that requires operator approval of the limits and the OX gates.
+  - SES can send to verified recipients only until production access is granted (operator AWS request).
+  - The voiceover audio and the untracked audit-deck were not remediated.
+
+related:
+  ax_register: .cca/AX_ADVERSARIAL_REGISTER.md
+  prose_canon: .cca/PROSE_GATE_RULES.md
+  baseline_v2: .ddb/decisions/orcast_system_state_baseline_v2_20260627.yaml
+  gp_pass: .ddb/decisions/orcast_gp_preflight_v1_20260626.yaml
+
+subordinate_mirror_path: .ddb/receipts/orcast_adversarial_final_gate_v1_20260627.md
+
+authority_note: >-
+  Authoritative structured registration lives in this YAML decision plus the
+  registered .sst artifact. The markdown receipt is a subordinate mirror.
