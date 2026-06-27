@@ -1,0 +1,87 @@
+# orcast co-tenant service manifest — single source of truth for what must be
+# present on the SHARED self-host (the pax aimez-services EC2) for the orcast
+# FastAPI backend. Consumed by preflight.py and referenced by provision_orcast.sh.
+#
+# The shared host already runs the pax infer (8077) / shade (8078) services and
+# the cloudflared tunnel. orcast is ADDITIVE: a separate venv at /opt/orcast, a
+# dedicated service user, and one new systemd unit binding 127.0.0.1:8090. It
+# does not touch any pax service, unit, or tunnel ingress already in place.
+#
+# delivery:  git        -> arrives via `git clone` of the public orcast repo
+#            env        -> injected out-of-band into the repo-external env file
+# criticality: critical -> service cannot start/serve without it
+#              functional -> a feature degrades but the service still runs
+
+meta:
+  schema: orcast_cotenant_manifest_v1
+  services_repo: https://github.com/GilRaitses/orcast.git
+  host_path: /opt/orcast
+  service_user: orcast
+  python: python3.12  # backend uses PEP 701 f-strings (3.12+); matches the Dockerfile
+  shared_host_instance: i-04a649f91274e9fce
+  shared_host_name: aimez-services
+  region_host: us-east-1
+  region_data: us-west-2
+
+packages:
+  - {name: fastapi,          pip: "fastapi==0.116.1",        criticality: critical}
+  - {name: uvicorn,          pip: "uvicorn==0.35.0",         criticality: critical}
+  - {name: multipart,        pip: "python-multipart==0.0.20", criticality: critical, note: "evidence/multipart upload router"}
+  - {name: pydantic,         pip: "pydantic==2.11.7",        criticality: critical}
+  - {name: boto3,            pip: "boto3==1.43.29",          criticality: critical, consumers: [dynamodb, s3, bedrock, stepfunctions]}
+  - {name: requests,         pip: "requests==2.31.0",        criticality: critical}
+  - {name: psycopg,          pip: "psycopg[binary]==3.2.9",  criticality: functional, note: "RDS explore-session writes; RDS is private (SD-A07) and unreachable from this host's region/VPC, so explore-session persistence degrades exactly as on App Runner"}
+
+files:
+  - {path: src/aws_backend/main.py, delivery: git, criticality: critical, note: "uvicorn entrypoint src.aws_backend.main:app"}
+  - {path: data/geo, delivery: git, criticality: functional, note: "geo assets read at runtime"}
+  - {path: src/integrations/orcasound_hydrophones_for_orcast.json, delivery: git, criticality: functional}
+  - {path: archive/public-templates-backup-20250720/api/verified-sightings.json, delivery: git, criticality: functional}
+
+env:
+  # NAMES ONLY here. Values (incl. secrets) live in the repo-external env file
+  # /opt/orcast/infra/shared_host/env/orcast-services.env (chmod 600), injected
+  # out-of-band. Mirror of the App Runner RuntimeEnvironmentVariables.
+  required:
+    - AWS_REGION
+    - ORCAST_ENV
+    - ORCAST_STORAGE_BACKEND
+    - ORCAST_API_KEY               # secret; must match the Vercel proxy X-ORCAST-Key
+    - ORCAST_CORS_ORIGINS
+    - ORCAST_SIGHTINGS_TABLE
+    - ORCAST_HOTSPOTS_TABLE
+    - ORCAST_REPORTS_TABLE
+    - ORCAST_INGESTION_RUNS_TABLE
+    - ORCAST_COMMUNITY_TABLE
+    - ORCAST_DECISION_RECORDS_TABLE
+    - ORCAST_JOURNAL_TABLE
+    - ORCAST_MANAGED_AGENTS_TABLE
+    - ORCAST_PARTNER_KEYS_TABLE
+    - ORCAST_REPORTS_BUCKET
+    - ORCAST_RAW_PAYLOAD_BUCKET
+    - ORCAST_STATE_MACHINE_ARN
+    - ORCAST_ENABLE_BEDROCK
+    - ORCAST_BEDROCK_SIGHTING_MODEL
+    - ORCAST_ENABLE_LIVE_INATURALIST
+    - ORCAST_ENABLE_LIVE_NOAA
+    - ORCAST_ENABLE_ORCAHELLO
+  optional:
+    - ORCAST_DB_HOST               # RDS explore (private; unreachable from host)
+    - ORCAST_DB_NAME
+    - ORCAST_DB_USER
+    - ORCAST_DB_PASSWORD           # secret
+    - ORCAST_EXPLORE_MAX_SESSIONS_PER_IP_DAY
+    - ORCAST_EXPLORE_MAX_TURNS_PER_SESSION
+    - ORCAST_EXPLORE_RETENTION_DAYS
+
+services:
+  - {name: orcast-api, port: 8090, health: /health, unit: orcast-api.service, bind: 127.0.0.1}
+
+reach:
+  tunnel: aimez-services
+  tunnel_id: e1ce3073-0588-4125-9f6a-cff5fb2a7d3d
+  # First-level subdomain: covered by the existing *.aimez.ai Universal SSL cert
+  # (a third-level name like api.orcast.aimez.ai is NOT covered and fails TLS).
+  hostname: orcast-api.aimez.ai
+  upstream: http://127.0.0.1:8090
+  auth: "existing ORCAST_API_KEY model (Vercel proxy injects X-ORCAST-Key); no new tunnel service key"

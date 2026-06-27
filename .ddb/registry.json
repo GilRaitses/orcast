@@ -1,0 +1,70 @@
+{
+  "entries": [
+    {
+      "artifact_hash": "c499c5c53ab4bed7b4f3a9fe0deb66064c9935f28d9fadb61fd99190d7d3ec61",
+      "artifact_path": ".sst/system_state_baseline_v1.json",
+      "decision_id": "8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "baseline_date": "2026-06-26",
+        "baseline_version": "v1",
+        "repo_commit": "95a6d95",
+        "topology": "selfhost_cotenant"
+      },
+      "kind": "system_state_baseline",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-26T23:14:20.804931+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active"
+    },
+    {
+      "artifact_hash": "06bdf575d0698c41ba7e25e8c8147b0d1beddd7c74ecea9c18d63ada3f88c71a",
+      "artifact_path": ".sst/gp_preflight_v1.json",
+      "decision_id": "d60cedb514fd29db0028c4b74ec05c3773649ba67d7f541a9f3ef8c5572e2e21",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "baseline_ref": "8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b",
+        "gp_date": "2026-06-26",
+        "gp_version": "v1"
+      },
+      "kind": "gp_preflight_result",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-27T01:19:07.354285+00:00"
+      },
+      "scope": {
+        "lane": "selfhost-cutover-hardening",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active"
+    }
+  ],
+  "schema_version": "0.1"
+}

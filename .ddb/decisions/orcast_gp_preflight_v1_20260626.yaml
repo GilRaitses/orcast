@@ -1,0 +1,67 @@
+decision_id: orcast_gp_preflight_v1_20260626
+title: orcast GP adversarial gap-detection + preflight pass v1
+status: ratified
+date: "2026-06-26"
+patch_type: preflight_result
+
+registry:
+  registry_decision_id: d60cedb514fd29db0028c4b74ec05c3773649ba67d7f541a9f3ef8c5572e2e21
+  artifact_path: .sst/gp_preflight_v1.json
+  kind: gp_preflight_result
+  scope:
+    platform: orcast
+    lane: selfhost-cutover-hardening
+
+statement:
+  - >-
+    The GP wave set ran adversarial gap detection and preflights over the
+    self-host cutover surfaces (Phase A, pre-commit) and the live deployment
+    (Phase B). Both phases reached a clean exit after remediations.
+  - >-
+    Phase A: no secrets in any surface; static preflight clean; docs match live
+    reality; only the pre-existing SDR O-2 reds in s-doc-grep; q1c-ddb-schema
+    PASS; .ddb ledger verified. Fixes: .gitignore now ignores
+    infra/shared_host/env/*.env; two stale hostname lines in provision_orcast.sh
+    corrected; stray __pycache__ removed.
+  - >-
+    Phase B: edge reachability + TLS valid; proxy authz matrix correct with
+    traffic provably landing on the host and protected paths short-circuited at
+    the proxy; co-tenant non-interference (pax cv/shade up, all units enabled,
+    ample headroom); rollback intact and the service self-heals on restart; RDS
+    explore fails soft (DD-6). Fix: SSH security group tightened to a single
+    current /32 (stale prior-IP allow revoked; no 0.0.0.0/0).
+  - >-
+    A self-caught methodology gap is recorded: initial scans falsely read clean
+    because zsh does not word-split unquoted variables and ripgrep skips
+    dot-directories; all scans were re-run under bash with grep -r.
+
+rationale: >-
+  Harden the cutover artifacts before commit and prove the live deployment is
+  correct, isolated, secure, and recoverable, with every finding remediated or
+  flagged to an owner.
+
+verification:
+  phase_a: "secret-free; preflight green; commit scope locked (awaiting operator approval)"
+  phase_b: "live GREEN; co-tenant intact; rollback proven; SSH hardened"
+  ledger: "verify_registry_hashes.py ok (2 active)"
+
+repo_anchoring:
+  branch: main
+  repo_state_verified_against: 95a6d95
+  artifact_scope: .sst/gp_preflight_v1.json (registry entry d60cedb5...)
+
+non_claims:
+  - This pass does not commit the cutover surfaces; the commit remains operator-gated.
+  - This pass does not fix the backend DD-5/DD-6 items or the SDR O-2 reds; those are flagged to owners.
+  - SSH access depends on a single mobile /32 that rotates; this is an operational note, not a resolved control.
+
+related:
+  gap_register: .cca/GP_GAP_REGISTER.md
+  baseline: .ddb/decisions/orcast_system_state_baseline_v1_20260626.yaml
+  deploy_demo_decisions: .cca/DEPLOY_DEMO_DECISIONS.md
+
+subordinate_mirror_path: .ddb/receipts/orcast_gp_preflight_v1_20260626.md
+
+authority_note: >-
+  Authoritative structured registration lives in this YAML decision plus the
+  registered .sst artifact. The markdown receipt is a subordinate mirror.

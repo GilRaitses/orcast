@@ -87,6 +87,9 @@ node_modules/
 .env
 .agent-credentials.env
 
+# orcast self-host service env (secrets; host-only, never commit). Keep *.example.
+infra/shared_host/env/*.env
+
 # dataconnect generated files
 .dataconnect
 

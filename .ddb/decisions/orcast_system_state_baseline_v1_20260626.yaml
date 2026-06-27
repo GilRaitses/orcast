@@ -1,0 +1,88 @@
+decision_id: orcast_system_state_baseline_v1_20260626
+title: orcast platform system-state baseline v1 (self-host cutover)
+status: ratified
+date: "2026-06-26"
+patch_type: system_state_baseline
+
+registry:
+  registry_decision_id: 8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b
+  artifact_path: .sst/system_state_baseline_v1.json
+  kind: system_state_baseline
+  scope:
+    platform: orcast
+    env: production
+
+statement:
+  - >-
+    This is the first registered system-state baseline for the orcast platform in
+    the orcast/.ddb decision ledger. It records the platform topology immediately
+    after cutting the production backend over from AWS App Runner to a co-tenant
+    self-host on the shared aimez-services EC2 (i-04a649f91274e9fce), fronted by
+    the existing cloudflared tunnel.
+  - >-
+    Frontend: Vercel project orcast-h0 (production alias orcast-h0.vercel.app),
+    Root Directory web, proxying via web/app/api/be/[...path]/route.ts with the
+    ORCAST_API_BASE upstream set to https://orcast-api.aimez.ai.
+  - >-
+    Backend: orcast-api.service (uvicorn src.aws_backend.main:app) on a python3.12
+    venv at /opt/orcast (clone of main @ 95a6d95), bound 127.0.0.1:8090, co-tenant
+    with pax-infer (8077) and pax-shade (8078).
+  - >-
+    Reach: cloudflared tunnel aimez-services (e1ce3073-0588-4125-9f6a-cff5fb2a7d3d)
+    serves orcast-api.aimez.ai (first-level subdomain under the *.aimez.ai
+    Universal SSL cert). Auth is the existing ORCAST_API_KEY model (the proxy
+    injects X-ORCAST-Key).
+  - >-
+    Data plane (account 198456344617, us-west-2) is unchanged: 9 DynamoDB tables,
+    2 S3 buckets, Bedrock (claude-haiku), and the forecast-orchestrator state
+    machine, granted to the host via the orcast-backend-data-access inline policy
+    on aimez-host-role (replicated from the App Runner instance role).
+  - >-
+    Rollback: the App Runner service orcast-aws-backend stays RUNNING; reverting
+    is a single ORCAST_API_BASE change plus a redeploy.
+
+rationale: >-
+  The aimez cutover waveset proved a reusable self-hosting pattern (EC2 +
+  cloudflared + systemd + service-key). Co-tenanting the orcast backend on the
+  same host lets pax and orcast share one backend host and one tunnel, removes the
+  always-on App Runner service as the primary path, and establishes a durable
+  decision ledger (orcast/.ddb) mirroring the pax surface, seeded with this
+  baseline as its first entry.
+
+verification:
+  cutover: GREEN 2026-06-26
+  prod_proxy: "health/gates/sightings 200, evidence 401, interest 200, home 200"
+  host_traffic_confirmed: true
+  a_gate: PASS 2026-06-25
+
+repo_anchoring:
+  branch: main
+  repo_state_verified_against: 95a6d95
+  artifact_scope: .sst/system_state_baseline_v1.json (registry entry 8f2b264f...)
+
+non_claims:
+  - >-
+    This baseline does not migrate or consolidate the managed AWS data stores
+    (DynamoDB, S3, RDS, Bedrock, Step Functions); only the FastAPI compute moved.
+  - >-
+    This baseline does not assert explore-session persistence works from the host;
+    RDS orcast_explore is private and unreachable from the host (DD-6), degraded
+    exactly as on App Runner.
+  - >-
+    This baseline does not ship the uncommitted local explore3d backend work; the
+    host runs committed main @ 95a6d95 (DD-4).
+  - >-
+    This decision records platform state. It does not alter any CLAIM_BOUNDARIES
+    value or any Standing Decision in .cca/STANDING_DECISIONS_REGISTER.md.
+
+related:
+  deploy_demo_decisions: .cca/DEPLOY_DEMO_DECISIONS.md
+  waveset_charter: .cca/catalogue/O0/20260626_orcast-selfhost-cutover/SELFHOST_CUTOVER_WAVESET_CHARTER.md
+  host_kit: infra/shared_host/
+
+subordinate_mirror_path: .ddb/receipts/orcast_system_state_baseline_v1_20260626.md
+
+authority_note: >-
+  Authoritative structured registration for the orcast system-state baseline lives
+  in this YAML decision plus the registered .sst artifact. The markdown receipt is
+  a subordinate human-readable mirror.

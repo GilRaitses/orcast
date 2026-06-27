@@ -1,0 +1,45 @@
+{
+  "decision_identity": {
+    "artifact_kind": "gp_preflight_result",
+    "scope": { "platform": "orcast", "lane": "selfhost-cutover-hardening" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "gp_version": "v1",
+    "gp_date": "2026-06-26",
+    "baseline_ref": "8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b"
+  },
+  "generated_at": "2026-06-26",
+  "summary": "Adversarial gap-detection + preflight wave set (GP) over the self-host cutover surfaces and the live deployment. Phase A (pre-commit) and Phase B (live) both reach a clean exit after remediations.",
+  "phase_a": {
+    "GP-A1_secret_leak": "FIXED (.gitignore now ignores infra/shared_host/env/*.env)",
+    "GP-A2_static_preflight": "PASS",
+    "GP-A3_plan_vs_reality": "FIXED (2 stale hostname lines in provision_orcast.sh)",
+    "GP-A4_gate_regression": "PASS (only known SDR O-2 reds; q1c PASS; ledger ok)",
+    "GP-A5_commit_scope": "FIXED (removed stray __pycache__; scope locked)",
+    "methodology_fix": "re-ran scans under bash + grep -r after zsh-no-split / rg-hidden false-clean"
+  },
+  "phase_b": {
+    "GP-B1_reachability_tls": "PASS",
+    "GP-B2_proxy_authz": "PASS (traffic on host confirmed; protected short-circuit at proxy)",
+    "GP-B3_cotenant": "PASS (pax 200; 4 units active+enabled; headroom)",
+    "GP-B4_security": "FIXED (SSH SG tightened to single /32, no 0.0.0.0/0)",
+    "GP-B5_rollback_resilience": "PASS (App Runner rollback intact; self-heal ~6s; RDS fails soft)"
+  },
+  "fixes_applied": [
+    ".gitignore: infra/shared_host/env/*.env",
+    "infra/shared_host/provision_orcast.sh: api.orcast.aimez.ai -> orcast-api.aimez.ai (2 lines)",
+    "removed stray __pycache__ under .ddb/tools and infra/shared_host",
+    "SG sg-08ad4456a152e4b27: added current /32, revoked stale 172.56.31.148/32"
+  ],
+  "open_items": [
+    "SDR O-2 s-doc-grep pre-existing reds (unrelated)",
+    "DD-5 AwsStorage.raw_payload_bucket (backend P2)",
+    "DD-6 RDS explore generic 500 -> prefer graceful 503 (backend P3)",
+    "SSH SG single mobile /32 rotates; re-add or move to SSM"
+  ],
+  "registers": {
+    "gap_register": ".cca/GP_GAP_REGISTER.md",
+    "baseline": ".sst/system_state_baseline_v1.json"
+  }
+}

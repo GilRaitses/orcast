@@ -1,0 +1,105 @@
+{
+  "decision_identity": {
+    "artifact_kind": "system_state_baseline",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "baseline_version": "v1",
+    "baseline_date": "2026-06-26",
+    "repo_commit": "95a6d95",
+    "topology": "selfhost_cotenant"
+  },
+  "generated_at": "2026-06-26",
+  "lane": "O0 orcast-selfhost-cutover",
+  "summary": "First registered platform baseline after cutting the orcast backend over from AWS App Runner to a co-tenant self-host on the shared aimez-services EC2, fronted by the existing cloudflared tunnel, with managed AWS data stores unchanged.",
+  "frontend": {
+    "host": "vercel",
+    "project": "orcast-h0",
+    "org": "aimez",
+    "production_alias": "orcast-h0.vercel.app",
+    "root_directory": "web",
+    "proxy_route": "web/app/api/be/[...path]/route.ts",
+    "proxy_upstream_env": "ORCAST_API_BASE",
+    "proxy_upstream_value": "https://orcast-api.aimez.ai"
+  },
+  "backend": {
+    "mode": "selfhost_cotenant",
+    "shared_host_instance": "i-04a649f91274e9fce",
+    "shared_host_name": "aimez-services",
+    "host_region": "us-east-1",
+    "service_unit": "orcast-api.service",
+    "bind": "127.0.0.1:8090",
+    "python": "python3.12",
+    "checkout_path": "/opt/orcast",
+    "checkout_commit": "95a6d95",
+    "entrypoint": "uvicorn src.aws_backend.main:app",
+    "co_tenants": ["pax-infer.service:8077", "pax-shade.service:8078"]
+  },
+  "reach": {
+    "tunnel": "aimez-services",
+    "tunnel_id": "e1ce3073-0588-4125-9f6a-cff5fb2a7d3d",
+    "zone": "aimez.ai",
+    "zone_id": "5200b6a14fd92f5ef1fc9127b28168d9",
+    "hostname": "orcast-api.aimez.ai",
+    "tls": "Universal SSL *.aimez.ai (first-level subdomain)",
+    "auth_model": "ORCAST_API_KEY via X-ORCAST-Key injected by the Vercel proxy"
+  },
+  "iam": {
+    "host_role": "aimez-host-role",
+    "host_instance_profile": "aimez-host-profile",
+    "orcast_policy": "orcast-backend-data-access",
+    "policy_source": "replicated from orcast-aws-backend-AppRunnerInstanceRole-4XtMQYZlzi4X"
+  },
+  "data_plane": {
+    "account": "198456344617",
+    "region": "us-west-2",
+    "dynamodb_tables": [
+      "orcast-aws-backend-sightings",
+      "orcast-aws-backend-hotspots",
+      "orcast-aws-backend-reports",
+      "orcast-aws-backend-ingestion-runs",
+      "orcast-aws-backend-community-submissions",
+      "orcast-aws-backend-decision-records",
+      "orcast-aws-backend-user-journal",
+      "orcast-aws-backend-managed-agents",
+      "orcast-aws-backend-partner-api-keys"
+    ],
+    "s3_buckets": [
+      "198456344617-us-west-2-orcast-aws-backend-reports",
+      "198456344617-us-west-2-orcast-aws-backend-raw-payloads"
+    ],
+    "rds": {
+      "endpoint": "orcast-aws-backend-explore.cjymkcu2uzi1.us-west-2.rds.amazonaws.com",
+      "database": "orcast_explore",
+      "reachable_from_host": false,
+      "note": "private (SDR SD-A07); explore-session persistence degrades, same as App Runner"
+    },
+    "bedrock_model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "step_functions": "arn:aws:states:us-west-2:198456344617:stateMachine:orcast-aws-backend-forecast-orchestrator"
+  },
+  "rollback": {
+    "apprunner_service": "orcast-aws-backend",
+    "apprunner_url": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+    "apprunner_status": "RUNNING",
+    "revert": "set Vercel ORCAST_API_BASE back to the App Runner URL and redeploy"
+  },
+  "verification": {
+    "cutover_verified": "GREEN 2026-06-26",
+    "prod_proxy": {
+      "GET /api/be/health": 200,
+      "GET /api/be/api/gates": 200,
+      "GET /api/be/api/sightings": 200,
+      "GET /api/be/api/evidence/assets": 401,
+      "POST /api/be/api/interest": 200,
+      "GET /": 200
+    },
+    "host_health": { "sightings_loaded": 113, "hotspots_loaded": 114 },
+    "a_gate": "PASS 2026-06-25"
+  },
+  "known_limits": [
+    "RDS explore unreachable from host (DD-6)",
+    "interest raw-payload snapshot skipped (non-fatal, DD-5)",
+    "App Runner scale-down deferred to post-submission (DD-3)"
+  ]
+}

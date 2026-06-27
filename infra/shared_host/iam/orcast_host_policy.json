@@ -1,0 +1,76 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OrcastDynamoData",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:BatchWriteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-sightings",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-hotspots",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-reports",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-ingestion-runs",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-community-submissions",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-decision-records",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-user-journal",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-partner-api-keys",
+        "arn:aws:dynamodb:us-west-2:198456344617:table/orcast-aws-backend-managed-agents"
+      ]
+    },
+    {
+      "Sid": "OrcastS3Objects",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetObject"],
+      "Resource": [
+        "arn:aws:s3:::198456344617-us-west-2-orcast-aws-backend-reports/*",
+        "arn:aws:s3:::198456344617-us-west-2-orcast-aws-backend-raw-payloads/*"
+      ]
+    },
+    {
+      "Sid": "OrcastS3List",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::198456344617-us-west-2-orcast-aws-backend-reports",
+        "arn:aws:s3:::198456344617-us-west-2-orcast-aws-backend-raw-payloads"
+      ]
+    },
+    {
+      "Sid": "OrcastBedrock",
+      "Effect": "Allow",
+      "Action": ["bedrock:InvokeModel"],
+      "Resource": [
+        "arn:aws:bedrock:us-west-2::foundation-model/*",
+        "arn:aws:bedrock:*::foundation-model/*",
+        "arn:aws:bedrock:us-west-2:198456344617:inference-profile/*",
+        "arn:aws:bedrock:*::inference-profile/*"
+      ]
+    },
+    {
+      "Sid": "OrcastStepFunctionsStart",
+      "Effect": "Allow",
+      "Action": ["states:StartExecution"],
+      "Resource": [
+        "arn:aws:states:us-west-2:198456344617:stateMachine:orcast-aws-backend-forecast-orchestrator"
+      ]
+    },
+    {
+      "Sid": "OrcastStepFunctionsCallback",
+      "Effect": "Allow",
+      "Action": ["states:SendTaskSuccess", "states:SendTaskFailure"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "OrcastExploreDbSecret",
+      "Effect": "Allow",
+      "Action": ["secretsmanager:GetSecretValue"],
+      "Resource": "arn:aws:secretsmanager:us-west-2:198456344617:secret:orcast-aws-backend/exploration-db-Qsf2jg"
+    }
+  ]
+}

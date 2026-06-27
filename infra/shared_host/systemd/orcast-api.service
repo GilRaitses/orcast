@@ -1,0 +1,18 @@
+[Unit]
+Description=orcast FastAPI backend (co-tenant on the aimez-services self-host)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=orcast
+WorkingDirectory=/opt/orcast
+Environment=PYTHONPATH=/opt/orcast
+EnvironmentFile=/opt/orcast/infra/shared_host/env/orcast-services.env
+ExecStart=/opt/orcast/venv/bin/uvicorn src.aws_backend.main:app --host 127.0.0.1 --port 8090
+Restart=always
+RestartSec=5
+Nice=10
+
+[Install]
+WantedBy=multi-user.target
