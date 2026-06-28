@@ -1,0 +1,27 @@
+{
+  "flight": {"iata": "AS412", "icao": "ASA412", "number": "412"},
+  "airline": {"name": "Alaska Airlines", "iata": "AS", "icao": "ASA"},
+  "status": "active",
+  "departure": {
+    "airport": "Seattle-Tacoma International",
+    "iata": "SEA",
+    "icao": "KSEA",
+    "terminal": "N",
+    "gate": "N12",
+    "scheduled": "2026-06-27T15:05:00-07:00",
+    "estimated": "2026-06-27T15:18:00-07:00",
+    "actual": "2026-06-27T15:20:00-07:00",
+    "delay": 15
+  },
+  "arrival": {
+    "airport": "San Francisco International",
+    "iata": "SFO",
+    "icao": "KSFO",
+    "terminal": "2",
+    "gate": "55",
+    "scheduled": "2026-06-27T17:35:00-07:00",
+    "estimated": "2026-06-27T17:50:00-07:00",
+    "actual": null,
+    "delay": 15
+  }
+}

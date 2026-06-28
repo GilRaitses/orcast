@@ -1,0 +1,62 @@
+[
+  {
+    "FlowDataID": 5940,
+    "FlowReadingValue": 1,
+    "FlowStationLocation": {
+      "Description": "Highland St",
+      "Direction": "NB",
+      "Latitude": 48.42156131,
+      "Longitude": -122.3351276,
+      "MilePost": 226.7,
+      "RoadName": "005"
+    },
+    "Region": "Northwest",
+    "StationName": "005es22670",
+    "Time": "/Date(1782608602000-0700)/"
+  },
+  {
+    "FlowDataID": 4947,
+    "FlowReadingValue": 1,
+    "FlowStationLocation": {
+      "Description": "236th St NE",
+      "Direction": "NB",
+      "Latitude": 48.209565681,
+      "Longitude": -122.215644758,
+      "MilePost": 210.29,
+      "RoadName": "005"
+    },
+    "Region": "Northwest",
+    "StationName": "005es21029",
+    "Time": "/Date(1782608602000-0700)/"
+  },
+  {
+    "FlowDataID": 3371,
+    "FlowReadingValue": 1,
+    "FlowStationLocation": {
+      "Description": "70th St NE",
+      "Direction": "NB",
+      "Latitude": 48.059896377,
+      "Longitude": -122.184509442,
+      "MilePost": 199.68,
+      "RoadName": "005"
+    },
+    "Region": "Northwest",
+    "StationName": "005es19968",
+    "Time": "/Date(1782608602000-0700)/"
+  },
+  {
+    "FlowDataID": 4649,
+    "FlowReadingValue": 1,
+    "FlowStationLocation": {
+      "Description": "SR 528-NB",
+      "Direction": "NB",
+      "Latitude": 48.054117621,
+      "Longitude": -122.184425003,
+      "MilePost": 199.28,
+      "RoadName": "005"
+    },
+    "Region": "Northwest",
+    "StationName": "005es19928",
+    "Time": "/Date(1782608602000-0700)/"
+  }
+]

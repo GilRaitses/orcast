@@ -1,0 +1,16 @@
+[
+  {
+    "RouteID": 9,
+    "RouteAbbrev": "ana-sj",
+    "Description": "Anacortes / San Juan Islands",
+    "RegionID": 1,
+    "ServiceDisruptions": []
+  },
+  {
+    "RouteID": 10,
+    "RouteAbbrev": "ana-sj-sid",
+    "Description": "Anacortes / Sidney B.C.",
+    "RegionID": 1,
+    "ServiceDisruptions": []
+  }
+]

@@ -6,6 +6,7 @@ import { postJSON } from "@/lib/api";
 import type { ExploreSessionResponse } from "@/lib/api";
 import type { PlanResponse } from "@/lib/uiIntent";
 import type { SceneIntent } from "@/lib/sceneIntent";
+import { enrichTurnContext } from "@/lib/intent/transducer";
 
 // Inline public planner spec sent for anonymous-first turns. Only public T0/T1
 // skills + public panels, so the backend public_route guard never has to reject
@@ -52,12 +53,16 @@ export async function runAdaptiveTurn(
   sessionId: string,
   ctx: TurnContext,
 ): Promise<PlanResponse> {
+  // Additive B.7 implicit-intent feed: fold the live camera's dwell focus into
+  // the turn context. No-op when no Camera Director is registered, and never
+  // overrides an explicit viewport/focus, so existing turn behavior is preserved.
+  const enriched = enrichTurnContext(ctx);
   const body = {
     session_id: sessionId,
-    message: ctx.message,
+    message: enriched.message,
     agent: PUBLIC_PLANNER_SPEC,
-    viewport: ctx.viewport ?? undefined,
-    focus: ctx.focus ?? undefined,
+    viewport: enriched.viewport ?? undefined,
+    focus: enriched.focus ?? undefined,
     narrate: true,
   };
   const res = await fetch("/api/be/api/interactions/plan", {

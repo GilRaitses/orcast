@@ -15,7 +15,7 @@ import {
   runAdaptiveTurn,
   type TurnContext,
 } from "@/lib/adaptiveConsole";
-import type { PlanResponse, UiIntentPanel } from "@/lib/uiIntent";
+import { mapViewportFromIntent, type PlanResponse, type UiIntentPanel } from "@/lib/uiIntent";
 import type { SceneIntent } from "@/lib/sceneIntent";
 
 const STARTER_PROMPTS = [
@@ -102,6 +102,13 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
           { role: "assistant", content: resp.reply ?? "(no narration)" },
         ]);
         if (ctx.viewport) setFocus({ lat: ctx.viewport.lat, lng: ctx.viewport.lng });
+        // WS-INTENT seam F (additive): a planner-returned map_viewport closes the
+        // planner-to-camera loop. When the planner chose a place, prefer it over
+        // the request viewport so SalishScene flies the live camera there. When no
+        // map_viewport is present mapViewportFromIntent returns null and the
+        // existing request-viewport behavior above is unchanged.
+        const plannerViewport = mapViewportFromIntent(resp.ui_intent);
+        if (plannerViewport) setFocus({ lat: plannerViewport.lat, lng: plannerViewport.lng });
       } catch (e) {
         setError(String(e));
       } finally {

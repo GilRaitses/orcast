@@ -1,0 +1,101 @@
+[
+  {
+    "TerminalID": 1,
+    "TerminalSubjectID": 111,
+    "RegionID": 1,
+    "TerminalName": "Anacortes",
+    "TerminalAbbrev": "ANA",
+    "SortSeq": 10,
+    "DepartingSpaces": [
+      {
+        "Departure": "/Date(1782612300000-0700)/",
+        "IsCancelled": false,
+        "VesselID": 2,
+        "VesselName": "Chelan",
+        "MaxSpaceCount": 120,
+        "SpaceForArrivalTerminals": [
+          {
+            "TerminalID": 1,
+            "TerminalName": "Anacortes -> Lopez Island",
+            "VesselID": 2,
+            "VesselName": "Chelan",
+            "DisplayReservableSpace": true,
+            "ReservableSpaceCount": null,
+            "ReservableSpaceHexColor": "#888888",
+            "DisplayDriveUpSpace": true,
+            "DriveUpSpaceCount": 77,
+            "DriveUpSpaceHexColor": "#00FF00",
+            "MaxSpaceCount": 120,
+            "ArrivalTerminalIDs": [
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "Departure": "/Date(1782616500000-0700)/",
+        "IsCancelled": false,
+        "VesselID": 38,
+        "VesselName": "Yakima",
+        "MaxSpaceCount": 139,
+        "SpaceForArrivalTerminals": [
+          {
+            "TerminalID": 1,
+            "TerminalName": "Anacortes -> Friday Harbor",
+            "VesselID": 38,
+            "VesselName": "Yakima",
+            "DisplayReservableSpace": true,
+            "ReservableSpaceCount": 32,
+            "ReservableSpaceHexColor": "#FFFF00",
+            "DisplayDriveUpSpace": true,
+            "DriveUpSpaceCount": 55,
+            "DriveUpSpaceHexColor": "#FFFF00",
+            "MaxSpaceCount": 139,
+            "ArrivalTerminalIDs": [
+              10
+            ]
+          }
+        ]
+      }
+    ],
+    "IsNoFareCollected": null,
+    "NoFareCollectedMsg": null
+  },
+  {
+    "TerminalID": 3,
+    "TerminalSubjectID": 103,
+    "RegionID": 4,
+    "TerminalName": "Bainbridge Island",
+    "TerminalAbbrev": "BBI",
+    "SortSeq": 40,
+    "DepartingSpaces": [
+      {
+        "Departure": "/Date(1782610200000-0700)/",
+        "IsCancelled": false,
+        "VesselID": 32,
+        "VesselName": "Tacoma",
+        "MaxSpaceCount": 197,
+        "SpaceForArrivalTerminals": [
+          {
+            "TerminalID": 7,
+            "TerminalName": "Seattle",
+            "VesselID": 32,
+            "VesselName": "Tacoma",
+            "DisplayReservableSpace": false,
+            "ReservableSpaceCount": null,
+            "ReservableSpaceHexColor": null,
+            "DisplayDriveUpSpace": true,
+            "DriveUpSpaceCount": 84,
+            "DriveUpSpaceHexColor": "#FFFF00",
+            "MaxSpaceCount": 197,
+            "ArrivalTerminalIDs": [
+              7
+            ]
+          }
+        ]
+      }
+    ],
+    "IsNoFareCollected": null,
+    "NoFareCollectedMsg": null
+  }
+]

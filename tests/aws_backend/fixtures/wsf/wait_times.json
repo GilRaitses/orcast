@@ -1,0 +1,28 @@
+[
+  {
+    "TerminalID": 1,
+    "TerminalSubjectID": 111,
+    "RegionID": 1,
+    "TerminalName": "Anacortes",
+    "TerminalAbbrev": "ANA",
+    "SortSeq": 10,
+    "WaitTimes": [
+      {
+        "RouteID": null,
+        "RouteName": "All routes",
+        "WaitTimeNotes": "Vehicles without reservations should arrive 60-90 minutes early.",
+        "WaitTimeLastUpdated": "/Date(1782611000000-0700)/",
+        "WaitTimeIVRNotes": "Arrive early; standby space is limited."
+      }
+    ]
+  },
+  {
+    "TerminalID": 10,
+    "TerminalSubjectID": 110,
+    "RegionID": 1,
+    "TerminalName": "Friday Harbor",
+    "TerminalAbbrev": "FRH",
+    "SortSeq": 30,
+    "WaitTimes": []
+  }
+]

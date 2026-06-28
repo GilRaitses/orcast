@@ -1,0 +1,61 @@
+{
+  "pagination": {"limit": 100, "offset": 0, "count": 2, "total": 2},
+  "data": [
+    {
+      "flight_date": "2026-06-27",
+      "flight_status": "scheduled",
+      "departure": {
+        "airport": "Seattle-Tacoma International",
+        "iata": "SEA",
+        "icao": "KSEA",
+        "terminal": "N",
+        "gate": "N16",
+        "scheduled": "2026-06-27T16:10:00+00:00",
+        "estimated": "2026-06-27T16:10:00+00:00",
+        "actual": null,
+        "delay": null
+      },
+      "arrival": {
+        "airport": "Los Angeles International",
+        "iata": "LAX",
+        "icao": "KLAX",
+        "terminal": "6",
+        "gate": "65A",
+        "scheduled": "2026-06-27T18:50:00+00:00",
+        "estimated": "2026-06-27T18:50:00+00:00",
+        "actual": null,
+        "delay": null
+      },
+      "airline": {"name": "Alaska Airlines", "iata": "AS", "icao": "ASA"},
+      "flight": {"number": "1185", "iata": "AS1185", "icao": "ASA1185"}
+    },
+    {
+      "flight_date": "2026-06-27",
+      "flight_status": "landed",
+      "departure": {
+        "airport": "Seattle-Tacoma International",
+        "iata": "SEA",
+        "icao": "KSEA",
+        "terminal": "C",
+        "gate": "C2",
+        "scheduled": "2026-06-27T09:00:00+00:00",
+        "estimated": "2026-06-27T09:05:00+00:00",
+        "actual": "2026-06-27T09:07:00+00:00",
+        "delay": 7
+      },
+      "arrival": {
+        "airport": "Denver International",
+        "iata": "DEN",
+        "icao": "KDEN",
+        "terminal": null,
+        "gate": "B44",
+        "scheduled": "2026-06-27T12:35:00+00:00",
+        "estimated": "2026-06-27T12:40:00+00:00",
+        "actual": "2026-06-27T12:38:00+00:00",
+        "delay": 3
+      },
+      "airline": {"name": "United Airlines", "iata": "UA", "icao": "UAL"},
+      "flight": {"number": "557", "iata": "UA557", "icao": "UAL557"}
+    }
+  ]
+}

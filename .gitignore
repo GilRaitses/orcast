@@ -112,3 +112,6 @@ venv/
 config.js
 src/frontend/production_config.js
 config/redis_connection.env
+
+# External research data (license-gated, do not commit)
+data/external/

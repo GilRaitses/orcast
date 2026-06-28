@@ -48,6 +48,36 @@
       "surface": "sidebar",
       "label": "Metric provenance graph",
       "h0_route": "/explore"
+    },
+    {
+      "id": "compare_places",
+      "surface": "sidebar",
+      "label": "Compare places",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "local_area",
+      "surface": "sidebar",
+      "label": "Local area plan",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "connections_plan",
+      "surface": "sidebar",
+      "label": "Connection plan",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "kayak_plan",
+      "surface": "sidebar",
+      "label": "Kayak window",
+      "h0_route": "/explore"
+    },
+    {
+      "id": "sidequests",
+      "surface": "sidebar",
+      "label": "Sidequests",
+      "h0_route": "/explore"
     }
   ]
 }

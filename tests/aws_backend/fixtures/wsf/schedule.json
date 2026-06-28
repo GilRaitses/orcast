@@ -1,0 +1,47 @@
+{
+  "ScheduleID": 4321,
+  "ScheduleName": "Anacortes / San Juan Islands",
+  "ScheduleSeason": 1,
+  "SchedulePDFUrl": "https://www.wsdot.wa.gov/ferries/schedules/pdf/ana-sj.pdf",
+  "ScheduleStart": "/Date(1781846400000-0700)/",
+  "ScheduleEnd": "/Date(1790000000000-0700)/",
+  "AllRoutes": [9],
+  "TerminalCombos": [
+    {
+      "DepartingTerminalID": 1,
+      "DepartingTerminalName": "Anacortes",
+      "ArrivingTerminalID": 10,
+      "ArrivingTerminalName": "Friday Harbor",
+      "SailingNotes": "",
+      "Annotations": [
+        "Reservations required for vehicles on this sailing.",
+        "Subject to tidal cancellation."
+      ],
+      "AnnotationsIVR": ["Reservations required."],
+      "Times": [
+        {
+          "DepartingTime": "/Date(1782612000000-0700)/",
+          "ArrivingTime": "/Date(1782615600000-0700)/",
+          "LoadingRule": 3,
+          "VesselID": 2,
+          "VesselName": "Chelan",
+          "VesselHandicapAccessible": true,
+          "VesselPositionNum": 1,
+          "Routes": [9],
+          "AnnotationIndexes": [0]
+        },
+        {
+          "DepartingTime": "/Date(1782638700000-0700)/",
+          "ArrivingTime": null,
+          "LoadingRule": 2,
+          "VesselID": 38,
+          "VesselName": "Yakima",
+          "VesselHandicapAccessible": true,
+          "VesselPositionNum": 2,
+          "Routes": [9],
+          "AnnotationIndexes": [0, 1]
+        }
+      ]
+    }
+  ]
+}

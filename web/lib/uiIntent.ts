@@ -48,6 +48,11 @@ const PANEL_LABELS: Record<string, string> = {
   moderation_queue: "Moderation queue",
   provenance_graph: "Metric provenance graph",
   hydrophone_signal: "Hydrophone signal",
+  compare_places: "Compare places",
+  local_area: "Local area",
+  connections_plan: "Connection plan",
+  kayak_plan: "Kayak window",
+  sidequests: "Sidequests",
 };
 
 export function panelLabel(id: string): string {

@@ -6,6 +6,9 @@
     "fetch_gates",
     "fetch_hotspots",
     "fetch_provenance",
+    "fetch_environmental",
+    "fetch_live_hydrophones",
+    "fetch_verified_sightings",
     "fetch_decision_records",
     "fetch_review_dossier_summary",
     "fetch_supervisor_recommendation",
@@ -30,7 +33,12 @@
       "decisions_table",
       "review_dossier",
       "moderation_queue",
-      "provenance_graph"
+      "provenance_graph",
+      "compare_places",
+      "local_area",
+      "connections_plan",
+      "kayak_plan",
+      "sidequests"
     ]
   },
   "active": true

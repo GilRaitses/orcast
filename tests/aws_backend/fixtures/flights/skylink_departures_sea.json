@@ -1,0 +1,60 @@
+{
+  "iata": "SEA",
+  "direction": "departures",
+  "schedules": [
+    {
+      "flight": {"iata": "AS412", "icao": "ASA412", "number": "412"},
+      "airline": {"name": "Alaska Airlines", "iata": "AS", "icao": "ASA"},
+      "status": "scheduled",
+      "departure": {
+        "airport": "Seattle-Tacoma International",
+        "iata": "SEA",
+        "icao": "KSEA",
+        "terminal": "N",
+        "gate": "N12",
+        "scheduled": "2026-06-27T15:05:00-07:00",
+        "estimated": "2026-06-27T15:18:00-07:00",
+        "actual": null,
+        "delay": 13
+      },
+      "arrival": {
+        "airport": "San Francisco International",
+        "iata": "SFO",
+        "icao": "KSFO",
+        "terminal": "2",
+        "gate": "55",
+        "scheduled": "2026-06-27T17:35:00-07:00",
+        "estimated": "2026-06-27T17:48:00-07:00",
+        "actual": null,
+        "delay": null
+      }
+    },
+    {
+      "flight": {"iata": "DL880", "icao": "DAL880", "number": "880"},
+      "airline": {"name": "Delta Air Lines", "iata": "DL", "icao": "DAL"},
+      "status": "active",
+      "departure": {
+        "airport": "Seattle-Tacoma International",
+        "iata": "SEA",
+        "icao": "KSEA",
+        "terminal": "S",
+        "gate": "S9",
+        "scheduled": "2026-06-27T15:40:00-07:00",
+        "estimated": "2026-06-27T15:40:00-07:00",
+        "actual": "2026-06-27T15:42:00-07:00",
+        "delay": 0
+      },
+      "arrival": {
+        "airport": "Salt Lake City International",
+        "iata": "SLC",
+        "icao": "KSLC",
+        "terminal": null,
+        "gate": "C12",
+        "scheduled": "2026-06-27T18:55:00-06:00",
+        "estimated": "2026-06-27T18:55:00-06:00",
+        "actual": null,
+        "delay": null
+      }
+    }
+  ]
+}

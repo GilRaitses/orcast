@@ -1,0 +1,114 @@
+version: 1
+family: CONSOLE-JOURNEY
+label: console-journey-trips
+home: .cca/catalogue/O0/20260627_console-journey-trips/
+status: chartered-pending-operator-go
+
+execution_model:
+  one_file_one_owner: true
+  single_convergence_file_editor_per_wave: true
+  convergence_files:
+    W2: web/app/components/scene/SalishScene.tsx
+    W3: src/aws_backend/casting/planner.py
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  large_artifacts_to: object-storage
+  secrets_to: env-and-deploy-config
+  honesty_label: "measured | modeled | published | heuristic"
+
+decision_record:
+  scope: full-3-wave-program            # CONFIRMED
+  trips_depth: real-planner             # CONFIRMED (lift js/agentic trip-hierarchy)
+  connections_requested: [ferry, seaplane, road-traffic]  # CONFIRMED
+  geocoding: gazetteer-first-photon-fallback   # proposed default
+  traffic_source: wsdot-plus-self-built-history-model     # proposed default
+  flight_source: skylink-plus-opensky-plus-static-seaplane # proposed default
+  surface: extend-live-home-console     # proposed default
+  no_promotion: true                    # proposed default
+
+waves:
+  - id: W1
+    name: foundation-primitives
+    parallelism: 6
+    convergence_file_edits: false
+    launch_status: pending-operator-go
+    agents:
+      - { role: camera-director, owns: web/lib/scene/camera/, deliverable: "flyTo/descendTo/followPath/orbit + easing, ref handle" }
+      - { role: search-affordance, owns: web/app/components/scene/SearchAffordance.tsx, deliverable: "frosted magnifier button + hover-expand field + idle collapse" }
+      - { role: geocode-gazetteer, owns: web/lib/geo/gazetteer.ts, deliverable: "curated Salish places + resolvePlace + optional Photon client" }
+      - { role: atmosphere-transition, owns: web/lib/scene/atmosphere/transition.ts, deliverable: "rollInFog + descent lighting tween" }
+      - { role: connections-recon, owns: .cca/catalogue/O0/20260627_console-journey-trips/CONNECTIONS_RESEARCH.md, deliverable: "source screen + endpoints + adapter contracts" }
+      - { role: trips-schema, owns: web/lib/trips/model.ts, deliverable: "TS port of trip-hierarchy + branch enum" }
+    gate: "each module type-checks; East Sound path runs in sandbox journey route; recon endpoints confirmed"
+
+  - id: W2
+    name: intent-loop-and-connections-clients
+    depends_on: [W1]
+    parallelism: 5
+    convergence_file: web/app/components/scene/SalishScene.tsx
+    launch_status: blocked-on-W1
+    agents:
+      - { role: viewport-bridge, owns: web/app/components/scene/SalishScene.tsx, phase: B, deliverable: "map_viewport intent drives Camera Director; camera ref" }
+      - { role: intent-transducer, owns: web/lib/intent/transducer.ts, phase: A, deliverable: "camera/dwell state enriches planner turns" }
+      - { role: flythrough-choreography, owns: web/lib/journey/controller.ts, phase: A, deliverable: "search->fog->descend->route->orbit end to end" }
+      - { role: wsf-client, owns: src/aws_backend/sources/wsf.py, phase: A, deliverable: "vessel locations + schedule + sailing space" }
+      - { role: wsdot-traffic-client, owns: src/aws_backend/sources/wsdot_traffic.py, phase: A, deliverable: "travel times + flow + history logger" }
+    gate: "gazetteer search flies the live camera; map_viewport turn moves camera; WSF/WSDOT unit tests pass on fixtures"
+
+  - id: W3
+    name: trips-journey
+    depends_on: [W2]
+    parallelism: 5
+    convergence_file: src/aws_backend/casting/planner.py
+    launch_status: blocked-on-W2
+    agents:
+      - { role: trips-planner-branch, owns: src/aws_backend/casting/planner.py, phase: B, deliverable: "branch on orienting answer; per-branch panels" }
+      - { role: connections-planner, owns: src/aws_backend/casting/trips/connections.py, phase: A, deliverable: "make-your-sailing/flight reasoning, honesty-labeled" }
+      - { role: corridor-traffic-model, owns: modeling/traffic/corridor.py, phase: A, deliverable: "time-of-day/day-of-week ETA model + interval" }
+      - { role: kayak-branch, owns: web/app/components/console/KayakPanel.tsx, phase: A, deliverable: "launch points + tide/current windows + safety" }
+      - { role: sidequests-auth, owns: web/app/components/console/SidequestPanel.tsx, phase: A, deliverable: "curiosity pairing + inline charter-auth confirm chip" }
+    gate: "each branch returns a coherent panel set from a real turn; connections planner answers a concrete sailing/flight question with a labeled confidence; no promotion"
+
+  - id: W-CAPTURE
+    name: demo-beats-handoff
+    depends_on: [W3]
+    mode: capture-only
+    launch_status: blocked-on-W3
+    hands_off_to: .cca/catalogue/O0/20260627_demo-waveset/
+    deliverable: "Playwright beats for the East Sound fly-through and one Trips branch under web/e2e/beats/"
+
+sources:
+  ferries:
+    provider: WSDOT-WSF-API
+    open: true
+    auth: free-access-code-by-email
+    endpoints:
+      vessel_locations: "https://wsdot.wa.gov/ferries/api/vessels/rest/vessellocations?apiaccesscode={CODE}"
+      schedule: "https://wsdot.wa.gov/ferries/api/schedule/rest/schedule/{TRIPDATE}/{ROUTEID}?apiaccesscode={CODE}"
+      sailing_space: "https://www.wsdot.wa.gov/ferries/api/terminals/rest/terminalsailingspace?apiaccesscode={CODE}"
+      wait_times: "https://www.wsdot.wa.gov/ferries/api/terminals/rest/terminalwaittimes?apiaccesscode={CODE}"
+    label: measured-realtime
+  road_traffic:
+    provider: WSDOT-Traveler-API
+    open: true
+    auth: free-access-code-by-email
+    endpoints:
+      travel_times: "https://wsdot.wa.gov/Traffic/api/TravelTimes/TravelTimesREST.svc/GetTravelTimesAsJson?AccessCode={CODE}"
+      traffic_flow: "https://wsdot.wa.gov/Traffic/api/TrafficFlow/TrafficFlowREST.svc/GetTrafficFlowsAsJson?AccessCode={CODE}"
+    realtime_label: measured-realtime
+    prediction_label: modeled-from-self-collected-history
+    note: "API serves realtime only; no historical via API. Self-collect to model future-departure ETA."
+  flights:
+    live_positions: { provider: OpenSky-Network, open: true, note: "ADS-B only, no schedules, may block AWS IPs" }
+    schedules: { provider: SkyLink-RapidAPI, open: false, free_tier: "1000 req/mo, 5-day history + 1 forward" }
+    seaplane: { provider: Kenmore-Air, open: false, approach: published-static-schedule, label: published }
+  geocoding:
+    core: { provider: curated-gazetteer, open: true, label: offline-deterministic }
+    typeahead: { provider: Photon, open: true, license: Apache-2.0, note: "self-hosted, OSM, search-as-you-type" }
+    alt: { provider: Nominatim-or-Pelias, open: true }
+
+operator_gates:
+  - decision record items 4-8 confirmed or overridden before W1 launch
+  - WSDOT/WSF access code provisioned before W2
+  - corridor history log start date decided (real lead time vs labeled synthetic bootstrap)
+  - no deploy / no promotion / no commit by sub-agents

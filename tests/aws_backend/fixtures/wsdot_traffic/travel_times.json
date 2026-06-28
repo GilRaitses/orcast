@@ -1,0 +1,177 @@
+[
+  {
+    "AverageTime": 16,
+    "CurrentTime": 12,
+    "Description": "SeaTac to Downtown Seattle",
+    "Distance": 13.03,
+    "EndPoint": {
+      "Description": "I-5 @ University St in Seattle",
+      "Direction": "N",
+      "Latitude": 47.609294,
+      "Longitude": -122.331759,
+      "MilePost": 165.83,
+      "RoadName": "005"
+    },
+    "Name": "SeaTac-Seattle",
+    "StartPoint": {
+      "Description": "I-5 @ S 188th St in SeaTac",
+      "Direction": "N",
+      "Latitude": 47.43876,
+      "Longitude": -122.26947,
+      "MilePost": 152.8,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 43
+  },
+  {
+    "AverageTime": 20,
+    "CurrentTime": 15,
+    "Description": "Downtown Seattle to Lynnwood",
+    "Distance": 15.73,
+    "EndPoint": {
+      "Description": "I-5 @ 196th St SW in Lynnwood",
+      "Direction": "N",
+      "Latitude": 47.819545,
+      "Longitude": -122.279109,
+      "MilePost": 181.56,
+      "RoadName": "005"
+    },
+    "Name": "Seattle-Lynnwood",
+    "StartPoint": {
+      "Description": "I-5 @ University St in Seattle",
+      "Direction": "N",
+      "Latitude": 47.609294,
+      "Longitude": -122.331759,
+      "MilePost": 165.83,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 27
+  },
+  {
+    "AverageTime": 31,
+    "CurrentTime": 25,
+    "Description": "Downtown Seattle to Everett",
+    "Distance": 26.94,
+    "EndPoint": {
+      "Description": "I-5 @ 41st St in Everett",
+      "Direction": "N",
+      "Latitude": 47.92428,
+      "Longitude": -122.26548,
+      "MilePost": 192.77,
+      "RoadName": "005"
+    },
+    "Name": "Seattle-Everett",
+    "StartPoint": {
+      "Description": "I-5 @ University St in Seattle",
+      "Direction": "N",
+      "Latitude": 47.609294,
+      "Longitude": -122.331759,
+      "MilePost": 165.83,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 4
+  },
+  {
+    "AverageTime": 7,
+    "CurrentTime": 7,
+    "Description": "41st St in Everett to 88th St NE in Marysville",
+    "Distance": 7.89,
+    "EndPoint": {
+      "Description": "I-5 @ 88th St NE-SB in Marysville",
+      "Direction": "N",
+      "Latitude": 48.075728,
+      "Longitude": -122.184877,
+      "MilePost": 200.66,
+      "RoadName": "005"
+    },
+    "Name": "Everett-Marysville",
+    "StartPoint": {
+      "Description": "I-5 @ 41st St in Everett",
+      "Direction": "N",
+      "Latitude": 47.964146,
+      "Longitude": -122.199237,
+      "MilePost": 192.77,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 268
+  },
+  {
+    "AverageTime": 12,
+    "CurrentTime": 12,
+    "Description": "41st St in Everett to SR 531 in Arlington",
+    "Distance": 13.1,
+    "EndPoint": {
+      "Description": "I-5 @ EB 172nd St in Arlington",
+      "Direction": "N",
+      "Latitude": 48.152212,
+      "Longitude": -122.188847,
+      "MilePost": 205.87,
+      "RoadName": "005"
+    },
+    "Name": "Everett-Arlington",
+    "StartPoint": {
+      "Description": "I-5 @ 41st St in Everett",
+      "Direction": "N",
+      "Latitude": 47.964146,
+      "Longitude": -122.199237,
+      "MilePost": 192.77,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 267
+  },
+  {
+    "AverageTime": 30,
+    "CurrentTime": 26,
+    "Description": "Everett to Downtown Seattle using HOV lanes",
+    "Distance": 26.72,
+    "EndPoint": {
+      "Description": "I-5 @ University St in Seattle",
+      "Direction": "S",
+      "Latitude": 47.609294,
+      "Longitude": -122.331759,
+      "MilePost": 165.83,
+      "RoadName": "005"
+    },
+    "Name": "Everett-Seattle HOV",
+    "StartPoint": {
+      "Description": "I-5 @ 41st St in Everett",
+      "Direction": "S",
+      "Latitude": 47.964146,
+      "Longitude": -122.199237,
+      "MilePost": 192.55,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 2
+  },
+  {
+    "AverageTime": 31,
+    "CurrentTime": 25,
+    "Description": "Downtown Seattle to Everett using HOV lanes",
+    "Distance": 26.94,
+    "EndPoint": {
+      "Description": "I-5 @ 41st St in Everett",
+      "Direction": "N",
+      "Latitude": 47.92428,
+      "Longitude": -122.26548,
+      "MilePost": 192.77,
+      "RoadName": "005"
+    },
+    "Name": "Seattle-Everett HOV",
+    "StartPoint": {
+      "Description": "I-5 @ University St in Seattle",
+      "Direction": "N",
+      "Latitude": 47.609294,
+      "Longitude": -122.331759,
+      "MilePost": 165.83,
+      "RoadName": "005"
+    },
+    "TimeUpdated": "/Date(1782608400000-0700)/",
+    "TravelTimeID": 3
+  }
+]
