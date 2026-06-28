@@ -24,9 +24,12 @@ $(TIKZ_FIGS):
 	fi
 	@echo "  -> $@/figure.pdf  $@/figure.png"
 
+# Canonical architecture diagram is the AWS4 draw.io source (supersedes TikZ fig-08).
+# Renders architecture-aws4.drawio and syncs it to both submission/demo locations.
 post-build-fig-08:
-	@cp docs/figures/fig-08-architecture/figure.png web/public/demo-slides/architecture.png 2>/dev/null || true
-	@cp docs/figures/fig-08-architecture/figure.png docs/devpost/figures/architecture.png 2>/dev/null || true
+	@drawio -x -f png -e -b 12 -s 2 -o docs/devpost/figures/architecture-aws4.png docs/devpost/figures/architecture-aws4.drawio 2>/dev/null || true
+	@cp docs/devpost/figures/architecture-aws4.png web/public/demo-slides/architecture.png 2>/dev/null || true
+	@cp docs/devpost/figures/architecture-aws4.png docs/devpost/figures/architecture.png 2>/dev/null || true
 
 clean:
 	for f in $(TIKZ_FIGS); do \
