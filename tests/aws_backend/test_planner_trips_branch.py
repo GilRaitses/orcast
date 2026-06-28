@@ -28,12 +28,14 @@ from src.aws_backend.casting.models import (
     load_seed_agent,
 )
 from src.aws_backend.casting.planner import (
+    _corridor_eta_adapter,
     aggregate_corridor_eta,
     draft_ui_intent,
     validate_ui_intent,
 )
 from src.aws_backend.casting.trips import connections as cx
 from src.aws_backend.casting.trips.connections import ConnectionClients
+from src.aws_backend.sources import wsdot_traffic
 
 # --------------------------------------------------------------------------- #
 # Scenario fixtures: "Depart SeaTac 3 pm Friday, catch the 6:30 Anacortes sailing?"
@@ -409,3 +411,40 @@ def test_public_spec_surfaces_trip_panels_on_anonymous_route(branch, expected_pa
     assert expected_panel in panel_ids, f"{branch} dropped {expected_panel}: {panel_ids}"
     # The reduced public spec must still validate on the anonymous public route.
     validate_ui_intent(agent, intent, public_route=True)
+
+
+# --------------------------------------------------------------------------- #
+# 6. WS-PERF guard: the visiting / here-now request path must NEVER call the
+#    slow wsdot_traffic.traffic_flows (~1.8 s; the drive leg reaches WSDOT only
+#    via corridor_route_ids -> travel_times). This wires the REAL corridor
+#    adapter (not the _corridor_adapter stub) and makes traffic_flows explode,
+#    so any future code that pulls traffic_flows onto a plan turn fails here.
+# --------------------------------------------------------------------------- #
+
+@pytest.mark.parametrize("branch", ["visiting", "here-now"])
+def test_visiting_and_here_now_never_call_traffic_flows(branch, monkeypatch):
+    def _boom(*_a, **_k):
+        raise AssertionError(
+            "traffic_flows must never run on the /plan request path"
+        )
+
+    monkeypatch.setattr(wsdot_traffic, "traffic_flows", _boom)
+    # Keep corridor route resolution offline: travel_times returns no rows, so
+    # corridor_route_ids degrades to [] without a live WSDOT call (and without
+    # ever reaching traffic_flows).
+    monkeypatch.setattr(wsdot_traffic, "travel_times", lambda *a, **k: [])
+
+    agent = load_seed_agent("surface-planner-v1")
+    # The REAL request-path adapter (corridor_route_ids -> travel_times), NOT
+    # the _corridor_adapter stub the other tests inject.
+    clients = _clients(predict_eta=_corridor_eta_adapter())
+    intent = draft_ui_intent(
+        agent,
+        "make my sailing",
+        focus={"branch": branch, "connection": _connection_intent()},
+        connection_clients=clients,
+    )
+
+    # The turn completed without tripping the traffic_flows guard.
+    panel_ids = [p["id"] for p in intent["panels"]]
+    assert "connections_plan" in panel_ids

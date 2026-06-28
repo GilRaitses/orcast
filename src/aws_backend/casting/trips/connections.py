@@ -40,7 +40,14 @@ from datetime import date as date_type
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
+from src.aws_backend.casting.trips.fanout import fetch_legs_concurrently
+
 logger = logging.getLogger(__name__)
+
+# Sentinel distinguishing "not prefetched, fetch it here" from "prefetched but
+# empty/failed". A prefetched ``None`` is coerced to the leg's empty sentinel,
+# exactly like the sequential ``try/except`` path did.
+_UNSET: Any = object()
 
 # --------------------------------------------------------------------------- #
 # Honesty labels + strength ordering
@@ -218,6 +225,8 @@ def _build_drive_leg(
     depart_dt: Optional[datetime],
     origin_label: str,
     destination_label: str,
+    *,
+    prediction: Any = _UNSET,
 ) -> Dict[str, Any]:
     """Drive leg from the corridor model. ALWAYS labeled ``modeled``.
 
@@ -260,11 +269,16 @@ def _build_drive_leg(
         leg["note"] = "No departure time supplied, drive estimate unknown."
         return leg
 
-    try:
-        prediction = clients.predict_eta(depart_dt) or {}
-    except Exception as exc:  # defensive: a sibling producer may raise
-        logger.warning("connections: corridor predict_eta failed: %s", exc)
-        prediction = {}
+    if prediction is _UNSET:
+        # Sequential path: fetch here (direct callers / no fan-out).
+        try:
+            prediction = clients.predict_eta(depart_dt) or {}
+        except Exception as exc:  # defensive: a sibling producer may raise
+            logger.warning("connections: corridor predict_eta failed: %s", exc)
+            prediction = {}
+    else:
+        # Fan-out path: a prefetched ``None`` means the leg failed -> empty.
+        prediction = prediction or {}
 
     eta_min = _minutes(prediction.get("eta"))
     interval = prediction.get("interval")
@@ -449,7 +463,13 @@ def _match_vessel(
 
 
 def _build_ferry_leg(
-    clients: ConnectionClients, ferry: Dict[str, Any], depart_dt: Optional[datetime]
+    clients: ConnectionClients,
+    ferry: Dict[str, Any],
+    depart_dt: Optional[datetime],
+    *,
+    schedule: Any = _UNSET,
+    spaces: Any = _UNSET,
+    vessels: Any = _UNSET,
 ) -> Dict[str, Any]:
     route_id = ferry.get("route_id")
     dep_term = ferry.get("departing_terminal_id")
@@ -470,13 +490,16 @@ def _build_ferry_leg(
 
     sailing = None
     if route_id is not None and trip_date is not None:
-        try:
-            schedule = clients.schedule(int(route_id), trip_date) or {}
-        except Exception as exc:
-            logger.warning("connections: wsf.schedule failed: %s", exc)
-            schedule = {}
+        if schedule is _UNSET:
+            try:
+                schedule_data = clients.schedule(int(route_id), trip_date) or {}
+            except Exception as exc:
+                logger.warning("connections: wsf.schedule failed: %s", exc)
+                schedule_data = {}
+        else:
+            schedule_data = schedule or {}
         sailing = _match_sailing_time(
-            schedule,
+            schedule_data,
             dep_term,
             arr_term,
             ferry.get("depart_clock"),
@@ -493,23 +516,29 @@ def _build_ferry_leg(
             "No matching sailing found in the schedule, sailing unknown."
         )
 
-    try:
-        spaces = clients.sailing_space(dep_term) or []
-    except Exception as exc:
-        logger.warning("connections: wsf.sailing_space failed: %s", exc)
-        spaces = []
-    space = _match_space(spaces, dep_term, arr_term, sailing_dt)
+    if spaces is _UNSET:
+        try:
+            spaces_data = clients.sailing_space(dep_term) or []
+        except Exception as exc:
+            logger.warning("connections: wsf.sailing_space failed: %s", exc)
+            spaces_data = []
+    else:
+        spaces_data = spaces or []
+    space = _match_space(spaces_data, dep_term, arr_term, sailing_dt)
     if space is not None:
         leg["space"] = space
         leg["label_detail"]["space"] = MEASURED
 
-    try:
-        vessels = clients.vessel_locations() or []
-    except Exception as exc:
-        logger.warning("connections: wsf.vessel_locations failed: %s", exc)
-        vessels = []
+    if vessels is _UNSET:
+        try:
+            vessels_data = clients.vessel_locations() or []
+        except Exception as exc:
+            logger.warning("connections: wsf.vessel_locations failed: %s", exc)
+            vessels_data = []
+    else:
+        vessels_data = vessels or []
     vessel = _match_vessel(
-        vessels, sailing.get("vessel_id") if sailing else None, arr_term
+        vessels_data, sailing.get("vessel_id") if sailing else None, arr_term
     )
     if vessel is not None:
         leg["vessel"] = vessel
@@ -715,12 +744,51 @@ def plan_connection(
     # Drive leg precedes a ferry / seaplane departure that has a road approach.
     ferry_leg: Optional[Dict[str, Any]] = None
     if mode == "ferry" or ferry:
-        destination = (ferry or {}).get("departing_terminal_name") or "the terminal"
-        drive_leg = _build_drive_leg(clients, depart_dt, origin_label, destination)
+        ferry = ferry or {}
+        destination = ferry.get("departing_terminal_name") or "the terminal"
+
+        # The four ferry-branch legs (corridor ETA + WSF schedule / sailing
+        # space / vessel locations) are independent blocking calls. Fan them out
+        # so wall time approaches the slowest leg instead of their sum. Matching,
+        # feasibility, labels, and freshness all stay sequential below; only the
+        # I/O fetches run concurrently. Each result is None on failure and the
+        # builders coerce it to their empty sentinel, so behavior is unchanged.
+        route_id = ferry.get("route_id")
+        dep_term = ferry.get("departing_terminal_id")
+        trip_date = _parse_date(ferry.get("trip_date"), depart_dt)
+
+        fetch_tasks: Dict[str, Callable[[], Any]] = {}
+        if depart_dt is not None:
+            fetch_tasks["drive_prediction"] = lambda: clients.predict_eta(depart_dt)
+        if route_id is not None and trip_date is not None:
+            fetch_tasks["ferry_schedule"] = (
+                lambda: clients.schedule(int(route_id), trip_date)
+            )
+        fetch_tasks["ferry_spaces"] = lambda: clients.sailing_space(dep_term)
+        fetch_tasks["ferry_vessels"] = lambda: clients.vessel_locations()
+
+        fetched = fetch_legs_concurrently(fetch_tasks)
+
+        drive_leg = _build_drive_leg(
+            clients,
+            depart_dt,
+            origin_label,
+            destination,
+            prediction=fetched.get("drive_prediction"),
+        )
         legs.append(drive_leg)
         notes.append(drive_leg["segments"][1]["note"])
 
-        ferry_leg = _build_ferry_leg(clients, ferry or {}, depart_dt)
+        ferry_leg = _build_ferry_leg(
+            clients,
+            ferry,
+            depart_dt,
+            schedule=(
+                fetched["ferry_schedule"] if "ferry_schedule" in fetched else _UNSET
+            ),
+            spaces=fetched.get("ferry_spaces"),
+            vessels=fetched.get("ferry_vessels"),
+        )
         # Stamp measured freshness from the live ferry signals actually used.
         if ferry_leg.get("space") is not None:
             measured_stamps.append(now)

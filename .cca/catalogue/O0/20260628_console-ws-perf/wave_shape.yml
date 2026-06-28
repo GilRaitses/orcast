@@ -1,0 +1,118 @@
+version: 1
+family: CONSOLE-JOURNEY
+waveset: WS-PERF
+label: console-ws-perf
+home: .cca/catalogue/O0/20260628_console-ws-perf/
+program_charter: .cca/catalogue/O0/20260627_console-journey-trips/PROGRAM_WAVESETS_CHARTER.md
+status: wp3-implementation-done       # T1+T2 built & green (314 tests); T3 resolved (no fix); T4 deferred; WP4 next
+origin: benchmark on EC2 t3.large us-west-2 (real DynamoDB/Bedrock/WSDOT/WSF), 2026-06-28
+
+execution_model:
+  one_file_one_owner: true
+  single_convergence_file_editor_per_wave: true
+  no_dev_server_during_parallel_phase: true
+  validate_with: [type-check, fixture-pytest, benchmark-harness]
+  no_live_calls_in_ci: true
+  honesty_label_unchanged: true            # speed must not relabel a leg; unknown != zero
+  agents_commit_deploy_promote: none
+  benchmark_rig:
+    instance: t3.large
+    region: us-west-2
+    note: "host backend + local Postgres + instance-role DynamoDB/Bedrock; harness to be vendored under tools/testing/bench/"
+
+# Parameterized acceptance thresholds (baseline = measured 2026-06-28).
+targets:
+  plan_visiting_p50_ms:            { baseline: 365,  goal: 180 }
+  plan_here_now_p95_ms:            { baseline: 1383, goal: 450 }
+  traffic_flows_calls_per_plan:    { baseline: ">=0", goal: 0 }     # never on the request path
+  tile_first_content_mb:           { baseline: 5.9,  goal: 1.5 }
+  scene_coherence:                 { requirement: "visual-verify unchanged vs baseline" }
+  narration_first_token_ms:        { baseline: 5517, goal: 1500, optional: true }   # T4 only
+
+tracks:
+  - { id: T1, name: connection-fanout-concurrency, owns: [src/aws_backend/casting/trips/connections.py], optional: false }
+  - { id: T2, name: traffic-flows-off-request-path, owns: ["new:tests/aws_backend/test_planner_trips_branch.py guard"], optional: false, finding: "WP1/WP2 confirmed traffic_flows has zero production callers; T2 reduced to a regression GUARD test, not a fix" }
+  - { id: T3, name: tile-first-paint-lod, owns: ["new:web/e2e/perf/tile-first-paint.spec.ts (guard only)"], optional: false, status: "resolved-no-fix-needed", finding: "re-measured 2026-06-28: live /3dtwin/full/ L0 root content = 989724 bytes (~0.97MB) < 1.5MB goal. 5.9MB was the dead pilot. No LOD tuning and no SalishScene de-override needed; reduces to a measurement regression guard at acceptance." }
+  - { id: T4, name: streamed-narration, owns: [src/aws_backend/routers/interactions.py, web/lib/adaptiveConsole.ts, web/app/components/AdaptiveExplore.tsx], optional: true, status: deferred-by-operator-2026-06-28 }
+
+# The fixed six-wave lifecycle. parallelism = subagent count for that wave.
+waves:
+  - id: WP1
+    lifecycle: research
+    parallelism: 3               # T1, T2, T3 (T4 deferred)
+    convergence_file_edits: false
+    deliverable: RESEARCH_SYNTHESIS.md
+    gate: >
+      Concrete techniques named per track: thread-pool vs asyncio for the sync FastAPI handler;
+      the full traffic_flows call graph; 3d-tiles-renderer geometricError / screen-space-error
+      tuning and tile-publish options; bedrock invoke_model_with_response_stream + SSE through the
+      same-origin proxy (T4).
+
+  - id: WP2
+    lifecycle: discovery
+    depends_on: [WP1]
+    parallelism: 3
+    convergence_file_edits: false
+    deliverable: DISCOVERY_MAP.md
+    gate: >
+      Every file to create or edit is owned; convergence files named; no unowned convergence-file
+      edits; the honesty-label surfaces that must stay byte-identical are listed.
+
+  - id: WP3
+    lifecycle: implementation
+    depends_on: [WP2]
+    phase_a:
+      parallelism: 3             # T1, T2-guard, T3 in parallel (+1 if T4 enabled)
+      convergence_files: false
+    phase_b:
+      parallelism: 1             # serialized convergence editor per file
+      convergence_files: [src/aws_backend/casting/trips/connections.py, "web/lib/scene/<tiles-config>"]
+      note: "T4 narration serialized separately on interactions.py + the two turn files"
+    deliverable: diffs + fixture tests + local benchmark-harness deltas
+    gate: >
+      Every module type-checks and fixture tests pass; the harness shows the target deltas locally;
+      graceful degradation under a slow/empty source is preserved (concurrent path behaves like the
+      sequential one on failure).
+
+  - id: WP4
+    lifecycle: adversarial
+    depends_on: [WP3]
+    parallelism: layers          # subagent count = number of active layers
+    reviewer_must_not_have_built_it: true
+    layers:
+      - { id: L1, dim: performance-regression, check: "re-run the EC2 benchmark; targets hit AND no p95/p99 regression on keyword/kayak/curious/health" }
+      - { id: L2, dim: correctness-honesty,    check: "concurrency drops or duplicates no leg; per-leg + composite labels and freshness stamp identical to baseline; unknown stays unknown" }
+      - { id: L3, dim: failure-edge,           check: "one source times out -> the concurrent plan degrades exactly like the sequential plan did; partial plan is labeled, not fabricated" }
+      - { id: L4, dim: frontend-visual-perf,   check: "tile LOD change preserves scene coherence (read the rendered output, never claim unseen); first paint measured improved; no missing geometry at rest altitude" }
+      - { id: L5, dim: stream-robustness, optional: true, check: "partial stream, client disconnect, and proxy buffering handled; falls back to the non-streamed /narrate cleanly (T4)" }
+    deliverable: DEFECT_REGISTER.md
+    gate: "every non-optional layer has run and filed; the register is complete and severity-triaged"
+
+  - id: WP5
+    lifecycle: remediation
+    depends_on: [WP4]
+    parallelism: 4               # by owner, highest severity first
+    serialized_on: convergence_files
+    deliverable: remediation diffs + re-validation
+    gate: "every blocking and major defect is closed, or explicitly deferred with operator sign-off"
+
+  - id: WP6
+    lifecycle: acceptance
+    depends_on: [WP5]
+    parallelism: 1
+    signed_off_by: program-orchestrator       # not the builder
+    verification: [re-benchmark-on-ec2, visual-verify-tiles]
+    gate: "the targets table is met and recorded in STEP_LOG.md; honesty labels unchanged"
+
+collision_governance:
+  - "connections.py is a convergence file: T1 is its only editor in WP3 phase B. T2 only reads call sites and adds a separate guard test; it does not edit connections logic in the same phase."
+  - "the tiles config is a convergence file: T3 single editor; it does NOT touch the SalishScene.tsx mount owned across INTENT/SCENIC/BATHY."
+  - "T4 (if enabled) is the only editor of interactions.py + adaptiveConsole.ts + AdaptiveExplore.tsx, serialized, and must not regress the panels-first split shipped in fd50929."
+  - "producers commit/deploy/promote nothing; operator commits; never git add -A; secrets stay in .env."
+
+operator_gates:
+  - "confirm T1, T2, T3 in scope at this granularity"
+  - "decide T4 (streamed narration): in this waveset, or deferred to a follow-on"
+  - "approve vendoring the benchmark harness under tools/testing/bench/ so acceptance is repeatable"
+  - "approve a short EC2 re-benchmark at adversarial L1 and at acceptance (a few cents, auto-terminate)"
+  - "confirm the numeric goals in the targets table, or override"
