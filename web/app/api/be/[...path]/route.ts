@@ -65,6 +65,10 @@ function isPublicRequest(method: string, path: string): boolean {
   // Keyed T2/T3 skills stay server-side gated, so a public planner simply omits
   // those panels (HANDOFF_CHARTER B2).
   if (method === "POST" && path === "api/interactions/plan") return true;
+  // WS6 M1: the panels-first narration JSON path is the guaranteed fallback for
+  // the streamed narration. It must be reachable anonymously or the fallback
+  // 401s for the primary anonymous audience (defeating the never-hang contract).
+  if (method === "POST" && path === "api/interactions/narrate") return true;
   if (method === "POST" && path === "api/interest") return true;
   return isPublicGet(method, path);
 }
@@ -99,6 +103,7 @@ function explorePathLimit(path: string): { limit: number; suffix: string } | nul
   if (path === "api/interactions") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions" };
   if (path === "api/interactions/prepare") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions-prepare" };
   if (path === "api/interactions/plan") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions-plan" };
+  if (path === "api/interactions/narrate") return { limit: EXPLORE_TURN_LIMIT, suffix: "interactions-narrate" };
   if (path === "api/explore/sessions") return { limit: EXPLORE_SESSION_LIMIT, suffix: "explore-session" };
   return null;
 }

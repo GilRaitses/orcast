@@ -13,6 +13,7 @@ import {
   ensureSession,
   intentToTurn,
   runAdaptiveNarration,
+  runAdaptiveNarrationStream,
   runAdaptiveTurn,
   type TurnContext,
 } from "@/lib/adaptiveConsole";
@@ -41,6 +42,8 @@ interface ChatTurn {
   content: string;
   // assistant turn whose narration is still arriving (panels already painted)
   pending?: boolean;
+  // narration tokens are streaming in: render plain text, defer markdown to end
+  streaming?: boolean;
 }
 
 let turnSeq = 0;
@@ -79,6 +82,13 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
   const [branch, setBranch] = useState<string | null>(null);
   const [events, setEvents] = useState<EventPoint[]>([]);
   const hydrophonePanel = useRef<UiIntentPanel | null>(null);
+  // Turn-generation guard + in-flight stream abort: a new message cancels the
+  // previous narration stream and ignores its late tokens.
+  const turnGenRef = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
+  // Id of the assistant bubble whose narration is still in flight, so a
+  // superseding turn can clear its "Narrating…" state instead of stranding it.
+  const pendingAssistantRef = useRef<string | null>(null);
 
   useEffect(() => {
     const vp = parseViewport(searchParams);
@@ -101,6 +111,24 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
 
   const runTurn = useCallback(
     async (ctx: TurnContext, extraPanel?: UiIntentPanel | null) => {
+      // Cancel any in-flight narration stream from a previous turn and bump the
+      // generation so its late callbacks are ignored.
+      abortRef.current?.abort();
+      // m1: clear the superseded turn's "Narrating…" state so it never strands.
+      const superseded = pendingAssistantRef.current;
+      if (superseded) {
+        setTurns((prev) =>
+          prev.map((t) =>
+            t.id === superseded && (t.pending || t.streaming)
+              ? { ...t, pending: false, streaming: false, content: t.content || "(superseded)" }
+              : t,
+          ),
+        );
+        pendingAssistantRef.current = null;
+      }
+      const myGen = ++turnGenRef.current;
+      const controller = new AbortController();
+      abortRef.current = controller;
       setBusy(true);
       setError(null);
       try {
@@ -119,6 +147,7 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
         }
         setPlan(resp);
         const assistantId = nextTurnId();
+        pendingAssistantRef.current = assistantId;
         setTurns((prev) => [
           ...prev,
           { id: nextTurnId(), role: "user", content: ctx.message },
@@ -136,20 +165,62 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
         setBusy(false);
 
         // Phase 2: narration. Reuses the planned context; its latency does not
-        // gate first paint. On failure the panels still stand.
-        try {
-          const nar = await runAdaptiveNarration(sid, ctx, resp);
-          const replyText = nar.reply || "(no narration)";
-          setPlan((prev) => (prev ? { ...prev, reply: replyText } : prev));
-          setTurns((prev) =>
-            prev.map((t) => (t.id === assistantId ? { ...t, content: replyText, pending: false } : t)),
-          );
-        } catch {
+        // gate first paint. Tokens stream in progressively (App Runner lane). On
+        // any stream error we fall back to the non-streamed JSON path; the panels
+        // always stand regardless.
+        let acc = "";
+        let raf = 0;
+        const flush = () => {
+          raf = 0;
+          if (myGen !== turnGenRef.current) return;
+          const text = acc;
           setTurns((prev) =>
             prev.map((t) =>
-              t.id === assistantId ? { ...t, content: "(narration unavailable)", pending: false } : t,
+              t.id === assistantId ? { ...t, content: text, pending: false, streaming: true } : t,
             ),
           );
+        };
+        const finalize = (replyText: string) => {
+          if (raf) cancelAnimationFrame(raf);
+          if (pendingAssistantRef.current === assistantId) pendingAssistantRef.current = null;
+          setPlan((prev) => (prev ? { ...prev, reply: replyText } : prev));
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === assistantId
+                ? { ...t, content: replyText, pending: false, streaming: false }
+                : t,
+            ),
+          );
+        };
+        try {
+          const nar = await runAdaptiveNarrationStream(
+            sid,
+            ctx,
+            resp,
+            {
+              onToken: (chunk) => {
+                if (myGen !== turnGenRef.current) return;
+                acc += chunk;
+                // rAF-batch DOM updates so a fast token stream does not thrash.
+                if (!raf) raf = requestAnimationFrame(flush);
+              },
+            },
+            controller.signal,
+          );
+          if (myGen !== turnGenRef.current) return;
+          finalize(nar.reply || acc || "(no narration)");
+        } catch {
+          // A new turn aborted this one: leave the stale turn alone.
+          if (myGen !== turnGenRef.current || controller.signal.aborted) return;
+          // Buffered / failed stream -> non-streamed JSON fallback (never hang).
+          try {
+            const nar = await runAdaptiveNarration(sid, ctx, resp);
+            if (myGen !== turnGenRef.current) return;
+            finalize(nar.reply || "(no narration)");
+          } catch {
+            if (myGen !== turnGenRef.current) return;
+            finalize("(narration unavailable)");
+          }
         }
       } catch (e) {
         setError(String(e));
@@ -307,6 +378,12 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
                       <strong style={{ display: "block" }}>Orchestrator</strong>
                       {t.pending ? (
                         <div className="muted" aria-live="polite">Narrating…</div>
+                      ) : t.streaming ? (
+                        // Mid-stream: plain text only, so partial **bold** / [links]
+                        // never render half-parsed. Markdown applies at stream end.
+                        <div aria-live="polite" style={{ whiteSpace: "pre-wrap" }}>
+                          {t.content}
+                        </div>
                       ) : (
                         <div>{renderReply(t.content)}</div>
                       )}

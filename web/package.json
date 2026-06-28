@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test:unit": "node --test \"lib/**/*.test.mts\"",
     "demo:walkthrough": "playwright test demo-no-cred-walkthrough --headed --project=chromium-desktop",
     "demo:screenshots": "DEMO_SCREENSHOTS=1 playwright test demo-no-cred-walkthrough --project=chromium-desktop",
     "demo:record": "DEMO_RECORD=1 playwright test demo-no-cred-walkthrough --headed --project=chromium-desktop",

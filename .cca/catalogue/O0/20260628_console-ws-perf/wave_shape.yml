@@ -4,7 +4,7 @@ waveset: WS-PERF
 label: console-ws-perf
 home: .cca/catalogue/O0/20260628_console-ws-perf/
 program_charter: .cca/catalogue/O0/20260627_console-journey-trips/PROGRAM_WAVESETS_CHARTER.md
-status: wp3-implementation-done       # T1+T2 built & green (314 tests); T3 resolved (no fix); T4 deferred; WP4 next
+status: wp4-adversarial-passed        # T1+T2 committed (82edeec/4d2dd73); L2/L3 PASS, L1 real-source EC2 re-benchmark deferred by operator; WP6 acceptance held on L1
 origin: benchmark on EC2 t3.large us-west-2 (real DynamoDB/Bedrock/WSDOT/WSF), 2026-06-28
 
 execution_model:
@@ -33,7 +33,7 @@ tracks:
   - { id: T1, name: connection-fanout-concurrency, owns: [src/aws_backend/casting/trips/connections.py], optional: false }
   - { id: T2, name: traffic-flows-off-request-path, owns: ["new:tests/aws_backend/test_planner_trips_branch.py guard"], optional: false, finding: "WP1/WP2 confirmed traffic_flows has zero production callers; T2 reduced to a regression GUARD test, not a fix" }
   - { id: T3, name: tile-first-paint-lod, owns: ["new:web/e2e/perf/tile-first-paint.spec.ts (guard only)"], optional: false, status: "resolved-no-fix-needed", finding: "re-measured 2026-06-28: live /3dtwin/full/ L0 root content = 989724 bytes (~0.97MB) < 1.5MB goal. 5.9MB was the dead pilot. No LOD tuning and no SalishScene de-override needed; reduces to a measurement regression guard at acceptance." }
-  - { id: T4, name: streamed-narration, owns: [src/aws_backend/routers/interactions.py, web/lib/adaptiveConsole.ts, web/app/components/AdaptiveExplore.tsx], optional: true, status: deferred-by-operator-2026-06-28 }
+  - { id: T4, name: streamed-narration, owns: [src/aws_backend/routers/interactions.py, web/lib/adaptiveConsole.ts, web/app/components/AdaptiveExplore.tsx], optional: true, status: "GRADUATED to WS-STREAM (.cca/catalogue/O0/20260628_console-ws-stream/); T4 research found the transport chain is the risk, warranting its own research+benchmark+discovery waveset" }
 
 # The fixed six-wave lifecycle. parallelism = subagent count for that wave.
 waves:

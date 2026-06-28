@@ -1,0 +1,14 @@
+# WS2 throwaway probe image for the App Runner (Cloudflare-free) streaming test.
+# Built for linux/amd64, pushed to a throwaway ECR repo, run as a separate
+# App Runner service, measured, then torn down. Not a production artifact.
+FROM python:3.12-slim
+WORKDIR /app
+# Plain uvicorn (asyncio + h11, pure Python) — NOT uvicorn[standard], whose
+# uvloop/httptools/watchfiles C+Rust builds are unusably slow under amd64
+# emulation. h11 serves StreamingResponse without buffering, which is all the
+# probe needs.
+RUN pip install --no-cache-dir fastapi uvicorn
+COPY stream_probe_app.py ./
+ENV PORT=8080
+EXPOSE 8080
+CMD ["sh", "-c", "uvicorn stream_probe_app:app --host 0.0.0.0 --port ${PORT}"]

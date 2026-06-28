@@ -85,3 +85,36 @@
 - WP4 test suite: test_planner_trips_branch.py 18 passed.
 - Remaining before WP6 acceptance: the L1 real-source EC2 re-benchmark
   (billable, operator-gated).
+
+## 2026-06-28 — operator gate: L1 EC2 deferred
+
+- Operator chose to hold the EC2 re-benchmark; local ~3.8x synthetic proof +
+  the L2/L3 test evidence stand as the perf verdict for now.
+- WP4 closed: L2/L3 PASS, L1 PARTIAL (real-source confirmation deferred), L4
+  N/A. WP5 remediation: nothing blocking (D-1/D-2 deferred with rationale).
+- WP6 acceptance: HELD on the deferred L1 re-benchmark. Not signed off.
+- Commits 82edeec + 4d2dd73 on main, NOT pushed.
+
+## 2026-06-28 — T4 activated, research+discovery done
+
+- Operator chose research-first on T4 (streamed narration). Ran three read-only
+  investigators (backend Bedrock, proxy transport, frontend render).
+- Findings (`T4_RESEARCH_SYNTHESIS.md`, `T4_DISCOVERY_MAP.md`): the code is
+  low-risk on all three layers (invoke_model_with_response_stream + SSE; proxy
+  resp.body pass-through; rAF-batched setTurns append). The REAL risk is the
+  transport chain: `/api/be` buffers today (resp.text), and prod now routes
+  Vercel -> Next -> cloudflared -> uvicorn (App Runner = rollback), with possible
+  buffering at Vercel and Cloudflare that we do not fully control. Also: narrate
+  is missing from the proxy public POST allow-list (anonymous 401).
+- Recommendation: a thin TRANSPORT SPIKE first (prove an SSE byte stream reaches
+  the browser unbuffered through the prod chain) before building the full Bedrock
+  endpoint + progressive UI. Held for operator gate.
+
+## 2026-06-28 — T4 graduated to WS-STREAM
+
+- Operator: rather than a one-off spike, charter a waveset to research, benchmark,
+  and discover a higher-reward streaming method that solves the transport flags.
+- T4 graduated out of WS-PERF into WS-STREAM
+  (.cca/catalogue/O0/20260628_console-ws-stream/), a seven-wave waveset (adds a
+  Benchmark wave). WS-PERF T1/T2 shipped, T3 no-fix, T4 graduated -> WS-PERF can
+  close.

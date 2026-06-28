@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import threading
+import time
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterator, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field, model_validator
 
 from ..auth import ReviewerIdentity, require_api_key, reviewer_identity
@@ -16,11 +20,19 @@ from ..casting.registry import build_managed_agent_store
 from ..config import settings
 from ..exploration.db import aurora_configured
 from ..exploration.limits import ExploreLimitError, assert_turn_quota
+from ..exploration.models import GuideReply
 from ..exploration.session_store import SessionStore, exploration_status
 
 router = APIRouter()
 _store = build_managed_agent_store()
 logger = logging.getLogger(__name__)
+
+# WS6 M3: bound concurrent narration streams per process. Each sync boto3 stream
+# holds one AnyIO threadpool thread across chunk waits, so an unbounded number of
+# long-lived streams could starve the pool shared with sync DB calls. A stream
+# that cannot acquire a slot emits a busy error and the client falls back to the
+# non-streamed JSON /narrate.
+_stream_semaphore = threading.BoundedSemaphore(settings.stream_max_concurrent)
 
 
 class InlineAgentSpec(BaseModel):
@@ -341,6 +353,174 @@ def narrate_cast_interaction(payload: NarrateRequest) -> Dict[str, Any]:
         "citations": guide.citations,
         "deep_links": guide.deep_links,
     }
+
+
+def _sse_frame(event: str, data: Dict[str, Any]) -> str:
+    """One SSE frame: an ``event:`` line, a ``data:`` line, and a blank separator."""
+    return f"event: {event}\ndata: {json.dumps(data, separators=(',', ':'), default=str)}\n\n"
+
+
+def _narrate_stream_events(
+    payload: "NarrateRequest",
+    agent: Any,
+    store: SessionStore,
+    interaction_id: str,
+    inline: Optional[Dict[str, Any]],
+) -> Iterator[str]:
+    """Sync generator: emit meta -> token(s) -> done (or error).
+
+    Sync ``def`` on purpose so Starlette iterates it in a threadpool, keeping the
+    synchronous boto3 stream off the event loop. Labels/citations/deep_links/
+    provenance ride the prefetched plan context and are emitted in the opening
+    ``meta`` event byte-identical to the panels-first split; only the prose
+    streams. The exchange is persisted exactly once, after a successful stream;
+    an aborted or failed stream persists nothing (no partial DB turn).
+    """
+    # WS6 M3: take a concurrency slot. If the pool is saturated, refuse fast with
+    # a busy error so the client falls back to JSON rather than queueing a thread.
+    if not _stream_semaphore.acquire(blocking=False):
+        logger.warning("narrate stream rejected: concurrency cap reached")
+        yield _sse_frame("error", {"error": "stream_busy", "message": "Too many concurrent streams"})
+        return
+
+    try:
+        prefetched = (
+            payload.context,
+            payload.citations,
+            payload.deep_links,
+            payload.tools_used,
+            payload.gate_ids,
+            payload.provenance_refs,
+        )
+        model = agent.model.get("model_id") or settings.bedrock_sighting_model_id
+
+        yield _sse_frame(
+            "meta",
+            {
+                "interaction_id": interaction_id,
+                "citations": payload.citations,
+                "deep_links": payload.deep_links,
+                "source": "bedrock" if settings.enable_bedrock else None,
+                "model": model,
+            },
+        )
+
+        parts: list[str] = []
+        final_source = "bedrock"
+        final_model = model
+        try:
+            if settings.enable_bedrock:
+                from ..exploration.guide import _bedrock_guide_stream
+
+                # WS6 M3: hard per-stream wall-clock cap, independent of the
+                # Vercel maxDuration on the proxy leg.
+                deadline = time.monotonic() + settings.stream_max_seconds
+                for text in _bedrock_guide_stream(payload.context, agent.instructions, model):
+                    if time.monotonic() > deadline:
+                        raise RuntimeError("Stream exceeded wall-clock cap")
+                    parts.append(text)
+                    yield _sse_frame("token", {"text": text})
+                full = "".join(parts).strip()
+                if not full:
+                    raise RuntimeError("Bedrock stream returned an empty message")
+            else:
+                # No Bedrock: compose the non-streamed reply (template / gateway)
+                # and emit it as a single token so the client contract is identical.
+                from ..exploration.guide import compose_guide_reply
+
+                composed = compose_guide_reply(
+                    payload.message,
+                    viewport=payload.viewport,
+                    focus=payload.focus,
+                    instructions=agent.instructions,
+                    skills=list(payload.skill_plan),
+                    prefetched=prefetched,
+                    model_id=model,
+                )
+                full = composed.reply
+                final_source = composed.source
+                final_model = composed.model
+                yield _sse_frame("token", {"text": full})
+        except Exception as exc:  # noqa: BLE001 - a failed stream falls back, never persists
+            logger.warning("narrate stream failed: %s", exc)
+            yield _sse_frame("error", {"error": "stream_failed", "message": str(exc)})
+            return
+
+        guide = GuideReply(
+            reply=full,
+            citations=list(payload.citations),
+            deep_links=list(payload.deep_links),
+            source=final_source,
+            model=final_model,
+            tools_used=list(payload.tools_used),
+            gate_ids=list(payload.gate_ids),
+            provenance_refs=list(payload.provenance_refs),
+        )
+        try:
+            store.save_interaction_exchange(
+                payload.session_id,
+                payload.message,
+                guide,
+                interaction_id=interaction_id,
+                managed_agent_id=payload.agent_id or DEFAULT_PLANNER_ID,
+                agent_version=payload.agent_version or "inline",
+                resolved_spec_hash="",
+                hydration_mode="inline" if inline else "managed",
+                skills_invoked=list(payload.skill_plan),
+                interaction_steps=[],
+            )
+        except Exception as exc:  # noqa: BLE001 - persistence is best-effort
+            logger.warning("narrate stream persistence failed: %s", exc)
+
+        yield _sse_frame("done", {"reply": full, "source": final_source, "model": final_model})
+    finally:
+        # Always release on completion, error, or GeneratorExit (client abort).
+        _stream_semaphore.release()
+
+
+@router.post("/api/interactions/narrate/stream", dependencies=[Depends(require_api_key)])
+def narrate_cast_interaction_stream(payload: NarrateRequest) -> StreamingResponse:
+    """SSE variant of ``/narrate`` for the live console (App Runner lane).
+
+    Reached only through the dedicated streaming Vercel route whose upstream is
+    App Runner (the cloudflared path buffers SSE). Streams ``meta`` -> ``token``
+    -> ``done`` over ``text/event-stream``. The non-streamed ``/narrate`` JSON
+    path remains as the guaranteed fallback; a buffered or failed stream falls
+    back there, it never hangs.
+    """
+    _require_aurora()
+    store = SessionStore()
+    if not store.session_exists(payload.session_id):
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    # WS6 B1: gate minting like the other turn paths. A streamed turn costs a
+    # Bedrock invocation, so enforce the per-session turn quota before streaming
+    # (the per-IP rate bucket is enforced at the dedicated Vercel route).
+    try:
+        assert_turn_quota(payload.session_id)
+    except ExploreLimitError as exc:
+        raise HTTPException(status_code=429, detail={"error": exc.code, "message": exc.message}) from exc
+
+    inline = _inline_dict(payload)
+    from ..casting.concierge import _resolve_cast_agent
+
+    agent, _ = _resolve_cast_agent(
+        _store,
+        agent_id=payload.agent_id or DEFAULT_PLANNER_ID,
+        agent_version=payload.agent_version,
+        inline_agent=inline,
+        session_id=payload.session_id,
+    )
+    interaction_id = str(uuid.uuid4())
+    return StreamingResponse(
+        _narrate_stream_events(payload, agent, store, interaction_id, inline),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.post("/api/interactions/prepare")

@@ -48,6 +48,15 @@ class Settings:
     explore_max_sessions_per_ip_day: int = int(os.getenv("ORCAST_EXPLORE_MAX_SESSIONS_PER_IP_DAY", "20"))
     explore_max_turns_per_session: int = int(os.getenv("ORCAST_EXPLORE_MAX_TURNS_PER_SESSION", "30"))
     explore_retention_days: int = int(os.getenv("ORCAST_EXPLORE_RETENTION_DAYS", "30"))
+    # WS-STREAM load/abuse bounds for the narration SSE stream (WS6 B1/M3).
+    # Max concurrent in-flight streams per backend process; a sync boto3 stream
+    # holds one threadpool thread across chunk waits, so this caps how much of the
+    # shared AnyIO pool the stream path can occupy. Excess streams get a busy
+    # error and the client falls back to the non-streamed JSON /narrate.
+    stream_max_concurrent: int = int(os.getenv("ORCAST_STREAM_MAX_CONCURRENT", "8"))
+    # Hard per-stream wall-clock cap (seconds): bounds a stuck Bedrock stream on
+    # the backend independent of the Vercel maxDuration on the proxy leg.
+    stream_max_seconds: int = int(os.getenv("ORCAST_STREAM_MAX_SECONDS", "30"))
     cors_origins_raw: str = os.getenv("ORCAST_CORS_ORIGINS", "*")
     repo_root: Path = Path(os.getenv("ORCAST_REPO_ROOT", Path(__file__).resolve().parents[2]))
 

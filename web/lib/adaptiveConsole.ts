@@ -7,6 +7,7 @@ import type { ExploreSessionResponse } from "@/lib/api";
 import type { PlanResponse } from "@/lib/uiIntent";
 import type { SceneIntent } from "@/lib/sceneIntent";
 import { enrichTurnContext } from "@/lib/intent/transducer";
+import { readSseStream } from "@/lib/sseTransport";
 
 // Inline public planner spec sent for anonymous-first turns. Only public T0/T1
 // skills + public panels, so the backend public_route guard never has to reject
@@ -142,6 +143,79 @@ export async function runAdaptiveNarration(
   }
   const json = (await res.json()) as { reply?: string; source?: string; model?: string };
   return { reply: json.reply ?? "", source: json.source, model: json.model };
+}
+
+export interface NarrationMeta {
+  interaction_id?: string;
+  citations?: Array<Record<string, unknown>>;
+  deep_links?: Array<Record<string, unknown>>;
+  source?: string;
+  model?: string;
+}
+
+export interface NarrationStreamHandlers {
+  onMeta?: (meta: NarrationMeta) => void;
+  onToken: (text: string) => void;
+}
+
+// Streaming variant of Phase 2. Reuses the same grounded context body as
+// runAdaptiveNarration but reads incremental tokens over SSE from the dedicated
+// /api/narrate-stream route (App Runner lane, Cloudflare-free). Resolves with the
+// assembled reply on `done`; rejects on stream error so the caller can fall back
+// to the non-streamed JSON path. Accepts an AbortSignal for turn cancellation.
+export async function runAdaptiveNarrationStream(
+  sessionId: string,
+  ctx: TurnContext,
+  plan: PlanResponse,
+  handlers: NarrationStreamHandlers,
+  signal?: AbortSignal,
+): Promise<NarrationResult> {
+  const enriched = enrichTurnContext(ctx);
+  const prep = plan.prepare;
+  const body = {
+    session_id: sessionId,
+    message: enriched.message,
+    agent: PUBLIC_PLANNER_SPEC,
+    viewport: enriched.viewport ?? undefined,
+    focus: enriched.focus ?? undefined,
+    skill_plan: plan.ui_intent.skill_plan ?? [],
+    context: prep.context ?? {},
+    citations: prep.citations ?? [],
+    deep_links: prep.deep_links ?? [],
+    tools_used: prep.tools_used ?? [],
+    gate_ids: prep.gate_ids ?? [],
+    provenance_refs: prep.provenance_refs ?? [],
+  };
+
+  let reply = "";
+  let source: string | undefined;
+  let model: string | undefined;
+
+  await readSseStream(
+    "/api/narrate-stream",
+    body,
+    {
+      onMeta: (meta) => {
+        const m = meta as NarrationMeta;
+        source = m.source ?? source;
+        model = m.model ?? model;
+        handlers.onMeta?.(m);
+      },
+      onToken: (text) => {
+        reply += text;
+        handlers.onToken(text);
+      },
+      onDone: (data) => {
+        const d = (data ?? {}) as { reply?: string; source?: string; model?: string };
+        if (d.reply) reply = d.reply;
+        source = d.source ?? source;
+        model = d.model ?? model;
+      },
+    },
+    signal,
+  );
+
+  return { reply, source, model };
 }
 
 // Lightweight client-side intent label for the scene -> turn bridge. The

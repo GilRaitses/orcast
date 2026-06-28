@@ -1,0 +1,123 @@
+version: 1
+family: CONSOLE-JOURNEY
+waveset: WS-STREAM
+label: console-ws-stream
+home: .cca/catalogue/O0/20260628_console-ws-stream/
+program_charter: .cca/catalogue/O0/20260627_console-journey-trips/PROGRAM_WAVESETS_CHARTER.md
+status: chartered-pending-operator-go
+origin: graduated from WS-PERF T4; transport chain is the risk, not the narration code
+
+execution_model:
+  one_file_one_owner: true
+  single_convergence_file_editor_per_wave: true
+  no_dev_server_during_parallel_phase: true
+  validate_with: [type-check, fixture-pytest, transport-benchmark]
+  no_live_calls_in_ci: true
+  honesty_label_unchanged: true            # narration is prose only; metadata rides prefetched plan
+  non_streamed_fallback_must_remain: true  # /narrate JSON path is the guaranteed fallback
+  agents_commit_deploy_promote: none
+  prod_chain: "Browser -> Vercel -> Next /api/be -> cloudflared tunnel -> uvicorn (App Runner = rollback)"
+
+# This waveset's shape adds a dedicated BENCHMARK wave between Research and
+# Discovery: the transport must be measured empirically before a method is chosen.
+targets:
+  first_token_ms:            { baseline: 5517_full_reply, goal: 1500 }
+  stream_reaches_browser:    { requirement: "tokens arrive incrementally through the FULL prod chain, measured" }
+  fallback_on_buffering:     { requirement: "any buffered/failed stream falls back to non-streamed /narrate, never hangs" }
+  honesty_unchanged:         { requirement: "labels/citations/deep_links/provenance byte-identical to panels-first" }
+
+# Candidate transport methods the Research + Benchmark waves must compare.
+candidate_methods:
+  - sse_through_proxy_passthrough      # fix /api/be to stream resp.body
+  - dedicated_next_stream_route        # purpose-built streaming route, bypass generic /api/be
+  - direct_backend_domain             # client streams straight from backend domain, bypass Vercel proxy
+  - chunked_ndjson                    # if SSE is buffered but chunked transfer is not
+  - websocket                         # if unidirectional SSE is buffered at an edge
+  - platform_response_streaming       # Vercel/Lambda response streaming primitives
+
+# Flags every method must clear (from WS-PERF T4 research).
+flags:
+  - proxy_buffers_resp_text
+  - vercel_platform_buffering
+  - cloudflare_edge_buffering
+  - uvicorn_streamingresponse
+  - narrate_not_public_allowlisted
+  - topology_drift_apprunner_vs_cloudflared
+  - eventsource_get_only
+  - no_abortcontroller_frontend
+  - iam_invoke_model_with_response_stream
+  - persistence_at_stream_end
+
+waves:
+  - id: WS1
+    lifecycle: research
+    parallelism: 4               # R1 transport methods, R2 platform buffering, R3 backend stream, R4 higher-reward reuse
+    convergence_file_edits: false
+    deliverable: RESEARCH_SYNTHESIS.md
+    gate: "each candidate_method has named techniques + the specific config that defeats buffering at each chain layer; R4 sizes the reusable-capability reward"
+
+  - id: WS2
+    lifecycle: benchmark        # ADDED to the standard lifecycle for this waveset
+    depends_on: [WS1]
+    parallelism: 3              # one prober per top candidate method
+    mode: measure-only          # throwaway probes (a trivial SSE/chunked endpoint + a stream route), discarded after
+    deliverable: BENCHMARK_REPORT.md
+    gate: "at least one method PROVEN to stream incrementally through the full prod chain with a measured first-token latency; a per-layer buffering map recorded; if none stream, report which layer buffered and STOP"
+
+  - id: WS3
+    lifecycle: discovery
+    depends_on: [WS2]
+    parallelism: 3
+    convergence_file_edits: false
+    deliverable: DISCOVERY_MAP.md
+    gate: "the chosen method grounded in the codebase: files/owners/seams, the reusable transport module boundary, convergence files named, honesty invariants listed"
+
+  - id: WS4
+    lifecycle: implementation
+    depends_on: [WS3]
+    phase_a: { parallelism: 3, convergence_files: false, note: "backend stream generator (guide.py), transport client module, throwaway-to-real probe promotion" }
+    phase_b: { parallelism: 1, convergence_files: [src/aws_backend/routers/interactions.py, "web/app/api/be/[...path]/route.ts", web/lib/adaptiveConsole.ts, web/app/components/AdaptiveExplore.tsx], note: "serialized single editor; must not regress fd50929 panels-first" }
+    deliverable: diffs + fixture tests + a local stream demo
+    gate: "type-checks/tests green; streamed narration renders progressively in a local run; non-streamed fallback intact"
+
+  - id: WS5
+    lifecycle: adversarial
+    depends_on: [WS4]
+    parallelism: layers
+    reviewer_must_not_have_built_it: true
+    layers:
+      - { id: L1, dim: transport-robustness, check: "re-measure first-token on the prod chain; tokens still arrive incrementally; no buffering regression" }
+      - { id: L2, dim: correctness-honesty,  check: "labels/citations/deep_links/provenance byte-identical to panels-first; meta event matches prefetched plan" }
+      - { id: L3, dim: failure-fallback,     check: "buffered/throttled/mid-stream-error/disconnect all fall back to non-streamed /narrate, never hang; no partial DB turn" }
+      - { id: L4, dim: frontend-visual-perf, check: "progressive render has no markdown flicker or scroll thrash; mid-stream new message aborts cleanly (read the rendered output)" }
+      - { id: L5, dim: load-concurrency,     check: "many concurrent long-lived streams do not exhaust workers; sync-boto3 generator offloaded; timeouts bounded" }
+    deliverable: DEFECT_REGISTER.md
+    gate: "all non-optional layers run and filed; register complete + triaged"
+
+  - id: WS6
+    lifecycle: remediation
+    depends_on: [WS5]
+    parallelism: 4
+    serialized_on: convergence_files
+    gate: "every blocking + major defect closed or deferred with operator sign-off"
+
+  - id: WS7
+    lifecycle: acceptance
+    depends_on: [WS6]
+    parallelism: 1
+    signed_off_by: program-orchestrator
+    verification: [first-token-on-prod-chain, visual-verify-progressive-render, fallback-drill]
+    gate: "targets table met and recorded in STEP_LOG.md; honesty unchanged; fallback proven"
+
+collision_governance:
+  - "interactions.py, the /api/be route, adaptiveConsole.ts, AdaptiveExplore.tsx are convergence files: single phase-B editor in WS4; must not regress the fd50929 panels-first split."
+  - "guide.py streaming generator and any new transport-client module are phase-A producers (new sibling code), not convergence edits."
+  - "WS2 probes are throwaway: a trivial stream endpoint + a stream route used only to measure, removed before WS4 (or promoted deliberately by the WS4 editor)."
+  - "producers commit/deploy/promote nothing; operator commits; never git add -A; secrets in .env; IAM change is an ops task, operator-applied."
+
+operator_gates:
+  - "confirm WS-STREAM scope: streamed narration as consumer #1 of a reusable transport"
+  - "approve the WS2 benchmark probes touching prod (Vercel preview + the cloudflared backend); throwaway, no user-facing change"
+  - "decide how far R4 'higher-reward reuse' is in scope now vs documented-for-later"
+  - "confirm first_token_ms goal (1500) or override"
+  - "approve adding /api/interactions/narrate(/stream) to the proxy public allow-list when implementation lands"

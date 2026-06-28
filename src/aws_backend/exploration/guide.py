@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterator, List, Optional
 
 from ..config import settings
 from ..sighting_assist.local_llm import llm_status
@@ -199,6 +199,53 @@ def _bedrock_guide(
     if not text.strip():
         raise RuntimeError("Bedrock returned an empty message")
     return text.strip()
+
+
+def _bedrock_guide_stream(
+    context: Dict[str, Any],
+    system_prompt: str = SYSTEM_PROMPT,
+    model_id: Optional[str] = None,
+) -> Iterator[str]:
+    """Yield Bedrock narration text deltas via invoke_model_with_response_stream.
+
+    Sync generator on purpose: boto3 is synchronous, so Starlette runs this in a
+    threadpool under StreamingResponse and the event loop is never blocked. The
+    request body is byte-identical to ``_bedrock_guide``; only the prose streams.
+    Parses the Anthropic Messages event stream, emitting on
+    ``content_block_delta`` / ``text_delta`` and ignoring control events.
+    """
+    import boto3
+
+    user_content = (
+        f"User question:\n{context.get('user_message')}\n\n"
+        "Tool JSON (cite only these facts):\n"
+        f"{json.dumps(context, indent=2, default=str)}"
+    )
+    client = boto3.client("bedrock-runtime", region_name=settings.aws_region)
+    response = client.invoke_model_with_response_stream(
+        modelId=model_id or settings.bedrock_sighting_model_id,
+        body=json.dumps(
+            {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": settings.llm_max_tokens,
+                "temperature": settings.llm_temperature,
+                "system": system_prompt,
+                "messages": [{"role": "user", "content": user_content}],
+            }
+        ),
+    )
+    for event in response.get("body", []):
+        chunk = event.get("chunk")
+        if not chunk:
+            continue
+        payload = json.loads(chunk["bytes"])
+        if payload.get("type") != "content_block_delta":
+            continue
+        delta = payload.get("delta") or {}
+        if delta.get("type") == "text_delta":
+            text = delta.get("text") or ""
+            if text:
+                yield text
 
 
 def _template_guide(
