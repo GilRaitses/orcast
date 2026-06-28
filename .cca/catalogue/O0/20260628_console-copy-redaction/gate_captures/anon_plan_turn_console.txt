@@ -1,0 +1,58 @@
+What brings you here?
+Planning a visit
+I'm here now
+Kayaking
+Just curious
+Show me today's hotspots.
+What can I see near me right now?
+How do I plan a trip to the San Juans?
+Ask about the Salish Sea
+Ask
+INTERACTION TRACE
+1
+Set up the guide
+success
+2
+Plan the answer
+success
+3
+Gather grounded data
+success
+4
+Write the reply
+success
+FITNESS GATES
+
+This forecast is modeled, not a direct observation. It is a likelihood, not a certainty.
+
+Conditions to keep in mind. Low data density this week
+
+LOCAL AREA
+
+Local viewing zones and today's remaining sailings near you.
+
+Forecast cells
+3
+
+Today's forecast is modeled from recent patterns, not a live sighting feed. It is a likelihood, not a certainty.
+
+SIDEQUESTS
+Sidequests
+Listen to a nearby hydrophone
+measured
+
+Open a live hydrophone feed and listen for calls.
+
+Open the map
+You
+Show me today's hotspots.
+Orchestrator
+This view is modeled, not a direct observation. Pick a spot on the map to see what grounds it.
+Get access
+
+It is all live. Tell me what brings you and it arrives right away.
+
+Research partner. Use it, and stand it up on your data or region.
+Planning a visit. Early access to orcast Trips for the San Juan Islands.
+Just exploring. See the live forecast and the whitepapers.
+Try it on my data

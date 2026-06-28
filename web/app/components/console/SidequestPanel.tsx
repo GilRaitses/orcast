@@ -58,19 +58,21 @@ const HONESTY_STYLE: Record<HonestyLabel, { label: string; color: string; backgr
   heuristic: { label: "heuristic", color: "var(--text-muted)", background: "rgba(139, 151, 167, 0.16)" },
 };
 
+type Audience = "public" | "reviewer";
+
 const TIER_STYLE: Record<ViewerTier, { label: string; color: string; background: string }> = {
   "anonymous-public": {
-    label: "Anonymous · public",
+    label: "Public view",
     color: "var(--text-muted)",
     background: "rgba(139, 151, 167, 0.16)",
   },
   "keyed-reviewer": {
-    label: "Keyed reviewer",
+    label: "Reviewer view",
     color: "var(--accent)",
     background: "rgba(79, 184, 216, 0.16)",
   },
   "keyed-operator": {
-    label: "Keyed operator",
+    label: "Operator view",
     color: "var(--pass)",
     background: "rgba(70, 192, 138, 0.18)",
   },
@@ -96,7 +98,7 @@ function TierChip({ tier }: { tier: ViewerTier }) {
       className="badge"
       style={{ color: s.color, background: s.background }}
       data-tier={tier}
-      title={`Viewer access tier: ${s.label}`}
+      title={s.label}
     >
       {s.label}
     </span>
@@ -106,11 +108,15 @@ function TierChip({ tier }: { tier: ViewerTier }) {
 export default function SidequestPanel({
   props,
   signedIn = false,
+  audience = "reviewer",
   onConfirm,
   onInvite,
 }: {
   props?: SidequestPanelProps;
   signedIn?: boolean;
+  // Copy/visibility tier. The anonymous public console hides the internal
+  // access-tier chip; reviewer surfaces keep it.
+  audience?: Audience;
   // The inline confirm chip emits this auth action on the turn when signed in.
   onConfirm?: () => void;
   // Per-sidequest invite into the trip platform when signed in.
@@ -129,7 +135,7 @@ export default function SidequestPanel({
         <h3 className="console-panel-title" style={{ margin: 0 }}>
           Sidequests
         </h3>
-        <TierChip tier={tier} />
+        {audience !== "public" && <TierChip tier={tier} />}
       </div>
 
       {props?.note && (

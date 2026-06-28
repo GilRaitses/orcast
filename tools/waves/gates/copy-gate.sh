@@ -52,10 +52,22 @@ report '\bour\b' "voice: our"
 report '\bmight\b\|\bcould\b\|\bseems\b' "hedging"
 report 'In this section we\|We propose\|This paper contributes\|Our approach' "meta-framing"
 
+# CXR-2: console deny-term grep against rendered anonymous-path captures. Runs as
+# part of the copy-gate battery. Non-blocking when no captures are present, hard
+# fail when a deny term is found in a captured anonymous render.
+section "CXR-2: console deny-term grep (rendered anonymous path)"
+deny_fail=0
+if [ -x "$ROOT/tools/waves/gates/console-deny-terms.sh" ] || [ -f "$ROOT/tools/waves/gates/console-deny-terms.sh" ]; then
+  if ! bash "$ROOT/tools/waves/gates/console-deny-terms.sh"; then
+    deny_fail=1
+  fi
+fi
+
 echo
-if [ "$hard_fail" -ne 0 ]; then
-  echo "copy-gate: FAIL ($n_emd em-dash in user-facing copy; replace with period/comma or restructure)"
+if [ "$hard_fail" -ne 0 ] || [ "$deny_fail" -ne 0 ]; then
+  [ "$hard_fail" -ne 0 ] && echo "copy-gate: FAIL ($n_emd em-dash in user-facing copy; replace with period/comma or restructure)"
+  [ "$deny_fail" -ne 0 ] && echo "copy-gate: FAIL (console deny-term hit on the anonymous render path)"
   exit 1
 fi
-echo "copy-gate: PASS (no em-dash ornament); review REPORT counts above for CX remediation"
+echo "copy-gate: PASS (no em-dash ornament, no console deny-term hits); review REPORT counts above for CX remediation"
 exit 0

@@ -129,6 +129,7 @@ def explore_turn(payload: ExploreTurnRequest) -> Dict[str, Any]:
         focus=payload.focus,
         gateway_reply=payload.gateway_reply,
         gateway_model=payload.gateway_model,
+        public=True,
     )
     try:
         store.save_exchange(payload.session_id, payload.message, guide)

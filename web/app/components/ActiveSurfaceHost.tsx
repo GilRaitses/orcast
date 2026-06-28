@@ -15,11 +15,18 @@ import SidequestPanel, {
 } from "@/app/components/console/SidequestPanel";
 import GatedAction from "@/app/components/ui/GatedAction";
 
+// Copy/visibility tier for the active surface. "public" is the anonymous home
+// console and hides reviewer internals (raw agent ids, skill manifest, schema
+// version, promotion and confidence internals). "reviewer" keeps the detail for
+// the dedicated keyed surfaces.
+type Audience = "public" | "reviewer";
+
 interface ActiveSurfaceHostProps {
   uiIntent: UiIntent;
   prepare: PlanPreparePayload;
   reply?: string;
   signedIn?: boolean;
+  audience?: Audience;
   onDeepLink?: (href: string) => void;
 }
 
@@ -28,9 +35,29 @@ function pct(value: number | null | undefined): string {
   return `${Math.round(value * 100)}%`;
 }
 
-function GatesSummaryPanel({ gates }: { gates?: GatesResponse }) {
+function GatesSummaryPanel({
+  gates,
+  audience,
+}: {
+  gates?: GatesResponse;
+  audience: Audience;
+}) {
   if (!gates) {
     return <p className="muted">No gate context for this turn.</p>;
+  }
+  if (audience === "public") {
+    return (
+      <div className="console-metrics">
+        <p className="muted" style={{ fontSize: "0.82rem", margin: 0 }}>
+          This forecast is modeled, not a direct observation. It is a likelihood, not a certainty.
+        </p>
+        {gates.caveats && gates.caveats.length > 0 && (
+          <p className="muted" style={{ fontSize: "0.78rem" }}>
+            Conditions to keep in mind. {gates.caveats.join(". ")}
+          </p>
+        )}
+      </div>
+    );
   }
   const battery = gates.gates ?? {};
   const rows: Array<{ label: string; pass: boolean | null | undefined }> = [
@@ -249,9 +276,11 @@ function ConnectionsPlanPanel({ plan }: { plan?: ConnectionPlan | null }) {
 function PlacesPanel({
   scope,
   prepare,
+  audience,
 }: {
   scope: "broad" | "focused";
   prepare: PlanPreparePayload;
+  audience: Audience;
 }) {
   const ctx = prepare.context as Record<string, unknown>;
   const hotspots = Array.isArray(ctx.hotspots) ? (ctx.hotspots as unknown[]) : [];
@@ -267,7 +296,9 @@ function PlacesPanel({
         <strong>{hotspots.length > 0 ? hotspots.length : "n/a"}</strong>
       </div>
       <p className="muted" style={{ fontSize: "0.76rem", marginTop: "0.3rem" }}>
-        Forecast stays on the hotspot heuristic with its confidence gate. No model is promoted.
+        {audience === "public"
+          ? "Today's forecast is modeled from recent patterns, not a live sighting feed. It is a likelihood, not a certainty."
+          : "Forecast stays on the hotspot heuristic with its confidence gate. No model is promoted."}
       </p>
     </div>
   );
@@ -278,11 +309,12 @@ function renderPanel(
   prepare: PlanPreparePayload,
   reply: string | undefined,
   signedIn: boolean,
+  audience: Audience,
 ) {
   const ctx = prepare.context as Record<string, unknown>;
   switch (panel.id) {
     case "gates_summary":
-      return <GatesSummaryPanel gates={ctx.gates as GatesResponse | undefined} />;
+      return <GatesSummaryPanel gates={ctx.gates as GatesResponse | undefined} audience={audience} />;
     case "provenance_pin":
       return (
         <ProvenancePinPanel
@@ -293,7 +325,7 @@ function renderPanel(
     case "provenance_graph":
       return <ProvenanceGraphFromPrepare prepare={prepare} />;
     case "explore_trace":
-      return <OrchestratorTrace steps={prepare.steps} reply={reply} />;
+      return <OrchestratorTrace steps={prepare.steps} reply={reply} audience={audience} />;
     case "hydrophone_signal":
       return (
         <HydrophoneSignalPanel
@@ -308,9 +340,9 @@ function renderPanel(
         />
       );
     case "compare_places":
-      return <PlacesPanel scope="broad" prepare={prepare} />;
+      return <PlacesPanel scope="broad" prepare={prepare} audience={audience} />;
     case "local_area":
-      return <PlacesPanel scope="focused" prepare={prepare} />;
+      return <PlacesPanel scope="focused" prepare={prepare} audience={audience} />;
     case "kayak_plan":
       return <KayakPanel props={panel.props as KayakPanelProps | undefined} />;
     case "sidequests":
@@ -318,6 +350,7 @@ function renderPanel(
         <SidequestPanel
           props={panel.props as SidequestPanelProps | undefined}
           signedIn={signedIn}
+          audience={audience}
         />
       );
     case "map_viewport":
@@ -340,24 +373,29 @@ export default function ActiveSurfaceHost({
   prepare,
   reply,
   signedIn = false,
+  audience = "reviewer",
   onDeepLink,
 }: ActiveSurfaceHostProps) {
   const sidebar = sidebarPanels(uiIntent);
 
   return (
     <div className="card active-surface" data-demo="active-surface">
-      <p className="cast-badge" style={{ marginBottom: "0.5rem" }}>
-        Orchestrator · {uiIntent.planner_agent_id} · schema {uiIntent.version}
-      </p>
-      <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "0.75rem" }}>
-        Active panels (skills: {uiIntent.skill_plan.join(", ") || "none"})
-      </p>
+      {audience !== "public" && (
+        <>
+          <p className="cast-badge" style={{ marginBottom: "0.5rem" }}>
+            Orchestrator · {uiIntent.planner_agent_id} · schema {uiIntent.version}
+          </p>
+          <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "0.75rem" }}>
+            Active panels (skills: {uiIntent.skill_plan.join(", ") || "none"})
+          </p>
+        </>
+      )}
 
       <div className="active-surface-panels">
         {sidebar.map((panel) => (
           <div key={panel.id} className="active-surface-panel console-card">
             <span className="console-panel-label">{panelLabel(panel.id)}</span>
-            {renderPanel(panel, prepare, reply, signedIn)}
+            {renderPanel(panel, prepare, reply, signedIn, audience)}
           </div>
         ))}
       </div>

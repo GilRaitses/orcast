@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 
 from src.aws_backend.casting.planner import draft_ui_intent, validate_ui_intent
@@ -77,6 +78,50 @@ def test_plan_returns_ui_intent(mock_settings, mock_cfg, mock_store_cls, mock_pl
     assert body["ui_intent"]["skill_plan"] == ["fetch_gates"]
     assert body["prepare"]["context"]["gates"]["status"] == "success"
     assert any(s.get("type") == "plan_output" for s in body["prepare"]["steps"])
+
+
+@patch("src.aws_backend.routers.interactions.SessionStore")
+@patch("src.aws_backend.routers.interactions.aurora_configured", return_value=True)
+@patch("src.aws_backend.auth.settings")
+def test_plan_db_failure_returns_503_not_500(mock_settings, mock_cfg, mock_store_cls):
+    """L3: aurora_configured passes on env-var presence, but the real connection
+    fails (unreachable host or unmigrated schema -> get_connection raises). The
+    handler maps only LookupError/ValueError, so without the guard this would
+    surface as an unhandled 500. It must degrade to 503 instead."""
+    mock_settings.api_key = API_KEY
+    store = MagicMock()
+    # The connection layer raises RuntimeError when psycopg is absent or the DSN
+    # is unset, the same shape get_connection() raises in a misconfigured runtime.
+    store.session_exists.side_effect = RuntimeError("psycopg is not installed")
+    mock_store_cls.return_value = store
+
+    resp = client.post(
+        "/api/interactions/plan",
+        headers={"X-ORCAST-Key": API_KEY},
+        json={"session_id": SESSION, "message": "plan a trip to the san juans"},
+    )
+    assert resp.status_code == 503
+
+
+@patch("src.aws_backend.routers.interactions.SessionStore")
+@patch("src.aws_backend.routers.interactions.aurora_configured", return_value=True)
+@patch("src.aws_backend.auth.settings")
+def test_plan_psycopg_connection_error_returns_503(mock_settings, mock_cfg, mock_store_cls):
+    """L3 (driver present): a live psycopg connection failure (connection refused
+    or an unmigrated table) must also degrade to 503, never an unhandled 500.
+    Skipped when the optional psycopg driver is not installed."""
+    psycopg = pytest.importorskip("psycopg")
+    mock_settings.api_key = API_KEY
+    store = MagicMock()
+    store.session_exists.side_effect = psycopg.OperationalError("connection refused")
+    mock_store_cls.return_value = store
+
+    resp = client.post(
+        "/api/interactions/plan",
+        headers={"X-ORCAST-Key": API_KEY},
+        json={"session_id": SESSION, "message": "plan a trip to the san juans"},
+    )
+    assert resp.status_code == 503
 
 
 def test_draft_ui_intent_decision_keywords():

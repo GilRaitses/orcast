@@ -21,19 +21,19 @@ import { mapViewportFromIntent, type PlanResponse, type UiIntentPanel } from "@/
 import type { SceneIntent } from "@/lib/sceneIntent";
 
 const STARTER_PROMPTS = [
-  "Which gates block promotion right now?",
-  "Explain effective confidence vs raw confidence.",
   "Show me today's hotspots.",
+  "What can I see near me right now?",
+  "How do I plan a trip to the San Juans?",
 ];
 
 // Orienting question -> trips branch. Selecting one threads focus.branch on the
 // turn so the planner runs the matching trip branch (connections / kayak /
 // sidequests); "General" clears it and falls back to the keyword planner.
 const BRANCH_OPTIONS: Array<{ id: string; label: string; prompt: string }> = [
-  { id: "visiting", label: "Planning a visit", prompt: "I'm planning a visit to the San Juans — how do I get there and what should I plan around?" },
-  { id: "here-now", label: "I'm here now", prompt: "I'm here now near the water — what's around me and how do connections look?" },
-  { id: "kayak", label: "Kayaking", prompt: "I want to kayak — when is the safe tide and current window?" },
-  { id: "curious", label: "Just curious", prompt: "I'm just exploring — what can I look at right now?" },
+  { id: "visiting", label: "Planning a visit", prompt: "I'm planning a visit to the San Juans. How do I get there and what should I plan around?" },
+  { id: "here-now", label: "I'm here now", prompt: "I'm here now near the water. What's around me and how do connections look?" },
+  { id: "kayak", label: "Kayaking", prompt: "I want to kayak. When is the safe tide and current window?" },
+  { id: "curious", label: "Just curious", prompt: "I'm just exploring. What can I look at right now?" },
 ];
 
 interface ChatTurn {
@@ -72,7 +72,7 @@ function renderReply(text: string) {
 
 function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
   const searchParams = useSearchParams();
-  const [message, setMessage] = useState(STARTER_PROMPTS[0]);
+  const [message, setMessage] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [turns, setTurns] = useState<ChatTurn[]>([]);
@@ -278,8 +278,8 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
       <header className="explore-header">
         <h1 className="hero-title">orcast. Explore the Salish Sea</h1>
         <p className="hero-subtitle">
-          A 3D, gate-bounded encounter forecast for the Salish Sea. Click the water or a hydrophone
-          to ask the orchestrator. Every panel is grounded and every step is traced.
+          A 3D map of the Salish Sea with a live encounter forecast. Click the water or a hydrophone
+          to ask a question. Every answer is grounded in real data.
         </p>
         {!signedIn && (
           <p className="muted explore-anon-note">
@@ -333,12 +333,12 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
               ))}
             </div>
             <label>
-              Ask the orchestrator
+              Ask about the Salish Sea
               <textarea
                 rows={2}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask about gates, provenance, or a hydrophone…"
+                placeholder="Ask about a place, a hydrophone, or planning a visit…"
               />
             </label>
             <div className="row" style={{ marginTop: "0.6rem" }}>
@@ -348,7 +348,7 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
                 onClick={submitMessage}
                 disabled={busy || !message.trim()}
               >
-                {busy ? "Orchestrating…" : "Send turn"}
+                {busy ? "Thinking…" : "Ask"}
               </button>
             </div>
             {error && <p className="error">{error}</p>}
@@ -360,6 +360,7 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
               prepare={plan.prepare}
               reply={plan.reply}
               signedIn={signedIn}
+              audience="public"
             />
           )}
 

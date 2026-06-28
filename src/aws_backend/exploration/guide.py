@@ -22,6 +22,28 @@ Rules (never break these):
 7. End with a "Navigate" bullet list of deep links (labels from context)."""
 
 
+# Anonymous public tier. The forecast is honest about being modeled and uncertain,
+# but it never exposes reviewer internals (model promotion, the effective vs raw
+# confidence split, or gate batteries). Honesty disclaimers stay intact: the
+# forecast is modeled not observed, and a likelihood not a certainty.
+PUBLIC_SYSTEM_PROMPT = """You are the ORCAST Exploration Guide for the public map. You help visitors read the map and plan around it.
+
+Rules (never break these):
+1. You are NOT a forecast oracle. You explain what the map and the data already show.
+2. Use ONLY facts from the JSON tool outputs. If data is missing, say you don't know.
+3. Always be clear that the forecast is modeled, not a direct observation, and that it is a likelihood, not a certainty.
+4. Do not discuss model promotion, internal gate batteries, or the difference between effective and raw confidence. Those are reviewer details.
+5. Link visitors to the map for provenance using the deep_links provided.
+6. Never suggest approving moderation, promotion, or writing decision records.
+7. Keep replies under 250 words, plain language, 2-4 short paragraphs.
+8. End with a "Navigate" bullet list of deep links (labels from context)."""
+
+
+def _is_public_version(version: Optional[str]) -> bool:
+    """True for the anonymous public planner spec (version prefixed ``public``)."""
+    return str(version or "").startswith("public")
+
+
 def build_exploration_context(
     message: str,
     *,
@@ -116,6 +138,7 @@ def compose_guide_reply(
         ]
     ] = None,
     model_id: Optional[str] = None,
+    public: bool = False,
 ) -> GuideReply:
     if prefetched is not None:
         context, citations, deep_links, tools_used, gate_ids, provenance_refs = prefetched
@@ -127,8 +150,21 @@ def compose_guide_reply(
             skills=skills,
         )
 
-    system_prompt = instructions or SYSTEM_PROMPT
+    # Anonymous public turns use the redacted prompt and template so promotion and
+    # effective-vs-raw confidence talk never reaches the public console. An explicit
+    # instructions string (a keyed managed agent) always wins.
+    default_prompt = PUBLIC_SYSTEM_PROMPT if public else SYSTEM_PROMPT
+    system_prompt = instructions or default_prompt
     bedrock_model = model_id or settings.bedrock_sighting_model_id
+
+    def _fallback_template() -> GuideReply:
+        if public:
+            return _public_template_guide(
+                context, citations, deep_links, tools_used, gate_ids, provenance_refs
+            )
+        return _template_guide(
+            context, citations, deep_links, tools_used, gate_ids, provenance_refs
+        )
 
     if gateway_reply and gateway_reply.strip():
         return GuideReply(
@@ -156,11 +192,11 @@ def compose_guide_reply(
                 provenance_refs=provenance_refs,
             )
         except Exception as exc:
-            fallback = _template_guide(context, citations, deep_links, tools_used, gate_ids, provenance_refs)
+            fallback = _fallback_template()
             fallback.llm_error = str(exc)
             return fallback
 
-    return _template_guide(context, citations, deep_links, tools_used, gate_ids, provenance_refs)
+    return _fallback_template()
 
 
 def guide_status() -> Dict[str, Any]:
@@ -286,6 +322,55 @@ def _template_guide(
 
     lines.append(
         "**Navigate:** "
+        + ", ".join(f"[{d['label']}]({d['href']})" for d in deep_links)
+    )
+
+    return GuideReply(
+        reply="\n\n".join(lines),
+        citations=citations,
+        deep_links=deep_links,
+        source="template",
+        model=None,
+        tools_used=tools_used,
+        gate_ids=gate_ids,
+        provenance_refs=provenance_refs,
+    )
+
+
+def _public_template_guide(
+    context: Dict[str, Any],
+    citations: List[Dict[str, str]],
+    deep_links: List[Dict[str, str]],
+    tools_used: List[str],
+    gate_ids: List[str],
+    provenance_refs: List[str],
+) -> GuideReply:
+    """Anonymous public template reply.
+
+    The reviewer template embeds fit status, the effective vs raw confidence
+    split, and promotion state. The public reply keeps the honesty disclaimers
+    (modeled not observed, likelihood not certainty) but never names those
+    internals.
+    """
+    lines = [
+        "**Exploration guide.** This forecast is modeled, not a direct observation. "
+        "It shows where an encounter is more likely. It is not a certainty.",
+    ]
+
+    prov = context.get("provenance")
+    if prov and prov.get("status") == "success":
+        lines.append(
+            f"**Map cell {prov.get('lat')}, {prov.get('lng')}.** Modeled intensity "
+            f"{prov.get('intensity')}. This is a temporal model, not a sighting verifier."
+        )
+    elif context.get("hotspots"):
+        hs = (context["hotspots"].get("hotspots") or [])[:3]
+        if hs:
+            sample = ", ".join(f"{h.get('lat')},{h.get('lng')}" for h in hs)
+            lines.append(f"**Sample places.** {sample}. Pick a map pin to see what grounds it.")
+
+    lines.append(
+        "**Navigate.** "
         + ", ".join(f"[{d['label']}]({d['href']})" for d in deep_links)
     )
 

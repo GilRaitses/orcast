@@ -62,12 +62,48 @@ class InteractionRequest(BaseModel):
         return self
 
 
+try:  # psycopg is optional until the DB driver is installed (see exploration.db)
+    import psycopg
+except ImportError:  # pragma: no cover - exercised only when the driver is absent
+    psycopg = None  # type: ignore[assignment]
+
+# A configured-but-unreachable database (connection refused, auth, or timeout) or
+# an unmigrated schema (missing table) raises from the connection layer.
+# ``aurora_configured`` only checks that the connection env var is present, so
+# without this guard such a failure escapes a turn handler as an unhandled 500.
+# Map it to the same 503 the config check already returns.
+_DB_UNAVAILABLE_ERRORS: tuple[type[BaseException], ...] = (
+    (RuntimeError, psycopg.Error) if psycopg is not None else (RuntimeError,)
+)
+
+
 def _require_aurora() -> None:
     if not aurora_configured():
         raise HTTPException(
             status_code=503,
             detail="Interactions require ORCAST_DATABASE_URL. See docs/devpost/casting/MANAGED_AGENTS_CONTRACT.md",
         )
+
+
+def _require_session(store: SessionStore, session_id: str) -> None:
+    """Resolve the session, degrading a real DB connection or migration failure
+    to 503 rather than letting it surface as an unhandled 500.
+
+    ``_require_aurora`` passes when the connection env var is merely present, so a
+    host that is unreachable or a schema that is not migrated only fails here,
+    inside ``session_exists``. The turn handlers map ``LookupError`` and
+    ``ValueError`` only, so this converts the DB-layer error to the documented
+    503 instead.
+    """
+    try:
+        exists = store.session_exists(session_id)
+    except _DB_UNAVAILABLE_ERRORS as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Interactions require a reachable, migrated database. See docs/devpost/casting/MANAGED_AGENTS_CONTRACT.md",
+        ) from exc
+    if not exists:
+        raise HTTPException(status_code=404, detail="Session not found")
 
 
 def _inline_dict(payload: InteractionRequest) -> Optional[Dict[str, Any]]:
@@ -181,8 +217,7 @@ def plan_cast_interaction(
     # full keyed access.
     public_route = identity.reviewer_id is None
     store = SessionStore()
-    if not store.session_exists(payload.session_id):
-        raise HTTPException(status_code=404, detail="Session not found")
+    _require_session(store, payload.session_id)
 
     inline = _inline_dict(payload)
     try:
@@ -209,7 +244,7 @@ def plan_cast_interaction(
 
     if payload.narrate:
         from ..casting.concierge import _resolve_cast_agent
-        from ..exploration.guide import compose_guide_reply
+        from ..exploration.guide import _is_public_version, compose_guide_reply
 
         agent, _ = _resolve_cast_agent(
             _store,
@@ -234,6 +269,7 @@ def plan_cast_interaction(
                 prep.provenance_refs,
             ),
             model_id=agent.model.get("model_id"),
+            public=_is_public_version(agent.version),
         )
         response["reply"] = guide.reply
         response["source"] = guide.source
@@ -300,7 +336,7 @@ def narrate_cast_interaction(payload: NarrateRequest) -> Dict[str, Any]:
 
     inline = _inline_dict(payload)
     from ..casting.concierge import _resolve_cast_agent
-    from ..exploration.guide import compose_guide_reply
+    from ..exploration.guide import _is_public_version, compose_guide_reply
 
     agent, _ = _resolve_cast_agent(
         _store,
@@ -325,6 +361,7 @@ def narrate_cast_interaction(payload: NarrateRequest) -> Dict[str, Any]:
         skills=list(payload.skill_plan),
         prefetched=prefetched,
         model_id=agent.model.get("model_id"),
+        public=_is_public_version(agent.version),
     )
 
     interaction_id = str(uuid.uuid4())
@@ -426,7 +463,7 @@ def _narrate_stream_events(
             else:
                 # No Bedrock: compose the non-streamed reply (template / gateway)
                 # and emit it as a single token so the client contract is identical.
-                from ..exploration.guide import compose_guide_reply
+                from ..exploration.guide import _is_public_version, compose_guide_reply
 
                 composed = compose_guide_reply(
                     payload.message,
@@ -436,6 +473,7 @@ def _narrate_stream_events(
                     skills=list(payload.skill_plan),
                     prefetched=prefetched,
                     model_id=model,
+                    public=_is_public_version(agent.version),
                 )
                 full = composed.reply
                 final_source = composed.source
