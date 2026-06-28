@@ -51,6 +51,18 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
+  try {
+    return await handleStream(req);
+  } catch (err) {
+    // Never emit a bare 500: surface a JSON error so the client falls back to JSON.
+    return new Response(
+      JSON.stringify({ error: "stream_route_failed", message: String((err as Error)?.message ?? err) }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
+  }
+}
+
+async function handleStream(req: NextRequest): Promise<Response> {
   if (!STREAM_BASE) {
     return new Response(JSON.stringify({ error: "ORCAST_STREAM_BASE not configured" }), {
       status: 500,
@@ -84,7 +96,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     if (n <= 0) inFlight.delete(ip);
     else inFlight.set(ip, n);
   };
-  req.signal.addEventListener("abort", releaseSlot, { once: true });
+  // `req.signal` may be absent in some runtimes; only wire abort cleanup if present.
+  const reqSignal: AbortSignal | undefined = req.signal;
+  if (reqSignal) reqSignal.addEventListener("abort", releaseSlot, { once: true });
 
   const upstream = `${STREAM_BASE.replace(/\/$/, "")}/api/interactions/narrate/stream`;
   const headers: Record<string, string> = {
@@ -93,18 +107,30 @@ export async function POST(req: NextRequest): Promise<Response> {
   };
   if (API_KEY) headers["X-ORCAST-Key"] = API_KEY;
 
+  let body: string;
+  try {
+    body = await req.text();
+  } catch {
+    releaseSlot();
+    return new Response(JSON.stringify({ error: "bad_request" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   let resp: Response;
   try {
-    resp = await fetch(upstream, {
+    const init: RequestInit = {
       method: "POST",
       headers,
-      body: await req.text(),
+      body,
       cache: "no-store",
-      // Propagate a client disconnect upstream so a mid-stream turn-abort cancels
-      // the backend generator.
-      signal: req.signal,
-    });
-  } catch (err) {
+    };
+    // Propagate a client disconnect upstream so a mid-stream turn-abort cancels
+    // the backend generator (only when the runtime exposes a request signal).
+    if (reqSignal) init.signal = reqSignal;
+    resp = await fetch(upstream, init);
+  } catch {
     releaseSlot();
     return new Response(JSON.stringify({ error: "upstream_unreachable" }), {
       status: 502,
