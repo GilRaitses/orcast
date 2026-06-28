@@ -1291,9 +1291,18 @@ waves:
   - id: TWIN-W-PERFUX
     family: 3D-TWIN
     type: probe
-    status: dispatched
+    status: complete
     depends_on: [TWIN-W2.6]
-    note: "Research-first (read-only): slow-load root cause + ranked levers (RP1), tighter default view scope (RP2), more labels + distance-proportional icon scaling with clamp + LGC styling (RP3). Reads the LGC charter to align. See W-PERFUX_RESEARCH_DISPATCH.md."
+    note: "Research COMPLETE (read-only). RP1: load cost is leaf terrain geometry (64 L3 leaves=74.7% of 75.75MiB), zero textures so KTX2 moot; levers errorTarget 16->32, maxDepth=2 cap, framing. RP2: 'so far back' = full 37km extent at 5.6deg pitch; fix camera-only (radius fitRadius*0.40, alt 2200->6000m) + maxDepth=2. RP3: clamped DOM label scale + LGC glass tokens, sequence after framing. All config/camera-only in SalishScene.tsx, no re-bake."
+  - id: TWIN-W-PERFUX-BUILD
+    family: 3D-TWIN
+    type: implement
+    status: dispatched
+    depends_on: [TWIN-W-PERFUX]
+    operator_gate: commit gated to O0; visual framing eyeballed on deploy (no Playwright)
+    scope_globs:
+      - web/app/components/scene/SalishScene.tsx
+    note: "Land RP1+RP2 config/camera win: raise errorTarget, startup maxDepth=2 cap lifted on zoom/focus, tighter default resting framing (radius fitRadius*0.40, alt ~6000m, initial camera ~[0,28,30]). RP3 labels follow once LGC tokens land. Single editor on SalishScene.tsx; serialize vs W-CAM/W4/LGC."
 
   - id: CXR-1
     family: CXR

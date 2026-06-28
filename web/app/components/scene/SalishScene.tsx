@@ -121,7 +121,19 @@ const SCENE_CENTER = {
   lng: (TILESET_BOUNDS.min_lng + TILESET_BOUNDS.max_lng) / 2,
 };
 const RESTING_ORBIT_SPEED = 0.05; // radians/second, matches the sandbox resting orbit.
-const RESTING_ORBIT_ALT_M = 2200; // metres above sea level; wide framing of the extent.
+const RESTING_ORBIT_ALT_M = 6000; // metres above sea level; a real look-down on the San Juans core (RP2: pitch ~31 deg) instead of a horizon graze.
+
+// --- W-PERFUX startup LoD caps (RP1/RP2) ------------------------------------
+// The resting wide frame only needs the coarse L0..L2 set, so start coarse and
+// lift to full detail the instant the user engages the map (grab/zoom/focus),
+// which streams leaves on demand for the place they actually look at.
+//   errorTarget 16 -> 32 cuts first-paint bytes ~75% (RP1 lever 1).
+//   maxDepth 2 caps the tree at L2: <=21 tiles / ~19 MiB vs 85 tiles / 75.75 MiB,
+//   dropping the 64-leaf level until the cap lifts (RP2 lever 2).
+const RESTING_ERROR_TARGET = 32;
+const RESTING_MAX_DEPTH = 2;
+const DETAIL_ERROR_TARGET = 16;
+const DETAIL_MAX_DEPTH = Infinity;
 
 // When the tileset fails to load: true => fall back to Google Maps via SceneHost;
 // false => keep realism water/lights and draw a minimal in-scene placeholder.
@@ -546,7 +558,7 @@ function IntentDirectorRig({
       if (director && !journeyRef.current) {
         orbitRef.current = director.orbit(
           SCENE_CENTER,
-          Math.max(fitRadius * 0.9, 40),
+          Math.max(fitRadius * 0.4, 24), // RP2: ~24 u frames ~1/3 of the extent diagonal instead of the full ~37 km.
           RESTING_ORBIT_SPEED,
           { subject: "Salish Sea", altitudeMeters: RESTING_ORBIT_ALT_M },
         );
@@ -768,11 +780,18 @@ function TwinScene({
   const scenicWorldUnitsPerMeter =
     fitRadius != null ? fitRadius / geoRadiusMeters(TILESET_BOUNDS) : undefined;
 
+  // W-PERFUX: start at the coarse resting caps, then lift to full leaf detail
+  // once the user engages the map (handleUserGrab) or a focus journey fires.
+  // The hook applies errorTarget/maxDepth live, so flipping this re-refines in
+  // place with no tileset rebuild.
+  const [detail, setDetail] = useState(false);
+
   const tiles = useTilesLayer({
     url: FULL_TILESET_URL,
     groupRotationX: -Math.PI / 2,
     fitScaleToWidth: SCENE_WIDTH,
-    errorTarget: 16,
+    errorTarget: detail ? DETAIL_ERROR_TARGET : RESTING_ERROR_TARGET,
+    maxDepth: detail ? DETAIL_MAX_DEPTH : RESTING_MAX_DEPTH,
     enableShadows: false,
     onFit: (sphere) => setFitRadius(sphere.radius),
   });
@@ -806,13 +825,16 @@ function TwinScene({
   // fitRadius is deterministic (= SCENE_WIDTH / 2) under fitScaleToWidth, so the
   // static camera/controls below already frame it; the value gates "tiles ready".
   const minDistance = fitRadius ? fitRadius * 0.5 : 30;
-  const maxDistance = fitRadius ? fitRadius * 8 : 600;
+  // RP2 guard rail: cap zoom-out at ~fitRadius*2 (~120 u) so the user cannot
+  // pull back to the same far-back horizon graze the resting frame avoids.
+  const maxDistance = fitRadius ? fitRadius * 2 : 120;
 
   // WS-INTENT: when the user grabs the controls, hand the camera to them by
   // stopping the director's resting orbit and any in-flight journey, so manual
   // orbit is genuinely usable. (onStart only fires while controls are enabled,
   // i.e. at rest or after a journey settles; the scripted beats keep them off.)
   const handleUserGrab = useCallback(() => {
+    setDetail(true); // W-PERFUX: lift the startup LoD caps so leaves stream once the user engages.
     const { journeyRef, orbitRef, directorRef } = intentRefs;
     journeyRef.current?.cancel();
     journeyRef.current = null;
@@ -820,6 +842,12 @@ function TwinScene({
     orbitRef.current = null;
     directorRef.current?.stop();
   }, [intentRefs]);
+
+  // W-PERFUX: a focus journey (planner map_viewport or scene click) means the
+  // user is looking at a place, so lift the caps too and let detail stream there.
+  useEffect(() => {
+    if (focus) setDetail(true);
+  }, [focus]);
 
   return (
     <>
@@ -977,7 +1005,7 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
     // full size; the bridge only adds the overlay sibling.
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <Canvas
-        camera={{ position: [0, 80, 120], fov: 45, near: 1, far: 800 }}
+        camera={{ position: [0, 28, 30], fov: 45, near: 1, far: 800 }}
         style={{ width: "100%", height: "100%", background: "linear-gradient(#0b1f33,#08263d)" }}
         onCreated={({ gl }) => gl.setClearColor("#08263d")}
       >
