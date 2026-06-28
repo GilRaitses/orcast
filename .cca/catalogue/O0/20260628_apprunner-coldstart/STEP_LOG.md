@@ -36,3 +36,25 @@ confirmed edge-handover gap; M3 fixes the distinct cold-explore path.
 Gate verdict: CS1 PASS. Proceed to CS2 discovery. Open operator gates: approve a
 CS4 forced-transition repro on the sole live backend; confirm/override the
 warm-pool cost ceiling.
+
+## 2026-06-28 operator decisions + CS2 + CS3a (M4)
+
+Operator locked: scope M2+M3+M4 (M1 deferred); CS4 forced-transition repro
+AUTHORIZED; proceed to commit + charter + implement. CS1 research committed/pushed
+(bc88b2c).
+
+CS2 discovery complete (DISCOVERY_MAP.md). Key decision: do NOT repoint App Runner
+health to /ready — coupling liveness to RDS would turn an RDS blip into a total
+outage (worse than today's graceful 503). /health stays the liveness check; /ready
+is added observability-only; cold latency removed via lifespan pre-warm.
+
+CS3a (M4) implemented + typecheck green: bounded double-write-safe retry in
+web/app/api/be/[...path]/route.ts forward() (503 any-method; 502/504/404 GET-only;
+1 retry, 300ms+jitter; body buffered so replay-safe) and a single pre-body retry
+on 502/503/504 in web/app/api/narrate-stream/route.ts. M4 directly absorbs the
+confirmed edge-handover gap for idempotent/no-side-effect calls; M2 (MinSize=2)
+covers the handover-404 at the source.
+
+Remaining: CS3b (M3 backend: pool + Bedrock pre-warm, /ready, interactions 503
+parity), CS3c (M2 MinSize=2), CS4 (deploy + authorized forced-transition repro
+under the gap poller), CS5 acceptance.

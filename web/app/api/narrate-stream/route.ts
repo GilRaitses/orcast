@@ -118,8 +118,7 @@ async function handleStream(req: NextRequest): Promise<Response> {
     });
   }
 
-  let resp: Response;
-  try {
+  const fetchUpstream = (): Promise<Response> => {
     const init: RequestInit = {
       method: "POST",
       headers,
@@ -129,7 +128,25 @@ async function handleStream(req: NextRequest): Promise<Response> {
     // Propagate a client disconnect upstream so a mid-stream turn-abort cancels
     // the backend generator (only when the runtime exposes a request signal).
     if (reqSignal) init.signal = reqSignal;
-    resp = await fetch(upstream, init);
+    return fetch(upstream, init);
+  };
+
+  let resp: Response;
+  try {
+    resp = await fetchUpstream();
+    // WS-COLDSTART M4: absorb an App Runner instance-handover blip before any SSE
+    // bytes flow. A 502/503/504 here means no instance served the request (the
+    // backend persists nothing on a failed stream), so one pre-body retry is safe
+    // and invisible to the client. Real limits (429) and app errors pass through.
+    if ((resp.status === 502 || resp.status === 503 || resp.status === 504) && !reqSignal?.aborted) {
+      try {
+        await resp.body?.cancel();
+      } catch {
+        // ignore: best-effort drain before retry
+      }
+      await new Promise((resolve) => setTimeout(resolve, 300 + Math.floor(Math.random() * 100)));
+      resp = await fetchUpstream();
+    }
   } catch {
     releaseSlot();
     return new Response(JSON.stringify({ error: "upstream_unreachable" }), {

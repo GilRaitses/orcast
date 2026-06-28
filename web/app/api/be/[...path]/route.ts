@@ -86,6 +86,18 @@ function clientIp(req: NextRequest): string {
   return req.headers.get("x-real-ip") ?? "unknown";
 }
 
+// WS-COLDSTART M4: absorb a brief App Runner instance-handover blip so a deploy or
+// instance recycle never surfaces a 404/503 to a user (confirmed root cause: the
+// App Runner edge emits a transient 5xx/404 during the ~30s handover before a new
+// instance is registered). One bounded retry, double-write-safe.
+const RETRY_BACKOFF_MS = 300;
+function retryDelayMs(): number {
+  return RETRY_BACKOFF_MS + Math.floor(Math.random() * 100);
+}
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function isRateLimited(ip: string, limit: number = RATE_LIMIT, keySuffix = ""): boolean {
   const key = keySuffix ? `${keySuffix}:${ip}` : ip;
   const now = Date.now();
@@ -177,11 +189,42 @@ async function forward(req: NextRequest, path: string[]) {
     }
   }
 
-  const resp = await fetch(target.toString(), init);
-  const body = await resp.text();
+  // A 503 from the App Runner edge means no healthy instance received the request,
+  // so it had no side effect and is safe to retry for any method. 502/504/404 are
+  // ambiguous for mutations, so they are only retried for idempotent GETs. The
+  // request body is fully buffered in `init.body`, so a retry replays cleanly.
+  const idempotent = req.method === "GET";
+  const maxAttempts = 2;
+  let resp: Response | undefined;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      resp = await fetch(target.toString(), init);
+    } catch {
+      if (attempt < maxAttempts) {
+        await sleep(retryDelayMs());
+        continue;
+      }
+      return NextResponse.json({ error: "upstream_unreachable" }, { status: 502 });
+    }
+    const status = resp.status;
+    const retryable = status === 503 || (idempotent && (status === 502 || status === 504 || status === 404));
+    if (retryable && attempt < maxAttempts) {
+      try {
+        await resp.body?.cancel();
+      } catch {
+        // ignore: best-effort drain before retry
+      }
+      await sleep(retryDelayMs());
+      continue;
+    }
+    break;
+  }
+
+  const settled = resp as Response;
+  const body = await settled.text();
   return new NextResponse(body, {
-    status: resp.status,
-    headers: { "Content-Type": resp.headers.get("Content-Type") ?? "application/json" },
+    status: settled.status,
+    headers: { "Content-Type": settled.headers.get("Content-Type") ?? "application/json" },
   });
 }
 

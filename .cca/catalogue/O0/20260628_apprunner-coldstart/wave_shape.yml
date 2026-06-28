@@ -69,25 +69,31 @@ waves:
         deliverable: research/R4_repro_observability.md
     gate: "each lane names mechanisms + the specific knob/code/retry that addresses the gap at its layer; R1 prices each App Runner knob; R2 confirms whether /health should gate on readiness; R4 delivers a safe repro + a measurable gap definition; synthesis lists root-cause hypotheses ranked by evidence"
 
-  # Downstream waves are chartered AFTER CS1 synthesis (shape depends on root cause).
+  # Locked after CS1 synthesis (operator 2026-06-28): scope = M2 + M3 + M4, M1 deferred.
   - id: CS2
     lifecycle: discovery
     depends_on: [CS1]
-    status: pending-charter
-    note: "ground the chosen mitigation set in files/owners/knobs; name convergence files; price the cost delta"
+    status: complete
+    deliverable: DISCOVERY_MAP.md
+    note: "convergence files named; key decision: do NOT couple App Runner health to /ready (RDS blip would become a total outage). /health stays liveness; /ready is observability-only; pre-warm via lifespan pool + Bedrock client."
   - id: CS3
     lifecycle: implementation
     depends_on: [CS2]
-    status: pending-charter
+    status: in-progress
+    sub:
+      - { id: CS3a, mitigation: M4, status: DONE, note: "bounded retry in /api/be forward() + pre-body retry in narrate-stream; typecheck green" }
+      - { id: CS3b, mitigation: M3, status: pending, note: "lifespan pool + Bedrock pre-warm; /ready observability endpoint; interactions 503 parity; psycopg_pool dep" }
+      - { id: CS3c, mitigation: M2, status: pending, note: "dedicated AutoScalingConfiguration MinSize=2 + associate; mirror in template.yaml (applied as the CS4 transition)" }
   - id: CS4
     lifecycle: adversarial
     depends_on: [CS3]
-    status: pending-charter
-    note: "force recycle + deploy + concurrent load; prove zero user-visible gap; verify retry does not mask real outages; confirm cost delta"
+    status: pending
+    operator_gate: AUTHORIZED  # health-gated start-deployment, auto-rollback
+    note: "deploy M3/M4 image + associate MinSize=2 (this IS the forced transition); run R4 gap poller + concurrent load; prove gap_while_health_up_ms=0; prove retry does not mask a sustained outage; confirm +~$10/mo"
   - id: CS5
     lifecycle: acceptance
     depends_on: [CS4]
-    status: pending-charter
+    status: pending
 
 collision_governance:
   - "CS1 is read-only research; R1/R4 may run read-only AWS describe/metrics calls and AWS-docs MCP/web, but change NO infra. No deploys, no config writes."
