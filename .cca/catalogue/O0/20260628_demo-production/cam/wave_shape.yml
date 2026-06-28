@@ -1,0 +1,28 @@
+waveset: orcast-demo-production
+stage: CAM
+family: DCAM
+status: chartered
+role: director
+depends_on: BLK
+parallelism: one_first_ad_per_cleared_beat
+capture: true
+capture_serial_per_host: true
+approval: false
+capture_settings:
+  viewport: 1280x900
+  env: DEMO_RECORD=1
+  per_beat: one silent clip + gif loop from the same recording
+  specs_dir: web/e2e/beats/
+  spec_naming: twoside-<beat>.spec.ts
+  media_out: docs/devpost/figures/_demo-run/beats/ (and object storage; never git)
+method:
+  - author/update twoside-<beat>.spec.ts to drive the cleared Show in order
+  - record the beat (silent)
+  - Read-examine the captured frames and confirm against the Show + honesty caption
+outputs:
+  - findings/CAM-<beat>.md
+  - CAM-ROLLUP.md
+  - web/e2e/beats/twoside-*.spec.ts
+advance_gate: CAPTURE OK advances to SCR; RESHOOT returns to CAM or BLK
+operator_gate: capture-start when it uses a paid surface or a long shared-host Playwright run
+next_stage: SCR

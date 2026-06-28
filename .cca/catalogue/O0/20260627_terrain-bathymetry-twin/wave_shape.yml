@@ -96,21 +96,43 @@ waves:
     gate: "GATED (O0): in the live scene the coastline meets the water plane and low islands sit at sea level, proven by Read-examined before/after frames; tsc clean; no commit without O0"
 
   - id: W-CAM
-    name: camera-pan-labels-choreography
+    name: camera-choreography
     depends_on: [W2.6]
-    parallelism: 3
-    convergence_file_edits: true                    # touches SalishScene.tsx camera rig; serialize vs W4
-    launch_status: chartered-2026-06-28             # operator asks: stop random-feeling motion, pan named places, world-anchored geo labels, defined tour
-    note: "near-term extraction of the W4 camera-modes + explore-ui geo-label asks; coordinate edit order with W4 to avoid double-editing SalishScene.tsx"
+    parallelism: 2
+    convergence_file_edits: true                    # touches SalishScene.tsx camera rig; serialize vs W4 and W-LABELS
+    launch_status: chartered-2026-06-28             # operator ask: stop random-feeling motion, pan deliberately to named places, defined tour
+    note: "Camera-choreography BUILD wave. Place-label RENDERING moved to W-LABELS (RP3) to keep one owner of web/lib/scene/labels/; W-CAM provides the target/waypoints W-LABELS anchors to. Coordinate SalishScene.tsx edit order with W4 and W-LABELS via O0 (LGC charter collision lock)."
     decisions:
-      not_random: "the live scene is NOT random; an always-on resting orbit + a place-journey on every focus/search supersede each other. Gate or calm these."
-      labels: "world-anchored <Html> labels above gazetteer place positions (projectToScene + surfaceYAt), like the hydrophone beacon labels but for named places"
+      not_random: "the live scene is NOT random; an always-on resting orbit + a place-journey on every focus/search supersede each other. Gate or calm these so motion reads as deliberate."
       choreography: "tour registry keyed by gazetteer id, invoked from IntentDirectorRig, reusing runPlaceJourney primitives (flyTo/descendTo/followPath/orbit)"
     agents:
-      - { role: camera-rig,    owns: "web/app/components/scene/SalishScene.tsx (camera rig only)", deliverable: "calm/gate resting orbit; debounce focus journeys so they do not feel random; diffs-only" }
-      - { role: place-labels,  owns: "web/lib/scene/labels/ + web/lib/geo/gazetteer.ts", deliverable: "world-anchored place-label rig driven by director target / tour waypoints" }
+      - { role: camera-rig,    owns: "web/app/components/scene/SalishScene.tsx (camera rig only)", deliverable: "calm/gate resting orbit; debounce focus journeys so they do not feel random; expose the current director target/waypoint for W-LABELS to read; diffs-only" }
       - { role: tour-registry, owns: "web/lib/scene/camera/tours.ts", deliverable: "named-place tour registry + entry point, reusing runPlaceJourney" }
-    gate: "GATED (O0): camera pans deliberately to named places with labels visible above their positions, a defined tour runs without random-feeling jumps; Read-verified capture; no commit without O0"
+    accept_gate: "GATED (O0): camera pans deliberately to named places, a defined tour runs without random-feeling jumps; proven by a Read-examined capture; tsc clean; no commit without O0"
+
+  # RP3 labels BUILD+ACCEPT (operator asks: more place labels, distance-proportional
+  # scale with a MIN/MAX clamp -> smaller far, capped near, LGC glass styling). Plan
+  # grounded in research/RP3_labels_scale_lgc.md. SEQUENCED AFTER the LGC lane lands
+  # Part A glass tokens into web/app/globals.css :root AND after RP2 framing fixes the
+  # resting distance (LABEL_REF_DIST is defined relative to it).
+  - id: W-LABELS
+    name: geo-labels-clamped-scale-lgc-glass
+    depends_on: [W-CAM, W-PERFUX]
+    sequence_after: ["LGC Part A token drop into web/app/globals.css :root", "RP2 resting framing (W-PERFUX-BUILD)"]
+    parallelism: 2
+    convergence_file_edits: true                    # mounts PlaceLabels in SalishScene.tsx + edits globals.css; serialize vs W-CAM/W4/LGC
+    launch_status: chartered-2026-06-28             # build of RP3 findings
+    decisions:
+      which_places: "filter GAZETTEER to TILESET_BOUNDS via an inFootprint predicate (analog of inBoundsNodes); ~24 in-footprint places, tiered island/harbor/city always, village/terminal mid, landmark close"
+      anchoring: "reuse the beacon placement seam verbatim: projectToScene + surfaceYAt(group,x,z) + clamp Math.max(y??0,0)+LABEL_LIFT_M; re-place on useModelLoadTick"
+      scaling: "drop drei distanceFactor; custom clamped per-frame scale in useFrame: s = clamp(LABEL_REF_DIST/dist, LABEL_SCALE_MIN, LABEL_SCALE_MAX) mutated on a ref (no React rerender). LABEL_REF_DIST tuned to RP2 resting framing."
+      glass: "new .scene-label class: cool frost fill (--glass-tint-cool) at >= --glass-opacity-floor, scrim wash, ink text (--text-ink), hairline; blur=0 (M3 over the repainting canvas, NO backdrop-filter). Replaces the yellow scene-beacon-label look."
+      lgc_tie_in: "Tier 2/3 labels may recede to the MIN floor or hide when an LGC console/edge panel owns focus; honesty captions never recede."
+    agents:
+      - { role: label-module,   owns: "web/lib/scene/labels/", deliverable: "PlaceLabels rig + clamped-scale hook (net-new module so the shared-file diff is minimal); reads gazetteer + W-CAM target" }
+      - { role: scene-mount,    owns: "web/app/components/scene/SalishScene.tsx (label mount only) + web/app/globals.css (.scene-label family)", deliverable: "mount PlaceLabels in TwinScene; replace scene-beacon-label with .scene-label consuming LGC tokens; remove distanceFactor from HydrophoneBeacon; diffs-only; serialize vs W-CAM/W4/LGC" }
+      - { role: labels-adversarial, owns: ".cca/catalogue/O0/20260627_terrain-bathymetry-twin/gate_screenshots/", deliverable: "M10 Read-verified frames at far/rest/near: labels legible and small when far, capped (not dominating) when near, anchored above the right places, LGC glass + ink contrast (M1 AA) holds over the worst-case composited frame" }
+    accept_gate: "GATED (O0): on Read-examined frames at far + resting + near distances, place labels are anchored above their gazetteer positions, scale within [MIN,MAX] (small far, capped near), and the LGC glass label clears AA contrast over the live canvas; tsc + copy-gate clean; no commit without O0; clamp constants tuned against RP2 framing"
 
   # Performance + view-scope + labels research (operator-reported 2026-06-28:
   # land still reads underwater on the deployed pre-fix site; view scope shows too

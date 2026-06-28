@@ -1,0 +1,22 @@
+waveset: orcast-demo-production
+stage: BLK
+family: DBLK
+status: chartered
+role: director
+depends_on: SET
+parallelism: one_first_ad_per_live_beat
+capture: false
+approval: false
+live_beats: [A1, A2, A3, A4, A5, A6, B1, B2, B3]
+slide_beats_skip: [C1, C2]
+method:
+  - decompose Show into ordered moving parts
+  - clear each part in isolation (Read-examined runtime + file/symbol)
+  - clear parts together in the running app
+  - confirm honesty caption presentable (real figure, gate caveat, modeled/estimate label)
+outputs:
+  - findings/BLK-<beat>.md
+  - BLK-ROLLUP.md
+advance_gate: a beat advances to CAM only when every moving part is CLEARED
+escalation: First AD -> Director -> O0
+next_stage: CAM

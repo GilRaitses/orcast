@@ -1,0 +1,32 @@
+waveset: orcast-demo-production
+stage: SET
+family: DSET
+status: chartered
+role: director
+parallelism: one_first_ad_per_prerequisite
+capture: false
+approval: false
+operator_gates:
+  - paid_resource_start
+  - prod_credential
+prerequisites:
+  - id: SET-web
+    serves: [A1, A2, A3, A4, A5, A6, B1, B2, B3]
+    check: GET / 200 + forecast hero rendered
+  - id: SET-maps
+    serves: [A1, A4, A5]
+    check: map canvas mounts + tiles paint (Read-examined frame)
+  - id: SET-session
+    serves: [A6, B1, B2]
+    check: authenticated 200 + reviewer pane renders
+  - id: SET-forecast
+    serves: [A1, A4]
+    check: /gates integrity conditions + real 0% promoted
+  - id: SET-twin
+    serves: [B3]
+    check: twin scene renders land at the waterline (Read-examined frame)
+outputs:
+  - findings/SET-<prereq>.md
+  - READINESS.md
+advance_gate: director confirms READINESS.md; only READY prerequisites unblock their beats
+next_stage: BLK

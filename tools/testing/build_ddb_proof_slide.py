@@ -97,7 +97,7 @@ COL_STATUS  = MARGIN + 900
 # Header row
 hdr_h = 32
 rounded_rect(draw, (MARGIN - 8, Y, W - MARGIN + 8, Y + hdr_h), 6, HEADER_BG)
-for txt, x in [("TABLE", COL_TABLE), ("ROLE", COL_ROLE), ("KEY", COL_KEY), ("ITEMS (APPROX)", COL_ITEMS), ("STATUS", COL_STATUS)]:
+for txt, x in [("TABLE", COL_TABLE), ("ROLE", COL_ROLE), ("KEY", COL_KEY), ("ITEMS", COL_ITEMS), ("STATUS", COL_STATUS)]:
     draw.text((x, Y + 8), txt, font=f_head, fill=MUTED)
 
 Y += hdr_h + 4

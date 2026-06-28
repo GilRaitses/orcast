@@ -1330,6 +1330,139 @@ waves:
     depends_on: [CXR-1, CXR-2]
     operator_gate: RUN copy-gate + deny-term grep + Read-verified anonymous render; gated to O0
 
+  # ── Final closeout (WS-CLOSEOUT, 2026-06-28) ──────────────────────────────
+  - id: TLR
+    family: CLOSEOUT
+    type: ratify
+    status: done
+    home: .ddb/
+    output: .sst/tracked_limits_register_v1.json
+    gate: ddb-register
+    note: "Ratified tracked-limits register (surmountable vs unsurmountable-window). decision orcast_tracked_limits_register_v1_20260628; registered (3ff9429) + verify_registry_hashes PASS. Reconciliation gate: every AX-9/baseline-v3 limit carried forward or moved to recently_closed."
+
+  - id: CAP-DOCS
+    family: CLOSEOUT
+    type: implement
+    status: done
+    depends_on: [TLR]
+    commit: 0eefcee
+    scope_globs:
+      - docs/devpost/SUBMISSION.md
+      - docs/devpost/WHITEPAPER_HYPOTHESIS.md
+      - docs/devpost/DEVPOST_DRAFT.md
+      - docs/devpost/README.md
+    note: "Combined Capabilities/Limits/Risks/Future section sourced from TLR register; seven->nine table fix. Gate: em-dash/prose-gate clean."
+
+  - id: CAP-WEB
+    family: CLOSEOUT
+    type: implement
+    status: done
+    depends_on: [TLR]
+    commit: 0eefcee
+    scope_globs:
+      - web/app/about/page.tsx
+      - web/app/components/Nav.tsx
+    gate: cxr-deny-terms + tsc + live-200
+    note: "Public /about capabilities/limits/future surface; live 200 on orcast-h0.vercel.app; CXR deny-term + prose + tsc clean."
+
+  - id: DGM-DDB
+    family: CLOSEOUT
+    type: implement
+    status: done
+    scope_globs:
+      - tools/testing/build_ddb_proof_slide.py
+      - web/public/demo-slides/dynamodb-proof.png
+      - docs/devpost/figures/dynamodb-proof.png
+      - docs/devpost/figures/dynamodb-proof.html
+    gate: read-verified-frame
+    note: "DynamoDB proof slide rebuilt to the real nine tables (was six); header overlap fixed; Read-verified; both demo-slides and figures copies synced; HTML source updated."
+
+  - id: DGM-ARCH
+    family: CLOSEOUT
+    type: implement
+    status: in_progress
+    scope_globs:
+      - docs/devpost/figures/architecture-aws4.drawio
+      - docs/devpost/figures/architecture-aws4.png
+    gate: read-verified-frame
+    note: "AWS4 draw.io architecture (App Runner topology) generated via aws-architecture-diagram skill as an additional source; canonical TikZ architecture.png (App Runner, 9-table) verified current and identical across figures/ and web/public/demo-slides/."
+
+  - id: DEMO-PROD
+    family: DEMO-PROD
+    type: program
+    status: chartered
+    home: .cca/catalogue/O0/20260628_demo-production/
+    output: .cca/catalogue/O0/20260628_demo-production/PROGRAM.md
+    note: "Director-based demo production (modeled on the pax briefing). Replaces the old A-side cut and the blocked B-side DEMO render. Role model + four-stage chain + 8 orcast honesty locks + binary R1-R5 rubric + two-sided-loop BEAT_SET.md."
+
+  - id: DSET
+    family: DEMO-PROD
+    type: implement
+    status: chartered
+    depends_on: [DEMO-PROD]
+    home: .cca/catalogue/O0/20260628_demo-production/set/
+    note: "Stage 0 stage-readiness. One First AD per prerequisite (web, maps, session, forecast, twin) with Read-examined runtime checks; READINESS.md. No capture/approval."
+
+  - id: DBLK
+    family: DEMO-PROD
+    type: implement
+    status: chartered
+    depends_on: [DSET]
+    home: .cca/catalogue/O0/20260628_demo-production/blk/
+    note: "Stage 1 blocking rehearsal. One First AD per live beat clears moving parts in the running app; BLK-ROLLUP.md. No capture."
+
+  - id: DCAM
+    family: DEMO-PROD
+    type: implement
+    status: chartered
+    depends_on: [DBLK]
+    home: .cca/catalogue/O0/20260628_demo-production/cam/
+    operator_gate: capture-start when it uses a paid surface or a long shared-host Playwright run
+    scope_globs:
+      - web/e2e/beats/
+    note: "Stage 2 camera test. Capture at 1280x900 DEMO_RECORD=1, sharded one beat per subagent, serial per host; Read-examine frames; new twoside-*.spec.ts; CAM-ROLLUP.md."
+
+  - id: DSCR
+    family: DEMO-PROD
+    type: gate
+    status: chartered
+    depends_on: [DCAM]
+    home: .cca/catalogue/O0/20260628_demo-production/scr/
+    gate: screen-test-binary-R1-R5
+    output: .cca/catalogue/O0/20260628_demo-production/scr/APPROVED_TAKES.md
+    note: "Stage 3 screen test. Director scores binary R1-R5, no conditional approval; APPROVED_TAKES.md is the only render input."
+
+  - id: DRENDER
+    family: DEMO-PROD
+    type: verify
+    status: chartered
+    depends_on: [DSCR]
+    operator_gate: render start + commit
+    output: docs/devpost/figures/_demo-run/demo-final.webm
+    gate: v-beat + v-stitch + v-render
+    note: "Render over APPROVED_TAKES.md only. Locked NARRATION.md (XTTS) + demo-video-assembly over a ducked bed. Render is operator-gated."
+
+  - id: TWIN-W-CAM-REG
+    family: 3D-TWIN
+    type: implement
+    status: chartered
+    depends_on: [TWIN-W2.6]
+    operator_gate: commit gated to O0; serialize SalishScene.tsx edits with W4 and W-LABELS
+    note: "Camera-choreography build (registry mirror of wave_shape W-CAM). Calm/gate resting orbit + debounce focus journeys + named-place tour registry; place-label rendering moved to W-LABELS."
+
+  - id: TWIN-W-LABELS
+    family: 3D-TWIN
+    type: implement
+    status: chartered
+    depends_on: [TWIN-W-CAM-REG, TWIN-W-PERFUX]
+    sequence_after: [LGC-W4 token drop, TWIN-W-PERFUX-BUILD framing]
+    operator_gate: commit gated to O0; frame-verified accept
+    scope_globs:
+      - web/lib/scene/labels/
+      - web/app/components/scene/SalishScene.tsx
+      - web/app/globals.css
+    note: "RP3 build: geo-anchored gazetteer place labels, distance-proportional clamped scale (min/max), LGC glass .scene-label (blur=0 over the canvas). Dispatch: W-LABELS_DISPATCH.md. Accept gate: Read-verified frames at far/rest/near + AA contrast + tsc/copy-gate."
+
 next_wave_set: U
 
 gates:
@@ -1434,6 +1567,19 @@ gates:
   v-stitch:
     script: tools/waves/gates/v-stitch.sh
     waves: [V3]
+  v-render:
+    script: tools/waves/gates/v-render.sh
+    waves: [DRENDER]
+  ddb-register:
+    scripts:
+      - .ddb/tools/register_sst.py
+      - .ddb/tools/verify_registry_hashes.py
+    waves: [TLR]
+    note: register .sst artifacts deterministically then verify all active registry hashes match
+  cxr-deny-terms:
+    script: tools/waves/gates/console-deny-terms.sh
+    waves: [CAP-WEB, CXR-2]
+    note: grep rendered anonymous-path strings for internal/reviewer deny terms
 
 quarantine:
   paths:

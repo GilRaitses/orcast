@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  body { margin: 0; background: #0f1b2d; color: #e6edf3; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { padding: 40px 48px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  .sub { color: #8b97a7; font-size: 16px; margin: 0 0 28px; }
+  .pill { display:inline-block; background:#16324a; color:#4fb8d8; border-radius:999px; padding:3px 12px; font-size:13px; font-weight:600; margin-left:10px; vertical-align:middle;}
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid #233040; }
+  th { color: #8b97a7; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em;}
+  td.name { font-family: ui-monospace, Menlo, monospace; color: #cfe8f4; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .active { color: #46c08a; font-weight: 600; }
+  .foot { color: #8b97a7; font-size: 13px; margin-top: 22px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Amazon DynamoDB &mdash; primary database <span class="pill">orcast &middot; us-west-2 &middot; account 198456344617</span></h1>
+    <p class="sub">Nine on-demand tables, partition key <code>pk</code>, accessed via the AwsStorage backend. S3 is supporting storage only.</p>
+    <table>
+      <thead>
+        <tr><th>Table</th><th>Role</th><th>Key</th><th class="num">Items (approx)</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="name">orcast-aws-backend-sightings</td><td>Normalized sightings + provenance</td><td>pk</td><td class="num">229</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-community-submissions</td><td>Citizen-science moderation queue</td><td>pk</td><td class="num">28</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-decision-records</td><td>Human promotion audit log</td><td>pk</td><td class="num">3</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-user-journal</td><td>Private field journal (WorkOS-scoped)</td><td>pk</td><td class="num">26</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-hotspots</td><td>Computed probability hotspots</td><td>pk</td><td class="num">113</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-reports</td><td>Probability reports</td><td>pk</td><td class="num">302</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-ingestion-runs</td><td>Per-run ingestion audit</td><td>pk</td><td class="num">554</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-partner-api-keys</td><td>Partner OpenAPI gateway keys</td><td>pk</td><td class="num">1</td><td class="active">ACTIVE</td></tr>
+        <tr><td class="name">orcast-aws-backend-managed-agents</td><td>Central Casting managed agent configs</td><td>pk</td><td class="num">4</td><td class="active">ACTIVE</td></tr>
+      </tbody>
+    </table>
+    <p class="foot">BillingMode PAY_PER_REQUEST. Item counts are DynamoDB-reported approximate ItemCount (refreshed ~6h). Reproduce: <code>aws dynamodb list-tables --region us-west-2</code> and <code>aws dynamodb describe-table --table-name orcast-aws-backend-&lt;name&gt;</code>.</p>
+  </div>
+</body>
+</html>

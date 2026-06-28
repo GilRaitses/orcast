@@ -1,0 +1,19 @@
+waveset: orcast-demo-production
+stage: SCR
+family: DSCR
+status: chartered
+role: director
+depends_on: CAM
+scorer: director
+first_ad_role: evidence_pull_only
+approval: binary_no_conditional
+rubric: SCREEN_TEST_RUBRIC.md
+rubric_items: [R1_say_lands, R2_show_lands, R3_honesty_caption, R4_matches_evidence, R5_camera_ready_locks_hold]
+slide_beats_scored_here: [C1, C2]
+outputs:
+  - findings/SCR-<beat>.md
+  - APPROVED_TAKES.md
+advance_gate: every item PASS for APPROVED; any FAIL is RETAKE (return to CAM or BLK)
+render_input: APPROVED_TAKES.md only
+operator_gate: commit of test specs; render start
+next_stage: DRENDER
