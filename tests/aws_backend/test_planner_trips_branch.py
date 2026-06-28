@@ -22,7 +22,11 @@ from datetime import datetime, timezone
 
 import pytest
 
-from src.aws_backend.casting.models import load_seed_agent
+from src.aws_backend.casting.models import (
+    ManagedAgent,
+    ManagedAgentPolicy,
+    load_seed_agent,
+)
 from src.aws_backend.casting.planner import (
     aggregate_corridor_eta,
     draft_ui_intent,
@@ -328,3 +332,80 @@ def test_absent_branch_falls_back_to_keyword_planner():
     assert "branch" not in intent
     panel_ids = [p["id"] for p in intent["panels"]]
     assert "gates_summary" in panel_ids
+
+
+# --------------------------------------------------------------------------- #
+# 5. The LIVE anonymous route: the inline public planner spec sent from the
+#    browser (web/lib/adaptiveConsole.ts PUBLIC_PLANNER_SPEC) must surface the
+#    trip panels too. The seed agent has every panel/skill, so it cannot catch a
+#    drift between the browser's reduced public spec and the trip branches. This
+#    pins the exact spec the home console posts so trips never silently fall off
+#    the anonymous route again (the regression the Director found).
+# --------------------------------------------------------------------------- #
+
+# Mirror of web/lib/adaptiveConsole.ts PUBLIC_PLANNER_SPEC (keep in sync).
+_PUBLIC_SPEC_SKILLS = [
+    "fetch_gates",
+    "fetch_hotspots",
+    "fetch_provenance",
+    "fetch_environmental",
+    "fetch_live_hydrophones",
+    "fetch_verified_sightings",
+]
+_PUBLIC_SPEC_PANELS = [
+    "map_viewport",
+    "explore_trace",
+    "gates_summary",
+    "provenance_pin",
+    "provenance_graph",
+    "hydrophone_signal",
+    "compare_places",
+    "local_area",
+    "connections_plan",
+    "kayak_plan",
+    "sidequests",
+]
+
+
+def _public_planner_agent() -> ManagedAgent:
+    return ManagedAgent(
+        id="public-planner",
+        version="public-2",
+        instructions="public explore planner",
+        skills=list(_PUBLIC_SPEC_SKILLS),
+        data_bindings={},
+        model={},
+        policy=ManagedAgentPolicy(
+            write_tools=False,
+            allowed_deep_links=["/gates", "/explore", "/glossary", "/"],
+            allowed_panels=list(_PUBLIC_SPEC_PANELS),
+            planner_mode=True,
+        ),
+        active=True,
+    )
+
+
+@pytest.mark.parametrize(
+    ("branch", "expected_panel"),
+    [
+        ("visiting", "connections_plan"),
+        ("here-now", "connections_plan"),
+        ("kayak", "kayak_plan"),
+        ("curious", "sidequests"),
+    ],
+)
+def test_public_spec_surfaces_trip_panels_on_anonymous_route(branch, expected_panel):
+    agent = _public_planner_agent()
+    focus = {"branch": branch}
+    if branch in ("visiting", "here-now"):
+        focus["connection"] = _connection_intent()
+    intent = draft_ui_intent(
+        agent,
+        "anonymous trip turn",
+        focus=focus,
+        connection_clients=_clients() if "connection" in focus else None,
+    )
+    panel_ids = [p["id"] for p in intent["panels"]]
+    assert expected_panel in panel_ids, f"{branch} dropped {expected_panel}: {panel_ids}"
+    # The reduced public spec must still validate on the anonymous public route.
+    validate_ui_intent(agent, intent, public_route=True)

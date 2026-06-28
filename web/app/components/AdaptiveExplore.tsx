@@ -24,6 +24,16 @@ const STARTER_PROMPTS = [
   "Show me today's hotspots.",
 ];
 
+// Orienting question -> trips branch. Selecting one threads focus.branch on the
+// turn so the planner runs the matching trip branch (connections / kayak /
+// sidequests); "General" clears it and falls back to the keyword planner.
+const BRANCH_OPTIONS: Array<{ id: string; label: string; prompt: string }> = [
+  { id: "visiting", label: "Planning a visit", prompt: "I'm planning a visit to the San Juans — how do I get there and what should I plan around?" },
+  { id: "here-now", label: "I'm here now", prompt: "I'm here now near the water — what's around me and how do connections look?" },
+  { id: "kayak", label: "Kayaking", prompt: "I want to kayak — when is the safe tide and current window?" },
+  { id: "curious", label: "Just curious", prompt: "I'm just exploring — what can I look at right now?" },
+];
+
 interface ChatTurn {
   role: "user" | "assistant";
   content: string;
@@ -56,6 +66,7 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ lat: number; lng: number } | null>(null);
+  const [branch, setBranch] = useState<string | null>(null);
   const [events, setEvents] = useState<EventPoint[]>([]);
   const hydrophonePanel = useRef<UiIntentPanel | null>(null);
 
@@ -138,12 +149,23 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
 
   function submitMessage() {
     if (!message.trim()) return;
+    const focusCtx: { cell?: string; branch?: string } = {};
+    if (focus) focusCtx.cell = `${focus.lat},${focus.lng}`;
+    if (branch) focusCtx.branch = branch;
     const ctx: TurnContext = {
       message: message.trim(),
       viewport: focus ? { lat: focus.lat, lng: focus.lng, zoom: 11 } : null,
-      focus: focus ? { cell: `${focus.lat},${focus.lng}` } : null,
+      focus: Object.keys(focusCtx).length ? focusCtx : null,
     };
     void runTurn(ctx);
+  }
+
+  function selectBranch(option: { id: string; prompt: string }) {
+    const next = branch === option.id ? null : option.id;
+    setBranch(next);
+    // Seed a natural prompt for the chosen branch so the turn reads well in the
+    // trace; the user can edit it before sending.
+    if (next) setMessage(option.prompt);
   }
 
   const fallbackViewport: MapViewport | null = focus
@@ -178,6 +200,30 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
 
         <aside className="explore-console" data-demo="explore-console">
           <div className="card">
+            <div className="orienting-question" style={{ marginBottom: "0.6rem" }}>
+              <span className="muted" style={{ display: "block", marginBottom: "0.35rem", fontSize: "0.85rem" }}>
+                What brings you here?
+              </span>
+              <div className="row" style={{ flexWrap: "wrap", gap: "0.4rem" }}>
+                {BRANCH_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    className="chip"
+                    aria-pressed={branch === opt.id}
+                    data-active={branch === opt.id ? "true" : undefined}
+                    style={
+                      branch === opt.id
+                        ? { borderColor: "var(--accent, #5aa9e6)", color: "var(--accent, #5aa9e6)" }
+                        : undefined
+                    }
+                    onClick={() => selectBranch(opt)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="row" style={{ flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.6rem" }}>
               {STARTER_PROMPTS.map((p) => (
                 <button key={p} type="button" className="chip" onClick={() => setMessage(p)}>

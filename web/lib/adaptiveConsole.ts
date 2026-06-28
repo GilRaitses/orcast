@@ -16,10 +16,23 @@ export const PUBLIC_PLANNER_SPEC = {
     "You are the ORCAST public explore planner. Allocate read-only panels and " +
     "public skills for anonymous users. Prefer gates + provenance + trace " +
     "panels. When a map pin or hydrophone is selected, include map_viewport and " +
-    "provenance/hydrophone panels. Never request decision, dossier, or " +
+    "provenance/hydrophone panels. When the turn carries an orienting-question " +
+    "branch (visiting, here-now, kayak, curious), surface the matching trip " +
+    "panel (compare_places, local_area, connections_plan, kayak_plan, " +
+    "sidequests) with its honesty label. Never request decision, dossier, or " +
     "moderation skills.",
-  skills: ["fetch_gates", "fetch_hotspots", "fetch_provenance"],
-  version: "public-1",
+  // All T0/public skills. The trip branches need fetch_environmental (kayak)
+  // and fetch_live_hydrophones / fetch_verified_sightings (curious); without
+  // them those skills are filtered out and the branch panels never surface.
+  skills: [
+    "fetch_gates",
+    "fetch_hotspots",
+    "fetch_provenance",
+    "fetch_environmental",
+    "fetch_live_hydrophones",
+    "fetch_verified_sightings",
+  ],
+  version: "public-2",
   policy: {
     write_tools: false,
     planner_mode: true,
@@ -31,6 +44,12 @@ export const PUBLIC_PLANNER_SPEC = {
       "provenance_pin",
       "provenance_graph",
       "hydrophone_signal",
+      // Trips (anonymous-public): the orienting-question branches surface these.
+      "compare_places",
+      "local_area",
+      "connections_plan",
+      "kayak_plan",
+      "sidequests",
     ],
   },
 } as const;
@@ -38,7 +57,9 @@ export const PUBLIC_PLANNER_SPEC = {
 export interface TurnContext {
   message: string;
   viewport?: { lat: number; lng: number; zoom?: number } | null;
-  focus?: { cell: string } | null;
+  // `branch` carries the orienting-question selection (visiting / here-now /
+  // kayak / curious) so the planner runs the trip branch; absent => keyword plan.
+  focus?: { cell?: string; branch?: string } | null;
 }
 
 export async function ensureSession(current: string | null): Promise<string> {
