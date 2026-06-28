@@ -27,6 +27,29 @@ Parameters:
     NoEcho: true
     Default: ''
     Description: Shared API key for POST ingest/recompute (X-ORCAST-Key header). Leave empty for open access.
+  FitImage:
+    Type: String
+    Default: ''
+    Description: ECR image URI for the container-image kernel-fit Lambda. Leave empty to skip the fit stage.
+  EnableBedrock:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+    Description: Use Amazon Bedrock for promotion supervisor and sighting-check narration (template fallback when false or on error).
+  EnableExplorationDatabase:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+    Description: Provision Aurora PostgreSQL for the exploration guide session store (ORCAST_DATABASE_URL on App Runner).
+
+Conditions:
+  HasFitImage:
+    Fn::Not:
+      - Fn::Equals: ['', Ref: FitImage]
+  EnableExplorationDatabase:
+    Fn::Equals:
+      - Ref: EnableExplorationDatabase
+      - 'true'
 
 Resources:
   SightingsTable:
@@ -94,6 +117,66 @@ Resources:
         - AttributeName: pk
           KeyType: HASH
 
+  DecisionRecordsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-decision-records'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  UserJournalTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-user-journal'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  PartnerApiKeysTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-partner-api-keys'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+
+  ManagedAgentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: '${ServiceName}-managed-agents'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: agent_id
+          AttributeType: S
+        - AttributeName: version
+          AttributeType: S
+      KeySchema:
+        - AttributeName: agent_id
+          KeyType: HASH
+        - AttributeName: version
+          KeyType: RANGE
+
   ReportsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -147,6 +230,7 @@ Resources:
                   - dynamodb:BatchWriteItem
                   - dynamodb:GetItem
                   - dynamodb:PutItem
+                  - dynamodb:Query
                   - dynamodb:Scan
                 Resource:
                   - Fn::GetAtt: [SightingsTable, Arn]
@@ -154,6 +238,10 @@ Resources:
                   - Fn::GetAtt: [ReportsTable, Arn]
                   - Fn::GetAtt: [IngestionRunsTable, Arn]
                   - Fn::GetAtt: [CommunitySubmissionsTable, Arn]
+                  - Fn::GetAtt: [DecisionRecordsTable, Arn]
+                  - Fn::GetAtt: [UserJournalTable, Arn]
+                  - Fn::GetAtt: [PartnerApiKeysTable, Arn]
+                  - Fn::GetAtt: [ManagedAgentsTable, Arn]
               - Effect: Allow
                 Action:
                   - s3:PutObject
@@ -167,6 +255,35 @@ Resources:
                 Resource:
                   - Fn::GetAtt: [ReportsBucket, Arn]
                   - Fn::GetAtt: [RawPayloadBucket, Arn]
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                  - bedrock:InvokeModelWithResponseStream
+                Resource:
+                  - Fn::Sub: 'arn:aws:bedrock:${AWS::Region}::foundation-model/*'
+                  - 'arn:aws:bedrock:*::foundation-model/*'
+                  - Fn::Sub: 'arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/*'
+                  - 'arn:aws:bedrock:*::inference-profile/*'
+              - Effect: Allow
+                Action:
+                  - states:StartExecution
+                Resource:
+                  - Fn::Sub: 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${ServiceName}-forecast-orchestrator'
+              # Task-token callbacks cannot be scoped to a specific execution ARN;
+              # AWS requires Resource '*' for SendTaskSuccess/SendTaskFailure.
+              - Effect: Allow
+                Action:
+                  - states:SendTaskSuccess
+                  - states:SendTaskFailure
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  Fn::If:
+                    - EnableExplorationDatabase
+                    - Fn::GetAtt: [ExplorationDbSecret, Id]
+                    - Fn::Sub: 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:unused'
 
   AppRunnerAccessRole:
     Type: AWS::IAM::Role
@@ -180,6 +297,302 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess
+
+  ExplorationVpc:
+    Type: AWS::EC2::VPC
+    Condition: EnableExplorationDatabase
+    Properties:
+      CidrBlock: 10.42.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+
+  ExplorationInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Condition: EnableExplorationDatabase
+
+  ExplorationVpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      InternetGatewayId:
+        Ref: ExplorationInternetGateway
+
+  ExplorationSubnetA:
+    Type: AWS::EC2::Subnet
+    Condition: EnableExplorationDatabase
+    DependsOn: ExplorationVpcGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      CidrBlock: 10.42.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ''
+
+  ExplorationSubnetB:
+    Type: AWS::EC2::Subnet
+    Condition: EnableExplorationDatabase
+    DependsOn: ExplorationVpcGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      CidrBlock: 10.42.2.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ''
+
+  ExplorationPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Condition: EnableExplorationDatabase
+    DependsOn: ExplorationVpcGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+
+  ExplorationDefaultRoute:
+    Type: AWS::EC2::Route
+    Condition: EnableExplorationDatabase
+    DependsOn: ExplorationVpcGatewayAttachment
+    Properties:
+      RouteTableId:
+        Ref: ExplorationPublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: ExplorationInternetGateway
+
+  ExplorationSubnetRouteA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: EnableExplorationDatabase
+    Properties:
+      SubnetId:
+        Ref: ExplorationSubnetA
+      RouteTableId:
+        Ref: ExplorationPublicRouteTable
+
+  ExplorationSubnetRouteB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: EnableExplorationDatabase
+    Properties:
+      SubnetId:
+        Ref: ExplorationSubnetB
+      RouteTableId:
+        Ref: ExplorationPublicRouteTable
+
+  ExplorationPrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      CidrBlock: 10.42.10.0/24
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ''
+
+  ExplorationPrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      CidrBlock: 10.42.11.0/24
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ''
+
+  ExplorationNatEip:
+    Type: AWS::EC2::EIP
+    Condition: EnableExplorationDatabase
+    DependsOn: ExplorationVpcGatewayAttachment
+    Properties:
+      Domain: vpc
+
+  ExplorationNatGateway:
+    Type: AWS::EC2::NatGateway
+    Condition: EnableExplorationDatabase
+    Properties:
+      AllocationId:
+        Fn::GetAtt: [ExplorationNatEip, AllocationId]
+      SubnetId:
+        Ref: ExplorationSubnetA
+
+  ExplorationPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+
+  ExplorationPrivateDefaultRoute:
+    Type: AWS::EC2::Route
+    Condition: EnableExplorationDatabase
+    Properties:
+      RouteTableId:
+        Ref: ExplorationPrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: ExplorationNatGateway
+
+  ExplorationPrivateSubnetRouteA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: EnableExplorationDatabase
+    Properties:
+      SubnetId:
+        Ref: ExplorationPrivateSubnetA
+      RouteTableId:
+        Ref: ExplorationPrivateRouteTable
+
+  ExplorationPrivateSubnetRouteB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: EnableExplorationDatabase
+    Properties:
+      SubnetId:
+        Ref: ExplorationPrivateSubnetB
+      RouteTableId:
+        Ref: ExplorationPrivateRouteTable
+
+  ExplorationDynamoDbEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      ServiceName:
+        Fn::Sub: com.amazonaws.${AWS::Region}.dynamodb
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - Ref: ExplorationPrivateRouteTable
+
+  ExplorationS3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      ServiceName:
+        Fn::Sub: com.amazonaws.${AWS::Region}.s3
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - Ref: ExplorationPrivateRouteTable
+
+  AppRunnerConnectorSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: EnableExplorationDatabase
+    Properties:
+      GroupDescription: App Runner VPC connector for exploration Postgres
+      VpcId:
+        Ref: ExplorationVpc
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  ExplorationBedrockEndpointSg:
+    Type: AWS::EC2::SecurityGroup
+    Condition: EnableExplorationDatabase
+    Properties:
+      GroupDescription: Bedrock runtime VPC interface endpoint
+      VpcId:
+        Ref: ExplorationVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId:
+            Ref: AppRunnerConnectorSecurityGroup
+
+  ExplorationBedrockEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcId:
+        Ref: ExplorationVpc
+      ServiceName:
+        Fn::Sub: com.amazonaws.${AWS::Region}.bedrock-runtime
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - Ref: ExplorationPrivateSubnetA
+        - Ref: ExplorationPrivateSubnetB
+      SecurityGroupIds:
+        - Ref: ExplorationBedrockEndpointSg
+
+  AppRunnerVpcConnector:
+    Type: AWS::AppRunner::VpcConnector
+    Condition: EnableExplorationDatabase
+    Properties:
+      VpcConnectorName:
+        Fn::Sub: '${ServiceName}-explore-vpc'
+      Subnets:
+        - Ref: ExplorationPrivateSubnetA
+        - Ref: ExplorationPrivateSubnetB
+      SecurityGroups:
+        - Ref: AppRunnerConnectorSecurityGroup
+
+  ExplorationDbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Condition: EnableExplorationDatabase
+    Properties:
+      DBSubnetGroupDescription: Exploration guide PostgreSQL subnets
+      SubnetIds:
+        - Ref: ExplorationSubnetA
+        - Ref: ExplorationSubnetB
+
+  ExplorationDbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: EnableExplorationDatabase
+    Properties:
+      GroupDescription: Exploration guide PostgreSQL access from App Runner connector only
+      VpcId:
+        Ref: ExplorationVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId:
+            Ref: AppRunnerConnectorSecurityGroup
+
+  ExplorationDbSecret:
+    Type: AWS::SecretsManager::Secret
+    Condition: EnableExplorationDatabase
+    Properties:
+      Name:
+        Fn::Sub: '${ServiceName}/exploration-db'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username":"orcast"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+
+  ExplorationDatabase:
+    Type: AWS::RDS::DBInstance
+    Condition: EnableExplorationDatabase
+    Properties:
+      DBInstanceIdentifier:
+        Fn::Sub: '${ServiceName}-explore'
+      Engine: postgres
+      EngineVersion: '16.14'
+      DBInstanceClass: db.t4g.micro
+      AllocatedStorage: 20
+      StorageType: gp3
+      MasterUsername: orcast
+      MasterUserPassword:
+        Fn::Sub: '{{resolve:secretsmanager:${ExplorationDbSecret}:SecretString:password}}'
+      DBName: orcast_explore
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - Ref: ExplorationDbSecurityGroup
+      DBSubnetGroupName:
+        Ref: ExplorationDbSubnetGroup
+      BackupRetentionPeriod: 1
+      DeletionProtection: false
 
   AppRunnerService:
     Type: AWS::AppRunner::Service
@@ -221,6 +634,26 @@ Resources:
               - Name: ORCAST_COMMUNITY_TABLE
                 Value:
                   Ref: CommunitySubmissionsTable
+              - Name: ORCAST_DECISION_RECORDS_TABLE
+                Value:
+                  Ref: DecisionRecordsTable
+              - Name: ORCAST_JOURNAL_TABLE
+                Value:
+                  Ref: UserJournalTable
+              - Name: ORCAST_PARTNER_KEYS_TABLE
+                Value:
+                  Ref: PartnerApiKeysTable
+              - Name: ORCAST_MANAGED_AGENTS_TABLE
+                Value:
+                  Ref: ManagedAgentsTable
+              - Name: ORCAST_ENABLE_BEDROCK
+                Value:
+                  Ref: EnableBedrock
+              - Name: ORCAST_BEDROCK_SIGHTING_MODEL
+                Value: global.anthropic.claude-haiku-4-5-20251001-v1:0
+              - Name: ORCAST_STATE_MACHINE_ARN
+                Value:
+                  Fn::Sub: 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${ServiceName}-forecast-orchestrator'
               - Name: ORCAST_REPORTS_BUCKET
                 Value:
                   Ref: ReportsBucket
@@ -241,6 +674,36 @@ Resources:
               - Name: ORCAST_API_KEY
                 Value:
                   Ref: ApiKey
+              - Name: ORCAST_DB_HOST
+                Value:
+                  Fn::If:
+                    - EnableExplorationDatabase
+                    - Fn::GetAtt: [ExplorationDatabase, Endpoint.Address]
+                    - ''
+              - Name: ORCAST_DB_USER
+                Value:
+                  Fn::If:
+                    - EnableExplorationDatabase
+                    - orcast
+                    - ''
+              - Name: ORCAST_DB_NAME
+                Value:
+                  Fn::If:
+                    - EnableExplorationDatabase
+                    - orcast_explore
+                    - ''
+              - Name: ORCAST_DB_PASSWORD
+                Value:
+                  Fn::If:
+                    - EnableExplorationDatabase
+                    - Fn::Sub: '{{resolve:secretsmanager:${ExplorationDbSecret}:SecretString:password}}'
+                    - ''
+              - Name: ORCAST_EXPLORE_MAX_SESSIONS_PER_IP_DAY
+                Value: '20'
+              - Name: ORCAST_EXPLORE_MAX_TURNS_PER_SESSION
+                Value: '30'
+              - Name: ORCAST_EXPLORE_RETENTION_DAYS
+                Value: '30'
       InstanceConfiguration:
         Cpu: 1024
         Memory: 2048
@@ -253,6 +716,14 @@ Resources:
         Timeout: 5
         HealthyThreshold: 1
         UnhealthyThreshold: 5
+      NetworkConfiguration:
+        EgressConfiguration:
+          Fn::If:
+            - EnableExplorationDatabase
+            - EgressType: VPC
+              VpcConnectorArn:
+                Fn::GetAtt: [AppRunnerVpcConnector, VpcConnectorArn]
+            - EgressType: DEFAULT
 
   SchedulerLambdaRole:
     Type: AWS::IAM::Role
@@ -430,6 +901,310 @@ Resources:
       SourceArn:
         Fn::GetAtt: [ScheduledReportRule, Arn]
 
+  # --- Forecast orchestrator (Step Functions + stage Lambdas) ----------------
+
+  OrchestratorLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: orcast-orchestrator-s3
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:PutObject, s3:GetObject]
+                Resource:
+                  - Fn::Sub: '${RawPayloadBucket.Arn}/*'
+
+  FitLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: orcast-fit-s3
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject]
+                Resource:
+                  - Fn::Sub: '${RawPayloadBucket.Arn}/*'
+              - Effect: Allow
+                Action: [s3:ListBucket]
+                Resource:
+                  - Fn::GetAtt: [RawPayloadBucket, Arn]
+
+  OrchestratorIngestFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-orch-ingest'
+      Runtime: python3.12
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [SchedulerLambdaRole, Arn]
+      Timeout: 120
+      Environment:
+        Variables:
+          BACKEND_URL:
+            Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
+          API_PATH: /api/sightings/ingest,/api/timeseries/refresh
+          ORCAST_API_KEY:
+            Ref: ApiKey
+      Code:
+        ZipFile: |
+          import json, os, urllib.error, urllib.request
+          def _post(url, data, headers):
+              req = urllib.request.Request(url, data=data, method="POST", headers=headers)
+              with urllib.request.urlopen(req, timeout=120) as r:
+                  return r.status, r.read().decode()
+          def handler(event, context):
+              base = os.environ["BACKEND_URL"].rstrip("/")
+              paths = [p.strip() for p in os.environ.get("API_PATH", "").split(",") if p.strip()]
+              headers = {"Content-Type": "application/json"}
+              key = os.environ.get("ORCAST_API_KEY", "")
+              if key:
+                  headers["X-ORCAST-Key"] = key
+              results = []
+              for path in paths:
+                  body = b"" if "refresh" in path else json.dumps({"include_live": True}).encode()
+                  try:
+                      s, b = _post(f"{base}{path}", body, headers)
+                      results.append({"path": path, "statusCode": s})
+                  except Exception as e:
+                      results.append({"path": path, "error": str(e)})
+              return {"results": results}
+
+  SupervisorStageFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-orch-supervisor'
+      Runtime: python3.12
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [SchedulerLambdaRole, Arn]
+      Timeout: 60
+      Environment:
+        Variables:
+          BACKEND_URL:
+            Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
+          ORCAST_API_KEY:
+            Ref: ApiKey
+      Code:
+        ZipFile: |
+          import json, os, urllib.request
+          def handler(event, context):
+              base = os.environ["BACKEND_URL"].rstrip("/")
+              headers = {"Content-Type": "application/json"}
+              key = os.environ.get("ORCAST_API_KEY", "")
+              if key:
+                  headers["X-ORCAST-Key"] = key
+              req = urllib.request.Request(f"{base}/api/promotion/draft", data=b"{}", method="POST", headers=headers)
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  payload = json.loads(r.read().decode())
+              return payload.get("recommendation", {"recommendation": "hold"})
+
+  RequestApprovalFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-orch-request-approval'
+      Runtime: python3.12
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [OrchestratorLambdaRole, Arn]
+      Timeout: 60
+      Environment:
+        Variables:
+          MODELS_BUCKET:
+            Ref: RawPayloadBucket
+      Code:
+        ZipFile: |
+          import json, os, boto3
+          def handler(event, context):
+              # Store the task token + recommendation so the UI can present the
+              # approval; the state waits until the human POSTs /api/decision-records
+              # with this token (backend then SendTaskSuccess/Failure).
+              s3 = boto3.client("s3")
+              marker = {
+                  "task_token": event.get("taskToken"),
+                  "recommendation": event.get("recommendation"),
+                  "fit": event.get("fit"),
+              }
+              s3.put_object(
+                  Bucket=os.environ["MODELS_BUCKET"],
+                  Key="models/pending_approval.json",
+                  Body=json.dumps(marker).encode(),
+                  ContentType="application/json",
+              )
+              return {"pending": True}
+
+  ApplyPromotionFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-orch-apply'
+      Runtime: python3.12
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [SchedulerLambdaRole, Arn]
+      Timeout: 60
+      Environment:
+        Variables:
+          BACKEND_URL:
+            Fn::Sub: 'https://${AppRunnerService.ServiceUrl}'
+          ORCAST_API_KEY:
+            Ref: ApiKey
+      Code:
+        ZipFile: |
+          import json, os, urllib.request
+          def handler(event, context):
+              base = os.environ["BACKEND_URL"].rstrip("/")
+              headers = {"Content-Type": "application/json"}
+              key = os.environ.get("ORCAST_API_KEY", "")
+              if key:
+                  headers["X-ORCAST-Key"] = key
+              body = json.dumps({
+                  "effective_confidence": 1.0,
+                  "verdict": event.get("verdict", "promote"),
+                  "decision_id": event.get("decision_id"),
+                  "kernel_version": event.get("kernel_version"),
+                  "reviewer": event.get("reviewer"),
+              }).encode()
+              req = urllib.request.Request(f"{base}/api/promotion/apply", data=body, method="POST", headers=headers)
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  return json.loads(r.read().decode())
+
+  FitStageFunction:
+    Type: AWS::Lambda::Function
+    Condition: HasFitImage
+    Properties:
+      FunctionName:
+        Fn::Sub: '${ServiceName}-orch-fit'
+      PackageType: Image
+      Code:
+        ImageUri:
+          Ref: FitImage
+      Role:
+        Fn::GetAtt: [FitLambdaRole, Arn]
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          ORCAST_STORAGE_BACKEND: aws
+          ORCAST_RAW_PAYLOAD_BUCKET:
+            Ref: RawPayloadBucket
+
+  StateMachineRole:
+    Type: AWS::IAM::Role
+    Condition: HasFitImage
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: orcast-orchestrator-invoke
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource:
+                  - Fn::GetAtt: [OrchestratorIngestFunction, Arn]
+                  - Fn::GetAtt: [FitStageFunction, Arn]
+                  - Fn::GetAtt: [SupervisorStageFunction, Arn]
+                  - Fn::GetAtt: [RequestApprovalFunction, Arn]
+                  - Fn::GetAtt: [ApplyPromotionFunction, Arn]
+
+  ForecastStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Condition: HasFitImage
+    Properties:
+      StateMachineName:
+        Fn::Sub: '${ServiceName}-forecast-orchestrator'
+      RoleArn:
+        Fn::GetAtt: [StateMachineRole, Arn]
+      DefinitionString:
+        Fn::Sub:
+          - |
+            {
+              "StartAt": "Ingest",
+              "States": {
+                "Ingest": {
+                  "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke",
+                  "Parameters": {"FunctionName": "${IngestArn}", "Payload": {"mode": "refresh"}},
+                  "ResultPath": "$.ingest", "Next": "FitAndGate"
+                },
+                "FitAndGate": {
+                  "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke",
+                  "Parameters": {"FunctionName": "${FitArn}", "Payload": {"bin_hours": 1.0}},
+                  "ResultSelector": {"status.$": "$.Payload.status", "confidence.$": "$.Payload.confidence", "gates.$": "$.Payload.gates_summary"},
+                  "ResultPath": "$.fit", "Next": "GatesPassed"
+                },
+                "GatesPassed": {
+                  "Type": "Choice",
+                  "Choices": [{"And": [{"Variable": "$.fit.status", "StringEquals": "fitted"}, {"Variable": "$.fit.confidence", "NumericGreaterThanEquals": 0.6}], "Next": "DraftPromotion"}],
+                  "Default": "HoldLowConfidence"
+                },
+                "DraftPromotion": {
+                  "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke",
+                  "Parameters": {"FunctionName": "${SupervisorArn}", "Payload.$": "$.fit"},
+                  "ResultPath": "$.recommendation", "Next": "AwaitHumanDecision"
+                },
+                "AwaitHumanDecision": {
+                  "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+                  "Parameters": {"FunctionName": "${ApprovalArn}", "Payload": {"taskToken.$": "$$.Task.Token", "recommendation.$": "$.recommendation", "fit.$": "$.fit"}},
+                  "ResultPath": "$.decision", "TimeoutSeconds": 604800,
+                  "Catch": [{"ErrorEquals": ["States.Timeout"], "ResultPath": "$.decision", "Next": "HoldLowConfidence"}],
+                  "Next": "HumanVerdict"
+                },
+                "HumanVerdict": {
+                  "Type": "Choice",
+                  "Choices": [{"Variable": "$.decision.verdict", "StringEquals": "promote", "Next": "ApplyPromotion"}],
+                  "Default": "HoldLowConfidence"
+                },
+                "ApplyPromotion": {
+                  "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke",
+                  "Parameters": {"FunctionName": "${ApplyArn}", "Payload.$": "$.decision"},
+                  "ResultPath": "$.applied", "Next": "Done"
+                },
+                "HoldLowConfidence": {"Type": "Pass", "Result": {"promoted": false}, "ResultPath": "$.applied", "Next": "Done"},
+                "Done": {"Type": "Succeed"}
+              }
+            }
+          - IngestArn:
+              Fn::GetAtt: [OrchestratorIngestFunction, Arn]
+            FitArn:
+              Fn::GetAtt: [FitStageFunction, Arn]
+            SupervisorArn:
+              Fn::GetAtt: [SupervisorStageFunction, Arn]
+            ApprovalArn:
+              Fn::GetAtt: [RequestApprovalFunction, Arn]
+            ApplyArn:
+              Fn::GetAtt: [ApplyPromotionFunction, Arn]
+
   FrontendOriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
@@ -503,6 +1278,13 @@ Outputs:
   CommunitySubmissionsTableName:
     Value:
       Ref: CommunitySubmissionsTable
+  DecisionRecordsTableName:
+    Value:
+      Ref: DecisionRecordsTable
+  ForecastStateMachineArn:
+    Condition: HasFitImage
+    Value:
+      Ref: ForecastStateMachine
   ReportsBucketName:
     Value:
       Ref: ReportsBucket
@@ -515,4 +1297,23 @@ Outputs:
   FrontendDistributionDomainName:
     Value:
       Fn::GetAtt: [FrontendDistribution, DomainName]
+  ExplorationDatabaseEndpoint:
+    Condition: EnableExplorationDatabase
+    Description: PostgreSQL endpoint for exploration guide sessions.
+    Value:
+      Fn::GetAtt: [ExplorationDatabase, Endpoint.Address]
+  ExplorationDatabaseSecretArn:
+    Condition: EnableExplorationDatabase
+    Description: Secrets Manager ARN for exploration DB credentials.
+    Value:
+      Ref: ExplorationDbSecret
+  AppRunnerVpcConnectorArn:
+    Condition: EnableExplorationDatabase
+    Description: VPC connector for App Runner exploration egress.
+    Value:
+      Fn::GetAtt: [AppRunnerVpcConnector, VpcConnectorArn]
+  ManagedAgentsTableName:
+    Value:
+      Ref: ManagedAgentsTable
+    Description: DynamoDB table for Central Casting managed agent configs.
 

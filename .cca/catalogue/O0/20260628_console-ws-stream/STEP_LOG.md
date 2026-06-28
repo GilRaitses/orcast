@@ -139,3 +139,31 @@
 - Validation: `tsc --noEmit` clean; `pytest tests/aws_backend` 323 passed;
   `node --test lib/sseTransport.test.mts` 5 passed. panels-first (fd50929) and
   the JSON fallback intact. Nothing deployed/committed/pushed.
+
+## 2026-06-28 — Commit + backend deploy (WS7 in progress)
+
+- Operator (via O0): commit WS4+WS6 first, then O0 runs the deploy/ops checklist
+  directly. Committed scoped to streaming as `874f830` (code + tests + WS-STREAM
+  wave record; unrelated tree churn untouched).
+- IAM: added `bedrock:InvokeModelWithResponseStream` to `infra/aws/template.yaml`
+  (uncommitted) AND, non-destructively, applied it live as a separate inline
+  policy `orcast-stream-bedrock` on the instance role
+  `orcast-aws-backend-AppRunnerInstanceRole-4XtMQYZlzi4X` (verified present).
+  Avoided a full CFN deploy because `deploy.sh` defaults
+  `ORCAST_ENABLE_EXPLORATION_DATABASE=false` while the live stack has the
+  exploration RDS/VPC enabled (teardown risk).
+- Backend image: built `linux/amd64` from `tools/deployment/aws/Dockerfile`,
+  pushed `orcast-aws-backend:ws-stream-874f830` to ECR, and
+  `apprunner update-service` to that image (VPC egress + env + auth preserved;
+  `ORCAST_ENABLE_BEDROCK=true` already set). Rollout op SUCCEEDED, service RUNNING.
+- Verified on the Cloudflare-free native URL
+  `https://pjrftm3bkv.us-west-2.awsapprunner.com`: `GET /health` 200;
+  `POST /api/interactions/narrate/stream` (no key) → 401
+  "Invalid or missing X-ORCAST-Key" (route present + auth gate live, not 404);
+  JSON `POST /api/interactions/narrate` (no key) → 401.
+- BLOCKED (operator action): Vercel (`orcast-h0`) needs the committed `web/`
+  changes deployed + `ORCAST_STREAM_BASE=https://pjrftm3bkv.us-west-2.awsapprunner.com`
+  set. Trigger is a push to main (no-push rule → needs explicit approval) or a
+  Vercel token for CLI deploy. Full-chain WS7 acceptance re-measure (browser →
+  Vercel /api/narrate-stream → App Runner) is gated on that. JSON fallback keeps
+  the UI correct in the interim.
