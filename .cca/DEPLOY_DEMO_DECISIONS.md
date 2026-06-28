@@ -37,8 +37,12 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
   June 29 submission is accepted. Then either pause the service or set min-size 0.
 - **Rationale:** Rollback insurance during judging outweighs the ~$70-85/mo
   carry for a few days.
-- **Status:** open (operator action post-submission). Command of record:
-  `aws apprunner pause-service --service-arn arn:aws:apprunner:us-west-2:198456344617:service/orcast-aws-backend/ed4d6e4999864a468e11349c3f1083d9`.
+- **Status:** RECONCILED by DD-10 (2026-06-28). App Runner is now the PRIMARY
+  production backend, not a rollback target, so it must **not** be paused or
+  scaled to zero — doing so would take production down. The `aws apprunner
+  pause-service` command of record is RETIRED. The cost-removal candidate is now
+  the dormant self-host (the FW2 decommission wave in
+  `.cca/catalogue/O0/20260628_hosting-consolidation-followups/`), not App Runner.
 
 ## DD-4 — Backend code on the host is committed `main` (95a6d95), not the local tree
 - **Decision:** The host runs a clean `git clone` of public `main` @ `95a6d95`.

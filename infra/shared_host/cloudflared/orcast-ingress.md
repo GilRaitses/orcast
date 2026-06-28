@@ -1,5 +1,13 @@
 # orcast tunnel ingress (W-REACH) — shared aimez-services tunnel
 
+> **RETIRED AS PRIMARY (DD-10, 2026-06-28).** `orcast-api.aimez.ai` is no longer in
+> the production path; App Runner serves all backend traffic. This ingress is the
+> **decommission target** of the FW2 wave in
+> `.cca/catalogue/O0/20260628_hosting-consolidation-followups/`: an operator
+> removes the orcast ingress rule + the `api.orcast` CNAME (read-modify-write; the
+> pax `cv`/`shade` routes are preserved verbatim). The procedure below also serves
+> as the teardown reference — invert it to remove the rule and the CNAME.
+
 The shared host runs a **remotely-managed** cloudflared tunnel (token-based; no
 local `/etc/cloudflared/config.yml`). Ingress is configured through the Cloudflare
 API, NOT a file on the host.

@@ -1,0 +1,88 @@
+version: 1
+family: CONSOLE-PLATFORM
+waveset: WS-HOSTFOLLOWUP
+label: hosting-consolidation-followups
+home: .cca/catalogue/O0/20260628_hosting-consolidation-followups/
+origin: follow-ups left open by the hosting consolidation decision (DD-10 / orcast_hosting_consolidation_v1_20260628)
+status: in-progress
+
+# Parent decision this waveset discharges.
+parent_decision:
+  ddb: orcast_hosting_consolidation_v1_20260628
+  ddb_id: 4012e683e51b28996d364232b81edfe829da6b400745aeb9d8137d11291f89ee
+  doc: .cca/DEPLOY_DEMO_DECISIONS.md (DD-10)
+  baseline: orcast_system_state_baseline_v3_20260628
+
+execution_model:
+  one_file_one_owner: true
+  no_destructive_infra_without_operator: true   # FW2 teardown is operator-gated, never auto-run
+  validate_with: [doc-grep, h0-gate, e-gate, prod-auth-sweep, stream-probe]
+  no_live_destructive_calls_in_ci: true
+  prod_chain: "Browser -> Vercel -> Next /api/be + /api/narrate-stream -> App Runner (orcast-aws-backend). Cloudflare self-host = dormant rollback."
+
+# Each follow-up is a wave; every work wave carries an adversarial check that must
+# pass before the waveset's final acceptance.
+targets:
+  no_active_topology_drift:
+    requirement: "no active (non-historical) doc asserts the self-host as primary or App Runner as rollback/pause without a DD-10 superseded banner"
+  no_regression_from_followups:
+    requirement: "H0 + e-gate + auth sweep + stream probe stay green after the reconciliation edits"
+  decommission_is_reversible_until_run:
+    requirement: "self-host teardown stays operator-gated; the dormant rollback remains until an operator runs FW2"
+
+# Surfaces FW1 must reconcile (active current-state docs only; historical logs are frozen).
+active_state_surfaces:
+  - .cca/DEPLOY_DEMO_DECISIONS.md        # DD-3 still says "pause App Runner post-submission" (now dangerous)
+  - infra/shared_host/README.md          # present-tense "replaces the always-on App Runner service as the upstream"
+  - infra/shared_host/cloudflared/orcast-ingress.md  # runbook for the now-retired ingress
+frozen_historical:                        # do NOT rewrite — point-in-time records
+  - "*/STEP_LOG.md"
+  - .ddb/receipts/orcast_system_state_baseline_v1_*.md
+  - .ddb/receipts/orcast_system_state_baseline_v2_*.md
+  - .cca/catalogue/O0/20260626_orcast-selfhost-cutover/*
+  - .cca/catalogue/O0/20260628_console-ws-stream*/*
+
+waves:
+  - id: FW1
+    lifecycle: reconciliation
+    parallelism: 1
+    autonomous: true
+    convergence_files: [.cca/DEPLOY_DEMO_DECISIONS.md]
+    deliverable: "DD-3 reconciled (App Runner is primary, do NOT pause) + DD-10 banners on the two infra/shared_host docs"
+    adversarial:
+      - { id: A1, dim: doc-drift, check: "curated doc-grep over active_state_surfaces finds zero stale 'App Runner is rollback / pause App Runner / self-host is primary' claims lacking a DD-10 banner" }
+    gate: "A1 passes; historical logs untouched"
+
+  - id: FW2
+    lifecycle: decommission
+    parallelism: 1
+    autonomous: false              # OPERATOR-GATED, DESTRUCTIVE — charter only, not auto-run
+    operator_gated: true
+    depends_on: [FW1]
+    scope: "retire orcast-api.aimez.ai Cloudflare ingress + DNS CNAME, stop+disable orcast-api.service on i-04a649f91274e9fce (SSM), reconcile DD-3 cost note"
+    preconditions:
+      - "FW1 green (no doc claims the self-host is primary)"
+      - "App Runner is the sole upstream for BOTH ORCAST_API_BASE and ORCAST_STREAM_BASE (verified)"
+      - "resilience decided: FW-ACCEPT observed a ~1-min App Runner instance-recycle/cold-start window where /api/explore/* returned 404/503 while /health stayed 200; before teardown, decide a warm-fallback or min-instance/health-alarm posture (baseline_v3 'sole live backend, no warm fallback' limit)"
+    adversarial:
+      - { id: A1, dim: traffic-dependency, check: "PRE: prove zero Vercel prod traffic resolves to orcast-api.aimez.ai (both env vars point to App Runner); the tunnel hostname is not referenced by any live env" }
+      - { id: A2, dim: post-teardown-health, check: "POST: console + streaming + H0 stay green after ingress/service removal; rollback path re-documented (App Runner only)" }
+    gate: "operator runs the SSM teardown + Cloudflare API ingress/DNS removal; A1 proven before, A2 proven after; pax co-tenants (cv/shade) untouched"
+    note: "pax cv.aimez.ai/shade.aimez.ai share the tunnel — remove ONLY the orcast ingress rule + the api.orcast CNAME, read-modify-write, never replace."
+
+  - id: FW-ACCEPT
+    lifecycle: acceptance
+    parallelism: 1
+    autonomous: true
+    depends_on: [FW1]              # FW2 is operator-gated and may complete later
+    signed_off_by: program-orchestrator
+    verification: [doc-grep, h0-gate, e-gate, prod-auth-sweep, stream-probe]
+    gate: "FW1 adversarial clean AND no regression on the consolidated path; record in STEP_LOG.md; commit+push if pass. FW2 remains the single open operator gate."
+
+collision_governance:
+  - "FW1 edits only the three active_state_surfaces; never rewrites STEP_LOGs, superseded receipts, or the selfhost-cutover/ws-stream catalogue (historical)."
+  - "FW2 is destructive + operator-only; no agent runs SSM teardown or Cloudflare ingress removal. pax co-tenant routes are preserved verbatim."
+  - "agents commit/push the charter + FW1 doc edits only after all FW1 + FW-ACCEPT gates pass."
+
+operator_gates:
+  - "FW2: run the self-host + Cloudflare decommission (SSM stop/disable orcast-api.service + Cloudflare API ingress/DNS removal) when ready; rollback to self-host first requires repairing the DD-6 RDS path."
