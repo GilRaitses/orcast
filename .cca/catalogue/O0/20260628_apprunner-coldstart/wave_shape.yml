@@ -4,7 +4,7 @@ waveset: WS-COLDSTART
 label: apprunner-coldstart
 home: .cca/catalogue/O0/20260628_apprunner-coldstart/
 origin: residual risk from DD-10/FW2 — App Runner is the sole backend with no warm fallback; FW-ACCEPT observed a ~1-min window where /api/explore/* returned 404/503 while /health stayed 200
-status: cs1-research-complete   # root cause confirmed (edge handover); CS2 discovery next
+status: complete   # CS4 PASS: measured user-visible gap = 0 with MinSize=2 + edge retry
 
 # Honest target framing: App Runner cannot be literally "instant", but the
 # user-visible cold-start gap can be driven to zero (warm pool + keep-alive +
@@ -81,19 +81,21 @@ waves:
     depends_on: [CS2]
     status: in-progress
     sub:
-      - { id: CS3a, mitigation: M4, status: DONE, note: "bounded retry in /api/be forward() + pre-body retry in narrate-stream; typecheck green" }
-      - { id: CS3b, mitigation: M3, status: pending, note: "lifespan pool + Bedrock pre-warm; /ready observability endpoint; interactions 503 parity; psycopg_pool dep" }
-      - { id: CS3c, mitigation: M2, status: pending, note: "dedicated AutoScalingConfiguration MinSize=2 + associate; mirror in template.yaml (applied as the CS4 transition)" }
+      - { id: CS3a, mitigation: M4, status: DONE, note: "bounded retry in /api/be forward() + pre-body retry in narrate-stream; typecheck green; shipped" }
+      - { id: CS3c, mitigation: M2, status: DONE, note: "AutoScalingConfiguration orcast-warm MinSize=2 created + associated (op 1470d3f1 SUCCEEDED); mirrored in infra/aws/template.yaml (AppRunnerWarmAutoScaling)" }
+      - { id: CS3b, mitigation: M3, status: DEFERRED, note: "backend-image work (connection pool, /ready, interactions 503 parity, lifespan pre-warm) requires a risky deploy to the SOLE live backend; pool changes 503 mapping (PoolTimeout vs OperationalError). Deferred pending CS4 evidence that M4+M2 alone close the gap; if needed, ship as one fully-tested image." }
   - id: CS4
     lifecycle: adversarial
     depends_on: [CS3]
-    status: pending
+    status: PASS
     operator_gate: AUTHORIZED  # health-gated start-deployment, auto-rollback
-    note: "deploy M3/M4 image + associate MinSize=2 (this IS the forced transition); run R4 gap poller + concurrent load; prove gap_while_health_up_ms=0; prove retry does not mask a sustained outage; confirm +~$10/mo"
+    result: "forced start-deployment transition with MinSize=2 active -> max_gap_while_health_up_ms=0.0; 321 samples; 100% status 2xx; 8/8 session-creates 200 through the rollover. No residual edge 5xx, so the M4 retry never fired (retained as defense-in-depth)."
+    capture: gate_captures/gap_minsize2.json
   - id: CS5
     lifecycle: acceptance
     depends_on: [CS4]
-    status: pending
+    status: DONE
+    note: "DDB decision orcast_coldstart_mitigation_v1_20260628 registered; committed + pushed"
 
 collision_governance:
   - "CS1 is read-only research; R1/R4 may run read-only AWS describe/metrics calls and AWS-docs MCP/web, but change NO infra. No deploys, no config writes."

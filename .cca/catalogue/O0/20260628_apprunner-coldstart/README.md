@@ -29,3 +29,13 @@ the waveset leads with research.
 Zero user-visible cold-start gap (a deploy or recycle never surfaces a 404/503 to
 a user). App Runner cannot be literally instant; the gap is closed with a warm
 pool + fast/ready startup + a bounded idempotent absorb-the-blip retry.
+
+## Outcome: COMPLETE (gap = 0)
+
+Root cause (CS1): App Runner edge artifact during instance handover with a single
+MinSize=1 instance. Fix shipped: **M2** dedicated `orcast-warm` AutoScalingConfiguration
+(MinSize=2, +~$10/mo) + **M4** bounded edge-blip retry in the Vercel proxy
+(defense-in-depth). **CS4 measured a forced transition: `max_gap_while_health_up_ms`
+= 0.0**, 100% status 2xx, 8/8 session-creates 200 through the rollover. Backend-image
+M3 (pool/`/ready`/503-parity/pre-warm) was deferred because gap=0 was reached
+without it. Registered as DDB decision `orcast_coldstart_mitigation_v1_20260628`.

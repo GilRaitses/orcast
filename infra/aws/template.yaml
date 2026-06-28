@@ -594,11 +594,27 @@ Resources:
       BackupRetentionPeriod: 1
       DeletionProtection: false
 
+  # WS-COLDSTART M2: a warm pool of 2 provisioned instances so a deploy or
+  # single-instance recycle always has a sibling serving traffic (eliminates the
+  # App Runner edge-handover 404/503 gap measured in CS4). Applied live first via
+  # `aws apprunner create-auto-scaling-configuration --name orcast-warm
+  # --min-size 2 ...` + update-service; mirrored here so a stack deploy does not
+  # revert the service to the default MinSize=1 configuration.
+  AppRunnerWarmAutoScaling:
+    Type: AWS::AppRunner::AutoScalingConfiguration
+    Properties:
+      AutoScalingConfigurationName: orcast-warm
+      MinSize: 2
+      MaxSize: 25
+      MaxConcurrency: 100
+
   AppRunnerService:
     Type: AWS::AppRunner::Service
     Properties:
       ServiceName:
         Ref: ServiceName
+      AutoScalingConfigurationArn:
+        Ref: AppRunnerWarmAutoScaling
       SourceConfiguration:
         AuthenticationConfiguration:
           AccessRoleArn:

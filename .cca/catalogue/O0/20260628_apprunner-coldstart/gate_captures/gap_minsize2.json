@@ -1,0 +1,13 @@
+{
+  "base": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+  "samples": 321,
+  "health_up_pct": 100.0,
+  "status_2xx_pct": 100.0,
+  "max_gap_while_health_up_ms": 0.0,
+  "gap_event_count": 0,
+  "gap_events": [],
+  "session_attempts": 8,
+  "session_2xx": 8,
+  "session_non2xx": [],
+  "finished": "2026-06-28T18:43:50.673041+00:00"
+}

@@ -57,8 +57,24 @@ stays 200 and explore degrades to a graceful 503. So:
 - CS4: R4 gap metric `gap_while_health_up_ms` against the public URL during a
   `start-deployment` transition + concurrent load. Target = 0.
 
+## Evidence-driven sequencing (revised after grounding the deploy risk)
+
+M2 `MinSize=2` is **config-only** (a new AutoScalingConfiguration + associate); it
+needs no new image. The backend-image M3 items (connection pool, `/ready`,
+interactions 503 parity, lifespan pre-warm) all require building and deploying a
+new image to the **sole live backend**, and the pool in particular introduces new
+failure modes (PoolTimeout vs OperationalError breaks the existing 503 mapping)
+that warrant isolated testing. R2 itself flagged the pool as secondary.
+
+So the order is: ship M4 (done), apply M2 (config), then **measure** whether
+M4 + M2 drive `gap_while_health_up_ms` to 0 (CS4). Only if measured residual
+latency justifies it do we invest in the riskier backend-image M3 — and then as a
+single fully-tested image deploy, not speculatively. This avoids a risky deploy to
+the only prod backend without evidence it is needed.
+
 ## Status
 
-CS2 discovery complete. CS3a (M4 proxy) implemented + typechecked. Next: CS3b
-(M3 backend) + M2 IaC, then CS4 (deploy + authorized forced-transition repro under
-the gap poller), then CS5 acceptance.
+CS2 discovery complete. CS3a (M4 proxy) implemented + typechecked + shipped.
+CS3c (M2 MinSize=2) applied in CS4. Backend-image M3 (pool/`/ready`/503-parity/
+pre-warm) **deferred pending CS4 evidence**. Next: CS4 (apply M2 + gap repro),
+then a data-driven decision on backend-image M3, then CS5 acceptance.

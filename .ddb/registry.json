@@ -274,6 +274,39 @@
         "platform": "orcast"
       },
       "status": "active"
+    },
+    {
+      "artifact_hash": "2f8a73b64f4090b2c0718aeaba7b7bd9a6f7658decd719ce83a0e3e7b9cc1ca0",
+      "artifact_path": ".sst/coldstart_mitigation_v1.json",
+      "decision_id": "2c6f49f4daae01c0a9ea0c7deec254c1b3fb19dcca81f8c3456fdc25ee5a3ef6",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "mitigation_date": "2026-06-28",
+        "mitigation_version": "v1",
+        "parent_decision": "orcast_selfhost_decommission_v1_20260628",
+        "wave": "WS-COLDSTART CS4"
+      },
+      "kind": "coldstart_mitigation_result",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-28T18:46:31.259896+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active"
     }
   ],
   "schema_version": "0.1"

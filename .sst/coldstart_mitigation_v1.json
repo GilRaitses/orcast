@@ -1,0 +1,48 @@
+{
+  "decision_identity": {
+    "artifact_kind": "coldstart_mitigation_result",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "mitigation_version": "v1",
+    "mitigation_date": "2026-06-28",
+    "parent_decision": "orcast_selfhost_decommission_v1_20260628",
+    "wave": "WS-COLDSTART CS4"
+  },
+  "generated_at": "2026-06-28",
+  "title": "App Runner cold-start gap eliminated (CS4): MinSize=2 warm pool + edge-blip retry; measured user-visible gap = 0",
+  "statement": "The App Runner instance-handover gap (the residual risk from the self-host decommission: ~60s where /api/explore/* returned 404/503 while /health stayed 200) is closed. Root cause was confirmed by research as an App Runner edge artifact during instance handover (a fresh instance booted dead-center of the FW-ACCEPT blip window; app logs showed zero 404/503 and empty 5xx metrics, so the error was emitted at the App Runner routing layer with a single MinSize=1 instance). Mitigation: a dedicated AutoScalingConfiguration orcast-warm with MinSize=2 (a sibling instance always serves during a deploy or recycle) plus a bounded, double-write-safe absorb-the-blip retry in the Vercel proxy as defense-in-depth. A forced deployment with MinSize=2 active produced a measured user-visible gap of 0.",
+  "execution": {
+    "autoscaling_configuration_arn": "arn:aws:apprunner:us-west-2:198456344617:autoscalingconfiguration/orcast-warm/1/1173a6e6f60842ea97fa2ea44511a740",
+    "min_size": 2,
+    "max_size": 25,
+    "max_concurrency": 100,
+    "associate_op": "UPDATE_SERVICE 1470d3f1114a494099f8ae10d6cada80 (SUCCEEDED)",
+    "forced_transition_op": "start-deployment e455f6f0e048425cb4468916c7c56cab (SUCCEEDED)",
+    "edge_retry": "web/app/api/be/[...path]/route.ts (forward retry: 503 any-method, 502/504/404 GET-only, 1 retry, 300ms+jitter) and web/app/api/narrate-stream/route.ts (one pre-body retry on 502/503/504)",
+    "iac_parity": "infra/aws/template.yaml AppRunnerWarmAutoScaling + AutoScalingConfigurationArn"
+  },
+  "measurement": {
+    "harness": "tools/testing/coldstart_gap_probe.py (R4 gap poller, 500ms cadence, /health vs /api/explore/status + sparse session-create)",
+    "scenario": "forced start-deployment transition with MinSize=2 active",
+    "samples": 321,
+    "health_up_pct": 100.0,
+    "status_2xx_pct": 100.0,
+    "max_gap_while_health_up_ms": 0.0,
+    "gap_event_count": 0,
+    "session_attempts": 8,
+    "session_2xx": 8,
+    "capture": ".cca/catalogue/O0/20260628_apprunner-coldstart/gate_captures/gap_minsize2.json"
+  },
+  "adversarial_gate": "CS4 PASS - a forced deployment/instance transition produced zero user-visible gap (gap_while_health_up_ms = 0; 100% status 2xx; all 8 session-creates 200 through the rollover). The Vercel-proxy retry did not need to fire (no residual edge 5xx) and is retained as defense-in-depth for multi-instance transitions.",
+  "cost_delta": "+~$10.22/mo (MinSize=2 provisioned baseline vs MinSize=1) in us-west-2 1vCPU/2GB. Keep-warm pinger (M1) NOT adopted.",
+  "deferred": [
+    "Backend-image M3 (connection pool, /ready endpoint, interactions 503 parity, lifespan pre-warm) deferred: it requires a riskier deploy to the sole live backend and the pool changes the 503 mapping (PoolTimeout vs OperationalError). CS4 measured gap=0 without it, so it is not justified now; ship as one fully-tested image only if residual latency later warrants it.",
+    "Do NOT repoint App Runner health to a DB-gated /ready: coupling liveness to RDS would turn an RDS blip into a total outage (worse than today's graceful 503)."
+  ],
+  "non_claims": [
+    "App Runner is not literally 'instant'; the achieved property is zero USER-VISIBLE gap during a deploy/recycle, validated by an external poller.",
+    "This does not change the DD-10 topology: Vercel + App Runner remains the sole production backend."
+  ]
+}

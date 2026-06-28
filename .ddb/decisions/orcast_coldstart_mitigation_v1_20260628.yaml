@@ -1,0 +1,60 @@
+decision_id: orcast_coldstart_mitigation_v1_20260628
+kind: coldstart_mitigation_result
+status: active
+date: 2026-06-28
+wave: WS-COLDSTART CS4
+parent_decision: orcast_selfhost_decommission_v1_20260628
+scope:
+  platform: orcast
+  env: production
+  lifecycle_id: orcast_platform
+
+title: >-
+  App Runner cold-start gap eliminated (CS4): MinSize=2 warm pool + edge-blip
+  retry; measured user-visible gap = 0
+
+summary: >-
+  The App Runner instance-handover gap (the residual risk recorded by the
+  self-host decommission: ~60s where /api/explore/* returned 404/503 while
+  /health stayed 200) is closed. A 4-lane research wave confirmed the root cause
+  as an App Runner edge artifact during instance handover with a single
+  MinSize=1 instance. Fix: a dedicated AutoScalingConfiguration (orcast-warm,
+  MinSize=2) so a sibling instance always serves during a deploy or recycle, plus
+  a bounded double-write-safe absorb-the-blip retry in the Vercel proxy as
+  defense-in-depth.
+
+mitigations:
+  M2_warm_pool:
+    autoscaling_configuration: orcast-warm (MinSize 2 / MaxSize 25 / MaxConcurrency 100)
+    arn: arn:aws:apprunner:us-west-2:198456344617:autoscalingconfiguration/orcast-warm/1/1173a6e6f60842ea97fa2ea44511a740
+    cost_delta: "+~$10.22/mo"
+  M4_edge_retry:
+    files:
+      - web/app/api/be/[...path]/route.ts
+      - web/app/api/narrate-stream/route.ts
+    policy: "503 any-method; 502/504/404 GET-only; 1 retry, 300ms+jitter; pre-body only for the stream"
+
+measurement:
+  harness: tools/testing/coldstart_gap_probe.py
+  scenario: forced start-deployment transition with MinSize=2 active
+  max_gap_while_health_up_ms: 0.0
+  status_2xx_pct: 100.0
+  session_2xx_of_attempts: "8/8"
+  capture: .cca/catalogue/O0/20260628_apprunner-coldstart/gate_captures/gap_minsize2.json
+
+adversarial_gate: >-
+  CS4 PASS - a forced deployment/instance transition produced zero user-visible
+  gap (gap_while_health_up_ms = 0; 100% status 2xx; all session-creates 200
+  through the rollover).
+
+deferred:
+  - >-
+    Backend-image M3 (connection pool, /ready, interactions 503 parity, lifespan
+    pre-warm) deferred: riskier deploy to the sole live backend and the pool
+    changes the 503 mapping. CS4 measured gap=0 without it.
+  - >-
+    Do NOT repoint App Runner health to a DB-gated /ready (an RDS blip would
+    become a total outage, worse than today's graceful 503).
+
+artifact: .sst/coldstart_mitigation_v1.json
+receipt: .ddb/receipts/orcast_coldstart_mitigation_v1_20260628.md

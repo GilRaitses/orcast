@@ -58,3 +58,28 @@ covers the handover-404 at the source.
 Remaining: CS3b (M3 backend: pool + Bedrock pre-warm, /ready, interactions 503
 parity), CS3c (M2 MinSize=2), CS4 (deploy + authorized forced-transition repro
 under the gap poller), CS5 acceptance.
+
+## 2026-06-28 CS3c (M2) + CS4 adversarial — PASS
+
+Created a dedicated AutoScalingConfiguration `orcast-warm` (MinSize=2 / MaxSize=25
+/ MaxConcurrency=100) and associated it to orcast-aws-backend (UPDATE_SERVICE op
+1470d3f1, SUCCEEDED). Mirrored in infra/aws/template.yaml (AppRunnerWarmAutoScaling
++ AutoScalingConfigurationArn) so a stack deploy will not revert to MinSize=1.
+
+Note: the first measurement was lost because a nohup background poller was reaped
+when the tool call returned. Re-ran correctly inside one long-blocking command:
+started the R4 gap poller, then forced a fresh transition (start-deployment op
+e455f6f0, SUCCEEDED) so the poller captured the whole window.
+
+CS4 result with MinSize=2 active: 321 samples, health up 100%, /api/explore/status
+2xx 100%, max_gap_while_health_up_ms = 0.0, 0 gap events, 8/8 session-creates 200
+through the rollover. Capture: gate_captures/gap_minsize2.json. The Vercel-proxy
+M4 retry never needed to fire (no residual edge 5xx) and is retained as
+defense-in-depth.
+
+Evidence-driven deferral upheld: backend-image M3 (pool, /ready, interactions 503
+parity, lifespan pre-warm) NOT shipped — gap=0 was reached without it, so the
+riskier sole-backend image deploy is not justified now.
+
+CS5 acceptance: registered DDB decision orcast_coldstart_mitigation_v1_20260628
+(.sst/coldstart_mitigation_v1.json + decisions/receipts). Waveset COMPLETE.
