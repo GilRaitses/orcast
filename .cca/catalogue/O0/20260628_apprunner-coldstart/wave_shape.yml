@@ -1,0 +1,98 @@
+version: 1
+family: CONSOLE-PLATFORM
+waveset: WS-COLDSTART
+label: apprunner-coldstart
+home: .cca/catalogue/O0/20260628_apprunner-coldstart/
+origin: residual risk from DD-10/FW2 — App Runner is the sole backend with no warm fallback; FW-ACCEPT observed a ~1-min window where /api/explore/* returned 404/503 while /health stayed 200
+status: cs1-research-complete   # root cause confirmed (edge handover); CS2 discovery next
+
+# Honest target framing: App Runner cannot be literally "instant", but the
+# user-visible cold-start gap can be driven to zero (warm pool + keep-alive +
+# absorb-the-blip retry). Targets are confirmed/overridden after research.
+targets:
+  user_visible_gap:
+    baseline: "~60s observed window: /api/explore/* 404/503 while /health 200 (FW-ACCEPT, 2026-06-28)"
+    goal: "zero user-visible cold-start gap on the live console (a deploy or instance recycle never surfaces a 404/503 to a user)"
+  steady_first_request_latency:
+    goal: "first request after idle/recycle served correctly (<= warm latency + small wake), measured"
+  cost_delta:
+    goal: "mitigation cost increase bounded + explicitly priced (App Runner provisioned-instance + any min-size carry)"
+
+# Known ground truth at charter time (verified live, not assumed):
+known_state:
+  apprunner_autoscaling: { MinSize: 1, MaxSize: 25, MaxConcurrency: 100, config: DefaultConfiguration }
+  apprunner_health: { path: /health, interval_s: 10, timeout_s: 5, healthy_threshold: 1, unhealthy_threshold: 5 }
+  apprunner_instance: { cpu: 1024, memory: 2048 }
+  routers_mounted: "explore.router + interactions.router are included UNCONDITIONALLY in main.py (lines 82,84) — so the blip was NOT conditional router mounting"
+  open_question: "the 404 on /api/explore/* while /health=200 is unexplained by app logic; likely an App Runner instance-transition/edge artifact — root cause UNCONFIRMED"
+
+waves:
+  - id: CS1
+    lifecycle: research
+    parallelism: 4
+    mode: read-only-plus-readonly-aws
+    deliverable: RESEARCH_SYNTHESIS.md  # orchestrator-synthesized from the four lane files
+    lanes:
+      - id: R1
+        title: "App Runner cold-start / recycle mechanics (AWS-grounded)"
+        agent: generalPurpose
+        questions:
+          - "How do App Runner provisioned vs active instances behave? When is an instance paused/woken/recycled? What happens to in-flight + new requests during deploy rollover and instance replacement?"
+          - "Exact semantics of MinSize (warm pool) on the DefaultConfiguration; does a dedicated AutoScalingConfiguration with MinSize>1 keep N warm? Does the 10s /health check prevent provisioned-instance pause?"
+          - "What status does App Runner's router itself return during transitions (404 vs 503)? Could a 404 originate at the App Runner edge rather than the app?"
+          - "Every config knob that reduces cold-start: MinSize, MaxConcurrency, health-check tuning, instance size, deployment behavior. Cost per knob."
+        deliverable: research/R1_apprunner_mechanics.md
+      - id: R2
+        title: "In-app startup + readiness grounding (codebase)"
+        agent: explore
+        questions:
+          - "Read src/aws_backend/main.py lifespan + /health. What runs at startup? Is any DB/Bedrock client created eagerly vs lazily? How long does startup take?"
+          - "Trace /api/explore/status, /api/explore/sessions, /api/interactions/* — is anything lazy/conditional that could 404 or hang transiently on a fresh instance (e.g., first-call DB pool init)?"
+          - "Is there a readiness concept distinct from liveness? Should /health gate on DB readiness, or should a separate /ready be used so App Runner only routes when explore is actually serveable?"
+          - "App-level pre-warm options: connection pool warm, Bedrock client warm, import cost. Startup time reduction."
+        deliverable: research/R2_app_startup.md
+      - id: R3
+        title: "Edge / proxy / client resilience (codebase + transport)"
+        agent: explore
+        questions:
+          - "Read web/app/api/be/[...path]/route.ts + web/app/api/narrate-stream/route.ts + web/lib/adaptiveConsole.ts + web/lib/sseTransport.ts + AdaptiveExplore.tsx. Do any retry on transient 404/503?"
+          - "Where could a single bounded retry/backoff absorb a sub-second-to-few-second instance-transition blip so it is invisible to users, WITHOUT masking real outages?"
+          - "Which calls are idempotent + safe to retry (GET status, session create, plan) vs not (stream mid-flight)? What is the safe retry policy per call?"
+        deliverable: research/R3_edge_client_resilience.md
+      - id: R4
+        title: "Repro + observability design (AWS CLI + metrics)"
+        agent: generalPurpose
+        questions:
+          - "How to deterministically reproduce the blip: force a deployment/instance recycle on orcast-aws-backend and capture the failure window. Safe procedure (it is the live prod service)."
+          - "What App Runner CloudWatch metrics + service events + application logs expose the transition (ActiveInstances, deployment events, 4xx/5xx, request latency)? How to correlate a 404 with an instance event."
+          - "Design the measurement harness for 'user-visible cold-start gap': poll cadence, endpoints (/health vs /api/explore/status vs a real session create), pass/fail definition."
+        deliverable: research/R4_repro_observability.md
+    gate: "each lane names mechanisms + the specific knob/code/retry that addresses the gap at its layer; R1 prices each App Runner knob; R2 confirms whether /health should gate on readiness; R4 delivers a safe repro + a measurable gap definition; synthesis lists root-cause hypotheses ranked by evidence"
+
+  # Downstream waves are chartered AFTER CS1 synthesis (shape depends on root cause).
+  - id: CS2
+    lifecycle: discovery
+    depends_on: [CS1]
+    status: pending-charter
+    note: "ground the chosen mitigation set in files/owners/knobs; name convergence files; price the cost delta"
+  - id: CS3
+    lifecycle: implementation
+    depends_on: [CS2]
+    status: pending-charter
+  - id: CS4
+    lifecycle: adversarial
+    depends_on: [CS3]
+    status: pending-charter
+    note: "force recycle + deploy + concurrent load; prove zero user-visible gap; verify retry does not mask real outages; confirm cost delta"
+  - id: CS5
+    lifecycle: acceptance
+    depends_on: [CS4]
+    status: pending-charter
+
+collision_governance:
+  - "CS1 is read-only research; R1/R4 may run read-only AWS describe/metrics calls and AWS-docs MCP/web, but change NO infra. No deploys, no config writes."
+  - "the live orcast-aws-backend is the SOLE prod backend (post-FW2): any repro that forces a recycle is operator-gated and run only with explicit approval in a later wave, never in CS1."
+
+operator_gates:
+  - "approve any later wave that forces a deployment/instance recycle on the live sole-backend"
+  - "confirm or override the cost ceiling for a warm pool (MinSize>1 / provisioned carry)"
