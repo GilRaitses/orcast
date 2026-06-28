@@ -17,10 +17,9 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
 - **Rationale:** Consolidates orcast + pax onto one host/tunnel; removes the
   always-on App Runner cost as the primary path while keeping a one-env-var
   rollback during the deadline.
-- **Status:** ratified + verified GREEN (2026-06-26). Prod proxy: `/api/be/health`
-  200, `/api/be/api/gates` 200, `/api/be/api/sightings` 200,
-  `/api/be/api/evidence/assets` 401, `/api/be/api/interest` POST 200, `/` 200;
-  host access logs confirm Vercel egress traffic reaches the host.
+- **Status:** SUPERSEDED by DD-10 (2026-06-28). The self-host/Cloudflare path is
+  retired as primary; App Runner is now canonical. Roles reversed: App Runner is
+  primary, the self-host is the dormant rollback.
 
 ## DD-2 — Judges hit the same live URL (`orcast-h0.vercel.app`)
 - **Decision:** No demo/storyboard URL change. Judges use `https://orcast-h0.vercel.app`
@@ -29,7 +28,9 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
   but remains reachable for rollback.
 - **Rationale:** Keeps the submitted live URL stable; the cutover is invisible to
   the demo surface.
-- **Status:** ratified.
+- **Status:** SUPERSEDED by DD-10 (2026-06-28). The live URL
+  (`orcast-h0.vercel.app`) is unchanged, but the App Runner URL
+  (`pjrftm3bkv.us-west-2.awsapprunner.com`) is again the canonical backend path.
 
 ## DD-3 — App Runner scale-down is deferred to post-submission
 - **Decision:** Do NOT pause/scale-down `orcast-aws-backend` until after the
@@ -89,6 +90,31 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
 - **Status:** open limit. To enable: set `ONC_API_TOKEN` (secret) + `ORCAST_ENABLE_ONC=true`
   in the host env file and `systemctl restart orcast-api` (via SSM). The explore3d
   FRONTEND (3D landing) remains unshipped (separate demo decision).
+
+## DD-10 — Consolidate production on Vercel + App Runner; retire Cloudflare/self-host as primary (supersedes DD-1, DD-2)
+- **Decision:** Production serving is consolidated on Vercel (frontend + edge proxy
+  and stream routes) and AWS App Runner (`orcast-aws-backend`). Both Vercel
+  upstreams resolve to App Runner: `ORCAST_API_BASE` (the generic `/api/be` JSON
+  proxy, repointed from `orcast-api.aimez.ai`) and `ORCAST_STREAM_BASE` (the
+  dedicated `/api/narrate-stream` SSE route). The Cloudflare-fronted self-host
+  co-tenant (`orcast-api.aimez.ai`) is retired as the primary backend and left
+  dormant as a one-env-var rollback; no physical teardown is performed here.
+- **Rationale:**
+  1. Streaming needs a Cloudflare-free endpoint — WS-STREAM WS2 proved cloudflared
+     buffers SSE while App Runner streams. App Runner must run for streaming anyway.
+  2. The self-host RDS path is unreachable (DD-6) and broke the live console (503
+     on `POST /api/explore/sessions`); App Runner reaches RDS and returns 200.
+  3. The Vercel × AWS hackathon brief (`docs/devpost/H0_WORKSHOP_COMPLIANCE.md`)
+     requires a Vercel + AWS + Bedrock spine and does not require Cloudflare.
+- **Status:** ratified + verified GREEN (2026-06-28). Registered in `.ddb`
+  (`orcast_hosting_consolidation_v1_20260628`, baseline `v3`). Verification: App
+  Runner `/health` 200; `/api/be/api/explore/sessions` via Vercel 200 (outage
+  resolved); `/api/be/api/evidence/assets` 401 (auth gate intact); streamed
+  narration first token 1.8-2.8 s incremental; H0 hackathon gate PASS.
+- **Follow-up (operator, post-submission):** physically tear down or repoint the
+  `orcast-api.aimez.ai` Cloudflare ingress + `orcast-api.service`, and reconcile
+  DD-3 (App Runner is now primary, not a paused rollback). Rollback to the
+  self-host requires repairing the self-host RDS path (DD-6) first.
 
 ---
 

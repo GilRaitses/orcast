@@ -1,0 +1,49 @@
+decision_id: orcast_system_state_baseline_v3_20260628
+title: orcast production system-state baseline v3 (Vercel + App Runner consolidated)
+status: ratified
+date: "2026-06-28"
+patch_type: system_state_baseline
+
+registry:
+  registry_decision_id: 4d7c751c2002a51163f24b3ca273bffb17c9278656ab4c1416969f10c9d1082a
+  artifact_path: .sst/system_state_baseline_v3.json
+  kind: system_state_baseline
+  scope:
+    platform: orcast
+    env: production
+    lifecycle_id: orcast_platform
+
+supersedes:
+  - orcast_system_state_baseline_v2_20260627 (topology selfhost_cotenant)
+
+statement:
+  - >-
+    Production backend serves from AWS App Runner (orcast-aws-backend). Both Vercel
+    upstreams (ORCAST_API_BASE for /api/be JSON, ORCAST_STREAM_BASE for the
+    dedicated /api/narrate-stream SSE route) resolve to App Runner. Topology moves
+    from selfhost_cotenant (v2) to vercel_apprunner (v3).
+  - >-
+    WS-STREAM streamed narration is live through the dedicated Node stream route.
+    Explore-session writes now reach RDS (200), resolving the DD-6 console impact.
+    The Cloudflare self-host co-tenant is dormant rollback only.
+
+verification:
+  apprunner_health: 200
+  be_explore_sessions_via_vercel: 200
+  be_evidence_assets_auth_gate: 401
+  stream_first_token: "1800-2800 ms incremental"
+
+repo_anchoring:
+  branch: main
+  repo_state_verified_against: 6af4eeb
+
+related:
+  hosting_decision: .ddb/decisions/orcast_hosting_consolidation_v1_20260628.yaml
+  prior_baseline: .ddb/decisions/orcast_system_state_baseline_v2_20260627.yaml
+
+subordinate_mirror_path: .ddb/receipts/orcast_system_state_baseline_v3_20260628.md
+
+authority_note: >-
+  Authoritative structured registration lives in this YAML decision plus the
+  registered .sst artifact (.sst/system_state_baseline_v3.json). The markdown
+  receipt is a subordinate mirror.

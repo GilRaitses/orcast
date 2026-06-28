@@ -97,7 +97,7 @@
         "lifecycle_id": "orcast_platform",
         "platform": "orcast"
       },
-      "status": "active",
+      "status": "superseded",
       "supersedes": [
         "8f2b264f24e280696788b7a10ead61092bc4a866da77d6a1911415cca098e90b"
       ]
@@ -133,6 +133,114 @@
         "platform": "orcast"
       },
       "status": "active"
+    },
+    {
+      "artifact_hash": "d3d9bf9f341d0b6676ceca0cc2e38a19370db0d97c8a42d8e3757f6b4ec587df",
+      "artifact_path": ".sst/hosting_consolidation_v1.json",
+      "decision_id": "4012e683e51b28996d364232b81edfe829da6b400745aeb9d8137d11291f89ee",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "anchor_commit": "6af4eeb",
+        "decision_date": "2026-06-28",
+        "decision_version": "v1",
+        "from_topology": "selfhost_cotenant",
+        "to_topology": "vercel_apprunner"
+      },
+      "kind": "hosting_topology_decision",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-28T15:07:10.628695+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "superseded"
+    },
+    {
+      "artifact_hash": "53b4ae81b0a1a78fc4f7a01847cbbe587f6f19445dc1ad42c9d1b57796de0be3",
+      "artifact_path": ".sst/system_state_baseline_v3.json",
+      "decision_id": "4d7c751c2002a51163f24b3ca273bffb17c9278656ab4c1416969f10c9d1082a",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "backend_host_commit": "6af4eeb",
+        "baseline_date": "2026-06-28",
+        "baseline_version": "v3",
+        "frontend_vercel_commit": "6af4eeb",
+        "topology": "vercel_apprunner"
+      },
+      "kind": "system_state_baseline",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-28T15:07:10.628875+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active",
+      "supersedes": [
+        "57853cfb36d2cf41f35191cfc46cee443410460a7a88a53e2097c41176dc5e34"
+      ]
+    },
+    {
+      "artifact_hash": "ec25a3c5e1cc413461be7c106d6d20da3359240440d747f5624fa053f6060a24",
+      "artifact_path": ".sst/hosting_consolidation_v1.json",
+      "decision_id": "4012e683e51b28996d364232b81edfe829da6b400745aeb9d8137d11291f89ee",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "anchor_commit": "6af4eeb",
+        "decision_date": "2026-06-28",
+        "decision_version": "v1",
+        "from_topology": "selfhost_cotenant",
+        "to_topology": "vercel_apprunner"
+      },
+      "kind": "hosting_topology_decision",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-28T15:11:12.860998+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active",
+      "supersedes": [
+        "4012e683e51b28996d364232b81edfe829da6b400745aeb9d8137d11291f89ee"
+      ]
     }
   ],
   "schema_version": "0.1"

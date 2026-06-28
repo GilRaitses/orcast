@@ -1,0 +1,60 @@
+{
+  "decision_identity": {
+    "artifact_kind": "system_state_baseline",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "baseline_version": "v3",
+    "baseline_date": "2026-06-28",
+    "backend_host_commit": "6af4eeb",
+    "frontend_vercel_commit": "6af4eeb",
+    "topology": "vercel_apprunner"
+  },
+  "generated_at": "2026-06-28",
+  "supersedes": "system_state_baseline_v2 (5a7e2e8 selfhost_cotenant)",
+  "summary": "Post hosting-consolidation state: production backend serves from AWS App Runner (orcast-aws-backend); both Vercel upstreams (ORCAST_API_BASE, ORCAST_STREAM_BASE) resolve to App Runner. WS-STREAM streamed narration is live via the dedicated /api/narrate-stream Node route. The Cloudflare self-host co-tenant is retired as primary and dormant as rollback. Explore-session writes now reach RDS (200), resolving the DD-6 console impact.",
+  "frontend": {
+    "host": "vercel",
+    "project": "orcast-h0",
+    "production_alias": "orcast-h0.vercel.app",
+    "commit": "6af4eeb",
+    "proxy_upstream_env": "ORCAST_API_BASE",
+    "proxy_upstream_value": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+    "stream_upstream_env": "ORCAST_STREAM_BASE",
+    "stream_upstream_value": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+    "stream_route": "web/app/api/narrate-stream/route.ts (nodejs, force-dynamic, maxDuration 60)"
+  },
+  "backend": {
+    "mode": "apprunner_managed",
+    "service": "orcast-aws-backend",
+    "url": "https://pjrftm3bkv.us-west-2.awsapprunner.com",
+    "status": "RUNNING",
+    "image_lane": "ws-stream (874f830 streamed narration)",
+    "bedrock_streaming": "invoke_model_with_response_stream enabled (IAM: bedrock:InvokeModelWithResponseStream)"
+  },
+  "reach": {
+    "model": "ORCAST_API_KEY via X-ORCAST-Key injected by the Vercel proxy + dedicated stream route",
+    "cloudflare": "retired as primary; orcast-api.aimez.ai dormant rollback only"
+  },
+  "rollback": {
+    "selfhost_service": "orcast-api.service on i-04a649f91274e9fce (orcast-api.aimez.ai)",
+    "status": "dormant; RDS path degraded (DD-6) so not a clean fallback until repaired",
+    "revert": "set Vercel ORCAST_API_BASE to https://orcast-api.aimez.ai and redeploy"
+  },
+  "verification": {
+    "apprunner_health": 200,
+    "be_explore_sessions_via_vercel": 200,
+    "be_evidence_assets_auth_gate": 401,
+    "stream_first_token_ms": "1800-2800 incremental"
+  },
+  "tracked_limits": [
+    "Self-host + Cloudflare ingress left dormant; physical teardown deferred to operator post-submission (DD-3/DD-10)",
+    "App Runner is the sole live backend; no warm fallback until self-host RDS (DD-6) is repaired",
+    "ONC disabled in prod: metadata-only/503 (DD-9, low, enable-on-demand)",
+    "explore3d frontend not deployed (DD-4/DD-9, medium, decision)",
+    "SDR O-2/O-3/O-4 drift (low/medium)",
+    "demo GIFs open (DD-7, medium)"
+  ],
+  "submission_gate": "P1 (DynamoDB screenshot, Devpost, arXiv) parked until operator-approved"
+}

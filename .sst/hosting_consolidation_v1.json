@@ -1,0 +1,54 @@
+{
+  "decision_identity": {
+    "artifact_kind": "hosting_topology_decision",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "decision_version": "v1",
+    "decision_date": "2026-06-28",
+    "from_topology": "selfhost_cotenant",
+    "to_topology": "vercel_apprunner",
+    "anchor_commit": "6af4eeb"
+  },
+  "generated_at": "2026-06-28",
+  "title": "Consolidate production on Vercel + AWS App Runner; retire Cloudflare/self-host as primary backend",
+  "supersedes_decisions": ["DD-1", "DD-2"],
+  "statement": "orcast production serving is consolidated on Vercel (frontend + edge proxy routes) and AWS App Runner (FastAPI backend: Bedrock, DynamoDB, S3, RDS, Step Functions). The Cloudflare-fronted self-hosted co-tenant (orcast-api.aimez.ai on the shared aimez-services EC2) is retired as the primary backend and kept dormant only as a one-env-var rollback. Both Vercel upstream env vars resolve to App Runner: ORCAST_API_BASE (generic /api/be JSON proxy) and ORCAST_STREAM_BASE (dedicated /api/narrate-stream SSE route).",
+  "rationale": [
+    "Streaming requires a Cloudflare-free endpoint: WS-STREAM WS2 benchmarks proved the cloudflared quick tunnel buffers SSE completely across protocols and payloads, while App Runner streams incrementally. App Runner must run for streaming regardless, so co-hosting only the JSON path on the self-host adds fragility for little savings.",
+    "The self-host RDS path is unreachable (DD-6), which surfaced as a live console outage: orcast-api.aimez.ai returned 503 on POST /api/explore/sessions. App Runner reaches the explore RDS and returns 200, restoring the console.",
+    "The hackathon brief (Vercel x AWS workshop, H0_WORKSHOP_COMPLIANCE.md) requires a Vercel + AWS + Bedrock spine and does not require or mention Cloudflare. App Runner satisfies and exceeds that requirement.",
+    "Consolidation removes a transport hop (cloudflared) and a dependency (Cloudflare token/ingress) from the submission-critical path."
+  ],
+  "implementation": {
+    "orcast_api_base": "repointed to App Runner (Vercel env updated + redeployed)",
+    "orcast_stream_base": "App Runner (dedicated /api/narrate-stream Node route)",
+    "iam": "bedrock:InvokeModelWithResponseStream added to App Runner instance role (infra/aws/template.yaml + live)",
+    "self_host_disposition": "left dormant as rollback; active teardown deferred to operator post-submission",
+    "doc_register": ".cca/DEPLOY_DEMO_DECISIONS.md DD-10"
+  },
+  "verification": {
+    "apprunner_health": 200,
+    "be_explore_sessions_via_vercel": 200,
+    "be_explore_status_aurora_connected": true,
+    "be_evidence_assets_auth_gate": 401,
+    "be_evidence_assets_spoofed_reviewer_header": 401,
+    "be_journal_no_key": 401,
+    "public_gates_no_token_leak": true,
+    "stream_via_vercel_first_token_ms": 1640,
+    "stream_via_vercel_tokens": 134,
+    "stream_via_vercel_incremental": true,
+    "stream_meta_source": "bedrock",
+    "h0_gate": "PASS",
+    "e_gate": "PASS"
+  },
+  "non_claims": [
+    "This does not physically tear down the self-host service or the Cloudflare ingress; both remain as a dormant rollback until an operator removes them.",
+    "This does not change the submitted live URL (orcast-h0.vercel.app); only the backend upstream resolves to App Runner."
+  ],
+  "rollback": {
+    "method": "set Vercel ORCAST_API_BASE back to https://orcast-api.aimez.ai and redeploy (requires the self-host RDS path to be repaired first)",
+    "apprunner_service": "orcast-aws-backend"
+  }
+}
