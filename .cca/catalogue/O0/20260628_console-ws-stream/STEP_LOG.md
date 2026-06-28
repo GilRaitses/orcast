@@ -167,3 +167,38 @@
   Vercel token for CLI deploy. Full-chain WS7 acceptance re-measure (browser →
   Vercel /api/narrate-stream → App Runner) is gated on that. JSON fallback keeps
   the UI correct in the interim.
+
+## 2026-06-28 — Vercel deploy + WS7 acceptance (PASS, with caveats)
+
+- Operator approved push to main + provided a Vercel token (stored via new
+  `tools/testing/set_vercel_token.sh` → gitignored `.agent-credentials.env`).
+- Set `ORCAST_STREAM_BASE=https://pjrftm3bkv.us-west-2.awsapprunner.com`
+  (Production) on `orcast-h0`. Pushed to main; Vercel git integration
+  auto-deploys (no CLI deploy needed — a stray CLI deploy created an accidental
+  `aimez/orcast` project; removed it).
+- Triaged a prod 500 on `/api/narrate-stream`: red herring. Backend casts
+  `session_id` to a Postgres uuid, so a non-uuid probe id raised
+  `InvalidTextRepresentation` on BOTH `/narrate` (line 298) and
+  `/narrate/stream` (line 493) before any streaming. Real uuid sessions are
+  unaffected. Hardened the route anyway (optional-`req.signal` guard + catch-all;
+  commit 971f4f9) and restored it clean (38f5f11).
+- WS7 end-to-end probe (`tools/testing/ws7_stream_probe.py`,
+  session → plan → narrate/stream with a real uuid session):
+  - App Runner direct: HTTP 200 `text/event-stream`, incremental=True,
+    ~190-206 token events, meta carries source=bedrock + model + 2 citations +
+    1 deep_link, done=1 error=0, first token 1.80-3.12s, full reply ~1.4-1.6k chars.
+  - Full prod chain (browser → Vercel `/api/narrate-stream` → App Runner):
+    HTTP 200 `text/event-stream`, incremental=True, 201 token events,
+    first token 2.78s, total 7.63s, meta intact. The WS2-locked unbuffered
+    transport holds in production.
+  - Verdict: transport goal MET (unbuffered, incremental, prod chain).
+    Latency goal (first_token ≤ 1.5s) PARTIALLY met — ~1.8-2.8s, Bedrock-TTFT
+    bound (not transport), still well under the 5517 ms buffered baseline.
+- PROD INCIDENT (separate, pre-existing, NOT from this lane): the cloudflared
+  host `orcast-api.aimez.ai` (which `ORCAST_API_BASE` / the generic `/api/be`
+  proxy uses) returns 503 "Exploration database is temporarily unreachable" for
+  session creation (5.2s), while the App Runner native URL creates sessions in
+  0.44s and RDS `orcast-aws-backend-explore` is `available`. The live browser
+  console is therefore blocked at session creation. App Runner (the stream lane)
+  is healthy. Recommended fix: repoint `ORCAST_API_BASE` to the App Runner URL
+  (matches DEPLOY_VERCEL.md) — operator decision, since it changes prod routing.
