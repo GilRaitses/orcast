@@ -72,3 +72,16 @@
   to WP4 L1 (EC2 re-benchmark).
 - Status: WP3 complete for T1 + T2. Held for operator commit; WP4 Adversarial
   (L1 perf-regression on EC2, L2 honesty, L3 failure-edge) not yet run.
+
+## 2026-06-28 — committed + WP4 adversarial
+
+- Committed WP3 (T1+T2) + charter as `82edeec` (only WS-PERF files staged; not
+  pushed). Large unrelated working tree left untouched.
+- WP4 layers: L1 PARTIAL (local ~3.8x; real-source EC2 re-benchmark pending),
+  L2 PASS (honesty/labels/freshness identical), L3 PASS (added two failure
+  injection tests; degrade-to-unknown, no crash, no fabrication), L4 N/A (T3
+  shipped no code). `DEFECT_REGISTER.md` filed: no blocking/major defects; D-1
+  (per-call executor) and D-2 (log string) deferred with rationale.
+- WP4 test suite: test_planner_trips_branch.py 18 passed.
+- Remaining before WP6 acceptance: the L1 real-source EC2 re-benchmark
+  (billable, operator-gated).

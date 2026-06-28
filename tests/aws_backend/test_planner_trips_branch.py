@@ -448,3 +448,56 @@ def test_visiting_and_here_now_never_call_traffic_flows(branch, monkeypatch):
     # The turn completed without tripping the traffic_flows guard.
     panel_ids = [p["id"] for p in intent["panels"]]
     assert "connections_plan" in panel_ids
+
+
+# --------------------------------------------------------------------------- #
+# 7. WS-PERF adversarial L3 (failure-edge): the concurrent fan-out must degrade
+#    EXACTLY like the old sequential path when one leg raises. A failed leg
+#    becomes "unknown" (None), never a fabricated value or a dropped plan, and
+#    the surviving legs still set their labels, composite, and freshness.
+# --------------------------------------------------------------------------- #
+
+def _exploding(*_a, **_k):
+    raise RuntimeError("simulated source outage")
+
+
+def test_fanout_vessel_failure_degrades_to_unknown_not_zero():
+    # vessel_locations blows up; schedule + sailing space still resolve.
+    clients = _clients(vessel_locations=_exploding)
+    plan = cx.plan_connection(_connection_intent(), clients=clients, now=NOW)
+
+    legs = {leg["leg"]: leg for leg in plan["legs"]}
+    ferry = legs["ferry"]
+    # The failed live vessel signal is unknown, never a fabricated ETA.
+    assert ferry["vessel"] is None
+    # The surviving signals still labelled the leg (schedule published + space).
+    assert ferry["sailing"] is not None
+    assert ferry["space"] is not None
+    assert ferry["label"] == cx.PUBLISHED
+    # Composite remains the weakest leg on the path (the modeled drive).
+    assert plan["composite_label"] == cx.MODELED
+    # Freshness still stamped from the measured sailing-space signal.
+    assert plan["freshness"] is not None
+
+
+def test_fanout_total_outage_yields_unknown_plan_not_crash():
+    # Every live leg raises; the plan must still return, fully "unknown".
+    clients = _clients(
+        schedule=_exploding,
+        sailing_space=_exploding,
+        vessel_locations=_exploding,
+        predict_eta=_exploding,
+    )
+    plan = cx.plan_connection(_connection_intent(), clients=clients, now=NOW)
+
+    legs = {leg["leg"]: leg for leg in plan["legs"]}
+    # Drive leg unknown (no eta), still always labelled modeled by contract.
+    assert legs["drive"]["eta_minutes"] is None
+    assert legs["drive"]["label"] == cx.MODELED
+    # Ferry leg carries no fabricated signals.
+    assert legs["ferry"]["sailing"] is None
+    assert legs["ferry"]["space"] is None
+    assert legs["ferry"]["vessel"] is None
+    # No measured signal used -> no freshness stamp, feasibility unknown.
+    assert plan["freshness"] is None
+    assert plan["feasibility"]["verdict"] == "unknown"
