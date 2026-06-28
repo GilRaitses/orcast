@@ -376,7 +376,7 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
                     </div>
                   ) : (
                     <div key={t.id} className="ask-assistant">
-                      <strong style={{ display: "block" }}>Orchestrator</strong>
+                      <strong style={{ display: "block" }}>Guide</strong>
                       {t.pending ? (
                         <div className="muted" aria-live="polite">Narrating…</div>
                       ) : t.streaming ? (

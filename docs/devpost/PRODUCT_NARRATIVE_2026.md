@@ -26,8 +26,10 @@ on, not a separate feature.
 
 ### B side, the research workbench
 
-A behavior-analysis research workbench with tools for collaborative annotation,
-dtag modeling replay, and the terrain and bathymetry 3D twin. The workbench
+A behavior-analysis research workbench. Collaborative review of community reports
+and annotation of hydrophone detections run today, a modeled terrain and
+bathymetry 3D twin lives in the research sandbox, and the build is extending
+toward dtag modeling replay. The workbench
 exists to close a gap that advances both sides of the loop. Better behavior
 analysis sharpens the forecast that grounds the visitor trips, and the visitor
 activity and the twin give the research side more to work with.
