@@ -4,6 +4,8 @@
 
 Record the **same narrative** as [DEMO_STORYBOARD.md](DEMO_STORYBOARD.md) on https://orcast-h0.vercel.app without clicking WorkOS sign-in. Playwright (or curl scripts) inject `X-ORCAST-Agent-Key` so protected routes behave like a signed-in reviewer.
 
+**Narrative spine.** orcast is a two-sided loop. Encounter forecasting is the grounding layer, and these beats walk the A side visitor console plus the stewardship seam. The B side research workbench and the AI orchestration bridge are the direction the build is heading, not shipped surfaces. The recorded beats are unchanged.
+
 Manual alternative: sign in with WorkOS before recording ([DEMO_STORYBOARD.md](DEMO_STORYBOARD.md) setup).
 
 ## Prerequisite
@@ -45,7 +47,7 @@ Tagged: **[PROBLEM]**, **[WORKING APP]**, **[DATABASE]**.
 
 ### Beat 1, [PROBLEM] Home
 
-**Say:** "Wildlife forecasts usually show a confident map that hides how thin the evidence is. For endangered orcas watched from shore and kayak, that's misleading. **orcast** always shows the forecast, but only the confidence its gates have earned. You're seeing 0% right now. That's the honest answer: the model fitted, but the gate battery says the fit isn't sharp enough to display high confidence without a human promotion decision. That gate is the product."
+**Say:** "Wildlife forecasts usually show a confident map that hides how thin the evidence is. For endangered orcas watched from shore and kayak, that's misleading. **orcast** always shows the forecast, but only the confidence its gates have earned. This forecast is the grounding layer that a visitor console and a research workbench both stand on. You're seeing 0% right now. That's the honest answer: the model fitted, but the gate battery says the fit isn't sharp enough to display high confidence without a human promotion decision. That gate is the product."
 
 ### Beat 2, [WORKING APP] Provenance
 
@@ -75,7 +77,7 @@ Tagged: **[PROBLEM]**, **[WORKING APP]**, **[DATABASE]**.
 
 ### Beat 8, Close
 
-**Say:** "Vercel frontend, App Runner API, DynamoDB system of record, Central Casting interactions, Step Functions orchestrator, Bedrock for sighting narration. **orcast**, a forecast you can use in the field and defend in public."
+**Say:** "Vercel frontend, App Runner API, DynamoDB system of record, Central Casting interactions, Step Functions orchestrator, Bedrock for sighting narration. The forecast is the grounding layer under a visitor console and a research workbench, and the orchestration direction serves three parties, tourists, researchers, and the whales themselves. **orcast**, a forecast you can use in the field and defend in public."
 
 ## Playwright spec
 

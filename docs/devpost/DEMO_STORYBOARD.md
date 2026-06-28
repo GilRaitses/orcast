@@ -2,6 +2,8 @@
 
 **Project:** Physical world model fusion for orca encounter forecasting and community platform for field researchers
 
+**Narrative spine.** orcast is a two-sided loop. Encounter forecasting is the grounding layer, and the demo walks the A side, the visitor console that turns intent into planning objects, plus the stewardship seam. The B side research workbench and the AI orchestration bridge are named as the direction the build is heading, not as shipped surfaces. The same recorded beats below carry that spine. No new beats are added.
+
 Record one take of https://orcast-h0.vercel.app plus one AWS Console tab. Tagged: **[PROBLEM]**, **[WORKING APP]**, **[DATABASE]**.
 
 **Recording paths:**
@@ -21,7 +23,7 @@ Record one take of https://orcast-h0.vercel.app plus one AWS Console tab. Tagged
 
 **Screen:** `/`, map, confidence meter, **orcast** hero (lowercase).
 
-**Say:** "Wildlife forecasts usually show a confident map that hides how thin the evidence is. For endangered orcas watched from shore and kayak, that's misleading. **orcast** always shows the forecast, but only the confidence its gates have earned. 0% is the honest answer right now: the model fitted, the gates said the fit isn't sharp enough yet, and no confidence gets displayed without a human promotion decision."
+**Say:** "Wildlife forecasts usually show a confident map that hides how thin the evidence is. For endangered orcas watched from shore and kayak, that's misleading. **orcast** always shows the forecast, but only the confidence its gates have earned. This forecast is the grounding layer that a visitor console and a research workbench both stand on. 0% is the honest answer right now: the model fitted, the gates said the fit isn't sharp enough yet, and no confidence gets displayed without a human promotion decision."
 
 ---
 
@@ -79,7 +81,7 @@ Record one take of https://orcast-h0.vercel.app plus one AWS Console tab. Tagged
 
 **Screen:** `figures/architecture.png`.
 
-**Say:** "Vercel frontend, App Runner API, DynamoDB system of record, Central Casting interactions, Step Functions orchestrator, Bedrock for sighting narration. **orcast**, a forecast you can use in the field and defend in public."
+**Say:** "Vercel frontend, App Runner API, DynamoDB system of record, Central Casting interactions, Step Functions orchestrator, Bedrock for sighting narration. The forecast is the grounding layer under a visitor console and a research workbench, and the orchestration direction serves three parties, tourists, researchers, and the whales themselves. **orcast**, a forecast you can use in the field and defend in public."
 
 ---
 

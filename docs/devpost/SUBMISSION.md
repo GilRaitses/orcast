@@ -4,23 +4,31 @@ H0: Hack the Zero Stack. Track: Open innovation. Primary AWS database: Amazon Dy
 
 ## Tagline
 
-A whale-encounter forecast that shows only the confidence its evidence has earned, every hot cell traces back to its data, and a human signs off before any confidence is promoted.
+orcast is a two-sided loop around Salish Sea killer whales. Encounter forecasting is the grounding layer that both a public visitor console and a behavior-analysis research workbench stand on, and an AI orchestration layer is set up for shared benefit across three parties, the tourists who visit, the researchers who study whale behavior, and the whales themselves.
+
+## The two-sided loop
+
+Encounter forecasting is the grounding layer, not the end product. Both sides of the loop stand on the same forecast, and each side improves it.
+
+The A side is the visitor console. A visitor states intent and the console transduces that intent into planning objects, the map, gates, decision, and provenance panels the visitor acts on. Trip use cases such as a shore watch, a kayak outing, or a ferry crossing share one grounding forecast, so the forecast is the substrate the planning objects are built on rather than a separate feature.
+
+The B side is a behavior-analysis research workbench. It carries collaborative review of community reports today, and the build is extending toward dtag modeling replay and a terrain and bathymetry 3D twin of the San Juan Islands. The workbench exists to close a gap that advances both sides. Sharper behavior analysis sharpens the forecast that grounds the visitor trips, and the visitor activity and the twin give the research side more to work with.
+
+The bridge is an AI managed-orchestration layer that runs the routines across both sides. It is the orchestration direction set out by the pax Friend console, the liquid-glass research console tracked in the LGC lane. That console is chartered and not yet shipped, so it is the direction the orchestration is built toward rather than a delivered surface. It is set up for the best shared benefit across conservation, enjoyment, and rigor, for the tourists visiting the Salish Sea, the researchers studying whale behavior, and the whales themselves.
 
 ## Problem, for whom, and why
 
 Wildlife and environmental forecasts present a smooth, confident surface that hides how thin or biased the underlying evidence is. A shore or kayak whale-watcher looking at a "hotspot" cannot tell whether it reflects real animal behavior or just where people happened to look. Researchers and data stewards have no audit trail from a displayed prediction back to the observations and statistical checks behind it.
 
-**orcast** is built for three users:
+orcast serves three parties at once. Shore and kayak whale-watchers act on the public forecast, the sighting check, and the field journal. Field scientists and naturalists work the fitness-gate dashboard, the provenance drill-down, the glossary, and the research workbench. Data stewards run the citizen-science moderation queue and the human promotion approvals. The whales themselves are the third party the loop is set up to benefit, because a forecast that does not oversell and a research side that sharpens it together steer attention and effort more honestly.
 
-- Shore and kayak whale-watchers (public forecast, sighting check, field journal),
-- Field scientists and naturalists (fitness-gate dashboard, provenance drill-down, glossary),
-- Data stewards (citizen-science moderation queue and human promotion approvals).
-
-Why this problem: the Southern Resident killer whales are endangered, sightings are effort-biased, and acoustic detections are sparse. An auditable forecast with explicit integrity conditions is more useful than a falsely precise one. Every operational entity, sightings, moderation queue, decision audit log, field journal, hotspots, reports, ingestion runs, lives in **Amazon DynamoDB**.
+Why this problem. The Southern Resident killer whales are endangered, sightings are effort-biased, and acoustic detections are sparse. An auditable forecast with explicit integrity conditions is more useful than a falsely precise one. Every operational entity, sightings, moderation queue, decision audit log, field journal, hotspots, reports, and ingestion runs, lives in **Amazon DynamoDB**.
 
 See [WHITEPAPER_HYPOTHESIS.md](WHITEPAPER_HYPOTHESIS.md) for the formal gap-and-hypothesis framing.
 
 ## What it does
+
+The forecast is the grounding layer under everything below. The visitor console reads it to build planning objects, and the research and stewardship tools read and improve it. The capabilities that ship today are the A side of the loop plus the stewardship seam.
 
 - **Always-on forecast** with inline confidence. The forecast is shown from day one; sharpness is governed by automated fitness gates plus a human promotion step.
 - **Click-to-trace provenance.** Tap any map cell to see kernel contributions, gate verdicts, and a nearby evidence sample.
@@ -67,13 +75,13 @@ See [figures/architecture.png](figures/architecture.png). The Next.js app on Ver
 
 ## 3-minute demo script (keyed to the live UI)
 
-1. **(0:00–0:20) Problem + home.** Open https://orcast-h0.vercel.app. "Wildlife forecasts hide how thin the evidence is. **orcast** shows the map anyway, but only the confidence the gates have earned."
+1. **(0:00–0:20) Problem + home.** Open https://orcast-h0.vercel.app. "Wildlife forecasts hide how thin the evidence is. **orcast** shows the map anyway, but only the confidence the gates have earned. This forecast is the grounding layer that a visitor console and a research workbench both stand on."
 2. **(0:20–0:45) Provenance.** Tap a water cell in the pilot region. Show kernels, gate verdicts, nearby evidence. "Nothing is asserted without a back-link."
 3. **(0:45–1:15) Gates.** Open `/gates`. Walk integrity conditions and Level 1 PSTH. "When gates fail or data is partial, we say so on the surface, not in a footnote."
 4. **(1:15–1:35) Explore planner (optional).** Sign in. Open `/explore?planner=1`, ask "show gates and provenance for this cell." Show `ui_intent` panels updating. "Central Casting plans the surface before narration."
 5. **(1:35–2:00) Journal + moderation + DynamoDB.** Sign in (WorkOS). `/journal` → save → **Publish to community**. `/moderation` → approve. "Private notes stay private until publish; the queue is DynamoDB."
 6. **(2:00–2:25) Database proof.** AWS Console → DynamoDB → nine `orcast-aws-backend-*` tables.
-7. **(2:25–3:00) Architecture + close.** Show [architecture.png](figures/architecture.png). "Vercel → App Runner → DynamoDB + Central Casting. Built for audits, not black boxes."
+7. **(2:25–3:00) Architecture + close.** Show [architecture.png](figures/architecture.png). "Vercel frontend, App Runner API, DynamoDB system of record, and Central Casting interactions. The forecast grounds a visitor console and a research workbench, and the orchestration direction serves tourists, researchers, and the whales themselves. Built for audits, not black boxes."
 
 Full beat sheet: [DEMO_STORYBOARD.md](DEMO_STORYBOARD.md).
 
