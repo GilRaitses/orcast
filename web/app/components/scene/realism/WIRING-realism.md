@@ -1,4 +1,4 @@
-# WIRING-realism.md — mounting the realism module into SalishScene.tsx
+# WIRING-realism.md - mounting the realism module into SalishScene.tsx
 
 Wave 1, agent A. This tells the Wave 2 integrator (the sole editor of
 `web/app/components/scene/SalishScene.tsx`) exactly how to mount the realism
@@ -23,7 +23,7 @@ already in `web/package.json`).
 
 The module uses the SalishScene frame from `web/lib/sceneIntent.ts`: `+X` east,
 `+Y` up, `-Z` north (so `+Z` is south). `makeSun().direction` is the unit vector
-pointing **toward the sun** — assign it (scaled) to a directional light's
+pointing **toward the sun** - assign it (scaled) to a directional light's
 `position`. The water plane is authored in XY and rotated `-PI/2` about X, the
 same orientation as the existing `WaterPlane`.
 

@@ -2,7 +2,7 @@
 
 // Wave 1 de-risk sandbox scene. Proves the imperative `3d-tiles-renderer`
 // TilesRenderer coexists with: r3f's render loop (useFrame), drei OrbitControls,
-// shadow-mapped lighting, and a raycast pick — all WITHOUT touching the live
+// shadow-mapped lighting, and a raycast pick - all WITHOUT touching the live
 // SalishScene.tsx. Visual confirmation that geometry actually renders is a Wave 2
 // task (no dev server is run during a parallel wave); this file is type-checked
 // only.
@@ -138,7 +138,7 @@ export default function TilesSandboxScene() {
           pointerEvents: "none",
         }}
       >
-        <strong>3D Tiles sandbox</strong> — orcast CUDEM pilot (modeled, not measured).
+        <strong>3D Tiles sandbox</strong> - orcast CUDEM pilot (modeled, not measured).
         {pick ? (
           <span>
             {" "}

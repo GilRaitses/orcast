@@ -1,4 +1,4 @@
-# WIRING-renderer.md — mounting `3d-tiles-renderer` inside react-three-fiber
+# WIRING-renderer.md - mounting `3d-tiles-renderer` inside react-three-fiber
 
 Wave 1, agent E (renderer sandbox) of the orcast terrain+bathymetry coastal twin
 charter. This documents the **r3f + imperative `TilesRenderer` mount pattern** so
@@ -17,11 +17,11 @@ scene; the proof lives entirely under `web/app/(sandbox)/tiles3d/`.
   so they need no extra npm package.
 
 - Route files (all new, isolated):
-  - `useTilesRenderer.ts` — the reusable lifecycle hook (the artifact Wave 2 reuses).
-  - `TilesSandboxScene.tsx` — r3f `<Canvas>` proving coexistence with OrbitControls,
+  - `useTilesRenderer.ts` - the reusable lifecycle hook (the artifact Wave 2 reuses).
+  - `TilesSandboxScene.tsx` - r3f `<Canvas>` proving coexistence with OrbitControls,
     shadows, and a raycast pick.
-  - `TilesSandboxHost.tsx` — `dynamic(..., { ssr: false })` wrapper (mirrors `SceneHost`).
-  - `page.tsx` — route at `/tiles3d` under the `(sandbox)` route group.
+  - `TilesSandboxHost.tsx` - `dynamic(..., { ssr: false })` wrapper (mirrors `SceneHost`).
+  - `page.tsx` - route at `/tiles3d` under the `(sandbox)` route group.
 
 ## The mount pattern (lifecycle)
 
@@ -55,7 +55,7 @@ host still settles the LoD; with the default `frameloop="always"` it is a no-op
 safety net.
 
 This is exactly what the maintained `3d-tiles-renderer/r3f` `<TilesRenderer>`
-component does internally — it was used as the reference. **Why hand-write it
+component does internally - it was used as the reference. **Why hand-write it
 instead of importing that component:** Wave 2 mounts into the
 imperatively-authored `SalishScene` and needs the lifecycle inline and editable
 (camera/error-target/shadows tied to existing scene state). The library's r3f
@@ -106,7 +106,7 @@ Two cases for turning that into a `SceneIntent` (`web/lib/sceneIntent.ts`):
   lat/lng/height. Not needed for the local-frame orcast pilot; listed for completeness.
 
 The sandbox HUD only prints the raw world point because the stand-in tileset is
-not georeferenced to the Salish bbox — the lat/lng mapping is a Wave 2 step once
+not georeferenced to the Salish bbox - the lat/lng mapping is a Wave 2 step once
 the real pilot frame is known.
 
 ## Stand-in tileset (MUST be swapped in Wave 2)
@@ -119,7 +119,7 @@ A public OGC **3D Tiles 1.1** sample (asset.version "1.1", implicit QUADTREE
 subtrees, `.glb` content), served with `Access-Control-Allow-Origin: *`. Defined
 as the exported constant `STANDIN_TILESET_URL` in `TilesSandboxScene.tsx`.
 **Wave 2 replaces this single constant** with agent D's baked orcast pilot
-tileset URL (S3/CDN). The mount code does not change — only the URL. This is a
+tileset URL (S3/CDN). The mount code does not change - only the URL. This is a
 stand-in chosen because agent D (pilot bake on EC2) is deferred; it exercises the
 mount pattern, not the orcast geometry.
 
@@ -133,7 +133,7 @@ tuned at runtime without rebuilding the tileset. For the orcast pilot, tune
 ## Adding DRACO / KTX2 for the pilot (if the bake uses them)
 
 `GLTFExtensionsPlugin` already takes the loaders; meshopt is wired. To add the
-others (no new npm dep — both come from `three/addons`):
+others (no new npm dep - both come from `three/addons`):
 
 ```ts
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
@@ -148,7 +148,7 @@ The decoder/transcoder wasm/js assets must be served from the app's `public/`
 
 ## Validation done this wave
 
-- `npx tsc --noEmit` (web type-check) — result reported in the agent return.
+- `npx tsc --noEmit` (web type-check) - result reported in the agent return.
 - **Not done (parallel-wave rule):** no `next dev`, no `next build`. The mount
   therefore is **type-correct and API-correct against `3d-tiles-renderer@0.4.28`
   but not visually confirmed to render**; visual confirmation is the explicit

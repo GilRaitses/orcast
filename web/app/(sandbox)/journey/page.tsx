@@ -8,7 +8,7 @@ import JourneyHost from "./JourneyHost";
 // settle into a continuous orbit of East Sound. The orchestrator runs the visual
 // gate verification here; the director itself is type-checked and framework-free.
 export const metadata: Metadata = {
-  title: "Camera journey sandbox — W1 East Sound",
+  title: "Camera journey sandbox - W1 East Sound",
   robots: { index: false, follow: false },
 };
 

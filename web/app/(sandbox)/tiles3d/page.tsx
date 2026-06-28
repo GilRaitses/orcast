@@ -5,7 +5,7 @@ import TilesSandboxHost from "./TilesSandboxHost";
 // the app's primary navigation; it exists only to de-risk the Wave 2 mount of
 // `3d-tiles-renderer` inside the live react-three-fiber scene.
 export const metadata: Metadata = {
-  title: "3D Tiles sandbox — Wave 1 de-risk",
+  title: "3D Tiles sandbox - Wave 1 de-risk",
   robots: { index: false, follow: false },
 };
 

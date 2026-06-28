@@ -233,7 +233,7 @@ export default function WaterSandboxScene() {
           width: 340,
         }}
       >
-        <strong>Depth-driven water (W2.5)</strong> — modeled, not measured.
+        <strong>Depth-driven water (W2.5)</strong> - modeled, not measured.
         <div style={{ display: "grid", gap: 5, marginTop: 8 }}>
           <Slider label="alphaScale" value={t.depthAlphaScale} min={0.02} max={0.6} step={0.005} onChange={(v) => set("depthAlphaScale", v)} />
           <Slider label="colorScale" value={t.depthColorScale} min={0.02} max={0.8} step={0.005} onChange={(v) => set("depthColorScale", v)} />

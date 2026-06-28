@@ -6,7 +6,7 @@
 // the cloudflared host used by the generic /api/be proxy for everything else).
 //
 // It injects X-ORCAST-Key server-side (the key never reaches the browser) and
-// pipes `resp.body` straight through with streaming headers — never
+// pipes `resp.body` straight through with streaming headers - never
 // `await resp.text()`, which would buffer. The non-stream API stays on /api/be.
 //
 // App Router gotcha: this folder is `narrate-stream` with NO leading underscore;
@@ -70,7 +70,7 @@ async function handleStream(req: NextRequest): Promise<Response> {
     });
   }
 
-  // Abuse bounds first — before the key is injected or any upstream call is made.
+  // Abuse bounds first - before the key is injected or any upstream call is made.
   const ip = clientIp(req);
   if (isRateLimited(ip)) {
     return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {

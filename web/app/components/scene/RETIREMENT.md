@@ -1,4 +1,4 @@
-# RETIREMENT.md — removing the placeholder terrain path from SalishScene.tsx
+# RETIREMENT.md - removing the placeholder terrain path from SalishScene.tsx
 
 Wave 2, agent `legacy-retirement`. This is a plan the **integrator** applies.
 Agent `legacy-retirement` did **not** edit `SalishScene.tsx`, `sceneIntent.ts`,
@@ -25,11 +25,11 @@ ordered checklist at the end is sequenced to minimize line drift.
 
 ## What stays (do NOT remove)
 
-- `HydrophoneBeacon` (lines 110-151) — keep the component. Its **placement**
+- `HydrophoneBeacon` (lines 110-151) - keep the component. Its **placement**
   changes from `sampleDepth` against the heightmap to a tile-surface Y. See
   step 7.
-- `FocusMarker` (lines 262-281) — keep the component, same placement change.
-- `OrbitControls` (lines 250-257) — keep. The integrator sets `minDistance` /
+- `FocusMarker` (lines 262-281) - keep the component, same placement change.
+- `OrbitControls` (lines 250-257) - keep. The integrator sets `minDistance` /
   `maxDistance` from the `onFit` bounding sphere instead of the hard-coded
   20 / 400.
 - The `onIntent` plumbing: `onIntentRef` (lines 157-158), the `cell` emit, and
@@ -276,10 +276,10 @@ runtime bounds + tile-surface Y. The `+ 4` hover offset stays.
 After the removals these imports are no longer referenced and must be dropped to
 keep `npm run typecheck` clean:
 
-- `sampleDepth` — removed with the heightmap path.
-- `sceneDepth` — removed with the `depth`-from-bounds memo.
-- `type Heightmap` — no `Heightmap` state remains.
-- `HEIGHT_SCALE` — removed once beacon/focus Y comes from the tile surface; if
+- `sampleDepth` - removed with the heightmap path.
+- `sceneDepth` - removed with the `depth`-from-bounds memo.
+- `type Heightmap` - no `Heightmap` state remains.
+- `HEIGHT_SCALE` - removed once beacon/focus Y comes from the tile surface; if
   the integrator keeps a vertical-exaggeration knob on the tiles group instead,
   remove it here regardless since the per-vertex height scaling is gone.
 

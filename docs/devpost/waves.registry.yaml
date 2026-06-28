@@ -1463,7 +1463,7 @@ waves:
       - web/app/globals.css
     note: "RP3 build: geo-anchored gazetteer place labels, distance-proportional clamped scale (min/max), LGC glass .scene-label (blur=0 over the canvas). Dispatch: W-LABELS_DISPATCH.md. Accept gate: Read-verified frames at far/rest/near + AA contrast + tsc/copy-gate."
 
-next_wave_set: U
+next_wave_set: H1
 
 gates:
   H0:
