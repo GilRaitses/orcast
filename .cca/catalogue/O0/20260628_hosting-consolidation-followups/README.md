@@ -21,5 +21,8 @@ is retired as primary and dormant as rollback.
 
 ## Status
 
-FW1 + FW-ACCEPT executed by the orchestrator. FW2 is the single open operator
-gate (self-host + Cloudflare teardown via SSM + Cloudflare API).
+COMPLETE (2026-06-28). FW1 + FW-ACCEPT + FW2 all executed and gated. FW2
+(self-host + Cloudflare teardown) was operator-authorized and run with reversible
+canary sequencing; registered as `.ddb` `orcast_selfhost_decommission_v1_20260628`.
+App Runner is now the sole production backend. The shared EC2 host was not
+terminated (pax co-tenants still run).

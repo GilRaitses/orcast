@@ -1,12 +1,15 @@
 # orcast shared self-host — co-tenant runbook
 
-> **RETIRED AS PRIMARY (DD-10, 2026-06-28).** This self-host / cloudflared path is
-> no longer the production backend. App Runner (`orcast-aws-backend`) is the
-> canonical backend; both Vercel upstreams (`ORCAST_API_BASE`, `ORCAST_STREAM_BASE`)
-> point to it. The self-host is a **dormant** rollback only and is the
-> decommission target of the FW2 wave in
-> `.cca/catalogue/O0/20260628_hosting-consolidation-followups/`. The text below is
-> the historical co-tenant runbook; do not treat it as the live topology.
+> **DECOMMISSIONED (DD-10 / FW2, 2026-06-28).** This self-host is no longer
+> running. `orcast-api.service` on `i-04a649f91274e9fce` was stopped + disabled
+> via SSM and the `orcast-api.aimez.ai` Cloudflare ingress + CNAME were removed
+> (see `.ddb` `orcast_selfhost_decommission_v1_20260628`). App Runner
+> (`orcast-aws-backend`) is the SOLE production backend; both Vercel upstreams
+> (`ORCAST_API_BASE`, `ORCAST_STREAM_BASE`) point to it. There is **no self-host
+> rollback** anymore — reverting would require re-provisioning via this runbook
+> AND repairing the DD-6 RDS path. The shared EC2 host still runs the pax
+> `cv`/`shade` co-tenants and was NOT terminated. The text below is the historical
+> provisioning runbook, kept for re-provisioning only; it is not the live topology.
 
 orcast's FastAPI backend runs as a **co-tenant** on the existing pax
 `aimez-services` EC2 (`i-04a649f91274e9fce`, us-east-1), reusing the cloudflared

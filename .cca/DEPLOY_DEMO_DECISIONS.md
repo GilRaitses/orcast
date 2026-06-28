@@ -18,8 +18,8 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
   always-on App Runner cost as the primary path while keeping a one-env-var
   rollback during the deadline.
 - **Status:** SUPERSEDED by DD-10 (2026-06-28). The self-host/Cloudflare path is
-  retired as primary; App Runner is now canonical. Roles reversed: App Runner is
-  primary, the self-host is the dormant rollback.
+  retired as primary; App Runner is now canonical. The self-host was subsequently
+  decommissioned (DD-10 follow-up / FW2, 2026-06-28).
 
 ## DD-2 — Judges hit the same live URL (`orcast-h0.vercel.app`)
 - **Decision:** No demo/storyboard URL change. Judges use `https://orcast-h0.vercel.app`
@@ -115,10 +115,14 @@ Schema: `id · decision · rationale · status`. status ∈ {ratified, open, ope
   Runner `/health` 200; `/api/be/api/explore/sessions` via Vercel 200 (outage
   resolved); `/api/be/api/evidence/assets` 401 (auth gate intact); streamed
   narration first token 1.8-2.8 s incremental; H0 hackathon gate PASS.
-- **Follow-up (operator, post-submission):** physically tear down or repoint the
-  `orcast-api.aimez.ai` Cloudflare ingress + `orcast-api.service`, and reconcile
-  DD-3 (App Runner is now primary, not a paused rollback). Rollback to the
-  self-host requires repairing the self-host RDS path (DD-6) first.
+- **Follow-up — DONE (FW2, 2026-06-28):** the self-host is decommissioned.
+  `orcast-api.service` was stopped + disabled via SSM and the `orcast-api.aimez.ai`
+  Cloudflare ingress + CNAME were removed (pax `cv`/`shade` preserved verbatim).
+  Registered as `.ddb` `orcast_selfhost_decommission_v1_20260628`. **Rollback
+  posture changed:** there is no longer a one-env-var self-host rollback — App
+  Runner is the sole backend; reverting requires re-provisioning the host +
+  Cloudflare ingress AND repairing the DD-6 RDS path. Residual risk: App Runner
+  cold-start window, no warm fallback (consider min-instances / health alarm).
 
 ---
 

@@ -1,0 +1,69 @@
+decision_id: orcast_selfhost_decommission_v1_20260628
+title: Self-host + Cloudflare decommission executed (WS-HOSTFOLLOWUP FW2)
+status: ratified
+date: "2026-06-28"
+patch_type: selfhost_decommission_result
+
+registry:
+  registry_decision_id: 1f1363b2982c1f499d8a43752aceb5e166778db545658c1bdbe0eeb93579a60d
+  artifact_path: .sst/selfhost_decommission_v1.json
+  kind: selfhost_decommission_result
+  scope:
+    platform: orcast
+    env: production
+    lifecycle_id: orcast_platform
+
+parent:
+  hosting_decision: orcast_hosting_consolidation_v1_20260628
+  wave: WS-HOSTFOLLOWUP FW2 (.cca/catalogue/O0/20260628_hosting-consolidation-followups/)
+
+statement:
+  - >-
+    The dormant orcast self-host co-tenant is decommissioned. orcast-api.service on
+    i-04a649f91274e9fce was stopped + disabled via SSM (command
+    67fe0e80-d1ba-407e-aaa0-178371d064eb), and the orcast-api.aimez.ai Cloudflare
+    ingress rule + api.orcast CNAME were removed by a read-modify-write that left
+    the pax cv/shade routes and the catch-all verbatim.
+  - >-
+    App Runner (orcast-aws-backend) is now the SOLE production backend. The
+    previous one-env-var self-host rollback no longer exists; reverting would
+    require re-provisioning the host service + Cloudflare ingress AND repairing the
+    DD-6 RDS path.
+
+adversarial_gates:
+  A1_pre_traffic_dependency: >-
+    PASS. With the self-host stopped (orcast-api.aimez.ai 502), the console
+    (/api/be/* 200), streaming, H0, and pax cv/shade (200) all stayed green —
+    proving zero production dependency on the tunnel before the Cloudflare edit.
+  A2_post_teardown_health: >-
+    PASS. orcast-api.aimez.ai 404 (route gone); pax cv/shade 200; console + explore
+    (aurora_connected=true) + narrate/stream healthy on App Runner; H0 ALL PASS.
+
+verification:
+  selfhost_after: "orcast-api.aimez.ai 404; service inactive+disabled"
+  pax_cotenants_after: "cv.aimez.ai 200, shade.aimez.ai 200"
+  console_after: "/api/be/health 200, /api/be/api/gates 200, /api/be/api/sightings 200"
+  h0_gate: PASS
+
+residual_risk:
+  - "App Runner is the sole backend with no warm fallback; an instance-recycle/cold-start window (~1 min, /api/explore/* 404/503 while /health 200) was observed in FW-ACCEPT. Consider min-instances or a health alarm."
+
+repo_anchoring:
+  branch: main
+  repo_state_verified_against: 85675c0
+
+non_claims:
+  - The shared EC2 host is NOT terminated; it still runs the pax cv/shade co-tenants. Only orcast's service + tunnel route were removed.
+  - The /opt/orcast checkout and host IAM policy were left inert; full host cleanup is a separate optional operator task.
+
+related:
+  hosting_decision: .ddb/decisions/orcast_hosting_consolidation_v1_20260628.yaml
+  baseline_v3: .ddb/decisions/orcast_system_state_baseline_v3_20260628.yaml
+  followup_waveset: .cca/catalogue/O0/20260628_hosting-consolidation-followups/
+
+subordinate_mirror_path: .ddb/receipts/orcast_selfhost_decommission_v1_20260628.md
+
+authority_note: >-
+  Authoritative structured registration lives in this YAML decision plus the
+  registered .sst artifact (.sst/selfhost_decommission_v1.json). The markdown
+  receipt is a subordinate mirror.

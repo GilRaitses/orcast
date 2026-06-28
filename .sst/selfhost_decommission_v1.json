@@ -1,0 +1,36 @@
+{
+  "decision_identity": {
+    "artifact_kind": "selfhost_decommission_result",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "decommission_version": "v1",
+    "decommission_date": "2026-06-28",
+    "parent_decision": "orcast_hosting_consolidation_v1_20260628",
+    "wave": "WS-HOSTFOLLOWUP FW2"
+  },
+  "generated_at": "2026-06-28",
+  "title": "Self-host + Cloudflare decommission executed (FW2): orcast-api.aimez.ai retired",
+  "statement": "The dormant orcast self-host co-tenant is decommissioned. orcast-api.service on i-04a649f91274e9fce was stopped + disabled via SSM, and the orcast-api.aimez.ai Cloudflare ingress rule + api.orcast CNAME were removed. The shared aimez-services tunnel and the pax cv/shade co-tenants are preserved verbatim. App Runner (orcast-aws-backend) is now the sole production backend.",
+  "execution": {
+    "ssm_command_id": "67fe0e80-d1ba-407e-aaa0-178371d064eb",
+    "ssm_result": "orcast-api.service is-active=inactive, is-enabled=disabled",
+    "cloudflare_ingress_before": ["cv.aimez.ai", "shade.aimez.ai", "orcast-api.aimez.ai", "catch-all-404"],
+    "cloudflare_ingress_after": ["cv.aimez.ai", "shade.aimez.ai", "catch-all-404"],
+    "cname_deleted": "orcast-api.aimez.ai (9033e4e5fa2074b771f355e010eb03da)"
+  },
+  "adversarial_gates": {
+    "A1_pre_traffic_dependency": "PASS — with the self-host stopped (orcast-api.aimez.ai 502), the console (/api/be/* 200), streaming, H0, and pax cv/shade (200) all stayed green; zero prod dependency on the tunnel",
+    "A2_post_teardown_health": "PASS — orcast-api.aimez.ai 404 (route gone), pax cv/shade 200, console + explore (aurora_connected=true) + narrate/stream healthy on App Runner, H0 ALL PASS"
+  },
+  "rollback_posture_change": {
+    "before": "self-host was a one-env-var dormant rollback (set ORCAST_API_BASE to orcast-api.aimez.ai)",
+    "after": "NO self-host rollback exists. App Runner is the sole backend. Reverting to a self-host now requires re-provisioning (infra/shared_host/provision_orcast.sh + re-adding the Cloudflare ingress/CNAME) AND repairing the DD-6 RDS path.",
+    "residual_risk": "App Runner instance-recycle/cold-start window observed in FW-ACCEPT (~1 min, /api/explore/* 404/503 while /health 200); no warm fallback. Consider min-instances or a health alarm."
+  },
+  "non_claims": [
+    "The shared EC2 host (i-04a649f91274e9fce) is NOT terminated; it continues to run the pax cv/shade co-tenants. Only orcast's service + tunnel route were removed.",
+    "The orcast checkout at /opt/orcast and the host IAM policy were left in place (inert); full host cleanup is a separate optional operator task."
+  ]
+}
