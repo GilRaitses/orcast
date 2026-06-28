@@ -70,6 +70,10 @@ export async function ensureSession(current: string | null): Promise<string> {
   return res.session_id;
 }
 
+// Phase 1 of a turn: plan only. Returns validated panels + grounded prepare
+// context fast (~hundreds of ms) WITHOUT the ~5s Bedrock narration, so the
+// caller can paint panels immediately. Narration is fetched separately via
+// runAdaptiveNarration so first paint is never gated on the model.
 export async function runAdaptiveTurn(
   sessionId: string,
   ctx: TurnContext,
@@ -84,7 +88,7 @@ export async function runAdaptiveTurn(
     agent: PUBLIC_PLANNER_SPEC,
     viewport: enriched.viewport ?? undefined,
     focus: enriched.focus ?? undefined,
-    narrate: true,
+    narrate: false,
   };
   const res = await fetch("/api/be/api/interactions/plan", {
     method: "POST",
@@ -95,6 +99,49 @@ export async function runAdaptiveTurn(
     throw new Error(`adaptive turn -> ${res.status}`);
   }
   return (await res.json()) as PlanResponse;
+}
+
+export interface NarrationResult {
+  reply: string;
+  source?: string;
+  model?: string;
+}
+
+// Phase 2 of a turn: narration. Reuses the grounded context already returned by
+// runAdaptiveTurn so the backend only runs the narration model (no skills or
+// live source calls re-run). Called after panels render; its latency does not
+// block first paint.
+export async function runAdaptiveNarration(
+  sessionId: string,
+  ctx: TurnContext,
+  plan: PlanResponse,
+): Promise<NarrationResult> {
+  const enriched = enrichTurnContext(ctx);
+  const prep = plan.prepare;
+  const body = {
+    session_id: sessionId,
+    message: enriched.message,
+    agent: PUBLIC_PLANNER_SPEC,
+    viewport: enriched.viewport ?? undefined,
+    focus: enriched.focus ?? undefined,
+    skill_plan: plan.ui_intent.skill_plan ?? [],
+    context: prep.context ?? {},
+    citations: prep.citations ?? [],
+    deep_links: prep.deep_links ?? [],
+    tools_used: prep.tools_used ?? [],
+    gate_ids: prep.gate_ids ?? [],
+    provenance_refs: prep.provenance_refs ?? [],
+  };
+  const res = await fetch("/api/be/api/interactions/narrate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`adaptive narration -> ${res.status}`);
+  }
+  const json = (await res.json()) as { reply?: string; source?: string; model?: string };
+  return { reply: json.reply ?? "", source: json.source, model: json.model };
 }
 
 // Lightweight client-side intent label for the scene -> turn bridge. The

@@ -23,6 +23,8 @@ export interface PlanPreparePayload {
   citations: Array<{ label: string; href: string }>;
   deep_links: Array<{ label: string; href: string }>;
   tools_used: string[];
+  gate_ids: string[];
+  provenance_refs: string[];
   steps: InteractionStep[];
   annotations: InteractionAnnotation[];
 }

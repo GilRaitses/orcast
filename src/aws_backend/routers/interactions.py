@@ -251,6 +251,98 @@ def plan_cast_interaction(
     return response
 
 
+class NarrateRequest(InteractionRequest):
+    """Second-phase narration input for the panels-first turn.
+
+    Carries the grounded context that ``/plan`` already produced so narration can
+    run Bedrock WITHOUT re-dispatching skills or live source calls.
+    """
+
+    skill_plan: list[str] = Field(default_factory=list, max_length=32)
+    context: Dict[str, Any] = Field(default_factory=dict)
+    citations: list[Dict[str, Any]] = Field(default_factory=list)
+    deep_links: list[Dict[str, Any]] = Field(default_factory=list)
+    tools_used: list[str] = Field(default_factory=list)
+    gate_ids: list[str] = Field(default_factory=list)
+    provenance_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def require_agent_source(self) -> "NarrateRequest":
+        return self
+
+
+@router.post("/api/interactions/narrate", dependencies=[Depends(require_api_key)])
+def narrate_cast_interaction(payload: NarrateRequest) -> Dict[str, Any]:
+    """Compose the Bedrock narration for an already-planned turn.
+
+    ``/plan`` returns validated panels + grounded ``prepare`` context quickly; the
+    client paints panels immediately, then calls this with that same context to
+    fetch the ~5s narration asynchronously. The grounded context is reused as-is
+    (``prefetched``), so no skills or live source calls run a second time, and
+    first paint is never gated on the narration model.
+    """
+    _require_aurora()
+    store = SessionStore()
+    if not store.session_exists(payload.session_id):
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    inline = _inline_dict(payload)
+    from ..casting.concierge import _resolve_cast_agent
+    from ..exploration.guide import compose_guide_reply
+
+    agent, _ = _resolve_cast_agent(
+        _store,
+        agent_id=payload.agent_id or DEFAULT_PLANNER_ID,
+        agent_version=payload.agent_version,
+        inline_agent=inline,
+        session_id=payload.session_id,
+    )
+    prefetched = (
+        payload.context,
+        payload.citations,
+        payload.deep_links,
+        payload.tools_used,
+        payload.gate_ids,
+        payload.provenance_refs,
+    )
+    guide = compose_guide_reply(
+        payload.message,
+        viewport=payload.viewport,
+        focus=payload.focus,
+        instructions=agent.instructions,
+        skills=list(payload.skill_plan),
+        prefetched=prefetched,
+        model_id=agent.model.get("model_id"),
+    )
+
+    interaction_id = str(uuid.uuid4())
+    try:
+        store.save_interaction_exchange(
+            payload.session_id,
+            payload.message,
+            guide,
+            interaction_id=interaction_id,
+            managed_agent_id=payload.agent_id or DEFAULT_PLANNER_ID,
+            agent_version=payload.agent_version or "inline",
+            resolved_spec_hash="",
+            hydration_mode="inline" if inline else "managed",
+            skills_invoked=list(payload.skill_plan),
+            interaction_steps=[],
+        )
+    except Exception as exc:  # noqa: BLE001 - persistence is best-effort
+        logger.warning("narrate turn persistence failed: %s", exc)
+
+    return {
+        "status": "success",
+        "interaction_id": interaction_id,
+        "reply": guide.reply,
+        "source": guide.source,
+        "model": guide.model,
+        "citations": guide.citations,
+        "deep_links": guide.deep_links,
+    }
+
+
 @router.post("/api/interactions/prepare")
 def prepare_cast_interaction(payload: InteractionRequest) -> Dict[str, Any]:
     """Return grounded tool context for Vercel AI Gateway narration (no LLM, no persist)."""

@@ -12,6 +12,7 @@ import { getJSON } from "@/lib/api";
 import {
   ensureSession,
   intentToTurn,
+  runAdaptiveNarration,
   runAdaptiveTurn,
   type TurnContext,
 } from "@/lib/adaptiveConsole";
@@ -35,8 +36,17 @@ const BRANCH_OPTIONS: Array<{ id: string; label: string; prompt: string }> = [
 ];
 
 interface ChatTurn {
+  id: string;
   role: "user" | "assistant";
   content: string;
+  // assistant turn whose narration is still arriving (panels already painted)
+  pending?: boolean;
+}
+
+let turnSeq = 0;
+function nextTurnId(): string {
+  turnSeq += 1;
+  return `t${turnSeq}`;
 }
 
 function renderReply(text: string) {
@@ -96,6 +106,7 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
       try {
         const sid = await ensureSession(sessionId);
         if (sid !== sessionId) setSessionId(sid);
+        // Phase 1: plan only. Panels paint now; narration is fetched after.
         const resp = await runAdaptiveTurn(sid, ctx);
         if (extraPanel) {
           hydrophonePanel.current = extraPanel;
@@ -107,10 +118,11 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
           }
         }
         setPlan(resp);
+        const assistantId = nextTurnId();
         setTurns((prev) => [
           ...prev,
-          { role: "user", content: ctx.message },
-          { role: "assistant", content: resp.reply ?? "(no narration)" },
+          { id: nextTurnId(), role: "user", content: ctx.message },
+          { id: assistantId, role: "assistant", content: "", pending: true },
         ]);
         if (ctx.viewport) setFocus({ lat: ctx.viewport.lat, lng: ctx.viewport.lng });
         // WS-INTENT seam F (additive): a planner-returned map_viewport closes the
@@ -120,9 +132,27 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
         // existing request-viewport behavior above is unchanged.
         const plannerViewport = mapViewportFromIntent(resp.ui_intent);
         if (plannerViewport) setFocus({ lat: plannerViewport.lat, lng: plannerViewport.lng });
+        // Panels are interactive now; release the send button before narration.
+        setBusy(false);
+
+        // Phase 2: narration. Reuses the planned context; its latency does not
+        // gate first paint. On failure the panels still stand.
+        try {
+          const nar = await runAdaptiveNarration(sid, ctx, resp);
+          const replyText = nar.reply || "(no narration)";
+          setPlan((prev) => (prev ? { ...prev, reply: replyText } : prev));
+          setTurns((prev) =>
+            prev.map((t) => (t.id === assistantId ? { ...t, content: replyText, pending: false } : t)),
+          );
+        } catch {
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === assistantId ? { ...t, content: "(narration unavailable)", pending: false } : t,
+            ),
+          );
+        }
       } catch (e) {
         setError(String(e));
-      } finally {
         setBusy(false);
       }
     },
@@ -266,16 +296,20 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
             <div className="card explore-replies">
               {turns
                 .slice(-6)
-                .map((t, i) =>
+                .map((t) =>
                   t.role === "user" ? (
-                    <div key={i} className="ask-user">
+                    <div key={t.id} className="ask-user">
                       <strong>You</strong>
                       <div>{t.content}</div>
                     </div>
                   ) : (
-                    <div key={i} className="ask-assistant">
+                    <div key={t.id} className="ask-assistant">
                       <strong style={{ display: "block" }}>Orchestrator</strong>
-                      <div>{renderReply(t.content)}</div>
+                      {t.pending ? (
+                        <div className="muted" aria-live="polite">Narrating…</div>
+                      ) : (
+                        <div>{renderReply(t.content)}</div>
+                      )}
                     </div>
                   ),
                 )}
