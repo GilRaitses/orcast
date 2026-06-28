@@ -12,7 +12,9 @@ Everything needed to submit **orcast** to the H0 hackathon, Open-innovation trac
 | [DEVPOST_DRAFT.md](DEVPOST_DRAFT.md) | Copy/paste into Devpost fields |
 | [DEMO_STORYBOARD.md](DEMO_STORYBOARD.md) | ~3 min video beats |
 | [WHITEPAPER_HYPOTHESIS.md](WHITEPAPER_HYPOTHESIS.md) | **Gap + hypothesis** the platform bridges |
-| [DYNAMODB_PROOF.md](DYNAMODB_PROOF.md) | Seven-table proof + console screenshot guide |
+| [SUBMISSION.md#capabilities-limits-risks-and-future-directions](SUBMISSION.md) | **Capabilities, limits, risks, future** (from the ratified register) |
+| `.sst/tracked_limits_register_v1.json` | Ratified tracked-limits register (machine source of truth) |
+| [DYNAMODB_PROOF.md](DYNAMODB_PROOF.md) | Nine-table proof + console screenshot guide |
 | [HACKATHON_SUBMIT_CHECKLIST.md](HACKATHON_SUBMIT_CHECKLIST.md) | Pre-publish smoke + your action items |
 | [API_AGENTS.md](API_AGENTS.md) | Partner OpenAPI + Claude/OpenAI tool schemas |
 | [figures/architecture.png](figures/architecture.png) | Architecture diagram (upload) |

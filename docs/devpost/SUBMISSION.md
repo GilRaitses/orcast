@@ -40,6 +40,20 @@ The forecast is the grounding layer under everything below. The visitor console 
 - **Citizen-science moderation queue.** Shore sightings are quarantined until a signed-in reviewer approves; approval attaches attribution and low reliability weight.
 - **Human-in-the-loop promotion.** Automated gates are necessary but not sufficient; promotion decisions are written to an immutable audit log.
 
+## Capabilities, limits, risks, and future directions
+
+This is the honest profile of what orcast does today, what it does not, and where it is headed. It is drawn from the ratified tracked-limits register (`.sst/tracked_limits_register_v1.json`, decision `orcast_tracked_limits_register_v1_20260628`) so this prose cannot drift from the decision record.
+
+**Capabilities that ship today.** The A side of the loop plus the stewardship seam: the always-on gated forecast, per-cell provenance, the fitness-gate dashboard with integrity conditions, the exploration guide and surface planner, Central Casting managed agents, the sighting check, the field journal, the citizen-science moderation queue, the immutable human-promotion audit log, trip-branch routing in the console, annotation of hydrophone detections, and a modeled terrain and bathymetry 3D twin in the research sandbox.
+
+**Ratified limits, scientific and scope (hard for the submission window).** Acoustic detection rests on a single sparse station and detections are confidence scores, not reviewed ground truth (TL-01, TL-02). Sightings are effort-biased (TL-03). The gates decline to promote, so the public forecast shows an honest 0% in the pilot (TL-04). The forecast is scoped to the San Juan and Salish core region (TL-05). The 3D twin is modeled in the sandbox, not a shipped route (TL-07). dtag modeling replay and a full annotation workbench are direction, while review and hydrophone annotation are live (TL-08). These are features of the honesty model, not defects.
+
+**Surmountable limits (an owned fix path, deferred by the window or an operator gate).** Excluded covariates graduate through the MLOps signal-modeling lane (TL-06). The pax-Friend liquid-glass orchestration console is chartered, not shipped (TL-09). SES is in sandbox, so interest email reaches verified recipients only while inline link delivery works for everyone (TL-10). ONC is disabled pending input validation (TL-13). The explore3d twin route is not yet deployed to production (TL-14).
+
+**Risks.** App Runner is the sole live backend with no clean warm rollback, although the cold-start user-visible gap is itself closed by a MinSize=2 warm pool measured at zero (TL-11). The self-host checkout is decommissioned and inert, with physical teardown deferred to the operator (TL-12). Host access is SSM-only (TL-15).
+
+**Future directions.** A multi-station acoustic relay with reviewed labels, effort correction and added covariates re-run through the same gate battery, a shipped 3D twin research route, the B-side dtag-replay and annotation workbench, and the pax-Friend liquid-glass orchestration console as the managed bridge across the two sides.
+
 ## AWS Database(s) used: Amazon DynamoDB (primary) + PostgreSQL (exploration sessions)
 
 S3 is object storage, not a database. DynamoDB is the system of record for every operational entity the app reads and writes. **PostgreSQL (RDS)** stores exploration guide session turns on `/explore` only, not sightings, gates, or audit records. S3 holds supporting time-series files and fit artifacts.

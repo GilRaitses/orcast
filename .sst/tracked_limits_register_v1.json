@@ -1,0 +1,236 @@
+{
+  "decision_identity": {
+    "artifact_kind": "tracked_limits_register",
+    "scope": { "platform": "orcast", "env": "production" },
+    "lifecycle_id": "orcast_platform"
+  },
+  "decisiondb_identity_fields": {
+    "register_version": "v1",
+    "register_date": "2026-06-28",
+    "anchor_baseline": "system_state_baseline_v3_20260628"
+  },
+  "generated_at": "2026-06-28",
+  "title": "orcast tracked-limits register v1: ratified capability limits and risks for the submission window",
+  "statement": "First-class, machine-authoritative register of orcast's known limits and residual risks at the submission window, reconciled against the current Vercel + App Runner topology (system_state_baseline_v3). Each limit is marked surmountable (a fix path exists and is owned) or unsurmountable for the submission window (a ratified hard limit, mostly scientific or scope). Seeded from the AX-9 dossier (.cca/AX_ADVERSARIAL_REGISTER.md), baseline v3 tracked_limits, the whitepaper pilot-scope and the model-card caveats, H0 risk assessment, and the Q/U gap registers. This register supersedes the free-text tracked_limits framing in the baselines as the canonical limit source; the docs and web surfaces draw from it so they cannot drift.",
+  "definitions": {
+    "surmountable": "A fix path exists and is owned; deferred only by the submission window or operator gate, not by a fundamental constraint.",
+    "unsurmountable_window": "A ratified hard limit for the submission window, driven by data sparsity, scientific honesty, or product scope; not an infrastructure defect."
+  },
+  "recently_closed": [
+    "App Runner cold-start user-visible gap (closed by coldstart_mitigation_v1: MinSize=2 warm pool, measured gap = 0)",
+    "Self-host + Cloudflare primary path (retired by hosting_consolidation_v1 / selfhost_decommission_v1; App Runner is the sole backend)",
+    "Explore-session RDS write path (baseline v3: now reaches RDS, 200), resolving the prior DD-6 console impact",
+    "P0 authorization bypass on evidence/journal routers (require_api_key, d866e48; re-verified 401)"
+  ],
+  "limits": [
+    {
+      "id": "TL-01",
+      "statement": "Acoustic detection rests on a single hydrophone station and detections are sparse in time and space.",
+      "surmountable": false,
+      "risk": "medium",
+      "blast_radius": "The acoustic signal feeding the forecast is thin; coverage gaps in space and time.",
+      "disposition": "Ratified hard limit for the window; honest on camera and on /gates.",
+      "status": "open",
+      "dd_ref": "WHITEPAPER_HYPOTHESIS.md S5",
+      "owner": "MLOps signal-modeling",
+      "future_direction": "Multi-station relay (OrcaHello array, ONC boundary nodes) graduated through the signal-modeling lane."
+    },
+    {
+      "id": "TL-02",
+      "statement": "Acoustic detections are model confidence scores, not human-reviewed ground truth.",
+      "surmountable": false,
+      "risk": "medium",
+      "blast_radius": "A detection can be a false positive; confidence is not certainty.",
+      "disposition": "Ratified; labeled confidence score not ground truth on every surface that shows it.",
+      "status": "open",
+      "dd_ref": "model-card-lite.md Caveats",
+      "owner": "MLOps signal-modeling",
+      "future_direction": "Human acoustic review loop feeding a labeled detection set."
+    },
+    {
+      "id": "TL-03",
+      "statement": "Community, OBIS, and iNaturalist sightings are effort-biased.",
+      "surmountable": false,
+      "risk": "medium",
+      "blast_radius": "Apparent hotspots can reflect observer effort rather than whale density.",
+      "disposition": "Ratified; the fitness gates downweight and the model card states it.",
+      "status": "open",
+      "dd_ref": "source-datasheets-lite.md",
+      "owner": "MLOps signal-modeling",
+      "future_direction": "Effort-correction covariate (AIS effort, detectability) from the signal-modeling graduation research."
+    },
+    {
+      "id": "TL-04",
+      "statement": "The fitness gates currently decline to promote high confidence; the public forecast shows 0% promoted confidence in the pilot.",
+      "surmountable": false,
+      "risk": "low",
+      "blast_radius": "The map shows an honest 0% rather than a falsely precise number.",
+      "disposition": "Ratified by design; this is the negative-deviance skill, shown with its gate caveat and real number.",
+      "status": "open",
+      "dd_ref": "WHITEPAPER_HYPOTHESIS.md S5",
+      "owner": "MLOps / human promotion",
+      "future_direction": "More data and graduated covariates may let the gates earn a promotion decision."
+    },
+    {
+      "id": "TL-05",
+      "statement": "The forecast is scoped to the San Juan and Salish core pilot region.",
+      "surmountable": false,
+      "risk": "low",
+      "blast_radius": "Cells outside the pilot region are honest nulls, not predictions.",
+      "disposition": "Ratified; provenance says honest outside the pilot region.",
+      "status": "open",
+      "dd_ref": "WHITEPAPER_HYPOTHESIS.md S5",
+      "owner": "MLOps signal-modeling",
+      "future_direction": "Expand the forecast grid as coverage and validation allow."
+    },
+    {
+      "id": "TL-06",
+      "statement": "Several covariates (SST front, currents, prey) are excluded from the current kernel.",
+      "surmountable": true,
+      "risk": "medium",
+      "blast_radius": "The forecast is grounded on a reduced covariate set.",
+      "disposition": "Tracked through the MLOps signal-modeling graduation lane.",
+      "status": "open",
+      "dd_ref": ".cca/catalogue/O0/20260627_mlops",
+      "owner": "MLOps signal-modeling",
+      "future_direction": "Graduate covariates (TA/TB research) into the kernel with gate validation."
+    },
+    {
+      "id": "TL-07",
+      "statement": "The terrain and bathymetry 3D twin is modeled in the research sandbox, not a shipped production research route; modeled not measured.",
+      "surmountable": false,
+      "risk": "low",
+      "blast_radius": "The twin is a modeling surface, not a delivered feature in the submission window.",
+      "disposition": "Ratified; framed as modeled and as direction in the submission.",
+      "status": "open",
+      "dd_ref": "TWIN lane .cca/catalogue/O0/20260627_terrain-bathymetry-twin",
+      "owner": "TWIN lane",
+      "future_direction": "Ship the twin as a research route with geo-anchored labels and the datum/scale fixes already landed."
+    },
+    {
+      "id": "TL-08",
+      "statement": "dtag modeling replay and a full collaborative-annotation workbench are direction, not shipped; hydrophone-detection annotation and the moderation review run today.",
+      "surmountable": false,
+      "risk": "low",
+      "blast_radius": "The B-side workbench is partially live (review, annotation) and partially direction.",
+      "disposition": "Ratified; framed honestly as direction in the submission.",
+      "status": "open",
+      "dd_ref": "PRODUCT_NARRATIVE_2026.md",
+      "owner": "B-side workbench",
+      "future_direction": "Build dtag replay and multi-user annotation on the existing moderation and annotation seams."
+    },
+    {
+      "id": "TL-09",
+      "statement": "The pax-Friend liquid-glass orchestration console (LGC) is chartered, not shipped.",
+      "surmountable": true,
+      "risk": "low",
+      "blast_radius": "The AI orchestration bridge is named as direction, not a delivered surface.",
+      "disposition": "Tracked through the LGC lane.",
+      "status": "open",
+      "dd_ref": ".cca/catalogue/O0/20260628_liquid-glass-console",
+      "owner": "LGC lane",
+      "future_direction": "Build the liquid-glass console per LIQUID_GLASS_CONSOLE_MANIFEST.md."
+    },
+    {
+      "id": "TL-10",
+      "statement": "SES is in sandbox; interest email only sends to verified recipients (inline link delivery works for everyone).",
+      "surmountable": true,
+      "risk": "medium",
+      "blast_radius": "Interest email to an unverified public signup does not send.",
+      "disposition": "Mitigate via an SES production-access request (operator AWS ticket).",
+      "status": "open",
+      "dd_ref": "AX-9",
+      "owner": "operator",
+      "future_direction": "SES production access removes the verified-recipient restriction."
+    },
+    {
+      "id": "TL-11",
+      "statement": "App Runner is the sole live backend; the self-host rollback is dormant with a degraded RDS path, so there is no clean warm fallback.",
+      "surmountable": true,
+      "risk": "low",
+      "blast_radius": "A region or service failure has no instant rollback target.",
+      "disposition": "Accept for the window; the cold-start gap itself is closed (MinSize=2 warm pool, measured gap = 0).",
+      "status": "open",
+      "dd_ref": "DD-10, coldstart_mitigation_v1",
+      "owner": "operator",
+      "future_direction": "Repair the self-host RDS path or stand up a second-region App Runner."
+    },
+    {
+      "id": "TL-12",
+      "statement": "The self-host service and Cloudflare route are decommissioned, but the EC2 checkout and host IAM are left inert; physical teardown is deferred to the operator post-submission.",
+      "surmountable": true,
+      "risk": "low",
+      "blast_radius": "Inert artifacts on a shared host; the pax co-tenants are preserved.",
+      "disposition": "Accept; optional operator cleanup.",
+      "status": "open",
+      "dd_ref": "DD-3, DD-10, selfhost_decommission_v1",
+      "owner": "operator",
+      "future_direction": "Terminate the inert orcast checkout and host IAM when convenient."
+    },
+    {
+      "id": "TL-13",
+      "statement": "ONC hydrophone integration is disabled in production (metadata-only, 503 before any fetch).",
+      "surmountable": true,
+      "risk": "low",
+      "blast_radius": "The hydrophone panel shows metadata only.",
+      "disposition": "Enable on demand after the ONC archive-file filename SSRF validation (AX-2).",
+      "status": "open",
+      "dd_ref": "DD-9, AX-2",
+      "owner": "backend",
+      "future_direction": "Enable ONC with input validation on the archive-file path."
+    },
+    {
+      "id": "TL-14",
+      "statement": "The explore3d live R3F twin frontend is not deployed to production; only the sandbox routes exist.",
+      "surmountable": true,
+      "risk": "medium",
+      "blast_radius": "The 3D twin is not reachable from the production nav.",
+      "disposition": "Decision pending; tracked through the TWIN lane.",
+      "status": "open",
+      "dd_ref": "DD-4, DD-9",
+      "owner": "TWIN lane",
+      "future_direction": "Deploy the twin route once labels, scaling, and LGC styling land."
+    },
+    {
+      "id": "TL-15",
+      "statement": "Host access is SSM-only, with no SSH fallback.",
+      "surmountable": true,
+      "risk": "low",
+      "blast_radius": "Host access depends on SSM availability.",
+      "disposition": "Accept; more secure than an open SSH port.",
+      "status": "open",
+      "dd_ref": "GP-B4",
+      "owner": "operator",
+      "future_direction": "Re-add SSH via the API only if SSM degrades."
+    },
+    {
+      "id": "TL-16",
+      "statement": "SDR O-2/O-3/O-4 internal gate reds and claim drift remain open.",
+      "surmountable": true,
+      "risk": "low",
+      "blast_radius": "Internal gate reds; no judge-facing claim affected.",
+      "disposition": "Accept; existing SDR open items.",
+      "status": "open",
+      "dd_ref": "SDR open items",
+      "owner": "O0",
+      "future_direction": "Close the SDR drift items as the lanes that own them land."
+    },
+    {
+      "id": "TL-17",
+      "statement": "Recorded demo narration is not prose-gated and the demo gallery GIFs are open.",
+      "surmountable": true,
+      "risk": "medium",
+      "blast_radius": "Spoken narration may carry phrasing the text prose gate would block; gallery placeholders.",
+      "disposition": "Addressed by the new director-based demo production lane (DEMO-PROD) with the R3/R5 honesty rubric on every captured beat.",
+      "status": "in_progress",
+      "dd_ref": "DD-7, DEMO-PROD lane",
+      "owner": "DEMO-PROD",
+      "future_direction": "Render the new demo from approved takes only; export the gallery GIFs from the same recordings."
+    }
+  ],
+  "non_claims": [
+    "This register does not change any model output, gate verdict, or topology; it records limits and risks, it does not fix them.",
+    "An unsurmountable-window limit is a ratified scope or scientific-honesty limit, not an admission of an infrastructure defect.",
+    "The recently_closed list records limits resolved by prior ratified decisions; it is not a claim that no new limits will appear."
+  ]
+}

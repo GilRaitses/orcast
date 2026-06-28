@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/account", label: "Account" },
   { href: "/gates", label: "Gates" },
   { href: "/glossary", label: "Glossary" },
+  { href: "/about", label: "About" },
   { href: "/review-dossier/latest", label: "Dossier" },
   { href: "/decisions", label: "Decisions" },
   { href: "/moderation", label: "Moderation" },

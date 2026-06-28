@@ -1,0 +1,66 @@
+decision_id: orcast_tracked_limits_register_v1_20260628
+kind: tracked_limits_register
+status: active
+date: 2026-06-28
+wave: WS-CLOSEOUT TLR
+anchor_baseline: orcast_system_state_baseline_v3_20260628
+scope:
+  platform: orcast
+  env: production
+  lifecycle_id: orcast_platform
+
+title: >-
+  orcast tracked-limits register v1: ratified capability limits and residual
+  risks for the submission window
+
+summary: >-
+  First-class, machine-authoritative register of orcast's known limits and
+  residual risks at the submission window, reconciled against the current Vercel
+  + App Runner topology (system_state_baseline_v3). Each limit is marked
+  surmountable (a fix path exists and is owned) or unsurmountable for the
+  submission window (a ratified hard limit, mostly scientific or scope). It is
+  seeded from the AX-9 dossier, baseline v3 tracked_limits, the whitepaper
+  pilot-scope, the model-card caveats, the H0 risk assessment, and the Q/U gap
+  registers, and becomes the canonical limit source the docs and web surfaces
+  draw from so they cannot drift.
+
+ratified_limits:
+  unsurmountable_window:
+    - TL-01 single hydrophone station, sparse acoustic detections
+    - TL-02 acoustic detections are confidence scores, not reviewed ground truth
+    - TL-03 effort-biased sightings
+    - TL-04 gates decline to promote; honest 0% promoted confidence in the pilot
+    - TL-05 San Juan / Salish core pilot spatial scope
+    - TL-07 3D twin modeled in the research sandbox, not a shipped route
+    - TL-08 dtag replay and full annotation are direction; review + hydrophone annotation are live
+  surmountable:
+    - TL-06 excluded covariates (MLOps signal-modeling)
+    - TL-09 LGC orchestration console chartered, not shipped
+    - TL-10 SES sandbox (verified-recipient only)
+    - TL-11 no clean warm rollback (cold-start gap itself closed)
+    - TL-12 self-host inert checkout teardown deferred
+    - TL-13 ONC disabled in prod (enable-on-demand after SSRF validation)
+    - TL-14 explore3d twin frontend not deployed
+    - TL-15 host access SSM-only
+    - TL-16 SDR O-2/O-3/O-4 drift
+    - TL-17 demo narration not prose-gated; gallery GIFs open (DEMO-PROD addresses)
+
+recently_closed:
+  - App Runner cold-start user-visible gap (coldstart_mitigation_v1, measured gap = 0)
+  - Self-host + Cloudflare primary path (hosting_consolidation_v1 / selfhost_decommission_v1)
+  - Explore-session RDS write path (baseline v3, now 200) resolving DD-6
+  - P0 authorization bypass on evidence/journal routers (require_api_key, d866e48)
+
+adversarial_gate: >-
+  TLR acceptance is a reconciliation gate: every limit on the AX-9 dossier and
+  baseline v3 tracked_limits is either carried forward with a surmountable /
+  unsurmountable mark and a future direction, or moved to recently_closed with
+  the ratified decision that closed it. No limit is dropped silently and no
+  closed limit is re-asserted as open.
+
+non_claims:
+  - This register records limits and risks; it does not change any model output, gate verdict, or topology.
+  - An unsurmountable-window limit is a ratified scope or honesty limit, not an infrastructure defect.
+
+artifact: .sst/tracked_limits_register_v1.json
+receipt: .ddb/receipts/orcast_tracked_limits_register_v1_20260628.md

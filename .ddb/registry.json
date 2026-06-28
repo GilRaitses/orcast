@@ -307,6 +307,38 @@
         "platform": "orcast"
       },
       "status": "active"
+    },
+    {
+      "artifact_hash": "842b4bd73c20e4871a8022b9bd6775f5a88d07088d7fae8a2d93334ff60ff611",
+      "artifact_path": ".sst/tracked_limits_register_v1.json",
+      "decision_id": "3ff942923bf3335df3d8cfb00324b4283125b8b947cc3ff40f66a6d59684d400",
+      "equivalence_policy": {
+        "canonicalization": "JSON key sort with compact separators then sha256.",
+        "compare_fields": [
+          "__full_json__"
+        ],
+        "policy_name": "canonical_json_sha256"
+      },
+      "identity_fields": {
+        "anchor_baseline": "system_state_baseline_v3_20260628",
+        "register_date": "2026-06-28",
+        "register_version": "v1"
+      },
+      "kind": "tracked_limits_register",
+      "provenance": {
+        "generator": {
+          "tool": ".ddb/tools/register_sst.py",
+          "version": "0.1.0"
+        },
+        "inputs": [],
+        "timestamp_utc": "2026-06-28T22:02:52.290337+00:00"
+      },
+      "scope": {
+        "env": "production",
+        "lifecycle_id": "orcast_platform",
+        "platform": "orcast"
+      },
+      "status": "active"
     }
   ],
   "schema_version": "0.1"

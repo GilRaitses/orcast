@@ -45,6 +45,10 @@ The capabilities that ship today are the A side visitor console plus the steward
 - **Grounding quality benchmark:** The surface planner step-log reduces unsupported scientific claim rate ($R_\text{uncited}$) from 91% (Maps-only baseline) to **0%** — measured live against the Gemini Interactions API with Google Maps grounding. Eight parallel scenarios benchmarked, 2026-06-24. ([benchmark tool](tools/testing/grounding_parallel_rag.py)) This metric provides the evaluation primitive that LeCun's world model architecture (AMI, V-JEPA) requires for evidence-bound intermediate representations — and which no existing physical-world AI benchmark currently measures.
 - Immutable promotion audit log in DynamoDB when a reviewer promotes, holds, or rejects confidence.
 
+**Capabilities, limits, and direction (honest profile)**
+
+What ships today is the A side visitor console plus the stewardship seam: the gated forecast, per-cell provenance, the fitness gates with integrity conditions, the exploration guide and surface planner, the sighting check, the field journal, citizen-science moderation, the human-promotion audit log, and a modeled 3D twin in the research sandbox. The ratified hard limits for this window are scientific and scope, not defects: a single sparse acoustic station with unreviewed detections, effort-biased sightings, an honest 0% promoted confidence, a San Juan and Salish core pilot scope, and the B-side dtag-replay and full annotation tools as direction. The future direction is a multi-station relay with reviewed labels, added covariates re-run through the same gates, a shipped twin research route, the B-side workbench, and the pax-Friend orchestration console as the managed bridge. Full register: `.sst/tracked_limits_register_v1.json`.
+
 **For:** shore/kayak whale-watchers, field scientists, data stewards.
 
 **Hypothesis (whitepaper):** [WHITEPAPER_HYPOTHESIS.md](WHITEPAPER_HYPOTHESIS.md) — we bridge the gap between a forecast you can use in the field and one you can defend in public.
