@@ -202,3 +202,21 @@
   console is therefore blocked at session creation. App Runner (the stream lane)
   is healthy. Recommended fix: repoint `ORCAST_API_BASE` to the App Runner URL
   (matches DEPLOY_VERCEL.md) — operator decision, since it changes prod routing.
+
+## 2026-06-28 — Console restored + WS7 UI confirmation (WS-STREAM COMPLETE)
+
+- Operator chose the rollback/repoint path. Swapped `ORCAST_API_BASE` on
+  `orcast-h0` (deleted the broken sensitive entry id 9p1HaQtkvfSTzY7O, recreated
+  → `https://pjrftm3bkv.us-west-2.awsapprunner.com`) and redeployed production.
+  Verified: `/api/be/api/explore/sessions` now 200 in ~0.97s (was 503). Rollback
+  target if the self-host cutover is restored: `https://orcast-api.aimez.ai`.
+- Browser UI walkthrough on the restored console: sessions 200, plan 200,
+  narrate-stream succeeded (~5s), full narration rendered, panels-first
+  preserved, no 503/errors. Visual partial-vs-full screenshot not captured
+  (browser-tool viewport too narrow + ~5s completion); progressive delivery is
+  already proven at the wire by the probe (incremental=True, 201 token events,
+  text/event-stream) over the Vercel→App Runner chain.
+- WS-STREAM verdict: COMPLETE. Streamed narration is live in production and
+  validated end-to-end. Transport goal met (unbuffered/incremental prod chain);
+  first-token ~1.8-2.8s (Bedrock-TTFT bound) is a tracked latency follow-up, not
+  a transport blocker.
