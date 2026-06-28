@@ -36,10 +36,16 @@ export interface UseTilesLayerOptions {
   groupRotationX?: number;
   /**
    * When a number, on first tileset load the group is uniformly scaled so the
-   * runtime bounding-sphere DIAMETER equals this many scene units, and recentered
-   * so the sphere center sits at the world origin. This lets the caller fit a
-   * real-meters tileset into the synthetic frame (SCENE_WIDTH = 120). When null,
-   * no scaling is applied. Default null.
+   * runtime bounding-sphere DIAMETER equals this many scene units, then recentered
+   * HORIZONTALLY so the sphere center's X/Z sit at the world origin. The VERTICAL
+   * axis is NOT recentered to the sphere center (the elevation midpoint, about
+   * +178 m NAVD88): the orcast tileset has no root transform and its glTF Y is
+   * NAVD88 elevation in metres, so the local frame's vertical origin already IS
+   * NAVD88 0 m. Leaving the vertical group position at 0 lands NAVD88 0 m at scene
+   * Y 0, which is the sea-level reference the water plane and shoreline tint key
+   * off (WIRING-host.md: "Root transform: none ... Y = NAVD88 elevation"). This
+   * lets the caller fit a real-meters tileset into the synthetic frame
+   * (SCENE_WIDTH = 120). When null, no scaling is applied. Default null.
    */
   fitScaleToWidth?: number | null;
   /**
@@ -189,13 +195,20 @@ export function useTilesLayer({
       group.scale.setScalar(scale);
 
       // Recenter: the matrix is composed as T * R * S, so a local point p lands
-      // at position + R * (scale * p). Choose position so the sphere center lands
-      // at the world origin.
+      // at position + R * (scale * p). Recenter HORIZONTALLY so the sphere center
+      // lands on the world Y axis (X = Z = 0), but leave the VERTICAL position at
+      // 0 rather than subtracting the sphere center's elevation. The tileset has
+      // no root transform and its glTF Y is NAVD88 metres, so the local frame's
+      // vertical origin is already NAVD88 0 m; with the group's -90deg X rotation
+      // a local point's world Y is scale * (local elevation), so leaving position.y
+      // at 0 maps NAVD88 0 m to scene Y 0 (the sea-level datum the water plane and
+      // shoreline tint depend on). Subtracting rotated.y instead would drag the
+      // elevation midpoint (~+178 m) to Y 0, sinking NAVD88 0 m below it (W2.6).
       const rotated = sphere.center
         .clone()
         .applyEuler(new THREE.Euler(group.rotation.x, group.rotation.y, group.rotation.z))
         .multiplyScalar(scale);
-      group.position.set(-rotated.x, -rotated.y, -rotated.z);
+      group.position.set(-rotated.x, 0, -rotated.z);
     }
 
     group.updateMatrixWorld(true);

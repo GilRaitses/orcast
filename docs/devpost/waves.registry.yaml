@@ -1213,6 +1213,114 @@ waves:
     depends_on: [WL-PREY, WL-SRKW, WL-ACOUSTIC, WL-PREYBASE]
     note: "WILDLIFE_SOURCES_REGISTER.md: ranked by gate impact (multi-station acoustic > real Chinook index > held-out visual), P0/P1/P2 acquisition order"
 
+  - id: LGC-W0
+    family: LGC
+    type: probe
+    status: chartered
+    home: .cca/catalogue/O0/20260628_liquid-glass-console/
+    operator_gate: target-surface confirmation (web/ vs legacy frontends) returns to O0
+    note: "Liquid-glass research console port from pax_v0. Target surface is web/ (Next.js/React/TS, same stack as the reference), NOT root css/+js/ or orcast-angular/. W0 research/drift + target-surface confirm. Collision lock with the 3D-twin and console ghost-text lanes on web/ scene/** and the chat shell."
+  - id: LGC-W1
+    family: LGC
+    type: implement
+    status: chartered
+    depends_on: [LGC-W0]
+    note: candidate design space (tokens in web/app/globals.css, React focus-model binding, preload) scored against M1-M10
+  - id: LGC-W2
+    family: LGC
+    type: implement
+    status: chartered
+    depends_on: [LGC-W1]
+    note: select design + architecture note
+  - id: LGC-W3
+    family: LGC
+    type: gate
+    status: chartered
+    depends_on: [LGC-W2]
+    operator_gate: design acceptance on prototype evidence (M1,M2,M4,M5,M6,M7)
+  - id: LGC-W4
+    family: LGC
+    type: implement
+    status: chartered
+    depends_on: [LGC-W3]
+    scope_globs:
+      - web/app/globals.css
+      - web/lib/focus/
+      - web/app/components/
+    note: tokens, GlassSurface (React + .glass-surface CSS), focus model + binding, self-hide, edge panels, consent-gated preload
+  - id: LGC-W5
+    family: LGC
+    type: verify
+    status: chartered
+    depends_on: [LGC-W4]
+    note: static gates (copy-gate M8 + tsc/lint), focus unit test M4, Playwright walkthrough M9, perf A/B M3, Read-verified frames M10, researcher-gate M7
+  - id: LGC-W6
+    family: LGC
+    type: review
+    status: chartered
+    depends_on: [LGC-W5]
+    note: adversarial review; exits at zero open P0/P1
+  - id: LGC-W7
+    family: LGC
+    type: gate
+    status: chartered
+    depends_on: [LGC-W6]
+    operator_gate: final acceptance M1-M10 on the running app with Read-examined evidence; gated for commit/push/promotion
+
+  - id: TWIN-W2.6
+    family: 3D-TWIN
+    type: implement
+    status: dispatched
+    home: .cca/catalogue/O0/20260627_terrain-bathymetry-twin/
+    operator_gate: commit gated to O0; M10 before/after frames required
+    scope_globs:
+      - web/app/components/scene/SalishScene.tsx
+      - web/lib/scene/water2/depthWater.ts
+      - web/lib/scene/tiles/useTilesLayer.ts
+      - web/lib/scene/terrain/terrainStylist.ts
+      - web/lib/scene/bathy/style/bathyTint.ts
+      - web/lib/sceneIntent.ts
+    note: "Datum-frame fix. Root cause: useTilesLayer recenters the tileset bounding-sphere center (elevation midpoint ~178m) to world origin, so NAVD88 0m lands below the hardcoded water plane at Y0; shore tint + bathy overlay also assume Y0==sea level. Fix offsets so NAVD88 0m maps to scene Y0 and drives water level + tint + scale from it. See W2.6_DATUM_DISPATCH.md."
+  - id: TWIN-W-CAM
+    family: 3D-TWIN
+    type: implement
+    status: chartered
+    depends_on: [TWIN-W2.6]
+    operator_gate: commit gated to O0; coordinate SalishScene edits with W4
+    note: "Camera pan-to-named-places + world-anchored geo labels + defined tour. Live scene is NOT random (resting orbit + per-focus journeys supersede each other). Reuses runPlaceJourney primitives + gazetteer; adds place-label rig like the hydrophone beacon labels."
+  - id: TWIN-W-PERFUX
+    family: 3D-TWIN
+    type: probe
+    status: dispatched
+    depends_on: [TWIN-W2.6]
+    note: "Research-first (read-only): slow-load root cause + ranked levers (RP1), tighter default view scope (RP2), more labels + distance-proportional icon scaling with clamp + LGC styling (RP3). Reads the LGC charter to align. See W-PERFUX_RESEARCH_DISPATCH.md."
+
+  - id: CXR-1
+    family: CXR
+    type: implement
+    status: dispatched
+    home: .cca/catalogue/O0/20260628_console-copy-redaction/
+    operator_gate: commit gated to O0
+    scope_globs:
+      - web/app/components/AdaptiveExplore.tsx
+      - web/app/components/ActiveSurfaceHost.tsx
+      - web/app/components/console/OrchestratorTrace.tsx
+      - web/app/components/console/SidequestPanel.tsx
+      - src/aws_backend/exploration/guide.py
+    note: "Redact internal/reviewer copy (promotion, effective confidence, raw agent IDs, skill manifest) leaking on the anonymous public home console. Anonymous tier only; reviewer pages out of scope. Authority is the existing prose/copy gate."
+  - id: CXR-2
+    family: CXR
+    type: verify
+    status: dispatched
+    depends_on: [CXR-1]
+    note: extend copy-gate with a console deny-term grep against rendered strings on the anonymous path
+  - id: CXR-ACCEPT
+    family: CXR
+    type: gate
+    status: dispatched
+    depends_on: [CXR-1, CXR-2]
+    operator_gate: RUN copy-gate + deny-term grep + Read-verified anonymous render; gated to O0
+
 next_wave_set: U
 
 gates:

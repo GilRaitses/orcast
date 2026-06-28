@@ -9,7 +9,6 @@ import { getJSON } from "@/lib/api";
 import {
   ORCASOUND_FALLBACK,
   SCENE_WIDTH,
-  HEIGHT_SCALE,
   projectToScene,
   sceneDepth,
   type HeightmapBounds,
@@ -102,6 +101,14 @@ const TILESET_BOUNDS: HeightmapBounds = {
 // The picking module expects depth = sceneDepth(bounds); beacon XZ uses the same
 // so picks and placements are mutual inverses.
 const SCENE_DEPTH = sceneDepth(TILESET_BOUNDS);
+
+// Sea-level datum reference (W2.6). useTilesLayer fits the tileset so its glTF Y
+// (= NAVD88 elevation in metres, tileset has no root transform) maps to scene Y
+// through the uniform scale with the vertical origin left at 0, so NAVD88 0 m
+// lands at scene Y 0. Everything that keys off sea level (the water plane and
+// foam/column reference, the shoreline tint band) reads this single reference
+// instead of a hardcoded 0, so a future datum change is a one-line edit.
+const SEA_LEVEL_Y = 0;
 
 // --- WS-INTENT viewport bridge constants (B.2 / B.7) ------------------------
 // Resting state per B.7 is a slow continuous orbit around the scene centre, the
@@ -232,7 +239,7 @@ function RealismRig({
       // WS-SCENIC: hand scene.background to the sky dome so realism's flat
       // background and the dome's horizon gradient do not fight.
       background: false,
-      waterOptions: { width: SCENE_WIDTH * 1.6, depth: depth * 1.6, level: 0 },
+      waterOptions: { width: SCENE_WIDTH * 1.6, depth: depth * 1.6, level: SEA_LEVEL_Y },
     });
     handleRef.current = handle;
     if (exposeHandle) exposeHandle.current = handle; // WS-SCENIC lights handle
@@ -276,7 +283,10 @@ function Water2Rig({ depth }: { depth: number }) {
       ...bathyWater2Options({ sunDirection: sun.direction }),
       width: SCENE_WIDTH * 1.6,
       depth: depth * 1.6,
-      level: 0,
+      // W2.6: the water surface (and the foam/column reference the depth shader
+      // derives from uWaterLevel) sits at the NAVD88 0 m datum, now mapped to
+      // scene Y 0 by the tiles fit, instead of a hardcoded literal.
+      level: SEA_LEVEL_Y,
       sunDirection: sun.direction,
       skyColor: skyColor(sun.elevationDeg),
     });
@@ -585,12 +595,22 @@ function useScenicSun(): SunResult {
 // and-slope biome tint so the bare tan relief reads as living land. Effect-only
 // (mounts on the live TilesRenderer, restyles already-streamed tiles, disposes
 // listeners + created materials on unmount). It never changes tile geometry.
-function TerrainStylistRig({ tiles }: { tiles: TilesRenderer | null }) {
+function TerrainStylistRig({
+  tiles,
+  worldUnitsPerMeter,
+}: {
+  tiles: TilesRenderer | null;
+  // W2.6: the live uniform fit scale (scene units per metre). Drives the
+  // shoreline-band height (and the elevation biome thresholds) off the actual
+  // fit instead of the stylist's stale 0.0024 default, so the band tracks the
+  // corrected sea level. Restyle re-runs once the fit reports it.
+  worldUnitsPerMeter?: number;
+}) {
   useEffect(() => {
     if (!tiles) return;
-    const handle = applyTerrainStyle(tiles);
+    const handle = applyTerrainStyle(tiles, { worldUnitsPerMeter });
     return () => handle.dispose();
-  }, [tiles]);
+  }, [tiles, worldUnitsPerMeter]);
   return null;
 }
 
@@ -671,24 +691,35 @@ function FogTuneRig() {
 // the tint reads the modeled CUDEM seabed in the live tile frame. The project
 // callback mirrors how the scene places everything else: projectToScene for X/Z
 // in the TILESET_BOUNDS/SCENE_DEPTH frame (the same frame the beacons use), and
-// depth_m * HEIGHT_SCALE for Y (the documented substrate vertical convention).
-// Mounted at scene root (the projectToScene frame), disposed on unmount. The
-// honesty label and the scene honesty note travel with the object's userData; the
-// deferred measured-overlay stub records loaded=false so the scene stays honestly
-// modeled. The exact depth->Y reconciliation to the live fit-scaled tile frame
-// (the deferred A2 bathy/field projector that was not delivered) is left as a seam
-// for the Director acceptance gate to tune against the water2 uDebug depth read.
-function BathyRig({ field }: { field: SubstrateField | null }) {
+// depth_m * worldUnitsPerMeter for Y (W2.6: the live fit scale, replacing the
+// legacy HEIGHT_SCALE that ran ~12x too tall). Mounted at scene root (the
+// projectToScene frame), disposed on unmount. The honesty label and the scene
+// honesty note travel with the object's userData; the deferred measured-overlay
+// stub records loaded=false so the scene stays honestly modeled. With the live
+// fit scale and the corrected datum the tint Y now agrees with the fit-scaled
+// tile frame (the prior A2 reconciliation seam), sea level at scene Y 0.
+function BathyRig({
+  field,
+  worldUnitsPerMeter,
+}: {
+  field: SubstrateField | null;
+  // W2.6: the live uniform fit scale (scene units per metre). Replaces the legacy
+  // HEIGHT_SCALE (0.04, ~12x too tall) so the modeled seabed tint sits on the same
+  // vertical scale as the rendered CUDEM tiles, with sea level (NAVD88 0 m) at
+  // scene Y 0. depth_m is signed (negative below sea level), so depth_m * scale is
+  // the world Y directly.
+  worldUnitsPerMeter?: number;
+}) {
   const scene = useThree((s) => s.scene);
   useEffect(() => {
-    if (!field) return;
+    if (!field || worldUnitsPerMeter == null) return;
     const project = (
       lat: number,
       lng: number,
       depthM: number,
     ): [number, number, number] => {
       const [x, z] = projectToScene(lat, lng, TILESET_BOUNDS, SCENE_DEPTH);
-      return [x, depthM * HEIGHT_SCALE, z];
+      return [x, depthM * worldUnitsPerMeter, z];
     };
     const tint = buildBathyTint(field, { project });
     // B.6: declare the modeled provenance on the depth-bearing object. The tint
@@ -702,7 +733,7 @@ function BathyRig({ field }: { field: SubstrateField | null }) {
     tint.object.userData.measuredOverlayLoaded = DEFERRED_MEASURED_OVERLAY.loaded;
     tint.apply(scene);
     return () => tint.dispose();
-  }, [scene, field]);
+  }, [scene, field, worldUnitsPerMeter]);
   return null;
 }
 // ----------------------------------------------------------------------------
@@ -803,7 +834,7 @@ function TwinScene({
           for FogTuneRig and the sky dome owns the background RealismRig
           released. Room is left BELOW for the WS-BATHY mount that follows.
           ==================================================================== */}
-      <TerrainStylistRig tiles={tiles} />
+      <TerrainStylistRig tiles={tiles} worldUnitsPerMeter={scenicWorldUnitsPerMeter} />
       <SkyRig />
       <HorizonRig worldUnitsPerMeter={scenicWorldUnitsPerMeter} />
       <FogTuneRig />
@@ -817,7 +848,7 @@ function TwinScene({
           rides along (B.6). The depth-read water tuning is applied in Water2Rig
           above. The measured overlay stays a deferred fast-follow (no fetch).
           ==================================================================== */}
-      <BathyRig field={field} />
+      <BathyRig field={field} worldUnitsPerMeter={scenicWorldUnitsPerMeter} />
       {/* ====================== END WS-BATHY MOUNT ========================== */}
       {tiles && <primitive object={tiles.group} onClick={handlePick} />}
       {showPlaceholder && (

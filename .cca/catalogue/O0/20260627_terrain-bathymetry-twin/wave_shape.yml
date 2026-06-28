@@ -1,0 +1,195 @@
+# orcast terrain+bathymetry coastal twin, machine-readable shape
+# Home: .cca/catalogue/O0/20260627_terrain-bathymetry-twin/
+# Canonical prose: WAVESET_CHARTER.md (copied from the 3d-twin template)
+# Decision record: DECISION_RECORD.md (operator-confirmed 2026-06-27)
+# Reference implementation: ~/.cursor/plans/realistic_nyc_3d_viewer_c0b6b2b4.plan.md
+
+version: 1
+family: 3D-TWIN
+label: terrain-bathymetry-coastal-twin
+home: .cca/catalogue/O0/20260627_terrain-bathymetry-twin/
+status: decision-record-confirmed   # operator-confirmed 2026-06-27; Wave 1 launch pending operator go
+
+execution_model:
+  one_file_one_owner: true
+  single_convergence_file_editor_per_wave: true
+  convergence_file: web/app/components/scene/SalishScene.tsx
+  single_manifest_editor_per_wave: true
+  manifest: web/package.json
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check                      # tsc --noEmit; never a full build in a parallel wave
+  large_artifacts_to: object-storage             # S3; never git
+  honesty_label: "modeled, not measured"
+  subagent_model: inherit                         # operator-confirmed
+  conversion_host_box: aimez.ai-ec2-aws           # operator-confirmed; native arch, no emulation
+
+decision_record:                                 # operator-confirmed (see DECISION_RECORD.md)
+  geometry_source: self-hosted-owned
+  tile_format: 3d-tiles-1.1
+  render_runtime: extend-existing-three           # react-three-fiber scene
+  single_source_of_truth: yes
+  conversion_host: dedicated-native-arch          # aimez.ai EC2 on AWS
+  # terrain+bathymetry specifics (grounded 2026-06-27):
+  primary_source: NOAA-NCEI-CUDEM-1/9-topobathy   # wash_pugetsound; integrates land+sea on one datum
+  source_dem_refinement: USGS-3DEP-1/3-or-1m-PSLC-lidar  # optional land refinement only
+  source_fallback: GEBCO-2024-and-CHS             # coarse / Canadian-side fill if bbox needs it
+  target_crs: EPSG:32610                          # WGS84 / UTM zone 10N, meters
+  vertical_reference: NAVD88-meters               # CUDEM native; VDatum only for non-NAVD88 blends
+  study_extent: { min_lat: 48.40, max_lat: 48.70, min_lng: -123.25, max_lng: -122.75 }  # SAN_JUAN_BOUNDS
+  science_consumer: s_space-depth-habitat-prior   # BathymetryAdapter / spatial_enrichment.py
+
+waves:
+  - id: W1
+    name: foundation-and-de-risk
+    parallelism: 6
+    convergence_file_edits: false                # none of these touch SalishScene.tsx
+    launch_status: pending-operator-go           # dispatch ready in WAVE1_DISPATCH.md
+    agents:
+      - { role: realism-module,    owns: web/app/components/scene/realism/,            deliverable: water+atmosphere+sun+depth-ramp module against a throwaway scene }
+      - { role: reproject-mesh,    owns: infra/3dtwin/reproject/,                       deliverable: "clip CUDEM to bbox, reproject to EPSG:32610 preserving NAVD88 m, mesh integrated surface, mark 0 m shoreline (OWNS the two footguns)", runs_on: aimez.ai-ec2 }
+      - { role: tiler-bakeoff,     owns: infra/3dtwin/bakeoff/,                         deliverable: meshed-surface-to-3D-Tiles vs quantized-mesh on one chunk; recommend one, runs_on: aimez.ai-ec2 }
+      - { role: optimize-assemble, owns: infra/3dtwin/pilot/,                           deliverable: "gltfpack/meshopt + 3D Tiles validator on one chunk; real sizes; artifact to S3", runs_on: aimez.ai-ec2 }
+      - { role: renderer-sandbox,  owns: web/app/(sandbox)/tiles3d/,                    deliverable: mount pilot tileset via 3d-tiles-renderer inside r3f; terrain+seafloor both load, manifest_editor: true }
+      - { role: science-spike,     owns: infra/3dtwin/science/,                         deliverable: rasterize depth/slope field from pilot mesh; confirm BathymetryAdapter ingest; label modeled-not-measured, runs_on: aimez.ai-ec2 }
+    gate: pilot tileset validates AND sandbox renders it
+
+  - id: W2
+    name: integrate-into-live-scene
+    depends_on: [W1]
+    parallelism: 6
+    single_convergence_file_editor: integrator
+    launch_status: gate-MET-structurally-2026-06-27   # S16; visual complaint (water dominance) NOT yet fixed -> A3 depth-driven water in W3/W4. dispatch: WAVE2_DISPATCH.md
+    sequencing: phaseA producers parallel; integrator (phaseB) after the 4 web producers land
+    integrator_hold_reason: "S14 research spike: integrator must mount a real multi-LoD tileset (R1), NOT the single-tile pilot (child geometricError 0.0). Waiting on batch-conversion full-extent LoD bake. Every upload must end with a CloudFront invalidation + cache-busted re-fetch (S14 stale-cache incident). See RESEARCH_SYNTHESIS.md."
+    quickwin_landed: "S14: live placeholder SalishScene vanishing-land bug fixed (terrain winding reversed; water depthWrite=false, biased below Y0, renderOrder 1) + visually verified. Stopgap until integrator retires placeholder."
+    convergence_frame_decision: keep synthetic SCENE_WIDTH=120; scale tiles.group to fit; sea level Y 0; metric migration deferred to W5
+    agents:
+      - { role: integrator,        owns: "web/app/components/scene/SalishScene.tsx + web/lib/sceneIntent.ts", phase: B, deliverable: wire tiles + realism + picking + substrate; retire placeholder; visual-verify }
+      - { role: tiles-layer,       owns: web/lib/scene/tiles/, phase: A, deliverable: reusable useTilesLayer hook (fit-to-width, meshopt, shadows, dispose) }
+      - { role: legacy-retirement, owns: web/app/components/scene/RETIREMENT.md, phase: A, edits_convergence_file: false, deliverable: exact removal plan + fallback toggle }
+      - { role: batch-conversion,  owns: infra/3dtwin/host/, phase: A-async, runs_on: aimez.ai-ec2, deliverable: full-extent LoD 3D Tiles -> s3 /3dtwin/full/ + CloudFront }
+      - { role: science-substrate, owns: web/lib/scene/substrate/, phase: A, deliverable: loadSubstrate + sampleSubstrate + optional overlay (modeled) }
+      - { role: picking-perf,      owns: "web/lib/scene/picking/ + web/package.json", phase: A, manifest_editor: true, deliverable: BVH picking + PerfHud }
+    gate: full-extent (pilot acceptable first) tiles render with agent A realism at interactive frame rate; picking works; legacy path removed behind fallback toggle; visually verified
+
+  # Datum-frame fix (operator-reported 2026-06-28: islands/coastline not aligned to
+  # sea level). Root cause grounded: useTilesLayer recenters the tileset bounding
+  # SPHERE CENTER (elevation midpoint ~178 m of the -376..+734 m NAVD88 range) to
+  # world origin, so NAVD88 0 m lands at negative scene Y while the water plane is
+  # hardcoded at level:0 and the shoreline tint keys off Y==0. Must precede W3/W4
+  # which build materials/modes on a correct vertical reference.
+  - id: W2.6
+    name: datum-frame-fix
+    depends_on: [W2]
+    parallelism: 1                                  # single editor: shared scene + vertical-reference seam
+    single_convergence_file_editor: datum-integrator
+    launch_status: chartered-2026-06-28             # dispatch: W2.6_DATUM_DISPATCH.md; GATED on O0 (commit) + M10 frames
+    root_cause: "bounding-sphere recenter sets elevation midpoint, not NAVD88 0 m, to scene Y 0; water level + shore tint + bathy overlay all assume Y 0 == sea level"
+    decisions:
+      vertical_reference: NAVD88-0m-maps-to-scene-Y-0   # derive a vertical offset after the uniform fit so 0 m NAVD88 lands at Y 0
+      water_level_source: data-driven                   # makeWater2 level driven from the same reference, not hardcoded 0
+      unify_scale: "replace legacy HEIGHT_SCALE (0.04) with live fit scale worldUnitsPerMeter (~0.003) in bathy/substrate + terrain stylist"
+    agents:
+      - { role: datum-integrator, owns: "web/app/components/scene/SalishScene.tsx + web/lib/scene/water2/depthWater.ts + web/lib/scene/tiles/useTilesLayer.ts", deliverable: "after fit, offset group so NAVD88 0 m == scene Y 0; drive water level + foam from that reference; diffs-only" }
+      - { role: tint-scale-fix,   owns: "web/lib/scene/terrain/terrainStylist.ts + web/lib/scene/bathy/style/bathyTint.ts + web/lib/sceneIntent.ts", deliverable: "shore band + bathy overlay keyed to corrected sea-level Y and live worldUnitsPerMeter; diffs-only" }
+      - { role: datum-adversarial, owns: ".cca/catalogue/O0/20260627_terrain-bathymetry-twin/gate_screenshots/", deliverable: "M10 Read-verified frames: coastline sits at the waterline, low islands at sea level, no submerged/floating shore; before+after" }
+    gate: "GATED (O0): in the live scene the coastline meets the water plane and low islands sit at sea level, proven by Read-examined before/after frames; tsc clean; no commit without O0"
+
+  - id: W-CAM
+    name: camera-pan-labels-choreography
+    depends_on: [W2.6]
+    parallelism: 3
+    convergence_file_edits: true                    # touches SalishScene.tsx camera rig; serialize vs W4
+    launch_status: chartered-2026-06-28             # operator asks: stop random-feeling motion, pan named places, world-anchored geo labels, defined tour
+    note: "near-term extraction of the W4 camera-modes + explore-ui geo-label asks; coordinate edit order with W4 to avoid double-editing SalishScene.tsx"
+    decisions:
+      not_random: "the live scene is NOT random; an always-on resting orbit + a place-journey on every focus/search supersede each other. Gate or calm these."
+      labels: "world-anchored <Html> labels above gazetteer place positions (projectToScene + surfaceYAt), like the hydrophone beacon labels but for named places"
+      choreography: "tour registry keyed by gazetteer id, invoked from IntentDirectorRig, reusing runPlaceJourney primitives (flyTo/descendTo/followPath/orbit)"
+    agents:
+      - { role: camera-rig,    owns: "web/app/components/scene/SalishScene.tsx (camera rig only)", deliverable: "calm/gate resting orbit; debounce focus journeys so they do not feel random; diffs-only" }
+      - { role: place-labels,  owns: "web/lib/scene/labels/ + web/lib/geo/gazetteer.ts", deliverable: "world-anchored place-label rig driven by director target / tour waypoints" }
+      - { role: tour-registry, owns: "web/lib/scene/camera/tours.ts", deliverable: "named-place tour registry + entry point, reusing runPlaceJourney" }
+    gate: "GATED (O0): camera pans deliberately to named places with labels visible above their positions, a defined tour runs without random-feeling jumps; Read-verified capture; no commit without O0"
+
+  # Performance + view-scope + labels research (operator-reported 2026-06-28:
+  # land still reads underwater on the deployed pre-fix site; view scope shows too
+  # far back; load is very slow; places need more labels; icon/label scale should
+  # be distance-proportional with a clamp; labels should carry LGC styling). This
+  # is a research-first wave; it reads the LGC charter to align (operator instinct:
+  # LGC focus model can reduce what is rendered).
+  - id: W-PERFUX
+    name: load-perf-view-scope-labels-research
+    depends_on: [W2.6]
+    parallelism: 3
+    convergence_file_edits: false                   # research only; read-only on code, each owns ONE findings doc
+    launch_status: dispatched-2026-06-28            # dispatch: W-PERFUX_RESEARCH_DISPATCH.md
+    reads: [LIQUID_GLASS_CONSOLE_MANIFEST.md, .cca/catalogue/O0/20260628_liquid-glass-console/WAVESET_CHARTER.md]
+    note: "Operator clarification needed before any build: the 'land under water' fix (W2.6) is uncommitted; the live site is pre-fix. This wave researches the NEXT layer of issues, not the datum bug."
+    agents:
+      - { role: load-perf,   owns: ".cca/catalogue/O0/20260627_terrain-bathymetry-twin/research/RP1_load_perf.md", deliverable: "measured root cause of slow load (tile count/LoD/errorTarget/texture sizes/CloudFront/initial download) + ranked levers incl. KTX2/meshopt/draco and lazy LoD" }
+      - { role: view-scope,  owns: ".cca/catalogue/O0/20260627_terrain-bathymetry-twin/research/RP2_view_scope.md", deliverable: "how to default to a tighter useful framing (San Juans core) and load less of the full extent; camera default + optional extent/LoD gating; ties to load-perf" }
+      - { role: labels-scale-style, owns: ".cca/catalogue/O0/20260627_terrain-bathymetry-twin/research/RP3_labels_scale_lgc.md", deliverable: "more gazetteer place labels; distance-proportional icon/label scale with min/max clamp (smaller far, capped near); LGC glass styling for labels/HUD; coordinate with W-CAM + LGC" }
+    gate: "report to O0: ranked, measured perf levers + a recommended default view scope + a label-density/scaling/LGC-style plan, each citing real files and sizes; no code changed"
+
+  # Visual program (charter: VISUAL_PROGRAM_CHARTER.md, decision record confirmed
+  # 2026-06-27). W3 and W4 inserted; the prior scale-science-hardening folds into W5.
+  - id: W3
+    name: world-materials-and-shading
+    depends_on: [W2]
+    parallelism: 6
+    convergence_file_edits: false                # sandbox-only; no SalishScene edits this wave
+    launch_status: pending-W2-gate
+    decisions:                                    # confirmed values driving this wave
+      sky: procedural-Sky-bound-to-makeSun + PMREM-environment   # V1
+      water: env-reflection + DEPTH-DRIVEN-color/alpha (Beer-Lambert from depth buffer); optional 1 depth target for refraction; no SSR  # V2 + A3
+      bathymetry_layers: continuous-ramp + toggleable-isobaths + section-tool; swappable chart(S-52-inspired) vs scientific(cmocean) preset + hillshade  # V3 + A5
+      materials: AI-or-CC0 decorative tileable PBR (sediment/rock/kelp/shore); C2PA + provenance manifest; shaders hand-written; never alter elevation/depth  # A6
+      frame_budget: 60fps-desktop / 30fps-laptop; post only in quality-preset   # V5
+    agents:
+      - { role: sky-env,             owns: web/lib/scene/sky/,                     deliverable: procedural Sky bound to makeSun + PMREM environment regenerated on sun/date change }
+      - { role: terrain-material,    owns: web/lib/scene/materials/terrain/,       deliverable: elevation+slope PBR land material with triplanar detail normal }
+      - { role: seafloor-material,   owns: web/lib/scene/materials/seafloor/,      deliverable: depth-ramp + in-shader isobath contours + slope sediment/rock }
+      - { role: water-upgrade,       owns: web/lib/scene/water2/,                  deliverable: env reflection + analytic depth color + shoreline foam + detail-normal ripples + sun glitter (v2 beside agent A v1) }
+      - { role: tile-material-applier, owns: web/lib/scene/tiles/applyTileMaterials.ts, deliverable: swap materials onto streaming tile meshes on load-model }
+      - { role: perf-harness,        owns: "web/app/(sandbox)/world/ + infra/3dtwin/perf/", deliverable: sandbox compositing all of the above + stats overlay + scripted camera sweep + budget doc, manifest_editor: true }
+    gate: /sandbox/world renders sky + lit land + depth-banded seafloor + upgraded water at/above frame budget; visually verified (screens + frame times)
+
+  - id: W4
+    name: underwater-and-exploration-modes
+    depends_on: [W2, W3]
+    parallelism: 7   # +soundings-overlay (A4)
+    single_convergence_file_editor: integrator   # this wave lands the experience in the live scene
+    launch_status: pending-W3-gate
+    decisions:
+      modes: [overview, fly, dive, section, time-of-day, cinematic, top-down]   # V4 (all)
+      orca_specific: none                         # V7
+    agents:
+      - { role: integrator,          owns: web/app/components/scene/SalishScene.tsx, deliverable: wire sky + materials + water2 + underwater + modes + section + layers + HUD; sole convergence-file editor }
+      - { role: underwater,          owns: web/lib/scene/underwater/,              deliverable: below-surface exp fog/tint + smooth surface transition + underside water + optional particles/shafts (preset-gated) }
+      - { role: camera-modes,        owns: web/lib/scene/camera/,                  deliverable: mode state machine (overview, fly, dive, cinematic, top-down) with smooth transitions }
+      - { role: section-tool,        owns: web/lib/scene/section/,                 deliverable: clip-plane cross-section + cap shader revealing the bathymetry layers }
+      - { role: layers-overlay,      owns: web/lib/scene/layers/,                  deliverable: isobath toggle + s_space habitat overlay (agent F, modeled) + hydrophone layer + toggling }
+      - { role: soundings-overlay,   owns: web/lib/scene/soundings/,               deliverable: "MEASURED soundings OVER (never INTO) modeled CUDEM: NOS H-surveys + ENC SOUNDG + CHS NONNA + San Juan MBES + WA DNR lidar; MLLW->NAVD88 via VDatum; per-source GEBCO TID tag (A4)" }
+      - { role: explore-ui,          owns: web/app/components/scene/hud/,          deliverable: mode switcher + time-of-day slider + depth/position readout + layer toggles + quality preset (copy follows prose gate) }
+    gate: in the live scene operator can switch all modes, dive to see depth-coded layers + a section, toggle overlays, scrub time-of-day, all smoothly; visually verified (screens + short capture)
+
+  - id: W5
+    name: perf-hardening-hosting-science-calibration
+    depends_on: [W4]
+    parallelism: 6
+    launch_status: pending-W4-gate
+    agents:
+      - { role: precision-origin-shift, owns: web/lib/scene/precision/,           deliverable: origin-shift/RTC for full-extent float stability }
+      - { role: texture-compression, owns: infra/3dtwin/textures/,                 deliverable: KTX2/Basis pipeline + manifest loaders; recompress env/normals/overlays, manifest_editor: true }
+      - { role: post-fx,             owns: web/lib/scene/post/,                    deliverable: selective bloom for glitter + optional SSAO/shafts + quality presets, perf-bounded, gated: true }
+      - { role: full-extent-host,    owns: infra/3dtwin/host/,                     deliverable: bake full extent on the EC2 box + host on CloudFront + wire live URL }
+      - { role: science-calibration, owns: "infra/3dtwin/science2/ + docs/",       deliverable: calibrated s_space rasters + provenance + error band + cross-check external bathymetry }
+      - { role: perf-audit-capture,  owns: "docs/ + harness",                      deliverable: VRAM/draw-call audit + frame times across modes/devices + final QA + demo capture }
+    gate: full twin hosted + validated with provenance; every mode within frame budget on target hardware; capture exists
+
+operator_gates:
+  - decision record confirmed before launch
+  - conversion host confirmed before first heavy conversion
+  - any commit or push (explicit operator request only)
+  - wave-to-wave promotion after the stated gate
