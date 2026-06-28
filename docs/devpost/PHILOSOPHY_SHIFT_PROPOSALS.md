@@ -4,7 +4,9 @@ Operator-gated. These surfaces are frozen under SD-025 and the prose gate frozen
 
 ## Frozen surface 1, docs/devpost/DEVPOST_DRAFT.md
 
-This file is frozen and allowlisted in the prose gate. Apply the rewrites below only on an explicit operator go.
+Status: APPLIED 2026-06-28 on operator approval. The elevator pitch, description opening, features lead-in, and verbatim honesty note below are now live in `docs/devpost/DEVPOST_DRAFT.md`.
+
+This file is frozen and allowlisted in the prose gate. The rewrites below were applied on explicit operator go.
 
 ### Elevator pitch, proposed replacement
 
@@ -25,6 +27,8 @@ The capabilities that ship today are the A side visitor console plus the steward
 The forecast is a modeled probability not an observed sighting. Detection is a confidence score not ground truth. Probability zones are predictions not guarantees. The 3D twin is modeled not measured.
 
 ## Frozen surface 2, locked demo recording and a-gate assets
+
+Status: NARRATION APPROVED, RE-RECORD NOT EXECUTED. The locked `demo-walkthrough.webm` is unchanged. The approved beat-1 and beat-8 narration below is staged for a re-record run, which remains a separate manual action and was not triggered here.
 
 The recorded `demo-walkthrough.webm` and the `a-gate` assets are locked under SD-025. Do not re-cut the locked recording. If the operator authorizes a re-record, the narration below carries the loop spine onto the same beats without adding beats.
 
