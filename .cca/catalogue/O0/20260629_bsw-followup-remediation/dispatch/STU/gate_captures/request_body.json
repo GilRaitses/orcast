@@ -1,0 +1,18 @@
+{
+    "deployment_id": "cascadia_2010_k33_test",
+    "target": { "kind": "dive", "dive_id": 1, "start_sample": 0, "end_sample": 100 },
+    "behavior": "foraging_dive",
+    "state": "active",
+    "confidence": 0.8,
+    "notes": "STU-ACCEPT live round-trip",
+    "provenance": {
+      "source": "community",
+      "annotator_id": "ignored-by-server",
+      "annotator_role": "ignored-by-server",
+      "method": "manual",
+      "dataset": "ignored-by-server",
+      "h5_refs": ["depth/values"],
+      "license_status": "ignored-by-server",
+      "tool": "ignored-by-server"
+    }
+  }

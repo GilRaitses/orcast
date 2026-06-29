@@ -1,0 +1,44 @@
+{
+  "captured_at_utc": "2026-06-29T19:57:40Z",
+  "proxy_base": "https://orcast-h0.vercel.app",
+  "route": "/api/be/api/dtag/annotations",
+  "deploy": {
+    "workflow_run_id": "28398460857",
+    "github_conclusion": "failure",
+    "failure_reason": "Pre-existing post-deploy smoke test step only (GET /api/reports/probability -> 401 on the auth-gated origin). All infra steps (ECR push, CloudFormation deploy, frontend deploy) succeeded.",
+    "apprunner_service": "orcast-aws-backend",
+    "apprunner_status": "RUNNING",
+    "apprunner_image_tag": "2ac3d782f3d797be9e21a389e782a75bb060486f",
+    "head_commit": "2ac3d78",
+    "dynamodb_table": "orcast-aws-backend-dtag-annotations",
+    "dynamodb_status": "ACTIVE"
+  },
+  "packaging_fix_confirmed": {
+    "available_deployments": ["cascadia_2010_k33_test"],
+    "note": "Backend now loads the bundled DTAG example, so deployment_id cascadia_2010_k33_test is recognized."
+  },
+  "annotation": {
+    "id": "359004b98cb84dbf843af066d8faaf70",
+    "created_at": "2026-06-29T19:57:38.649295+00:00"
+  },
+  "responses": {
+    "step1_create": { "http": 200, "body": { "id": "359004b98cb84dbf843af066d8faaf70", "status": "created", "simulated": true } },
+    "step2_list_http": 200,
+    "step3_get_http": 200,
+    "step4_create_repeat": { "http": 200, "body": { "id": "359004b98cb84dbf843af066d8faaf70", "status": "duplicate", "simulated": true } },
+    "step4b_list_after_http": 200,
+    "step4b_list_count": 1,
+    "negative_unauth_post_http": 401
+  },
+  "pass_criteria": {
+    "create_200_simulated_true": "PASS",
+    "list_get_simulated_true": "PASS",
+    "license_status_simulated_example": "PASS",
+    "dataset_eq_deployment_id_cascadia": "PASS",
+    "source_community_annotator_agent_no_reviewer_email": "PASS",
+    "idempotency_duplicate_single_item": "PASS",
+    "unauth_post_401": "PASS"
+  },
+  "verdict": "PASS",
+  "reviewer_email_leaked": false
+}
