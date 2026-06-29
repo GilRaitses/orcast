@@ -22,3 +22,16 @@ changes how water/sky look and asserts no measured depth, color, or sea state.
 WATER-FX build is **NOT a Wave-0 parallel lane**: it is blocked on W2.6 datum-integrator
 landing first and contends `depthWater.ts` / `SalishScene.tsx`. It is sign-off-ready and
 queued behind W2.6 under a single serialized editor. No WFX build dispatched now.
+
+## WS-BATHY owner ratification (2026-06-29)
+The operator, who owns the WS-BATHY style file `web/lib/scene/bathy/style/waterTuning.ts`,
+signed off on the decision-1/2 green-survives retarget. Applied to the owner's file:
+- `WATER_TUNED_SHALLOW` `#2f8fa6` -> `#4f8c79`
+- `WATER_TUNED_DEEP` `#0b2140` (navy) -> `#13302b` (turbid green)
+- `PROPOSED_RGB_EXTINCTION` `{r:3.0,g:1.6,b:0.9}` (clear-ocean, blue-survives) ->
+  `{r:3.0,g:1.0,b:3.0}` (R11 green-survives)
+
+This unblocks the cross-owner item flagged by WFX. The W4 single editor consumes these
+constants when wiring the `Water2Rig` absorption/tint feeds; final green-survives look is
+verified in-scene on the GPU render host at integrate, not in the /water sandbox (which
+uses its own rig controls and does not read `waterTuning.ts`).

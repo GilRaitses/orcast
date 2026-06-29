@@ -20,19 +20,20 @@ import * as THREE from "three";
 import type { Water2Options } from "../../water2";
 
 /**
- * Tuned shallow water tint: a believable bright teal-green for shoals, lighter
- * than the water2 default (#2e6f9e) so thin water over shallows reads as living
- * coastal water rather than washed navy. Pairs with the cmocean `deep` seabed
- * shallow endpoint.
+ * Tuned shallow water tint: a living coastal teal-green for shoals. Retargeted
+ * for the Salish green window (owner sign-off 2026-06-29, WFX SIGN_OFF #1): the
+ * Strait of Georgia transmits green deepest and blue first, so shoals read
+ * green-leaning rather than the old cooler teal (#2f8fa6).
  */
-export const WATER_TUNED_SHALLOW = "#2f8fa6";
+export const WATER_TUNED_SHALLOW = "#4f8c79";
 
 /**
- * Tuned deep water tint: a navy leaning slightly cool/violet toward the cmocean
- * `deep` deep endpoint, so the deepest channels read dark blue-purple under the
- * two-stop lerp until the per-channel absorption upgrade lands.
+ * Tuned deep water tint: turbid green for the deepest channels, NOT navy. Salish
+ * optics (R09/R11) measure green surviving deepest and blue dying first, so the
+ * deep channel converges to a dark turbid green (#13302b), the truthful
+ * green-survives read. (Was clear-ocean navy #0b2140.)
  */
-export const WATER_TUNED_DEEP = "#0b2140";
+export const WATER_TUNED_DEEP = "#13302b";
 
 /** Foam color near the shoreline; near-white marine spray. */
 export const WATER_TUNED_FOAM = "#dfeef5";
@@ -41,21 +42,21 @@ export const WATER_TUNED_FOAM = "#dfeef5";
 export const WATER_TUNED_SKY = "#9fc4e0";
 
 /**
- * Proposed per-channel RGB extinction coefficients for the requested water2
- * absorption upgrade, in inverse scene units (column thickness). Red is absorbed
- * fastest, blue slowest, so transmitted color shifts blue-green -> navy with
- * depth by physics. These are a starting point for the water2 owner to tune in
- * the /water sandbox against the full-extent tileset; they are NOT applied here.
+ * Per-channel RGB extinction coefficients for the water2 absorption upgrade, in
+ * inverse scene units. GREEN-SURVIVES (owner sign-off 2026-06-29, WFX SIGN_OFF
+ * #2 = R11): green is absorbed slowest (1.0), red and blue fastest (3.0), so the
+ * transmitted color shifts toward turbid green with depth, matching measured
+ * Strait of Georgia optics. (Was clear-ocean {r:3.0,g:1.6,b:0.9}, which is
+ * physically backward for the Salish window.)
  *
- * Mapping note: the deep Haro Strait channel runs about 1.0 scene units below
- * the surface in the live tile frame (water2 default-tuning comment), so a
- * coefficient near 3.0 takes the red channel to ~95% extinction over that
- * column while blue retains ~70%, producing the deep navy/violet read.
+ * Mapping note: over the deep Haro Strait channel (~1.0 scene units below the
+ * surface), red and blue reach ~95% extinction while green retains the most,
+ * producing the deep turbid-green read.
  */
 export const PROPOSED_RGB_EXTINCTION: { r: number; g: number; b: number } = {
   r: 3.0,
-  g: 1.6,
-  b: 0.9,
+  g: 1.0,
+  b: 3.0,
 };
 
 export interface BathyWaterTuningOverrides {
