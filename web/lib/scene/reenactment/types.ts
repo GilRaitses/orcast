@@ -105,13 +105,32 @@ export interface OrcaSpawnInstance {
   clip: BehaviorMotionClip;
   /** HUD-only acoustic label; MUST NOT affect kinematics. */
   acousticLabel?: { text: string; confidence?: number };
+  /** Disclosed modeled behavior-label string for this instance's clip. */
+  behaviorLabel?: string;
+  /** Per-instance offset (seconds) INTO the measured clip window. A modeled
+   * presentation choice so spawned orcas sharing a clip do not move in perfect
+   * lockstep; it samples a different REAL moment of the driver, never fabricates
+   * motion. Default 0. */
+  phaseOffsetS?: number;
   bodyScale?: number;
 }
 
+/** How the spawn count was decided. The first three mirror BAM's
+ * `summary.spawnCountBasis`; `capability_demo` marks a sandbox override that is
+ * explicitly NOT a model estimate (the classifier does not resolve count). */
+export type SpawnCountBasis =
+  | "presence_only"
+  | "count_head"
+  | "capped_fallback"
+  | "capability_demo";
+
 export interface ReenactmentSpawnRecord {
   classification: AcousticClassificationRecord;
-  instances: OrcaSpawnInstance[]; // length === classification.summary.spawnCount
+  instances: OrcaSpawnInstance[]; // length === resolved spawn count
   timelineDurationS: number;
+  countBasis: SpawnCountBasis;
+  /** On-screen honesty wording for how the count was decided. */
+  countBasisLabel: string;
   honesty: {
     motion: "measured_srkw_dtag";
     spawn: "modeled_3d_placement";

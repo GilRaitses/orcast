@@ -38,6 +38,13 @@ ROUTE="${1:?route required, e.g. /orca or /water}"
 WAITMS="${2:-9000}"
 mkdir -p "$PROOF"
 
+# Routes can carry shell-special chars (?, &, ,, %) for the ACCEPT capture hooks
+# (e.g. /?station=...&ocean=1). Base64 the route so it survives the SSM -> host
+# shell layers untouched; render_route.mjs reads it from ORCAST_ROUTE.
+ROUTE64="$(printf '%s' "$ROUTE" | base64 | tr -d '\n')"
+# Opt-in frame-time sampling for the BSH/BRE A/B gates (off by default).
+PERF="${ORCAST_PERF:-0}"
+
 # --- run a shell snippet on the host via SSM and wait for it ---
 ssm() {
   local cid
@@ -73,7 +80,7 @@ if [ "$SYNC" = "1" ]; then
 fi
 
 echo ">> host: ensure deps + dev server on :$PORT, then render $ROUTE (GL=$GLMODE)"
-ssm "\"su - ubuntu -c 'cd ~/orcast/web && [ -d node_modules/.bin ] || npm ci'\",\"su - ubuntu -c 'cd ~/orcast/web && (curl -sf -o /dev/null http://127.0.0.1:$PORT/ || (nohup npx next dev -p $PORT -H 127.0.0.1 >~/orcast/next-dev.log 2>&1 & sleep 12))'\",\"su - ubuntu -c 'for i in \$(seq 1 40); do curl -sf -o /dev/null http://127.0.0.1:$PORT/ && break; sleep 2; done'\",\"su - ubuntu -c 'ORCAST_GL=$GLMODE node ~/orcast/render_route.mjs $ROUTE ~/orcast/shots/shot.png $WAITMS'\",\"$(dock_aws s3 cp /w/shots/shot.png s3://$BUCKET/$PREFIX/shots/shot.png --only-show-errors)\""
+ssm "\"su - ubuntu -c 'cd ~/orcast/web && [ -d node_modules/.bin ] || npm ci'\",\"su - ubuntu -c 'cd ~/orcast/web && (curl -sf -o /dev/null http://127.0.0.1:$PORT/ || (nohup npx next dev -p $PORT -H 127.0.0.1 >~/orcast/next-dev.log 2>&1 & sleep 12))'\",\"su - ubuntu -c 'for i in \$(seq 1 40); do curl -sf -o /dev/null http://127.0.0.1:$PORT/ && break; sleep 2; done'\",\"su - ubuntu -c 'ORCAST_ROUTE=\$(printf %s $ROUTE64 | base64 -d) ORCAST_PERF=$PERF ORCAST_VW=${ORCAST_VW:-1280} ORCAST_VH=${ORCAST_VH:-800} ORCAST_GL=$GLMODE node ~/orcast/render_route.mjs _ ~/orcast/shots/shot.png $WAITMS'\",\"$(dock_aws s3 cp /w/shots/shot.png s3://$BUCKET/$PREFIX/shots/shot.png --only-show-errors)\""
 
 OUTNAME="$(echo "$ROUTE" | sed 's#^/##; s#/#_#g')_$(date +%H%M%S).png"
 echo ">> pull frame -> $PROOF/$OUTNAME"

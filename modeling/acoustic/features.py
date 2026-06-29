@@ -144,6 +144,42 @@ def windows_from_wav(path: str, win_s: float = WIN_S, hop_s: float = HOP_S
     return np.asarray(feats, dtype=np.float64), np.asarray(starts, dtype=np.float64)
 
 
+def feature_for_segment(x: np.ndarray, sr: int, t0: float, t1: float) -> np.ndarray | None:
+    """Feature vector for one arbitrary time slice [t0, t1] of a loaded signal.
+    Returns None if the slice is empty. Used by the window-level pipeline to
+    featurize a window whose bounds come from windows.py (corpus-aligned), so
+    training features and label windows share the exact same definition."""
+    a, b = int(round(t0 * sr)), int(round(t1 * sr))
+    seg = x[max(0, a):max(0, b)]
+    if seg.size == 0:
+        return None
+    return window_feature(seg, sr)
+
+
+def features_at_starts(path: str, starts_s, win_s: float = WIN_S
+                       ) -> tuple[np.ndarray, np.ndarray]:
+    """Compute features at a GIVEN set of window start times (seconds), instead
+    of re-tiling internally. This is the compute-once contract with the
+    window-level labeller (windows.py): pass it the same `starts` that produced
+    the labels and the feature rows line up one-to-one with the label rows.
+
+    Returns (features [n_kept, N_FEATURES], kept_starts_s). Windows that run past
+    the end of the audio are dropped, and the matching label rows must be dropped
+    with `kept_starts_s`."""
+    sr, x = read_wav_mono(path)
+    win = int(round(win_s * sr))
+    feats: list[np.ndarray] = []
+    kept: list[float] = []
+    for ts in np.asarray(starts_s, dtype=np.float64):
+        a = int(round(ts * sr))
+        seg = x[a:a + win]
+        if len(seg) < win:
+            continue
+        feats.append(window_feature(seg, sr))
+        kept.append(float(ts))
+    return np.asarray(feats, dtype=np.float64), np.asarray(kept, dtype=np.float64)
+
+
 if __name__ == "__main__":
     import sys
     f, t = windows_from_wav(sys.argv[1])

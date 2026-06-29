@@ -15,6 +15,12 @@
 // The DOM `lib` is the one configured for this project, so the worker global is
 // reached through a narrow typed cast rather than the conflicting webworker lib.
 
+import { buildMagmaLut } from "./colormap";
+
+// Dynamic range mapped to the full colormap: 80 dB below the loudest bin so real
+// SRKW call structure stays visible regardless of clip gain. The legend reads it.
+const DYNAMIC_RANGE_DB = 80;
+
 interface StftRequest {
   channel: Float32Array;
   sampleRate: number;
@@ -28,6 +34,11 @@ interface StftResponse {
   freqBins: number;
   timeBins: number;
   hopS: number;
+  // Adaptive normalization range used to build rgba: dbCeil is the loudest bin,
+  // dbFloor = dbCeil - dynamicRangeDb. The legend keys its dB labels to these.
+  dbCeil: number;
+  dbFloor: number;
+  dynamicRangeDb: number;
 }
 
 const ctx = self as unknown as {
@@ -77,33 +88,6 @@ function fftRadix2(re: Float32Array, im: Float32Array, n: number): void {
   }
 }
 
-// 256-entry magma-style colormap LUT (black -> deep purple -> magenta -> orange ->
-// pale yellow). Built in TS from a handful of control stops, linearly interpolated.
-function buildColormap(): Uint8Array {
-  const stops: Array<[number, number, number, number]> = [
-    [0.0, 0, 0, 4],
-    [0.15, 28, 16, 68],
-    [0.35, 79, 18, 123],
-    [0.55, 137, 34, 106],
-    [0.75, 205, 64, 67],
-    [0.9, 247, 144, 60],
-    [1.0, 252, 253, 191],
-  ];
-  const lut = new Uint8Array(256 * 3);
-  for (let i = 0; i < 256; i++) {
-    const t = i / 255;
-    let s = 0;
-    while (s < stops.length - 2 && t > stops[s + 1][0]) s++;
-    const [t0, r0, g0, b0] = stops[s];
-    const [t1, r1, g1, b1] = stops[s + 1];
-    const f = t1 > t0 ? (t - t0) / (t1 - t0) : 0;
-    lut[i * 3] = Math.round(r0 + (r1 - r0) * f);
-    lut[i * 3 + 1] = Math.round(g0 + (g1 - g0) * f);
-    lut[i * 3 + 2] = Math.round(b0 + (b1 - b0) * f);
-  }
-  return lut;
-}
-
 function computeStft(req: StftRequest): StftResponse {
   const { channel, sampleRate, fftSize, hopSize } = req;
   const freqBins = fftSize >> 1;
@@ -141,9 +125,9 @@ function computeStft(req: StftRequest): StftResponse {
   // Adaptive normalization: 80 dB of dynamic range below the loudest bin maps to
   // the full colormap so real SRKW call structure is visible regardless of clip gain.
   const dbCeil = Number.isFinite(maxDb) ? maxDb : 0;
-  const dbFloor = dbCeil - 80;
+  const dbFloor = dbCeil - DYNAMIC_RANGE_DB;
   const span = dbCeil - dbFloor;
-  const lut = buildColormap();
+  const lut = buildMagmaLut();
   const rgba = new Uint8ClampedArray(timeBins * freqBins * 4);
   for (let t = 0; t < timeBins; t++) {
     const base = t * freqBins;
@@ -161,7 +145,16 @@ function computeStft(req: StftRequest): StftResponse {
     }
   }
 
-  return { magnitudes, rgba, freqBins, timeBins, hopS };
+  return {
+    magnitudes,
+    rgba,
+    freqBins,
+    timeBins,
+    hopS,
+    dbCeil,
+    dbFloor,
+    dynamicRangeDb: DYNAMIC_RANGE_DB,
+  };
 }
 
 ctx.onmessage = (ev: MessageEvent<StftRequest>) => {

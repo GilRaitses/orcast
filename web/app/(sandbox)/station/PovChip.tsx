@@ -1,16 +1,17 @@
 "use client";
 
-import type { StationPov } from "@/lib/scene/hydrophone";
+import { STATION_POVS, type StationPov } from "@/lib/scene/hydrophone";
 import styles from "./povChip.module.css";
 
-// Two-segment glass POV control "Hydrophone POV | Top-down". The active segment
-// uses the accent ink colour. Local .bsw-glass fallback while LGC tokens are
-// unbuilt; no classes are added to the convergence globals.css.
+// Glass POV control. The segments are data-driven from the reusable POV object
+// (STATION_POVS), so the control renders whatever the object defines. The
+// active segment uses the accent ink colour. Local .bsw-glass fallback while
+// LGC tokens are unbuilt; no classes are added to the convergence globals.css.
 
-const SEGMENTS: Array<{ value: StationPov; label: string }> = [
-  { value: "hydrophone", label: "Hydrophone POV" },
-  { value: "topdown", label: "Top-down" },
-];
+const SEGMENTS: Array<{ value: StationPov; label: string }> = STATION_POVS.map((p) => ({
+  value: p.id,
+  label: p.label,
+}));
 
 export default function PovChip({
   value,

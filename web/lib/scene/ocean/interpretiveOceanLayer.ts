@@ -14,13 +14,40 @@ import * as THREE from "three";
 /** Mandatory on-screen chip text whenever the layer is enabled. */
 export const INTERPRETIVE_OCEAN_LABEL = "interpretive · stratified ocean mixing";
 
-// Guardrail: these claims must never appear near this interpretive stub.
-const FORBIDDEN = ["measured thermohaline", "biosonar perception"];
-for (const phrase of FORBIDDEN) {
-  if (INTERPRETIVE_OCEAN_LABEL.toLowerCase().includes(phrase)) {
-    throw new Error(`interpretiveOceanLayer: forbidden claim in label: ${phrase}`);
+/**
+ * Secondary descriptive line the host may show beside the chip. It states the
+ * honesty boundary in full: real T/S structure, stylized motion, not measured
+ * orca perception. Kept prose-gate clean (no em dash, no colon-in-prose).
+ */
+export const INTERPRETIVE_OCEAN_DETAIL =
+  "Salish Sea temperature and salinity structure comes from cited oceanographic profiles and models. " +
+  "The moving layers are a stylized view of water-mass mixing. This is not a measured depiction of how an orca senses its surroundings.";
+
+// Guardrail: these claims must never appear in this layer's labels or copy. The
+// list is the union of the original stub guard and the BSW-R09 forbidden copy.
+// Extended here for the promoted double-diffusion layer; never weaken it.
+export const FORBIDDEN_OCEAN_CLAIMS = [
+  "measured thermohaline",
+  "biosonar perception",
+  "biosonar reveals",
+  "what the whale sees",
+  "salt fingering observed",
+] as const;
+
+/** Throw if any forbidden claim appears in the given on-screen text. */
+export function assertNoForbiddenClaim(...texts: string[]): void {
+  for (const text of texts) {
+    const lower = text.toLowerCase();
+    for (const phrase of FORBIDDEN_OCEAN_CLAIMS) {
+      if (lower.includes(phrase)) {
+        throw new Error(`interpretiveOceanLayer: forbidden claim in copy: ${phrase}`);
+      }
+    }
   }
 }
+
+// Assert at module load that the shipped labels carry no forbidden claim.
+assertNoForbiddenClaim(INTERPRETIVE_OCEAN_LABEL, INTERPRETIVE_OCEAN_DETAIL);
 
 export interface InterpretiveOceanOptions {
   /** World width of the layer. */

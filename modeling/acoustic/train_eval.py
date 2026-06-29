@@ -36,7 +36,8 @@ from sklearn.metrics import (
 import joblib
 
 from features import (
-    windows_from_wav, feature_names, N_FEATURES, WIN_S, HOP_S, N_MELS,
+    windows_from_wav, features_at_starts, feature_names, N_FEATURES,
+    WIN_S, HOP_S, N_MELS,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -181,5 +182,162 @@ def main() -> int:
     return 0
 
 
+# --------------------------------------------------------------------------
+# Window-level multiclass head harness (the eval_report "to_strengthen" path).
+# This is the gated BAM-TRAIN entrypoint: it trains a supported head (ecotype /
+# call_type) on a window-level label manifest produced from a license-cleared
+# corpus, with an HONEST cross-station / cross-day grouped split. It is NOT run
+# by the default binary-presence main() above and requires a real manifest +
+# the referenced audio in the box. No corpus is fetched here.
+# --------------------------------------------------------------------------
+
+def grouped_train_test_split(groups, test_frac: float = 0.30, seed: int = 0):
+    """Hold out WHOLE groups (station-days) for test so train and test never
+    share a station-day. Returns (train_idx, test_idx, train_groups, test_groups).
+    This is the cross-station / cross-day generalization the slice never had."""
+    groups = np.asarray(groups, dtype=object)
+    uniq = sorted(set(groups.tolist()))
+    rng = np.random.default_rng(seed)
+    rng.shuffle(uniq)
+    test_g: list[str] = []
+    n_total = len(groups)
+    n_test = 0
+    for g in uniq:
+        if n_test >= test_frac * n_total and len(test_g) >= 1 and len(test_g) < len(uniq):
+            break
+        test_g.append(g)
+        n_test += int((groups == g).sum())
+    test_set = set(test_g)
+    test_mask = np.array([g in test_set for g in groups])
+    train_idx = np.where(~test_mask)[0]
+    test_idx = np.where(test_mask)[0]
+    return train_idx, test_idx, list(groups[train_idx]), list(groups[test_idx])
+
+
+def _annotations_from_manifest(entry: dict):
+    """Reconstruct windows.Annotation rows for one clip from a manifest entry."""
+    from windows import Annotation  # local import: gated path only
+    out = []
+    for a in entry.get("annotations", []):
+        out.append(Annotation(
+            t0=float(a["t0"]), t1=float(a["t1"]), clip_id=entry["clip_id"],
+            label=a.get("label"), call_type=a.get("call_type"),
+            ecotype=a.get("ecotype"), kw=a.get("kw"), kw_certain=a.get("kw_certain"),
+            dataset=a.get("dataset") or entry.get("dataset"),
+            provider=a.get("provider"), date=a.get("date") or entry.get("date"),
+        ))
+    return out
+
+
+def build_head_dataset(manifest: dict):
+    """Featurize every clip in a window-level manifest and align labels.
+    Returns (X, y, groups). Requires each clip's `wav` to exist in the box.
+    Featurization reuses features.features_at_starts so feature rows line up
+    one-to-one with windows.label_windows output."""
+    from windows import label_windows, window_starts  # gated path only
+
+    head_name = manifest["head"]
+    scheme = manifest.get("scheme", head_name)
+    win_s = float(manifest.get("win_s", WIN_S))
+    hop_s = float(manifest.get("hop_s", HOP_S))
+    min_ov = float(manifest.get("min_overlap_frac", 0.5))
+
+    X_parts, y_parts, g_parts = [], [], []
+    for entry in manifest["clips"]:
+        wav = entry["wav"]
+        if not Path(wav).is_absolute():
+            wav = str(ROOT / wav)
+        if not Path(wav).exists():
+            raise FileNotFoundError(
+                f"clip audio missing: {wav}. Re-fetch from the box (see PROVENANCE.md)."
+            )
+        dur = float(entry["duration_s"])
+        starts = window_starts(dur, win_s, hop_s)
+        anns = _annotations_from_manifest(entry)
+        group = entry.get("group") or f"{entry.get('dataset')}|{entry.get('date')}"
+        wl = label_windows(entry["clip_id"], starts, anns, scheme,
+                           win_s=win_s, min_overlap_frac=min_ov, group=group)
+        feats, kept = features_at_starts(wav, wl.starts_s, win_s)
+        if feats.size == 0:
+            continue
+        # Align labels to the windows that actually had full audio.
+        keep_mask = np.isin(np.round(wl.starts_s, 6), np.round(kept, 6))
+        X_parts.append(feats)
+        y_parts.append(wl.labels[keep_mask])
+        g_parts.append(wl.groups[keep_mask])
+    if not X_parts:
+        raise ValueError("no usable clips in manifest")
+    return (np.vstack(X_parts),
+            np.concatenate(y_parts).astype(str),
+            np.concatenate(g_parts).astype(str))
+
+
+def train_head_from_manifest(manifest_path: str | Path, out_report: str | Path | None = None) -> dict:
+    """GATED BAM-TRAIN entrypoint. Trains a supported, license-clear head on a
+    window-level manifest with a station-day grouped split, then emits an honest
+    multiclass eval. Refuses STOP-to-O0 / non-shippable heads. Weights go to the
+    gitignored box models dir. Does NOT touch the served classification.json;
+    BAM-TRAIN extends that only after O0 reviews the eval."""
+    from heads import HEADS, assert_shippable, multiclass_eval
+
+    manifest = json.loads(Path(manifest_path).read_text())
+    head_name = manifest["head"]
+    head = assert_shippable(head_name)  # raises on overclaim / STOP corpus
+    classes = HEADS[head_name].classes
+
+    X, y, groups = build_head_dataset(manifest)
+    tr, te, gtr, gte = grouped_train_test_split(groups)
+    if len(te) == 0 or len(tr) == 0:
+        raise ValueError("grouped split produced an empty train or test pool; need >=2 station-day groups")
+
+    scaler = StandardScaler().fit(X[tr])
+    clf = RandomForestClassifier(n_estimators=300, class_weight="balanced",
+                                 random_state=0, n_jobs=-1)
+    clf.fit(scaler.transform(X[tr]), y[tr])
+    proba = clf.predict_proba(scaler.transform(X[te]))
+    # Map predict_proba column order onto the head's fixed class order.
+    col = {c: i for i, c in enumerate(clf.classes_)}
+    proba_full = np.zeros((len(te), len(classes)))
+    for j, c in enumerate(classes):
+        if c in col:
+            proba_full[:, j] = proba[:, col[c]]
+    pred = np.array([classes[int(i)] for i in proba_full.argmax(axis=1)])
+
+    eval_rep = multiclass_eval(
+        y[te], pred, proba_full, classes,
+        split_desc=manifest.get("split_policy", "leave-station-day-out"),
+        groups_train=gtr, groups_test=gte,
+    )
+    report = {
+        "model_version": f"bam-{head_name}-v1",
+        "train_run_id": f"{git_rev()}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "head": head_name,
+        "corpus": manifest.get("corpus"),
+        "feature": {"window_s": WIN_S, "hop_s": HOP_S, "n_features": N_FEATURES},
+        "eval": eval_rep,
+        "honesty": {
+            "claim": f"{head_name} estimate + confidence",
+            "license_status": head.license_status,
+            "confounds": head.confounds,
+            "not_claimed": ["whale count", "pod / individual ID", "SRKW S1-S40 catalog call"],
+        },
+    }
+    MODELS.mkdir(parents=True, exist_ok=True)
+    joblib.dump({"model": clf, "scaler": scaler, "classes": classes,
+                 "head": head_name, "feature_names": feature_names()},
+                MODELS / f"bam_{head_name}_v1.joblib")
+    if out_report:
+        Path(out_report).write_text(json.dumps(report, indent=2))
+    print(f">> trained head={head_name} macro_f1={eval_rep['macro_f1']} "
+          f"test_groups={eval_rep['split']['test_groups']}")
+    return report
+
+
 if __name__ == "__main__":
+    import sys
+    if "--head-manifest" in sys.argv:
+        i = sys.argv.index("--head-manifest")
+        train_head_from_manifest(sys.argv[i + 1])
+        raise SystemExit(0)
     raise SystemExit(main())

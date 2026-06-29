@@ -5,3 +5,8 @@ models/*.npz
 *.wav
 *.ts
 *.m3u8
+# Fetched corpora (raw audio + raw annotation dumps) stay in the box. The small
+# window-level manifests under manifests/ DO ship in-repo.
+data/corpora/
+*.flac
+*.mat

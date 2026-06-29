@@ -1,0 +1,4 @@
+# Baked heavy artifacts and per-sample arrays go to the box (S3), never git.
+out/
+__pycache__/
+*.pyc

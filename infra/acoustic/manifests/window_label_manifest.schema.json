@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "bam-window-label-manifest/v1",
+  "title": "BAM window-level label manifest",
+  "description": "Maps each license-cleared corpus annotation to the 3 s / 1.5 s analysis windows used by modeling/acoustic/features.py, producing true window-level labels for one supported head. Heavy audio referenced by `wav` lives in the box and is gitignored; only this manifest plus the eval ship in-repo. Produced by BAM-DATA after an O0-approved fetch; consumed by train_eval.train_head_from_manifest at BAM-TRAIN.",
+  "type": "object",
+  "required": ["schema", "head", "scheme", "win_s", "hop_s", "split_policy", "corpus", "clips"],
+  "properties": {
+    "schema": {"const": "bam-window-label-manifest/v1"},
+    "head": {
+      "type": "string",
+      "enum": ["presence", "ecotype", "call_type", "single_vs_multiple"],
+      "description": "Must match a key in modeling/acoustic/heads.py HEADS. single_vs_multiple is eval-unsupported per BSW-R02 and is refused by assert_shippable; include it only for diagnostic measurement, never a shipped claim."
+    },
+    "scheme": {
+      "type": "string",
+      "enum": ["presence", "ecotype", "call_type", "single_vs_multiple"],
+      "description": "windows.py labelling scheme; normally equals `head`."
+    },
+    "win_s": {"type": "number", "const": 3.0},
+    "hop_s": {"type": "number", "const": 1.5},
+    "min_overlap_frac": {
+      "type": "number",
+      "default": 0.5,
+      "description": "Minimum fraction of a window that an annotation must cover for the window to take that label; below this the window is `background`."
+    },
+    "split_policy": {
+      "type": "string",
+      "description": "Human-readable policy. Default `leave-station-day-out`: whole (dataset, date) groups are held out for test so train and test never share a station-day. This is the cross-station / cross-day generalization the v0 slice lacked."
+    },
+    "corpus": {
+      "type": "object",
+      "required": ["name", "license", "license_status", "attribution", "source_url"],
+      "properties": {
+        "name": {"type": "string"},
+        "license": {"type": "string", "description": "e.g. CC-BY-4.0"},
+        "license_status": {
+          "type": "string",
+          "enum": ["OPEN", "NC-AUTHORIZED", "STOP-to-O0"],
+          "description": "OPEN ships freely. NC-AUTHORIZED requires a recorded O0/owner sign-off. STOP-to-O0 must not be trained or shipped until O0 clears it."
+        },
+        "attribution": {"type": "string"},
+        "source_url": {"type": "string"},
+        "fetched_utc": {"type": "string"},
+        "box_pointer": {"type": "string", "description": "S3 path the raw audio + raw annotations were mirrored to."}
+      }
+    },
+    "label_qc": {
+      "type": "object",
+      "description": "Optional QC summary recorded by BAM-DATA: class balance, dropped/ambiguous annotations, and any privacy scrubbing applied.",
+      "properties": {
+        "class_balance": {"type": "object"},
+        "n_clips": {"type": "integer"},
+        "n_annotations": {"type": "integer"},
+        "n_windows": {"type": "integer"},
+        "notes": {"type": "string"}
+      }
+    },
+    "clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["clip_id", "wav", "duration_s", "dataset", "date", "annotations"],
+        "properties": {
+          "clip_id": {"type": "string"},
+          "wav": {"type": "string", "description": "Repo-relative or absolute path to the decoded audio in the box (gitignored)."},
+          "duration_s": {"type": "number"},
+          "dataset": {"type": "string", "description": "Provider / station key; part of the split group."},
+          "date": {"type": "string", "description": "YYYY-MM-DD; part of the split group (cross-day)."},
+          "annotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["t0", "t1"],
+              "properties": {
+                "t0": {"type": "number"},
+                "t1": {"type": "number"},
+                "label": {"type": ["string", "null"]},
+                "call_type": {"type": ["string", "null"], "description": "CK / W / BP category, never S1-S40"},
+                "ecotype": {"type": ["string", "null"], "description": "SRKW / NRKW / TKW / OKW / SAR"},
+                "kw": {"type": ["boolean", "null"]},
+                "kw_certain": {"type": ["boolean", "null"]},
+                "dataset": {"type": ["string", "null"]},
+                "provider": {"type": ["string", "null"]},
+                "date": {"type": ["string", "null"]}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -12,6 +12,8 @@
 
 import type { SpectroTimelineAuthority } from "./types";
 import type { SpectrogramCache } from "./SpectrogramCache";
+import { frequencyTicks, timeTicks } from "./axes";
+import { createSpectroLegend } from "./legend";
 
 export interface SpectroHudOptions {
   /** Displayed width/height of the spectrogram canvas in CSS pixels. */
@@ -19,6 +21,8 @@ export interface SpectroHudOptions {
   height?: number;
   /** Caption rendered under the HUD (provenance honesty line). */
   caption?: string;
+  /** Show the colormap legend keyed to the adaptive dB normalization. Default true. */
+  legend?: boolean;
 }
 
 const RATES = [1, 0.5, 0.25];
@@ -39,7 +43,13 @@ export class SpectroHud {
 
   private readonly dispW: number;
   private readonly dispH: number;
-  private readonly nyquist: number;
+  private nyquist: number;
+
+  private readonly showLegend: boolean;
+  private specRow: HTMLDivElement;
+  private canvasWrap: HTMLDivElement;
+  private legendEl: HTMLDivElement | null = null;
+  private titleEl: HTMLDivElement;
 
   constructor(authority: SpectroTimelineAuthority, cache: SpectrogramCache, opts: SpectroHudOptions = {}) {
     this.authority = authority;
@@ -47,6 +57,7 @@ export class SpectroHud {
     this.dispW = opts.width ?? 900;
     this.dispH = opts.height ?? 280;
     this.nyquist = cache.sampleRate / 2;
+    this.showLegend = opts.legend ?? true;
 
     this.root = document.createElement("div");
     Object.assign(this.root.style, {
@@ -60,29 +71,31 @@ export class SpectroHud {
       color: "#cfe6ff",
     } as CSSStyleDeclaration);
 
-    // Title row.
-    const title = document.createElement("div");
-    title.style.marginBottom = "6px";
-    title.innerHTML =
-      '<strong>STFT spectrogram</strong> measured Orcasound Lab audio. ' +
-      'freq 0 to ' +
-      (this.nyquist / 1000).toFixed(0) +
-      ' kHz (low at bottom), time left to right.';
-    this.root.appendChild(title);
+    // Title row (refreshed by bindClip for multi-clip swaps).
+    this.titleEl = document.createElement("div");
+    this.titleEl.style.marginBottom = "6px";
+    this.root.appendChild(this.titleEl);
 
-    // Base offscreen canvas at native bin resolution.
+    // Base offscreen canvas at native bin resolution (filled by bindClip).
     this.base = document.createElement("canvas");
-    this.base.width = Math.max(1, cache.timeBins);
-    this.base.height = Math.max(1, cache.freqBins);
-    const bg = this.base.getContext("2d");
-    if (!bg) throw new Error("SpectroHud: 2D context unavailable for base canvas");
-    if (cache.timeBins > 0 && cache.freqBins > 0) {
-      // Copy into a fresh ArrayBuffer-backed view so ImageData accepts it (the
-      // baked rgba arrives over a worker message typed as ArrayBufferLike).
-      const pixels = new Uint8ClampedArray(cache.rgba);
-      const img = new ImageData(pixels, cache.timeBins, cache.freqBins);
-      bg.putImageData(img, 0, 0);
-    }
+
+    // Spectrogram row holds a canvas wrapper sized EXACTLY to the display canvas.
+    this.specRow = document.createElement("div");
+    Object.assign(this.specRow.style, {
+      display: "flex",
+      alignItems: "flex-start",
+    } as CSSStyleDeclaration);
+
+    // Canvas wrapper: position:relative + an explicit canvas-sized box makes this
+    // the containing block for the absolutely-positioned colormap legend, so the
+    // legend is anchored to the CANVAS bounds (not the wider HUD row) and can
+    // never overflow the canvas or be occluded by the console panel.
+    this.canvasWrap = document.createElement("div");
+    Object.assign(this.canvasWrap.style, {
+      position: "relative",
+      width: this.dispW + "px",
+      height: this.dispH + "px",
+    } as CSSStyleDeclaration);
 
     // Display canvas.
     this.canvas = document.createElement("canvas");
@@ -100,7 +113,13 @@ export class SpectroHud {
     if (!g) throw new Error("SpectroHud: 2D context unavailable for display canvas");
     this.g = g;
     this.g.imageSmoothingEnabled = false;
-    this.root.appendChild(this.canvas);
+    this.canvasWrap.appendChild(this.canvas);
+    this.specRow.appendChild(this.canvasWrap);
+    this.root.appendChild(this.specRow);
+
+    this.buildBase();
+    this.buildLegend();
+    this.refreshTitle();
 
     // Controls row: play/pause, slow-mo rates, time readout.
     const controls = document.createElement("div");
@@ -145,6 +164,72 @@ export class SpectroHud {
     }
 
     this.attachPointer();
+    this.unsubscribe = this.authority.subscribe(() => this.draw());
+    this.draw();
+  }
+
+  /** Draw the prebaked rgba into the offscreen base canvas at native bin res. */
+  private buildBase(): void {
+    const cache = this.cache;
+    this.base.width = Math.max(1, cache.timeBins);
+    this.base.height = Math.max(1, cache.freqBins);
+    const bg = this.base.getContext("2d");
+    if (!bg) throw new Error("SpectroHud: 2D context unavailable for base canvas");
+    if (cache.timeBins > 0 && cache.freqBins > 0) {
+      // Copy into a fresh ArrayBuffer-backed view so ImageData accepts it (the
+      // baked rgba arrives over a worker message typed as ArrayBufferLike).
+      const pixels = new Uint8ClampedArray(cache.rgba);
+      const img = new ImageData(pixels, cache.timeBins, cache.freqBins);
+      bg.putImageData(img, 0, 0);
+    }
+  }
+
+  /** (Re)build the colormap legend keyed to this clip's adaptive dB range. */
+  private buildLegend(): void {
+    if (!this.showLegend) return;
+    // Compact inset sized to a corner of the canvas (not the full height), so it
+    // reads as an inset and hides as little of the spectrogram as possible.
+    const insetHeight = Math.min(this.dispH - 16, 140);
+    const next = createSpectroLegend(
+      { dbCeil: this.cache.dbCeil, dbFloor: this.cache.dbFloor, dynamicRangeDb: this.cache.dynamicRangeDb },
+      { height: insetHeight },
+    );
+    // Anchor inside the canvas bounds at the TOP-LEFT. canvasWrap is sized to the
+    // canvas and is the relative containing block. The left corner is chosen on
+    // purpose: the console panel always sits to the RIGHT of the scene, so a
+    // left-anchored inset can never be occluded by the console at any viewport.
+    // The left offset clears the on-canvas frequency-axis labels (drawn at x=3).
+    Object.assign(next.style, {
+      position: "absolute",
+      top: "6px",
+      left: "30px",
+    } as CSSStyleDeclaration);
+    if (this.legendEl) this.canvasWrap.replaceChild(next, this.legendEl);
+    else this.canvasWrap.appendChild(next);
+    this.legendEl = next;
+  }
+
+  private refreshTitle(): void {
+    this.titleEl.innerHTML =
+      "<strong>STFT spectrogram</strong> measured Orcasound Lab audio. freq 0 to " +
+      (this.nyquist / 1000).toFixed(0) +
+      " kHz, low at bottom, time left to right.";
+  }
+
+  /**
+   * Rebind the HUD to a different clip's authority + cache (multi-clip support).
+   * Rebuilds the base image, legend, frequency axis range, and redraws. The
+   * locked SpectroTimelineAuthority contract is unchanged; only which authority
+   * the HUD listens to swaps.
+   */
+  bindClip(authority: SpectroTimelineAuthority, cache: SpectrogramCache): void {
+    this.unsubscribe?.();
+    this.authority = authority;
+    this.cache = cache;
+    this.nyquist = cache.sampleRate / 2;
+    this.buildBase();
+    this.buildLegend();
+    this.refreshTitle();
     this.unsubscribe = this.authority.subscribe(() => this.draw());
     this.draw();
   }
@@ -229,27 +314,30 @@ export class SpectroHud {
   }
 
   private drawAxes(g: CanvasRenderingContext2D, w: number, h: number, d: number): void {
-    g.fillStyle = "rgba(207,230,255,0.85)";
     g.font = "10px ui-monospace, monospace";
 
-    // Frequency ticks on the left (top = Nyquist, bottom = 0).
-    const freqTicks = 4;
+    // Frequency ticks on the left (bottom = 0, top = Nyquist) at nice values.
     g.textAlign = "left";
-    for (let i = 0; i <= freqTicks; i++) {
-      const frac = i / freqTicks;
-      const y = h - frac * h;
-      const khz = (this.nyquist * frac) / 1000;
-      g.fillText(`${khz.toFixed(0)}k`, 3, Math.max(9, Math.min(h - 2, y + 3)));
+    for (const tick of frequencyTicks(this.nyquist, 5)) {
+      const y = h - tick.frac * h;
+      const cy = Math.max(9, Math.min(h - 2, y + 3));
+      // Faint gridline then the label, so the tick reads over the colormap.
+      g.strokeStyle = "rgba(207,230,255,0.18)";
+      g.lineWidth = 1;
+      g.beginPath();
+      g.moveTo(22, y);
+      g.lineTo(w, y);
+      g.stroke();
+      g.fillStyle = "rgba(207,230,255,0.9)";
+      g.fillText(tick.label, 3, cy);
     }
 
-    // Time ticks along the bottom.
-    const timeTicks = 6;
+    // Time ticks along the bottom at nice values.
     g.textAlign = "center";
-    for (let i = 0; i <= timeTicks; i++) {
-      const frac = i / timeTicks;
-      const x = frac * w;
-      const sec = d * frac;
-      g.fillText(`${sec.toFixed(0)}s`, Math.max(10, Math.min(w - 10, x)), h - 3);
+    g.fillStyle = "rgba(207,230,255,0.9)";
+    for (const tick of timeTicks(d, 6)) {
+      const x = tick.frac * w;
+      g.fillText(tick.label, Math.max(10, Math.min(w - 10, x)), h - 3);
     }
     g.textAlign = "left";
   }

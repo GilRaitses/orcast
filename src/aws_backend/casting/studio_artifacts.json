@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "note": "Poster visualization artifacts baked OFFLINE by the existing R scripts in whale-behavior-analysis/Visualization_Poster_Appendix (O0 gate 2, posture 2). No R / plotly runtime ships. The managed HUD skills serve these baked artifacts with honesty labels. The interactive 3D dive-lattice JS port (react-three-fiber) is posture 3, DEFERRED.",
+  "box_prefix": "s3://<orcast-box-bucket>/bss/poster-viz/mn09_203a/",
+  "license": "CC-BY-NC-4.0",
+  "license_status": "CC-BY-NC-4.0, non-commercial, authorized per O0 SIGN_OFF decision 1",
+  "attribution": "Humpback DTAG mn09_203a, whale-behavior-analysis dataset. Non-commercial use under CC-BY-NC, authorized by O0 SIGN_OFF decision 1.",
+  "source": "whale-behavior-analysis/Visualization_Poster_Appendix/data/dive_analysis.h5",
+  "artifacts": [
+    {
+      "viz_id": "composite_dashboard",
+      "title": "Composite kinematic dashboard",
+      "source_script": "03_composite_dashboard.R",
+      "render": "baked-png",
+      "box_key": "composite_dashboard.png",
+      "truth_label": "baked",
+      "js_port_status": "not-planned"
+    },
+    {
+      "viz_id": "dive_overview",
+      "title": "All-dives twistiness overview",
+      "source_script": "04_dive_overview.R",
+      "render": "baked-png",
+      "box_key": "dive_overview.png",
+      "truth_label": "baked",
+      "js_port_status": "not-planned"
+    },
+    {
+      "viz_id": "dive_frames",
+      "title": "Per-dive depth profile frames",
+      "source_script": "05_dive_frames.R",
+      "render": "baked-png-series",
+      "box_key": "dive_frames/dive_XXX.png",
+      "truth_label": "baked",
+      "js_port_status": "not-planned"
+    },
+    {
+      "viz_id": "hierarchical_3d_lattice",
+      "title": "Interactive 3D dive lattice",
+      "source_script": "06_hierarchical_visualization.R",
+      "render": "baked-html",
+      "box_key": "hierarchical_visualization.html",
+      "truth_label": "baked",
+      "js_port_status": "deferred-posture-3-react-three-fiber"
+    },
+    {
+      "viz_id": "energetics_scatter",
+      "title": "ODBA vs max depth energetics scatter",
+      "source_script": "07_energetics_analysis.R",
+      "render": "baked-png",
+      "box_key": "energetics_analysis.png",
+      "truth_label": "baked",
+      "js_port_status": "not-planned"
+    }
+  ]
+}

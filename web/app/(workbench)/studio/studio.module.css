@@ -1,0 +1,58 @@
+.root {
+  min-height: 100vh;
+  padding: 32px clamp(16px, 5vw, 64px);
+  background: #0a1219;
+  color: #d7e3ec;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.lede {
+  color: #9fb6c8;
+  font-size: 15px;
+  max-width: 70ch;
+  margin: 0 0 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.card,
+.cardMuted {
+  display: block;
+  border: 1px solid #1d2c38;
+  border-radius: 10px;
+  padding: 18px;
+  background: #101c26;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:hover {
+  border-color: #2a7bf5;
+  background: #122433;
+}
+
+.cardMuted {
+  opacity: 0.7;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.cardBody {
+  font-size: 13px;
+  color: #9fb6c8;
+  margin: 0;
+}

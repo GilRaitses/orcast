@@ -1,5 +1,6 @@
 import { projectToScene, type HeightmapBounds } from "@/lib/sceneIntent";
 import { sampleSubstrate, type SubstrateField } from "@/lib/scene/substrate";
+import type { StationCatalogEntry } from "./catalog";
 
 // Seabed placement for a station rig.
 //
@@ -79,4 +80,23 @@ export function stationSeabedPose(
   const fallbackDepthM =
     typeof opts.fallbackDepthM === "number" ? opts.fallbackDepthM : DEFAULT_FALLBACK_DEPTH_M;
   return [x, fallbackDepthM * wupm, z];
+}
+
+/**
+ * Convenience pose for a catalog station: wires the station's
+ * `modeledFallbackDepthM` into `stationSeabedPose`. The substrate sample (when
+ * `opts.substrate` is given) still wins over the per-station fallback, so the
+ * live scene uses the real CUDEM seabed depth and the sandbox uses the modeled
+ * fallback.
+ */
+export function stationSeabedPoseForEntry(
+  entry: StationCatalogEntry,
+  bounds: HeightmapBounds,
+  sceneDepth: number,
+  opts: StationSeabedOptions = {},
+): [number, number, number] {
+  return stationSeabedPose(entry.lat, entry.lng, bounds, sceneDepth, {
+    ...opts,
+    fallbackDepthM: opts.fallbackDepthM ?? entry.modeledFallbackDepthM,
+  });
 }

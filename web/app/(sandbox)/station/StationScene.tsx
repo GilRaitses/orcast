@@ -1,16 +1,22 @@
 "use client";
 
-// STATION sandbox: the modeled hydrophone-equipment rig placed at the real
-// Orcasound Lab station on the modeled seabed, an audio player bound to the one
-// real archived clip (MEASURED), and a camera POV selector (hydrophone POV +
-// top-down) that drives the existing Camera Director. Proves the lane's modules
-// before the O0-gated integrator mounts them into SalishScene.
+// STATION sandbox: a real MULTI-STATION hydrophone player.
 //
-// Deterministic headless framing via a SINGLE query param (the render host
-// passes the route as one arg, so an unescaped "&" would break a multi-param
-// query string):
-//   /station              default = hydrophone POV, underwater, paused
-//   /station?view=topdown top-down station overview
+// Select any real Orcasound node inside the rendered tileset extent (the same
+// set GET /api/live-hydrophones serves: Orcasound Lab, North San Juan Channel,
+// Andrews Bay). On select, the MODELED equipment variant for that node class
+// (cabled shore hydrophone vs subsurface mooring) is placed at the station's
+// real lat/lng on the modeled seabed, its audio is bound (the one license-clear
+// archived clip for Orcasound Lab, MEASURED; live-listen link only for the
+// others, never synthesised), and the reusable camera POV-selection object
+// switches the shared Camera Director between the hydrophone POV and top-down.
+// Proves the lane's modules before the O0-gated integrator mounts them.
+//
+// Deterministic headless framing via single query params (the render host
+// passes the route as one arg):
+//   /station                     default = Orcasound Lab, hydrophone POV, paused
+//   /station?view=topdown        top-down overview of the default station
+//   /station?station=north-sjc   the North San Juan Channel mooring, hydrophone POV
 //
 // Built on three + WebAudio only. Imports the Camera Director + sceneIntent
 // (read-only convergence files) but never modifies them.
@@ -22,21 +28,20 @@ import { createCameraDirector } from "@/lib/scene/camera/director";
 import type { CameraDirector, CameraDirectorHandle } from "@/lib/scene/camera/types";
 import { sceneDepth, type HeightmapBounds } from "@/lib/sceneIntent";
 import {
-  makeHydrophoneRig,
-  stationSeabedPose,
+  makeStationEquipment,
+  stationSeabedPoseForEntry,
   StationPlayer,
-  runStationPOV,
-  type HydrophoneRig,
+  createStationPovController,
+  listSelectableStations,
+  getStation,
+  stationPlayerOptions,
+  type EquipmentRig,
+  type StationCatalogEntry,
   type StationPov,
-  type StationPovHandle,
+  type StationPovController,
 } from "@/lib/scene/hydrophone";
 import PovChip from "./PovChip";
-
-// --- real, verifiable facts -------------------------------------------------
-
-// Orcasound Lab, Haro Strait (matches PROVENANCE.md for the archived clip).
-const LAT = 48.5583362;
-const LNG = -123.1735774;
+import StationChip from "./StationChip";
 
 // Slice bounds from SalishScene TILESET_BOUNDS.
 const SLICE_BOUNDS: HeightmapBounds = {
@@ -50,47 +55,55 @@ const SCENE_DEPTH = sceneDepth(SLICE_BOUNDS);
 // Sandbox visible scale: 1 metre = 1 scene unit (mirrors the orca sandbox), so
 // the equipment rig and its true-depth seabed placement read clearly.
 const WUPM = 1;
-const FALLBACK_DEPTH_M = -18;
-
-const AUDIO_URL = "/hydrophone/slice/orcasound_lab_20210825_srkw.m4a";
-const STREAM_URL = "https://live.orcasound.net/listen/orcasound-lab";
-const ATTRIBUTION = "Audio: Orcasound (CC BY-NC-SA 4.0)";
 
 const UNDERWATER_TINT = "#0c3a40";
 
+const STATIONS = listSelectableStations();
+const DEFAULT_STATION = STATIONS[0];
+
 interface Params {
   pov: StationPov;
+  stationId: string;
 }
 
 function readParams(): Params {
-  const p: Params = { pov: "hydrophone" };
+  const p: Params = { pov: "hydrophone", stationId: DEFAULT_STATION.id };
   if (typeof window === "undefined") return p;
   const q = new URLSearchParams(window.location.search);
   if (q.get("view") === "topdown") p.pov = "topdown";
   if (q.get("view") === "hydrophone") p.pov = "hydrophone";
+  const slug = q.get("station");
+  const match = slug ? getStation(slug) : null;
+  if (match && match.withinTilesetExtent) p.stationId = match.id;
   return p;
 }
 
 function SceneContent({
+  station,
   pov,
   interacted,
 }: {
+  station: StationCatalogEntry;
   pov: StationPov;
   interacted: boolean;
 }) {
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
 
-  // Modeled seabed pose for the rig (NEVER clamped to the surface).
+  // Modeled seabed pose for the selected station (NEVER clamped to the surface).
   const pose = useMemo(
     () =>
-      stationSeabedPose(LAT, LNG, SLICE_BOUNDS, SCENE_DEPTH, {
+      stationSeabedPoseForEntry(station, SLICE_BOUNDS, SCENE_DEPTH, {
         worldUnitsPerMeter: WUPM,
-        fallbackDepthM: FALLBACK_DEPTH_M,
       }),
-    [],
+    [station],
   );
   const seabedDepthM = pose[1] / WUPM;
+
+  // Keep the live station geo in a ref so the POV controller always re-frames
+  // the currently-selected node when it switches or refreshes.
+  const stationGeoRef = useRef({ lat: station.lat, lng: station.lng, seabedDepthM });
+  stationGeoRef.current = { lat: station.lat, lng: station.lng, seabedDepthM };
 
   // Underwater Beer-Lambert-ish tint, mirroring the orca sandbox under-view.
   useEffect(() => {
@@ -121,11 +134,23 @@ function SceneContent({
     directorRef.current = createCameraDirector(handleRef.current);
   }
 
-  // Build the modeled rig once and place its root on the modeled seabed.
-  const rigRef = useRef<HydrophoneRig | null>(null);
+  // The reusable POV-selection object, created once and bound to the director.
+  const povRef = useRef<StationPovController | null>(null);
+  if (!povRef.current && directorRef.current) {
+    povRef.current = createStationPovController({
+      director: directorRef.current,
+      getStation: () => stationGeoRef.current,
+      context: (p) => (p === "topdown" ? { orbit: true } : {}),
+      initialPov: pov,
+    });
+  }
+
+  // Build the MODELED equipment variant for this station's node class and place
+  // its root on the modeled seabed. Rebuilt whenever the station changes.
+  const rigRef = useRef<EquipmentRig | null>(null);
   const rigGroupRef = useRef<THREE.Group>(null);
   useEffect(() => {
-    const rig = makeHydrophoneRig({
+    const rig = makeStationEquipment(station.nodeClass, {
       seabedDepthM,
       worldUnitsPerMeter: WUPM,
     });
@@ -140,37 +165,32 @@ function SceneContent({
         rigRef.current = null;
       }
     };
-  }, [pose, seabedDepthM]);
+  }, [station.nodeClass, pose, seabedDepthM]);
 
-  // Drive the POV through the director. The deterministic (non-interacted) shot
-  // snaps to the end pose so a headless screenshot is reproducible; a top-down
-  // overview is framed as a static orbit (speed 0). After the user picks a POV
-  // the move animates, and the top-down orbits slowly.
-  const povHandleRef = useRef<StationPovHandle | null>(null);
+  // Drive the POV through the reusable controller. The deterministic
+  // (non-interacted) shot snaps to the end pose so a headless screenshot is
+  // reproducible; a top-down overview is framed as a static orbit (speed 0).
+  // After the user picks a POV (or station) the move animates and the top-down
+  // orbits slowly.
   useEffect(() => {
-    const director = directorRef.current;
-    if (!director) return;
+    const controller = povRef.current;
+    if (!controller) return;
     handleRef.current.camera = camera as THREE.PerspectiveCamera;
 
-    povHandleRef.current = runStationPOV(
+    controller.setPov(
       pov,
-      { lat: LAT, lng: LNG, seabedDepthM },
-      director,
-      pov === "topdown"
-        ? { orbit: true, orbitSpeed: interacted ? 0.03 : 0 }
-        : {},
+      pov === "topdown" ? { orbit: true, orbitSpeed: interacted ? 0.03 : 0 } : {},
     );
 
     if (!interacted) {
       // Settle the eased fly-in immediately for a deterministic paused frame.
-      director.update(10);
+      directorRef.current?.update(10);
     }
 
     return () => {
-      povHandleRef.current?.stop();
-      povHandleRef.current = null;
+      controller.stop();
     };
-  }, [pov, interacted, camera, seabedDepthM]);
+  }, [pov, interacted, camera, station, seabedDepthM]);
 
   // Per-frame: keep the handle's camera live and advance the director. The
   // deterministic shot has already settled, so this is a no-op there; the
@@ -220,7 +240,7 @@ function SceneContent({
   );
 }
 
-function useStationPlayer() {
+function useStationPlayer(station: StationCatalogEntry) {
   const playerRef = useRef<StationPlayer | null>(null);
   const [status, setStatus] = useState<string>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -229,20 +249,21 @@ function useStationPlayer() {
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    const player = new StationPlayer({
-      audioUrl: AUDIO_URL,
-      streamUrl: STREAM_URL,
-      attribution: ATTRIBUTION,
-    });
+    const player = new StationPlayer(stationPlayerOptions(station));
     playerRef.current = player;
     setStatus("loading");
+    setError(null);
+    setPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
     player
       .load()
       .then(() => {
-        setStatus("ready");
+        setStatus(player.getStatus());
         setDuration(player.getDuration());
         // Seam: publish the player so the spectrogram lane can read the SAME
-        // decoded real AudioBuffer (player.getAudioBuffer()).
+        // decoded real AudioBuffer (player.getAudioBuffer()). Only meaningful
+        // for a station with a bound clip.
         (window as unknown as { __STATION_PLAYER?: StationPlayer }).__STATION_PLAYER = player;
       })
       .catch((e) => {
@@ -266,7 +287,7 @@ function useStationPlayer() {
         playerRef.current = null;
       }
     };
-  }, []);
+  }, [station]);
 
   const toggle = () => {
     const p = playerRef.current;
@@ -288,14 +309,26 @@ function fmt(t: number): string {
 
 export default function StationScene() {
   const params = useMemo(readParams, []);
+  const [stationId, setStationId] = useState<string>(params.stationId);
   const [pov, setPov] = useState<StationPov>(params.pov);
   const [interacted, setInteracted] = useState(false);
-  const player = useStationPlayer();
+
+  const station = useMemo(
+    () => getStation(stationId) ?? DEFAULT_STATION,
+    [stationId],
+  );
+  const player = useStationPlayer(station);
 
   const onPov = (next: StationPov) => {
     setInteracted(true);
     setPov(next);
   };
+  const onStation = (id: string) => {
+    setInteracted(true);
+    setStationId(id);
+  };
+
+  const hasClip = station.audio.kind === "archived-clip";
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
@@ -308,12 +341,13 @@ export default function StationScene() {
           gl.toneMappingExposure = 1.0;
         }}
       >
-        <SceneContent pov={pov} interacted={interacted} />
+        <SceneContent station={station} pov={pov} interacted={interacted} />
       </Canvas>
 
+      <StationChip stations={STATIONS} value={station.id} onChange={onStation} />
       <PovChip value={pov} onChange={onPov} />
 
-      {/* Station audio player (MEASURED clip) + attribution (must be shown). */}
+      {/* Station audio player + attribution (must be shown). */}
       <div
         style={{
           position: "absolute",
@@ -330,35 +364,45 @@ export default function StationScene() {
           maxWidth: 280,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button
-            type="button"
-            onClick={player.toggle}
-            disabled={player.status !== "ready"}
-            style={{
-              appearance: "none",
-              border: "1px solid rgba(160,210,255,0.25)",
-              borderRadius: 8,
-              padding: "6px 14px",
-              background: player.status === "ready" ? "rgba(95,208,255,0.16)" : "rgba(95,208,255,0.06)",
-              color: player.status === "ready" ? "#5fd0ff" : "rgba(207,230,255,0.5)",
-              cursor: player.status === "ready" ? "pointer" : "default",
-            }}
-          >
-            {player.playing ? "Pause" : "Play"}
-          </button>
-          <span style={{ fontVariantNumeric: "tabular-nums" }}>
-            {fmt(player.currentTime)} / {fmt(player.duration)}
-          </span>
-        </div>
-        {player.status === "loading" && <div style={{ opacity: 0.7 }}>Loading real clip…</div>}
-        {player.status === "error" && (
-          <div style={{ color: "#ff9b8a" }}>Audio unavailable: {player.error}</div>
+        {hasClip ? (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button
+                type="button"
+                onClick={player.toggle}
+                disabled={player.status !== "ready"}
+                style={{
+                  appearance: "none",
+                  border: "1px solid rgba(160,210,255,0.25)",
+                  borderRadius: 8,
+                  padding: "6px 14px",
+                  background: player.status === "ready" ? "rgba(95,208,255,0.16)" : "rgba(95,208,255,0.06)",
+                  color: player.status === "ready" ? "#5fd0ff" : "rgba(207,230,255,0.5)",
+                  cursor: player.status === "ready" ? "pointer" : "default",
+                }}
+              >
+                {player.playing ? "Pause" : "Play"}
+              </button>
+              <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                {fmt(player.currentTime)} / {fmt(player.duration)}
+              </span>
+            </div>
+            {player.status === "loading" && <div style={{ opacity: 0.7 }}>Loading real clip…</div>}
+            {player.status === "error" && (
+              <div style={{ color: "#ff9b8a" }}>Audio unavailable: {player.error}</div>
+            )}
+          </>
+        ) : (
+          <div style={{ opacity: 0.85 }}>
+            No archived clip bound for this station. Live-listen only.
+          </div>
         )}
-        <div style={{ opacity: 0.85 }}>{ATTRIBUTION}</div>
-        <a href={STREAM_URL} target="_blank" rel="noreferrer" style={{ color: "#8fd0ff", opacity: 0.85 }}>
-          Live-listen: orcasound-lab
-        </a>
+        <div style={{ opacity: 0.85 }}>{station.audio.attribution}</div>
+        {station.streamUrl && (
+          <a href={station.streamUrl} target="_blank" rel="noreferrer" style={{ color: "#8fd0ff", opacity: 0.85 }}>
+            Live-listen: {station.slug}
+          </a>
+        )}
       </div>
 
       {/*
@@ -379,14 +423,18 @@ export default function StationScene() {
           font: "11px/1.5 ui-monospace, monospace",
           color: "#cfe6ff",
           background: "rgba(8,38,61,0.84)",
-          maxWidth: 420,
+          maxWidth: 460,
         }}
       >
-        <strong>Orcasound Lab station</strong> (48.5583362, -123.1735774)
-        <div style={{ marginTop: 4 }}>measured: audio · modeled: equipment mesh</div>
+        <strong>{station.name}</strong> ({station.lat.toFixed(6)}, {station.lng.toFixed(6)})
+        <div style={{ marginTop: 4 }}>
+          {hasClip ? "measured: audio · " : "live-listen only · "}modeled: equipment mesh (
+          {station.nodeClass})
+        </div>
         <div style={{ opacity: 0.7, marginTop: 4 }}>
-          POV {pov}. Rig on the modeled seabed (~{Math.abs(FALLBACK_DEPTH_M)} m). Camera driven by the
-          shared Camera Director.
+          POV {pov}. Rig on the modeled seabed (~{Math.abs(station.modeledFallbackDepthM)} m,
+          modeled fallback; CUDEM substrate supersedes at integrate). Camera driven by the shared
+          Camera Director.
         </div>
       </div>
     </div>

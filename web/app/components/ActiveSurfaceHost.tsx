@@ -304,6 +304,146 @@ function PlacesPanel({
   );
 }
 
+// ---- BSS studio panels (managed HUD skills). Honest NC attribution shown. ----
+
+interface TagtoolsStepCtx {
+  status?: string;
+  title?: string;
+  truth_label?: string;
+  reproduces_h5_path?: string | null;
+  summary?: Record<string, unknown>;
+  attribution?: string;
+  license?: string;
+}
+
+interface PosterVizCtx {
+  status?: string;
+  title?: string;
+  render?: string;
+  truth_label?: string;
+  source_script?: string;
+  box_key?: string;
+  js_port_status?: string;
+  attribution?: string;
+  license?: string;
+}
+
+interface BehaviorCaptureCtx {
+  status?: string;
+  behavior?: string;
+  dive_id?: number;
+  max_depth_m?: number;
+  dive_window_s?: number[];
+  truth_label?: string;
+  honesty?: string;
+  stages?: Array<{ stage?: string; intent?: string; director_call?: string }>;
+  attribution?: string;
+  license?: string;
+}
+
+function AttributionLine({ license, attribution }: { license?: string; attribution?: string }) {
+  if (!license && !attribution) return null;
+  return (
+    <p className="muted bsw-studio-attr" style={{ fontSize: "0.72rem", marginTop: "0.4rem" }}>
+      {license ? `${license}. ` : ""}
+      {attribution ?? ""}
+    </p>
+  );
+}
+
+function TagtoolsStepPanel({ ctx }: { ctx?: TagtoolsStepCtx }) {
+  if (!ctx || ctx.status !== "success") {
+    return <p className="muted">No tagtools step for this turn.</p>;
+  }
+  const summary = ctx.summary ?? {};
+  return (
+    <div className="console-metrics bsw-studio-panel">
+      <div className="console-metric-row">
+        <span>{ctx.title ?? "Tagtools step"}</span>
+        <HonestyBadge label={ctx.truth_label} />
+      </div>
+      {ctx.reproduces_h5_path && (
+        <p className="muted" style={{ fontSize: "0.78rem", margin: "0.2rem 0 0" }}>
+          Reproduces {ctx.reproduces_h5_path}
+        </p>
+      )}
+      <ul className="console-gate-list" style={{ marginTop: "0.4rem" }}>
+        {Object.entries(summary)
+          .slice(0, 6)
+          .map(([k, v]) => (
+            <li key={k}>
+              <span className="gate-dot ok" />
+              <span style={{ fontSize: "0.78rem" }}>
+                {k.replace(/_/g, " ")} {typeof v === "object" ? JSON.stringify(v) : String(v)}
+              </span>
+            </li>
+          ))}
+      </ul>
+      <AttributionLine license={ctx.license} attribution={ctx.attribution} />
+    </div>
+  );
+}
+
+function PosterVizPanel({ ctx }: { ctx?: PosterVizCtx }) {
+  if (!ctx || ctx.status !== "success") {
+    return <p className="muted">No poster visualization for this turn.</p>;
+  }
+  return (
+    <div className="console-metrics bsw-studio-panel">
+      <div className="console-metric-row">
+        <span>{ctx.title ?? "Poster visualization"}</span>
+        <HonestyBadge label={ctx.truth_label} />
+      </div>
+      <p className="muted" style={{ fontSize: "0.78rem", margin: "0.2rem 0 0" }}>
+        Baked from {ctx.source_script ?? "R script"}, render {ctx.render ?? "baked"}.
+        {ctx.js_port_status ? ` Interactive port ${ctx.js_port_status}.` : ""}
+      </p>
+      {ctx.box_key && (
+        <p className="muted bsw-studio-box" style={{ fontSize: "0.72rem", marginTop: "0.3rem" }}>
+          {ctx.box_key}
+        </p>
+      )}
+      <AttributionLine license={ctx.license} attribution={ctx.attribution} />
+    </div>
+  );
+}
+
+function BehaviorCapturePanel({ ctx }: { ctx?: BehaviorCaptureCtx }) {
+  if (!ctx || ctx.status !== "success") {
+    return <p className="muted">No behavior capture for this turn.</p>;
+  }
+  const win = ctx.dive_window_s;
+  return (
+    <div className="console-metrics bsw-studio-panel">
+      <div className="console-metric-row">
+        <span>{ctx.behavior ?? "Behavior"}</span>
+        <HonestyBadge label={ctx.truth_label} />
+      </div>
+      <p className="muted" style={{ fontSize: "0.78rem", margin: "0.2rem 0 0" }}>
+        Dive {ctx.dive_id ?? "n/a"}
+        {ctx.max_depth_m != null ? `, max depth ${ctx.max_depth_m} m` : ""}
+        {win && win.length === 2 ? `, window ${win[0]} to ${win[1]} s` : ""}
+      </p>
+      <ul className="console-gate-list" style={{ marginTop: "0.4rem" }}>
+        {(ctx.stages ?? []).map((s, i) => (
+          <li key={`${s.stage ?? "stage"}-${i}`}>
+            <span className="gate-dot ok" />
+            <span style={{ fontSize: "0.78rem" }}>
+              {s.stage?.replace(/_/g, " ")} {s.director_call ? `via ${s.director_call}` : ""}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {ctx.honesty && (
+        <p className="muted" style={{ fontSize: "0.74rem", marginTop: "0.3rem" }}>
+          {ctx.honesty}
+        </p>
+      )}
+      <AttributionLine license={ctx.license} attribution={ctx.attribution} />
+    </div>
+  );
+}
+
 function renderPanel(
   panel: UiIntentPanel,
   prepare: PlanPreparePayload,
@@ -313,6 +453,12 @@ function renderPanel(
 ) {
   const ctx = prepare.context as Record<string, unknown>;
   switch (panel.id) {
+    case "tagtools_step":
+      return <TagtoolsStepPanel ctx={ctx.run_tagtools_step as TagtoolsStepCtx | undefined} />;
+    case "poster_viz":
+      return <PosterVizPanel ctx={ctx.render_poster_viz as PosterVizCtx | undefined} />;
+    case "behavior_capture":
+      return <BehaviorCapturePanel ctx={ctx.capture_behavior as BehaviorCaptureCtx | undefined} />;
     case "gates_summary":
       return <GatesSummaryPanel gates={ctx.gates as GatesResponse | undefined} audience={audience} />;
     case "provenance_pin":

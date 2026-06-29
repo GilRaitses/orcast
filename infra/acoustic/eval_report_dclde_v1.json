@@ -1,0 +1,392 @@
+{
+  "model_version": "bam-dclde-salish-v1",
+  "train_run_id": "1b9772e-20260629T130831Z",
+  "created_utc": "2026-06-29T13:08:31.113159+00:00",
+  "corpus": {
+    "name": "DCLDE-2027 collated annotations, Salish-Sea subset",
+    "license": "CC-BY-SA-4.0",
+    "license_note": "ShareAlike + attribution carried on this eval and on all weights/inference derivatives",
+    "attribution": "DCLDE-2027 killer whale annotations (DFO Canada / NOAA NCEI), CC-BY-SA-4.0; cite doi:10.25921/15ey-mh50",
+    "doi": "https://doi.org/10.25921/15ey-mh50",
+    "source_url": "https://storage.googleapis.com/noaa-passive-bioacoustic/dclde/2027/dclde_2027_killer_whales/"
+  },
+  "feature": {
+    "window_s": 3.0,
+    "hop_s": 1.5,
+    "n_features": 129,
+    "description": "scipy log-mel silhouette (no torch/librosa)"
+  },
+  "split_policy": "leave-station-day-out; minority class (TKW) held in both train and test",
+  "heads": {
+    "presence": {
+      "task": "killer-whale call present vs background, per 3s window",
+      "claim": "estimate + confidence",
+      "selected_model": "logreg",
+      "models": {
+        "logreg": {
+          "classes": [
+            "background",
+            "present"
+          ],
+          "accuracy": 0.6768,
+          "macro_precision": 0.6709,
+          "macro_recall": 0.6901,
+          "macro_f1": 0.6661,
+          "auprc_macro_ovr": 0.7242,
+          "per_class": {
+            "background": {
+              "precision": 0.5175,
+              "recall": 0.7316,
+              "f1": 0.6062,
+              "support": 626
+            },
+            "present": {
+              "precision": 0.8243,
+              "recall": 0.6486,
+              "f1": 0.7259,
+              "support": 1215
+            }
+          },
+          "confusion": {
+            "labels": [
+              "background",
+              "present"
+            ],
+            "matrix": [
+              [
+                458,
+                168
+              ],
+              [
+                427,
+                788
+              ]
+            ]
+          },
+          "split": {
+            "description": "leave-station-day-out (cross-station/cross-day)",
+            "train_groups": null,
+            "test_groups": null,
+            "n_train": null,
+            "n_test": null
+          },
+          "n_test_windows": 1841
+        },
+        "rf": {
+          "classes": [
+            "background",
+            "present"
+          ],
+          "accuracy": 0.7306,
+          "macro_precision": 0.7222,
+          "macro_recall": 0.6387,
+          "macro_f1": 0.6447,
+          "auprc_macro_ovr": 0.7621,
+          "per_class": {
+            "background": {
+              "precision": 0.7097,
+              "recall": 0.3514,
+              "f1": 0.4701,
+              "support": 626
+            },
+            "present": {
+              "precision": 0.7348,
+              "recall": 0.9259,
+              "f1": 0.8194,
+              "support": 1215
+            }
+          },
+          "confusion": {
+            "labels": [
+              "background",
+              "present"
+            ],
+            "matrix": [
+              [
+                220,
+                406
+              ],
+              [
+                90,
+                1125
+              ]
+            ]
+          },
+          "split": {
+            "description": "leave-station-day-out (cross-station/cross-day)",
+            "train_groups": null,
+            "test_groups": null,
+            "n_train": null,
+            "n_test": null
+          },
+          "n_test_windows": 1841
+        }
+      },
+      "n_train_windows": 3684,
+      "n_test_windows": 1841,
+      "n_train_station_days": 64,
+      "n_test_station_days": 28,
+      "test_station_days": [
+        "BoundaryPass|2019-03-22",
+        "BoundaryPass|2019-03-25",
+        "HaroStraitNorth|2017-07-19",
+        "HaroStraitNorth|2017-07-25",
+        "HaroStraitNorth|2017-08-04",
+        "HaroStraitNorth|2017-09-05",
+        "HaroStraitNorth|2017-09-13",
+        "HaroStraitNorth|2017-09-30",
+        "HaroStraitSouth|2017-07-19",
+        "HaroStraitSouth|2017-07-23",
+        "HaroStraitSouth|2017-08-19",
+        "HaroStraitSouth|2017-09-06",
+        "HaroStraitSouth|2017-09-20",
+        "StrGeoN1|2021-09-05",
+        "StrGeoS1|2021-11-11",
+        "StrGeoS1|2021-11-18",
+        "StraitofGeorgia|2016-08-09",
+        "SwanChan|2021-11-16",
+        "SwanChan|2021-11-19",
+        "SwanChan|2021-12-28",
+        "Tekteksen|2022-06-28",
+        "Tekteksen|2022-07-10",
+        "Tekteksen|2022-07-25",
+        "Tekteksen|2022-08-04",
+        "Tekteksen|2022-10-03",
+        "bush_point|2020-09-29",
+        "orcasound_lab|2020-09-01",
+        "port_townsend|2020-09-30"
+      ]
+    },
+    "ecotype": {
+      "task": "SRKW vs Bigg's (TKW) on call windows",
+      "claim": "estimate + confidence, SRKW-dominated (low-confidence TKW)",
+      "selected_model": "logreg",
+      "models": {
+        "logreg": {
+          "classes": [
+            "SRKW",
+            "TKW"
+          ],
+          "accuracy": 0.7919,
+          "macro_precision": 0.6442,
+          "macro_recall": 0.6666,
+          "macro_f1": 0.6533,
+          "auprc_macro_ovr": 0.679,
+          "per_class": {
+            "SRKW": {
+              "precision": 0.8911,
+              "recall": 0.8547,
+              "f1": 0.8725,
+              "support": 929
+            },
+            "TKW": {
+              "precision": 0.3973,
+              "recall": 0.4785,
+              "f1": 0.4341,
+              "support": 186
+            }
+          },
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                794,
+                135
+              ],
+              [
+                97,
+                89
+              ]
+            ]
+          },
+          "split": {
+            "description": "leave-station-day-out (cross-station/cross-day)",
+            "train_groups": null,
+            "test_groups": null,
+            "n_train": null,
+            "n_test": null
+          },
+          "n_test_windows": 1115
+        },
+        "rf": {
+          "classes": [
+            "SRKW",
+            "TKW"
+          ],
+          "accuracy": 0.8502,
+          "macro_precision": 0.7836,
+          "macro_recall": 0.579,
+          "macro_f1": 0.5968,
+          "auprc_macro_ovr": 0.7389,
+          "per_class": {
+            "SRKW": {
+              "precision": 0.8561,
+              "recall": 0.986,
+              "f1": 0.9165,
+              "support": 929
+            },
+            "TKW": {
+              "precision": 0.7111,
+              "recall": 0.172,
+              "f1": 0.2771,
+              "support": 186
+            }
+          },
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                916,
+                13
+              ],
+              [
+                154,
+                32
+              ]
+            ]
+          },
+          "split": {
+            "description": "leave-station-day-out (cross-station/cross-day)",
+            "train_groups": null,
+            "test_groups": null,
+            "n_train": null,
+            "n_test": null
+          },
+          "n_test_windows": 1115
+        }
+      },
+      "n_train_windows": 2671,
+      "n_test_windows": 1115,
+      "n_train_station_days": 64,
+      "n_test_station_days": 28,
+      "test_station_days": [
+        "BoundaryPass|2019-03-22",
+        "BoundaryPass|2019-04-01",
+        "HaroStraitNorth|2017-07-25",
+        "HaroStraitNorth|2017-08-04",
+        "HaroStraitNorth|2017-09-05",
+        "HaroStraitNorth|2017-09-06",
+        "HaroStraitNorth|2017-09-20",
+        "HaroStraitNorth|2017-10-15",
+        "HaroStraitSouth|2017-07-23",
+        "HaroStraitSouth|2017-07-25",
+        "HaroStraitSouth|2017-09-20",
+        "HaroStraitSouth|2017-09-27",
+        "LimeKiln|2019-08-22",
+        "StrGeoN1|2021-09-13",
+        "StrGeoN1|2021-09-21",
+        "StrGeoS1|2021-11-11",
+        "StraitofGeorgia|2015-12-27",
+        "StraitofGeorgia|2016-08-08",
+        "StraitofGeorgia|2016-08-09",
+        "StraitofGeorgia|2017-11-04",
+        "StraitofGeorgia|2018-01-17",
+        "Tekteksen|2022-07-25",
+        "Tekteksen|2022-07-26",
+        "Tekteksen|2022-07-29",
+        "Tekteksen|2022-08-09",
+        "Tekteksen|2022-09-03",
+        "Tekteksen|2022-10-03",
+        "port_townsend|2020-09-30"
+      ]
+    },
+    "call_type_diagnostic": {
+      "status": "DIAGNOSTIC ONLY -- not shipped, not wired to classification.json",
+      "contrast": "pulsed_call (any S-code) vs whistle; click/buzz dropped (single-station)",
+      "why_not_shipped": "populated labels are the S1-S40 catalog (charter forbids claiming); coarse signal labels are sparse",
+      "label_inventory": {
+        "BoundaryPass|pulsed_call": 877,
+        "LimeKiln|pulsed_call": 412,
+        "LimeKiln|whistle": 40,
+        "Tekteksen|pulsed_call": 1975,
+        "Tekteksen|whistle": 321
+      },
+      "stations_used": [
+        "BoundaryPass",
+        "LimeKiln",
+        "Tekteksen"
+      ],
+      "test_stations": [
+        "LimeKiln"
+      ],
+      "metrics": {
+        "classes": [
+          "pulsed_call",
+          "whistle"
+        ],
+        "accuracy": 0.7532,
+        "macro_precision": 0.3766,
+        "macro_recall": 0.5,
+        "macro_f1": 0.4296,
+        "auprc_macro_ovr": 0.4239,
+        "per_class": {
+          "pulsed_call": {
+            "precision": 0.7532,
+            "recall": 1.0,
+            "f1": 0.8593,
+            "support": 116
+          },
+          "whistle": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 38
+          }
+        },
+        "confusion": {
+          "labels": [
+            "pulsed_call",
+            "whistle"
+          ],
+          "matrix": [
+            [
+              116,
+              0
+            ],
+            [
+              38,
+              0
+            ]
+          ]
+        },
+        "split": {
+          "description": "leave-station-out (BoundaryPass/LimeKiln/Tekteksen)",
+          "train_groups": [
+            "BoundaryPass",
+            "Tekteksen"
+          ],
+          "test_groups": [
+            "LimeKiln"
+          ],
+          "n_train": 629,
+          "n_test": 154
+        },
+        "n_test_windows": 154
+      },
+      "to_strengthen": "scoped relabel budget to a coarse CK/W/BP taxonomy across providers, or an O0-costed learned embedding; the 129-dim log-mel silhouette is presence-oriented"
+    }
+  },
+  "not_trained": {
+    "call_type": "no honest shippable labels: populated labels are the S1-S40 catalog (forbidden) and coarse signal classes are too sparse / single-station; to_strengthen (diagnostic only)",
+    "single_vs_multiple": "no source-count labels (BSW-R02); BLOCKED"
+  },
+  "honesty": {
+    "reported_as": "estimate + confidence",
+    "not_claimed": [
+      "whale count",
+      "pod / individual ID",
+      "SRKW S1-S40 catalog call"
+    ],
+    "known_confounds": [
+      "ecotype is SRKW-dominated (~19:1 SRKW:TKW); TKW metrics rest on few station-days",
+      "129-dim log-mel silhouette is presence-oriented; fine call morphology is weak (see call_type to_strengthen)",
+      "cross-station/cross-day held-out split; metrics are real generalization, expected below v0's confounded within-session 0.99"
+    ]
+  }
+}

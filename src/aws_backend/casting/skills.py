@@ -24,6 +24,7 @@ from ..exploration.tools import (
     fetch_verified_sightings,
 )
 from .manifest import SkillSpec, enabled_skill_ids, get_skill, load_manifest
+from .studio_skills import STUDIO_DISPATCH
 
 SkillFn = Callable[..., Dict[str, Any]]
 
@@ -44,6 +45,10 @@ _DISPATCH: Dict[str, SkillFn] = {
     "fetch_snapshot_manifest": lambda **_kw: fetch_snapshot_manifest(),
     "fetch_ingestion_status": lambda **_kw: fetch_ingestion_status(),
 }
+
+# BSS managed HUD skills (poster viz, tagtools steps, behavior capture) extend
+# the Central Casting dispatch. Net-new; tiers/honesty preserved in the manifest.
+_DISPATCH.update(STUDIO_DISPATCH)
 
 # Backward-compatible alias for tests and policy imports.
 SKILL_CATALOG: Dict[str, SkillFn] = {

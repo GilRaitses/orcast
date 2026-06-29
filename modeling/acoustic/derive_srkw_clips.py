@@ -43,21 +43,37 @@ def main() -> int:
     for s in range(0, n - w + 1, hop):
         e = s + w
         d = depth[s:e]
+        p = pitch[s:e]
         # yaw variance via circular spread
         cy, sy = np.cos(yaw[s:e]).mean(), np.sin(yaw[s:e]).mean()
         yaw_steadiness = np.hypot(cy, sy)  # 1 = perfectly steady heading
+        # pitch oscillation: std + zero-crossings of the demeaned pitch trace,
+        # the kinematic fingerprint of a vertical (porpoising) loop.
+        pd = p - p.mean()
+        pitch_zero_crossings = int(np.count_nonzero(np.diff(np.sign(pd)) != 0))
         cands.append({
             "s": s, "e": e, "t0": float(t[s]), "t1": float(t[e - 1]),
             "depth_mean": float(d.mean()), "depth_range": float(d.max() - d.min()),
             "roll_abs_p90": float(np.percentile(np.abs(roll[s:e]), 90)),
             "yaw_steadiness": float(yaw_steadiness),
             "fluke_amp_mean": float(famp[s:e].mean()),
+            "pitch_std": float(p.std()),
+            "pitch_zero_crossings": pitch_zero_crossings,
         })
 
     def pick(key, reverse=True, **filters):
         pool = [c for c in cands if all(f(c) for f in filters.values())]
         if not pool:
             pool = cands
+        return sorted(pool, key=lambda c: c[key], reverse=reverse)[0]
+
+    def pick_strict(key, reverse=True, **filters):
+        # Honest variant: returns None when NO real SRKW window matches the
+        # kinematic signature, so a class is only emitted when the measured
+        # telemetry actually supports it (never mislabel a fallback window).
+        pool = [c for c in cands if all(f(c) for f in filters.values())]
+        if not pool:
+            return None
         return sorted(pool, key=lambda c: c[key], reverse=reverse)[0]
 
     # Traveling (class 8): steady heading + active fluke + modest depth.
@@ -68,6 +84,16 @@ def main() -> int:
     side_rolls = pick("roll_abs_p90")
     # Exploratory dive (class 1): largest depth excursion.
     exploratory = pick("depth_range")
+    # Surface_Active (class 7): genuinely shallow + active fluke. Only emitted
+    # when a near-surface SRKW window exists.
+    surface_active = pick_strict("fluke_amp_mean",
+                                 surface=lambda c: c["depth_mean"] < 5.0,
+                                 active=lambda c: c["fluke_amp_mean"] > 0.18)
+    # Vertical_loop (class 9): repeated pitch reversals + a real depth swing.
+    vertical_loop = pick_strict("pitch_zero_crossings",
+                                oscillating=lambda c: c["pitch_zero_crossings"] >= 6,
+                                swing=lambda c: c["depth_range"] > 10.0,
+                                steep=lambda c: c["pitch_std"] > 0.25)
 
     def clip(c, behavior_class, name):
         return {
@@ -86,8 +112,28 @@ def main() -> int:
                 "roll_abs_p90_deg": round(np.degrees(c["roll_abs_p90"]), 1),
                 "yaw_steadiness": round(c["yaw_steadiness"], 3),
                 "fluke_amp_mean": round(c["fluke_amp_mean"], 3),
+                "pitch_std_rad": round(c["pitch_std"], 3),
+                "pitch_zero_crossings": c["pitch_zero_crossings"],
             },
         }
+
+    # Build the clip list. Side_rolls / Traveling / Exploratory_dives always
+    # match on this driver; Surface_Active / Vertical_loop are appended ONLY
+    # when a real SRKW window passes their kinematic guard (R04 honesty: never
+    # mislabel a fallback window as a behavior the data does not show).
+    clips = [
+        clip(traveling, 8, "Traveling"),
+        clip(side_rolls, 5, "Side_rolls"),
+        clip(exploratory, 1, "Exploratory_dives"),
+    ]
+    if surface_active is not None:
+        clips.append(clip(surface_active, 7, "Surface_Active"))
+    else:
+        print("   Surface_Active   SKIPPED - no shallow active SRKW window")
+    if vertical_loop is not None:
+        clips.append(clip(vertical_loop, 9, "Vertical_loop"))
+    else:
+        print("   Vertical_loop    SKIPPED - no pitch-oscillating SRKW window")
 
     manifest = {
         "schema": "bsw-behavior-clips/v1",
@@ -105,11 +151,7 @@ def main() -> int:
             "behaviorName": "unclassified", "loop": True, "honesty": "measured",
             "selection": "continuous_fallback",
         },
-        "clips": [
-            clip(traveling, 8, "Traveling"),
-            clip(side_rolls, 5, "Side_rolls"),
-            clip(exploratory, 1, "Exploratory_dives"),
-        ],
+        "clips": clips,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(manifest, indent=2))

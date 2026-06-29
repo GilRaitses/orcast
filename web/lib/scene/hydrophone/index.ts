@@ -12,7 +12,16 @@ export {
 } from "./makeHydrophoneRig";
 
 export {
+  makeStationEquipment,
+  makeMooringHydrophone,
+  type EquipmentRig,
+  type EquipmentVariantOptions,
+  type MooringHydrophoneOptions,
+} from "./equipment";
+
+export {
   stationSeabedPose,
+  stationSeabedPoseForEntry,
   resolveSeabedDepthM,
   type StationSeabedOptions,
 } from "./placement";
@@ -30,3 +39,27 @@ export {
   type StationPovContext,
   type StationPovHandle,
 } from "./stationCamera";
+
+export {
+  createStationPovController,
+  STATION_POVS,
+  type PovDefinition,
+  type StationPovController,
+  type StationPovControllerOptions,
+} from "./povObject";
+
+export {
+  STATION_CATALOG,
+  listStations,
+  listSelectableStations,
+  getStation,
+  classifyNodeClass,
+  entryFromNode,
+  fetchLiveHydrophones,
+  listenUrl,
+  stationPlayerOptions,
+  type StationCatalogEntry,
+  type StationAudioBinding,
+  type StationAudioKind,
+  type HydrophoneNodeClass,
+} from "./catalog";

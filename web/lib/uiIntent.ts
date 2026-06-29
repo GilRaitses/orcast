@@ -55,6 +55,9 @@ const PANEL_LABELS: Record<string, string> = {
   connections_plan: "Connection plan",
   kayak_plan: "Kayak window",
   sidequests: "Sidequests",
+  tagtools_step: "Tagtools pipeline step",
+  poster_viz: "Poster visualization",
+  behavior_capture: "Behavior capture",
 };
 
 export function panelLabel(id: string): string {

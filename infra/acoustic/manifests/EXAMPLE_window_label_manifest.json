@@ -1,0 +1,39 @@
+{
+  "schema": "bam-window-label-manifest/v1",
+  "_template_note": "Illustrative template only. NOT real data and NOT a fetch instruction. The wav path is a placeholder in the box; train_head_from_manifest will raise FileNotFoundError until an O0-approved BAM-DATA fetch lands real audio. Values below show the expected shape against the DCLDE-2027 OPEN anchor.",
+  "head": "ecotype",
+  "scheme": "ecotype",
+  "win_s": 3.0,
+  "hop_s": 1.5,
+  "min_overlap_frac": 0.5,
+  "split_policy": "leave-station-day-out",
+  "corpus": {
+    "name": "DCLDE-2027 collated Annotations.csv",
+    "license": "CC-BY-4.0",
+    "license_status": "OPEN",
+    "attribution": "Palmer et al. 2025, NOAA passive bioacoustic open data",
+    "source_url": "https://doi.org/10.25921/15ey-mh50",
+    "fetched_utc": "PENDING-O0-GO",
+    "box_pointer": "s3://198456344617-us-west-2-orcast-aws-backend-reports/bsw-acoustic/corpora/dclde-2027/"
+  },
+  "label_qc": {
+    "class_balance": {"background": 0, "SRKW": 0, "NRKW": 0, "TKW": 0},
+    "n_clips": 0,
+    "n_annotations": 0,
+    "n_windows": 0,
+    "notes": "Populated by BAM-DATA after the gated fetch."
+  },
+  "clips": [
+    {
+      "clip_id": "EXAMPLE_provider_file_0001",
+      "wav": "infra/acoustic/data/corpora/dclde-2027/EXAMPLE_provider_file_0001.wav",
+      "duration_s": 60.0,
+      "dataset": "EXAMPLE_provider_station",
+      "date": "2021-08-25",
+      "annotations": [
+        {"t0": 4.2, "t1": 6.1, "ecotype": "SRKW", "call_type": "CK", "kw": true, "kw_certain": true, "dataset": "EXAMPLE_provider_station", "date": "2021-08-25"},
+        {"t0": 31.0, "t1": 33.5, "ecotype": "TKW", "call_type": "BP", "kw": true, "kw_certain": false, "dataset": "EXAMPLE_provider_station", "date": "2021-08-25"}
+      ]
+    }
+  ]
+}

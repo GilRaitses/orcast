@@ -8,6 +8,7 @@ export type {
   ReenactmentTimeline,
   OrcaSpawnInstance,
   ReenactmentSpawnRecord,
+  SpawnCountBasis,
 } from "./types";
 export {
   buildSpawnRecord,
@@ -15,7 +16,12 @@ export {
   presenceAtTime,
   type SpawnOptions,
 } from "./spawnFromClassification";
-export { createOrcaPool, type OrcaPool, type OrcaPoolOptions } from "./OrcaPool";
+export {
+  createOrcaPool,
+  type OrcaPool,
+  type OrcaPoolOptions,
+  type OrcaInstanceLabel,
+} from "./OrcaPool";
 export {
   createTimelineDriver,
   type TimelineDriver,
@@ -28,3 +34,15 @@ export {
   CLASSIFICATION_URL,
   CLIP_MANIFEST_URL,
 } from "./loaders";
+export {
+  bindReenactmentPov,
+  REENACTMENT_POV_LABELS,
+  type ReenactmentPov,
+} from "./povBinding";
+export {
+  buildEthogram,
+  modeledClipLabel,
+  type Ethogram,
+  type EthogramEntry,
+  type ClipAssignmentOptions,
+} from "@/lib/scene/orca/motion/clips/ethogram";

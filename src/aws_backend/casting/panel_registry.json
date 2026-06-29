@@ -78,6 +78,24 @@
       "surface": "sidebar",
       "label": "Sidequests",
       "h0_route": "/explore"
+    },
+    {
+      "id": "tagtools_step",
+      "surface": "sidebar",
+      "label": "Tagtools pipeline step",
+      "h0_route": "/studio/annotate"
+    },
+    {
+      "id": "poster_viz",
+      "surface": "sidebar",
+      "label": "Poster visualization",
+      "h0_route": "/studio"
+    },
+    {
+      "id": "behavior_capture",
+      "surface": "sidebar",
+      "label": "Behavior capture",
+      "h0_route": "/studio"
     }
   ]
 }

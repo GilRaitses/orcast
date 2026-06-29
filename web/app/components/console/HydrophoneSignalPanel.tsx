@@ -18,6 +18,9 @@ export interface HydrophoneSignalProps {
   station?: string | null;
   lat?: number | null;
   lng?: number | null;
+  // Live-listen stream carried through from the scene hydrophone intent. The
+  // panel surfaces it as an external link; it never decodes the stream here.
+  streamUrl?: string | null;
 }
 
 export default function HydrophoneSignalPanel({
@@ -50,6 +53,13 @@ export default function HydrophoneSignalPanel({
       <h3 className="console-panel-title">Hydrophone signal</h3>
       {loading && <p className="muted">Loading hydrophone signal…</p>}
       {failed && <p className="muted">Hydrophone signal service unavailable.</p>}
+      {props?.streamUrl && (
+        <p style={{ fontSize: "0.8rem", margin: "0.2rem 0 0.4rem" }}>
+          <a href={props.streamUrl} target="_blank" rel="noreferrer">
+            Live-listen: orcasound-lab
+          </a>
+        </p>
+      )}
       {data && (
         <>
           <p className="muted" style={{ fontSize: "0.85rem" }}>

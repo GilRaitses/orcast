@@ -94,6 +94,52 @@ import {
   type WfxEnvHandle,
 } from "@/lib/scene/orca";
 import { makeRealWfxEnv } from "@/lib/scene/wfx/realWfxEnv";
+// --- SLICE MOUNT imports (single owner SLICE-INTEGRATE) ----------------------
+// The thin-but-real B-side slice, mounted IN PLACE on a hydrophone station
+// selection. Public barrels only; no lane internal is copied or forked. This
+// mirrors the proven /workbench composition (BST rig, BSH spectro authority,
+// BAM precomputed classification, BRE presence-gated reenactment) but reuses the
+// LIVE twin environment (SkyRig/FogTuneRig/OrcaRig stay authoritative; the slice
+// never writes scene.background/fog/environment) and the EXISTING camera
+// director instead of the workbench stand-ins. See the SLICE MOUNT BLOCK below
+// and web/lib/scene/hydrophone/WIRING.md "How the integrator mounts this".
+import {
+  makeStationEquipment,
+  stationSeabedPoseForEntry,
+  resolveSeabedDepthM,
+  createStationPovController,
+  getStation,
+  entryFromNode,
+  STATION_CATALOG,
+  STATION_POVS,
+  type EquipmentRig,
+  type StationCatalogEntry,
+  type StationPov,
+  type StationPovController,
+} from "@/lib/scene/hydrophone";
+import {
+  createSpectroTimeline,
+  type SpectroTimeline,
+} from "@/lib/scene/hud/spectro";
+// BSH-INTEGRATE: the interpretive double-diffusion ocean layer (additive,
+// depthWrite:false, default-off). The barrel stays backward-compatible; this only
+// pulls the promoted layer + its locked on-screen labels.
+import {
+  createDoubleDiffusionLayer,
+  INTERPRETIVE_OCEAN_LABEL,
+  INTERPRETIVE_OCEAN_DETAIL,
+  type DoubleDiffusionLayer,
+} from "@/lib/scene/ocean";
+import {
+  buildSpawnRecord,
+  createOrcaPool,
+  createTimelineDriver,
+  loadClassification,
+  loadClipManifest,
+  type OrcaPool,
+  type TimelineDriver,
+  type BehaviorClassId,
+} from "@/lib/scene/reenactment";
 
 // Full-extent multi-LoD tileset (85 tiles, 4 LoD levels, meshopt, validated 0
 // errors). NOT the single-tile pilot; the pilot and pilot.bounds.json are dead
@@ -935,6 +981,525 @@ function OrcaRig({ worldUnitsPerMeter }: { worldUnitsPerMeter?: number }) {
 // END W4 ORCA MOUNT BLOCK
 // ============================================================================
 
+// ============================================================================
+// SLICE MOUNT BLOCK -- the thin-but-real B-side slice, single owner
+// SLICE-INTEGRATE. Mirrors the proven /workbench composition (BST hydrophone
+// rig, BSH spectro authority over the ONE real clip, BAM precomputed
+// classification, BRE presence-gated SRKW reenactment) and lands it on the LIVE
+// twin, GATED on a hydrophone station selection. Binding O0 rulings honored
+// here:
+//   SEAM 1+2 (in-place, not a swap): the slice is mounted as in-scene objects
+//     anchored at the selected station. It NEVER writes scene.background,
+//     scene.fog, or scene.environment -- SkyRig / FogTuneRig / OrcaRig stay the
+//     sole authorities for those globals.
+//   SEAM 3 (camera): the station POV reuses the EXISTING SalishScene director
+//     (intentRefs); the WS-INTENT resting orbit + any journey are suppressed on
+//     select. No second director is created and the per-frame director.update
+//     stays owned by IntentDirectorRig. See the WS-INTENT review note in
+//     web/lib/scene/camera/WIRING-slice-note.md.
+//   SEAM 4 (WFX env): a second makeRealWfxEnv PMREM bake lights ONLY the
+//     reenactment pool's materials (passed to createOrcaPool); it is never
+//     assigned to scene.environment, so OrcaRig remains the lone writer. The
+//     consolidation follow-up (ORCA exposes its env handle) is in
+//     web/lib/scene/wfx/WIRING-slice-note.md.
+//   SEAM 6 (first paint): the STFT/WebAudio bake and all slice loads fire ONLY
+//     after a station is selected; nothing here runs on first paint.
+// Honesty labels travel verbatim from the slice: the estimate+confidence chip,
+// "orcas shown: N" presence-gated to 0 on absence windows, the Orcasound
+// attribution, and the representativeness label (rendered as DOM chrome by
+// SalishScene below, styled via the bsw-* classes in globals.css).
+//
+// NOTE on scale + camera (documented modeled choice, flagged for the ACCEPT
+// gate): the twin's fit scale maps ~0.0024 units/m, so a true-scale ~18 m rig
+// would be sub-pixel. The rig is built at a readable modeled VISIBILITY scale
+// (SLICE_RIG_WUPM) -- honest station PLACEMENT, not surveyed size -- exactly the
+// rationale OrcaRig uses for ORCA_BODY_SCALE. The director's hard no-dunk
+// altitude clamp (web/lib/scene/camera/director.ts) keeps the eye above the
+// water plane, so the "dive-to-rig" frames the station from just above the
+// translucent surface rather than truly submerged; a true underwater POV needs a
+// WS-INTENT opt-out and is left as a review note. Keep SLICE additions in this
+// fence.
+// ----------------------------------------------------------------------------
+
+// A hydrophone station the user selected on the live twin (subset of the
+// hydrophone SceneIntent the beacons already emit). streamUrl is carried through
+// for the console live-listen bind; it is surfaced, never decoded here.
+interface SelectedStation {
+  id: string | number | null;
+  name?: string | null;
+  lat: number;
+  lng: number;
+  streamUrl?: string | null;
+}
+
+// DOM chrome state the slice publishes for the honesty chips (rendered by
+// SalishScene as canvas-overlay siblings, styled by globals.css bsw-* classes).
+interface SliceState {
+  status: string;
+  presence: boolean;
+  label: string;
+  count: number;
+  countBasisLabel: string;
+  t: number;
+  attribution: string;
+  streamUrl: string | null;
+  // BST-INTEGRATE deepening: which modeled equipment variant is mounted, and
+  // whether this station has a license-clear archived clip. A clip-less station
+  // shows the rig + live-listen affordance only -- no spectrogram, no
+  // reenactment, no invented audio.
+  nodeClass: StationCatalogEntry["nodeClass"];
+  hasClip: boolean;
+  // BRE-INTEGRATE: per-spawned-orca disclosed modeled behavior labels (the
+  // DTAG-segment ethogram match for each instance). Empty until the pool spawns.
+  behaviors: string[];
+}
+
+// The Orcasound Lab live-listen URL, used by the deterministic ?station capture
+// hook (which carries no id). Per-station audio + attribution now travel with
+// the catalog entry (web/lib/scene/hydrophone/catalog.ts); no stream is invented.
+const SLICE_STREAM_URL = "https://live.orcasound.net/listen/orcasound-lab";
+// The reenactment plays the measured "Traveling" clip (near-surface, reads above
+// the rig). Acoustic presence still gates WHETHER it is shown.
+const SLICE_CLIP_ID = "Traveling";
+// BRE-INTEGRATE capability-demo breadth: when the labeled `?bsw_demo=N` override
+// is active, the spawned orcas rotate through these near-column DTAG-segment
+// behaviors (Traveling 8, Surface_Active 7, Side_rolls 5) so multiple read in
+// one frame, each carrying its disclosed modeled-match label. This is NEVER a
+// model estimate: BAM is presence-only, so the REAL count stays 0/1 and these
+// extra orcas appear only under the explicit override.
+const SLICE_DEMO_BEHAVIOR_CLASSES = [8, 7, 5] as BehaviorClassId[];
+// Presence-positive window (BAM classification confidence ~0.85) so a freshly
+// selected station opens on a frame that shows the spawned orca, not an empty
+// absence window.
+const SLICE_DEFAULT_T = 61.5;
+// Readable modeled VISIBILITY scale for the rig (units per metre). NOT true
+// geographic size: see the block header. The rig is internally self-consistent
+// at any scale (anchor on the modeled seabed, float at the water plane).
+const SLICE_RIG_WUPM = 0.34;
+// Readable orca body scale, matching the OrcaRig ORCA_BODY_SCALE convention.
+const SLICE_ORCA_BODY_SCALE = 0.5;
+
+// BST-INTEGRATE: resolve the station the user selected (or the ?station capture
+// hook set) to a real catalog entry, so the right MODELED equipment variant,
+// per-station modeled fallback depth, and audio binding travel with it. Match
+// by id/slug first (a beacon click carries the real /api/live-hydrophones id),
+// then by nearest coordinates (the ?station=lat,lng capture hook has no id),
+// then synthesise an honest entry for any out-of-catalog node (live-listen
+// only, node class classified, no invented clip). v1 scope = the 3 in-extent
+// nodes (Orcasound Lab, North San Juan Channel, Andrews Bay).
+function resolveStationEntry(station: SelectedStation): StationCatalogEntry {
+  const byId = station.id != null ? getStation(String(station.id)) : null;
+  if (byId) return byId;
+  let best: StationCatalogEntry | null = null;
+  let bestD = Infinity;
+  for (const s of STATION_CATALOG) {
+    const d = (s.lat - station.lat) ** 2 + (s.lng - station.lng) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      best = s;
+    }
+  }
+  // ~0.01 deg (~1 km) tolerance: a capture-hook coordinate that lands on a real
+  // node adopts that node's variant + clip; anything farther is out-of-catalog.
+  if (best && bestD < 1e-4) return best;
+  return entryFromNode({
+    id: station.id,
+    name: station.name,
+    latitude: station.lat,
+    longitude: station.lng,
+    streamUrl: station.streamUrl,
+  });
+}
+
+function SliceRig({
+  station,
+  pov,
+  field,
+  worldUnitsPerMeter,
+  demoCount,
+  intentRefs,
+  hudHost,
+  onSliceState,
+}: {
+  station: SelectedStation;
+  pov: StationPov;
+  field: SubstrateField | null;
+  worldUnitsPerMeter?: number;
+  // BRE-INTEGRATE: labeled capability-demo orca count (1..3) from ?bsw_demo. When
+  // null, the homepage spawns exactly BAM's presence-only estimate (0/1).
+  demoCount?: number | null;
+  intentRefs: IntentBridgeRefs;
+  hudHost: HTMLDivElement | null;
+  onSliceState: (s: SliceState) => void;
+}) {
+  // The resolved real catalog entry: modeled node class, per-station modeled
+  // fallback depth, and audio binding (archived clip vs live-listen only).
+  const entry = useMemo(
+    () => resolveStationEntry(station),
+    [station.id, station.lat, station.lng, station.name, station.streamUrl],
+  );
+  const hasClip = entry.audio.kind === "archived-clip";
+  const clipUrl = entry.audio.audioUrl ?? null;
+  const gl = useThree((s) => s.gl);
+  const camera = useThree((s) => s.camera);
+  const sun = useScenicSun();
+
+  // SEAM 4: pool-only WFX env. PMREMs the same scene sky for the reenactment
+  // materials' IBL and carries the twin-unit underwater optic. It is passed to
+  // createOrcaPool ONLY; it is NEVER assigned to scene.environment (OrcaRig is
+  // the sole writer). One-time PMREM bake, disposed on unmount; no third render
+  // pass is added (the pool joins the existing opaque depth pre-pass).
+  const env = useMemo<WfxEnvHandle>(
+    () =>
+      makeRealWfxEnv({
+        renderer: gl,
+        sunDirection: sun.direction,
+        sunColor: sun.color,
+        sunIntensity: sun.intensity,
+        waterLevelY: SEA_LEVEL_Y,
+      }),
+    [gl, sun],
+  );
+  useEffect(() => () => env.dispose?.(), [env]);
+
+  // Modeled seabed depth (metres, negative below sea level): the LIVE CUDEM
+  // substrate field first, then this station's modeled fallback (from the
+  // catalog, not a single hardcoded constant). Used for the rig cable length
+  // and the camera POV altitude.
+  const seabedDepthM = useMemo(
+    () =>
+      resolveSeabedDepthM(station.lat, station.lng, {
+        substrate: field,
+        fallbackDepthM: entry.modeledFallbackDepthM,
+      }),
+    [station.lat, station.lng, field, entry.modeledFallbackDepthM],
+  );
+
+  // BST-INTEGRATE: the MODELED equipment variant for this station's node class
+  // (cabled shore hydrophone vs subsurface mooring), anchored on the modeled
+  // seabed via stationSeabedPoseForEntry against the LIVE substrate field. XZ
+  // uses the shared projectToScene frame (beacons + OrcaRig); Y is the substrate
+  // depth (per-station fallback when the field misses), both scaled by the
+  // readable visibility scale so the rig is not sub-pixel (the gate-flagged
+  // modeled VISIBILITY choice; see the block header). Added imperatively,
+  // disposed on station change / unmount.
+  const rigGroupRef = useRef<THREE.Group>(null);
+  useEffect(() => {
+    const [x, y, z] = stationSeabedPoseForEntry(entry, TILESET_BOUNDS, SCENE_DEPTH, {
+      substrate: field,
+      worldUnitsPerMeter: SLICE_RIG_WUPM,
+    });
+    const rig: EquipmentRig = makeStationEquipment(entry.nodeClass, {
+      seabedDepthM,
+      worldUnitsPerMeter: SLICE_RIG_WUPM,
+    });
+    rig.root.position.set(x, y, z);
+    const group = rigGroupRef.current;
+    group?.add(rig.root);
+    return () => {
+      group?.remove(rig.root);
+      rig.dispose();
+    };
+  }, [entry, field, seabedDepthM]);
+
+  // Per-station audio binding (REUSE of the bind SLICE-INTEGRATE wired; never
+  // re-bound, never invented). Live-listen link prefers the real intent
+  // streamUrl, then the catalog.
+  const attribution = entry.audio.attribution;
+  const liveListenUrl = station.streamUrl ?? entry.streamUrl ?? entry.audio.streamUrl;
+
+  // BSH: the spectro timeline = the single audio + clock authority over the
+  // station's archived clip. LAZY -- created only now that a station is selected
+  // (SEAM 6). A clip-less station (live-listen only) bakes NOTHING: it publishes
+  // the live-listen affordance and leaves the authority null, so the reenactment
+  // below stays unspawned and no audio is synthesised. The Canvas-overlay HUD
+  // mounts to the DOM host sibling SalishScene provides.
+  const [authority, setAuthority] = useState<SpectroTimeline["authority"] | null>(null);
+  const timelineRef = useRef<SpectroTimeline | null>(null);
+  useEffect(() => {
+    if (!hasClip || !clipUrl) {
+      // Honest live-listen-only state: rig is placed, but there is no archived
+      // clip to scrub, classify, or reenact.
+      onSliceState({
+        status: "live-listen only · no archived clip to scrub",
+        presence: false,
+        label: "",
+        count: 0,
+        countBasisLabel: "",
+        t: 0,
+        attribution,
+        streamUrl: liveListenUrl,
+        nodeClass: entry.nodeClass,
+        hasClip: false,
+        behaviors: [],
+      });
+      setAuthority(null);
+      return;
+    }
+    let alive = true;
+    onSliceState({
+      status: "baking spectrogram of the real clip…",
+      presence: false,
+      label: "",
+      count: 0,
+      countBasisLabel: "",
+      t: SLICE_DEFAULT_T,
+      attribution,
+      streamUrl: liveListenUrl,
+      nodeClass: entry.nodeClass,
+      hasClip: true,
+      behaviors: [],
+    });
+    createSpectroTimeline({
+      url: clipUrl,
+      hud: {
+        width: 760,
+        height: 200,
+        caption:
+          "measured: STFT of real Orcasound Lab audio · scrub/slow-mo drives the reenactment",
+      },
+    })
+      .then((tl) => {
+        if (!alive) {
+          tl.dispose();
+          return;
+        }
+        timelineRef.current = tl;
+        if (tl.hud && hudHost) tl.hud.mount(hudHost);
+        // Station-select is a user gesture, so resuming WebAudio is permitted.
+        tl.authority.seek(SLICE_DEFAULT_T, { play: true });
+        setAuthority(tl.authority);
+      })
+      .catch((e) => {
+        console.error("slice spectro timeline failed", e);
+        onSliceState({
+          status: `bake failed: ${String(e)}`,
+          presence: false,
+          label: "",
+          count: 0,
+          countBasisLabel: "",
+          t: SLICE_DEFAULT_T,
+          attribution,
+          streamUrl: liveListenUrl,
+          nodeClass: entry.nodeClass,
+          hasClip: true,
+          behaviors: [],
+        });
+      });
+    return () => {
+      alive = false;
+      timelineRef.current?.dispose();
+      timelineRef.current = null;
+      setAuthority(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hudHost, entry]);
+
+  // BRE: presence-gated reenactment pool from the BAM classification, lit by the
+  // pool-only WFX env. worldUnitsPerMeter is the live fit scale (honest depth);
+  // body readability comes from the bodyScale on the spawn record (SEAM-aligned
+  // with OrcaRig). Added imperatively once the authority exists.
+  const poolGroupRef = useRef<THREE.Group>(null);
+  const poolRef = useRef<OrcaPool | null>(null);
+  const driverRef = useRef<TimelineDriver | null>(null);
+  const countBasisRef = useRef<string>("");
+  const behaviorsRef = useRef<string[]>([]);
+  useEffect(() => {
+    if (!authority) return;
+    let alive = true;
+    let pool: OrcaPool | null = null;
+    let driver: TimelineDriver | null = null;
+    (async () => {
+      const [classification, manifest] = await Promise.all([
+        loadClassification(),
+        loadClipManifest(),
+      ]);
+      if (!alive) return;
+      // BRE-INTEGRATE: extend the SAME pool to multi-orca. Default (no override)
+      // is byte-identical to the landed slice: the fixed "Traveling" clip at
+      // BAM's presence-only count (0/1). The labeled `?bsw_demo=N` override
+      // spawns N (capped nMax 3) across the DTAG-segment ethogram, stamped
+      // `capability_demo` so the chip says "not a model estimate". Either way the
+      // motion is the REAL SRKW driver and presence still gates visibility.
+      const demoActive = demoCount != null && demoCount >= 1;
+      const record = buildSpawnRecord(classification, manifest, {
+        anchor: { lat: station.lat, lng: station.lng },
+        bodyScale: SLICE_ORCA_BODY_SCALE,
+        ...(demoActive
+          ? {
+              nMax: 3,
+              demoCountOverride: demoCount,
+              behaviorClasses: SLICE_DEMO_BEHAVIOR_CLASSES,
+            }
+          : { clipId: SLICE_CLIP_ID }),
+      });
+      countBasisRef.current = record.countBasisLabel;
+      // ONE pool, extended to N (not a second pool). The per-instance controller
+      // path is retained: the R08 shared-asset optimization (one mesh/material
+      // baked once in ORCA's createOrcaController) stays DEFERRED — per-frame
+      // cost is identical at nMax=3 (BUILD finding) and the change is additive to
+      // ORCA-owned code. See web/lib/scene/reenactment/WIRING.md.
+      pool = createOrcaPool({
+        env,
+        bounds: TILESET_BOUNDS,
+        sceneDepth: SCENE_DEPTH,
+        worldUnitsPerMeter: worldUnitsPerMeter ?? 1,
+        depthScale: 1,
+      });
+      await pool.setSpawn(record);
+      if (!alive) {
+        pool.dispose();
+        return;
+      }
+      // Per-instance modeled DTAG-segment behavior names for the honesty chrome.
+      // Each spawned orca shows WHICH measured kinematic clip it is replaying; the
+      // shared representativeness disclosure (rendered below) labels all of them
+      // as representative SRKW motion, not the recorded animal.
+      behaviorsRef.current = pool.instanceLabels().map((l) => l.behaviorName);
+      poolGroupRef.current?.add(pool.group);
+      driver = createTimelineDriver(authority, pool, classification, { presenceGated: true });
+      poolRef.current = pool;
+      driverRef.current = driver;
+    })().catch((e) => console.error("slice reenactment failed", e));
+    return () => {
+      alive = false;
+      driver?.dispose();
+      if (pool) {
+        poolGroupRef.current?.remove(pool.group);
+        pool.dispose();
+      }
+      poolRef.current = null;
+      driverRef.current = null;
+      behaviorsRef.current = [];
+    };
+  }, [authority, env, station.lat, station.lng, worldUnitsPerMeter, demoCount]);
+
+  // SEAM 3 stands: the reusable POV-selection object drives the EXISTING
+  // SalishScene director (intentRefs). It creates NO second director and does
+  // NOT advance it here (IntentDirectorRig owns the per-frame director.update).
+  // On (re)select it suppresses the WS-INTENT resting orbit + any in-flight
+  // journey, then sets the requested POV: hydrophone dive-in by default,
+  // top-down adds a slow orbit. Additive only; see
+  // web/lib/scene/camera/WIRING-slice-note.md.
+  const povCtlRef = useRef<StationPovController | null>(null);
+  useEffect(() => {
+    const director = intentRefs.directorRef.current;
+    if (!director) return;
+    intentRefs.journeyRef.current?.cancel();
+    intentRefs.journeyRef.current = null;
+    intentRefs.orbitRef.current?.stop();
+    intentRefs.orbitRef.current = null;
+    const controller = createStationPovController({
+      director,
+      getStation: () => ({ lat: station.lat, lng: station.lng, seabedDepthM }),
+      context: (p) => (p === "topdown" ? { orbit: true } : {}),
+      initialPov: pov,
+    });
+    povCtlRef.current = controller;
+    controller.setPov(pov);
+    return () => {
+      controller.stop();
+      povCtlRef.current = null;
+    };
+  }, [intentRefs, station.lat, station.lng, seabedDepthM, pov]);
+
+  // Drive loop: one clock (BSH authority) -> reenactment (BRE). The director is
+  // advanced by IntentDirectorRig, not here. Chip state is pushed only when the
+  // whole-second playhead, presence, or count changes, so the homepage does not
+  // re-render the overlay every frame.
+  const camWorld = useRef(new THREE.Vector3());
+  const lastPush = useRef<{ t: number; presence: boolean; count: number }>({
+    t: -1,
+    presence: false,
+    count: -1,
+  });
+  useFrame((_state, dt) => {
+    const driver = driverRef.current;
+    if (!driver || !authority) return;
+    camera.getWorldPosition(camWorld.current);
+    driver.update(Math.min(dt, 1 / 30), camWorld.current);
+    const s = driver.getState();
+    const count = poolRef.current?.count() ?? 0;
+    const prev = lastPush.current;
+    if (
+      Math.floor(s.currentTimeS) !== Math.floor(prev.t) ||
+      s.presence !== prev.presence ||
+      count !== prev.count
+    ) {
+      lastPush.current = { t: s.currentTimeS, presence: s.presence, count };
+      onSliceState({
+        status: "ready",
+        presence: s.presence,
+        label: s.hudLabel,
+        count,
+        countBasisLabel: countBasisRef.current,
+        t: s.currentTimeS,
+        attribution,
+        streamUrl: liveListenUrl,
+        nodeClass: entry.nodeClass,
+        hasClip: true,
+        behaviors: behaviorsRef.current,
+      });
+    }
+  });
+
+  return (
+    <group name="bsw-slice-mount">
+      {/* BST rig + BRE reenactment pool, both anchored at the station and added
+          imperatively. The slice adds NO lights and mutates NO scene global; it
+          is lit by the live twin (SkyRig sky, OrcaRig scene.environment) and the
+          pool-only WFX env. */}
+      <group ref={rigGroupRef} />
+      <group ref={poolGroupRef} />
+    </group>
+  );
+}
+// ----------------------------------------------------------------------------
+// END SLICE MOUNT BLOCK
+// ============================================================================
+
+// ============================================================================
+// BSH-INTEGRATE OCEAN MOUNT -- the interpretive double-diffusion ("lava lamp in
+// both directions") layer, single owner BSH-INTEGRATE. This rig is rendered ONLY
+// when the layer is toggled on, so it costs exactly 0 when off (default). The
+// layer is an additive, transparent mesh with depthWrite:false and no raymarch
+// and no extra render pass, so it CANNOT regress WFX's Water2 water (it never
+// touches the water material, scene.fog, or scene.environment). It is added to
+// the scene imperatively and disposed on unmount.
+//
+// HONESTY (locked): the moving strata are a stylized view of real Salish Sea
+// temperature/salinity structure, NOT measured microstructure and NEVER measured
+// orca biosonar perception. The host shows the mandatory interpretive chip
+// whenever the layer is on. The stratification is the honestly-labeled analytic
+// halocline; the measured CC0 CruiseSalish CTD upgrade is a deferred fast-follow.
+//
+// DEFERRED (WFX-coordinated, R09): depth-aware plume-clipping that reads a
+// read-only WFX Water2Handle depth seam to clip the column to the submerged water
+// is intentionally NOT built here. It needs a new seam on the water handle and so
+// belongs to a WFX-coordinated pass. Today the layer is self-contained.
+function OceanProcessRig({ surfaceY }: { surfaceY: number }) {
+  const scene = useThree((s) => s.scene);
+  const layerRef = useRef<DoubleDiffusionLayer | null>(null);
+  useEffect(() => {
+    const layer = createDoubleDiffusionLayer({
+      width: SCENE_WIDTH * 1.4,
+      height: 70,
+      surfaceY,
+    });
+    layer.setEnabled(true);
+    scene.add(layer.object3D);
+    layerRef.current = layer;
+    return () => {
+      scene.remove(layer.object3D);
+      layer.dispose();
+      layerRef.current = null;
+    };
+  }, [scene, surfaceY]);
+  useFrame((state) => layerRef.current?.update(state.clock.elapsedTime));
+  return null;
+}
+// ===================== END BSH-INTEGRATE OCEAN MOUNT ========================
+
 // The composed live twin: mounts the tileset, realism, BVH picking, beacons, and
 // the focus marker inside the r3f Canvas.
 function TwinScene({
@@ -945,6 +1510,12 @@ function TwinScene({
   onTilesError,
   showPlaceholder,
   intentRefs,
+  selectedStation,
+  pov,
+  demoCount,
+  hudHost,
+  oceanOn,
+  onSliceState,
 }: {
   onIntent: (intent: SceneIntent) => void;
   focus?: { lat: number; lng: number } | null;
@@ -953,6 +1524,20 @@ function TwinScene({
   onTilesError: () => void;
   showPlaceholder: boolean;
   intentRefs: IntentBridgeRefs;
+  // SLICE MOUNT wiring (single owner SLICE-INTEGRATE): the station the user
+  // selected on the live twin gates the SliceRig; hudHost is the DOM sibling the
+  // spectrogram HUD mounts into; onSliceState bubbles the honesty-chip state out
+  // to SalishScene's DOM chrome. All three are null/no-op until a station select.
+  // pov is the selected camera point of view (BST-INTEGRATE).
+  selectedStation: SelectedStation | null;
+  pov: StationPov;
+  // BRE-INTEGRATE: labeled capability-demo orca count (1..3) from ?bsw_demo, or
+  // null for the homepage default (BAM presence-only 0/1).
+  demoCount: number | null;
+  hudHost: HTMLDivElement | null;
+  // BSH-INTEGRATE: when true, mount the additive default-off ocean-process layer.
+  oceanOn: boolean;
+  onSliceState: (s: SliceState) => void;
 }) {
   const [fitRadius, setFitRadius] = useState<number | null>(null);
 
@@ -1048,6 +1633,39 @@ function TwinScene({
       <OrcaRig worldUnitsPerMeter={scenicWorldUnitsPerMeter} />
       {/* ======================= END W4 ORCA MOUNT ========================== */}
       {/* ====================================================================
+          SLICE MOUNT -- the thin-but-real B-side slice, single owner
+          SLICE-INTEGRATE. Mounted (and torn down) on a hydrophone station
+          selection, so nothing here runs on first paint (SEAM 6). It anchors
+          the BST rig + BRE reenactment at the selected station as in-scene
+          objects (SEAM 1+2: no scene.background/fog/environment writes) and
+          drives a dive-to-rig POV on the EXISTING director (SEAM 3). The
+          pool-only WFX env lives inside SliceRig and is never assigned to
+          scene.environment (SEAM 4). worldUnitsPerMeter is the live fit scale.
+          ==================================================================== */}
+      {selectedStation && (
+        <SliceRig
+          station={selectedStation}
+          pov={pov}
+          field={field}
+          worldUnitsPerMeter={scenicWorldUnitsPerMeter}
+          demoCount={demoCount}
+          intentRefs={intentRefs}
+          hudHost={hudHost}
+          onSliceState={onSliceState}
+        />
+      )}
+      {/* ======================== END SLICE MOUNT =========================== */}
+      {/* ====================================================================
+          BSH-INTEGRATE OCEAN MOUNT -- the interpretive double-diffusion layer.
+          Rendered only when toggled on (default-off, so 0 cost when off). It is
+          additive with depthWrite:false and adds no render pass, so it cannot
+          regress the WFX water. Mounted AFTER Water2Rig/OrcaRig; renderOrder on
+          the layer keeps it in the additive transparent pass. The mandatory
+          interpretive chip is wired in the DOM chrome below.
+          ==================================================================== */}
+      {oceanOn && <OceanProcessRig surfaceY={SEA_LEVEL_Y} />}
+      {/* ===================== END BSH-INTEGRATE OCEAN MOUNT ================= */}
+      {/* ====================================================================
           WS-SCENIC MOUNT -- scenic visuals (terrain tint, sky, horizon, fog),
           single owner WS-SCENIC. Mounted AFTER RealismRig so scene.fog exists
           for FogTuneRig and the sky dome owns the background RealismRig
@@ -1124,6 +1742,81 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
   const [tilesFailed, setTilesFailed] = useState(false);
   const onIntentRef = useRef(onIntent);
   onIntentRef.current = onIntent;
+
+  // --- SLICE MOUNT wiring (single owner SLICE-INTEGRATE) --------------------
+  // The hydrophone station the user selected on the live twin gates the in-scene
+  // SliceRig; sliceState carries the honesty-chip values the rig publishes; the
+  // hudHost element (a DOM sibling of the canvas) is where the spectrogram HUD
+  // mounts. Selecting a station ALSO still bubbles the intent to the console
+  // (the existing onIntent prop) so the hydrophone_signal panel turn is
+  // unchanged; the slice just additionally lights up in-scene.
+  const [selectedStation, setSelectedStation] = useState<SelectedStation | null>(null);
+  const [sliceState, setSliceState] = useState<SliceState | null>(null);
+  const [hudHost, setHudHost] = useState<HTMLDivElement | null>(null);
+  // BST-INTEGRATE: the selected camera POV (hydrophone dive-in vs top-down).
+  // A fresh station selection always opens on the hydrophone dive-in.
+  const [pov, setPov] = useState<StationPov>("hydrophone");
+  // BRE-INTEGRATE: labeled capability-demo orca count (1..3) from ?bsw_demo. null
+  // is the homepage default, where the spawn count is BAM's presence-only 0/1.
+  // Multi-orca >1 NEVER appears as a model estimate; this override is stamped
+  // `capability_demo` and the chip says so. Inert when the param is absent.
+  const [demoCount, setDemoCount] = useState<number | null>(null);
+  // BSH-INTEGRATE: the interpretive double-diffusion ocean layer toggle. Default
+  // OFF; the layer is only mounted (and the mandatory chip shown) when this is on.
+  const [oceanOn, setOceanOn] = useState(false);
+  const handleIntent = useCallback((intent: SceneIntent) => {
+    if (intent.type === "hydrophone") {
+      setSelectedStation({
+        id: intent.id ?? null,
+        name: intent.name ?? null,
+        lat: intent.lat,
+        lng: intent.lng,
+        streamUrl: intent.streamUrl ?? null,
+      });
+      setSliceState(null);
+      setPov("hydrophone");
+    }
+    onIntentRef.current?.(intent);
+  }, []);
+
+  // Deterministic ACCEPT-capture hook (single owner SLICE-INTEGRATE). A headless
+  // render cannot click a 3D hydrophone beacon, so an explicit query param
+  // (?station=<lat>,<lng>[,<name>]) pre-selects a station to exercise the live-twin
+  // slice mount for the GPU ACCEPT gate. Mirrors the /workbench readParams
+  // deterministic-framing convention. Absent in normal navigation, so it is inert
+  // for real users; it sets the same selectedStation a beacon click would.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search);
+    const raw = q.get("station");
+    if (!raw) return;
+    const [latS, lngS, ...rest] = raw.split(",");
+    const lat = parseFloat(latS);
+    const lng = parseFloat(lngS);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    setSelectedStation({
+      id: "capture",
+      name: rest.length ? decodeURIComponent(rest.join(",")) : "Orcasound Lab",
+      lat,
+      lng,
+      streamUrl: SLICE_STREAM_URL,
+    });
+    // Optional, additive: ?view=topdown pre-selects the top-down POV for a
+    // headless ACCEPT capture. Inert when absent (defaults to the dive-in).
+    if (q.get("view") === "topdown") setPov("topdown");
+    // BSH-INTEGRATE: ?ocean=1 enables the interpretive double-diffusion layer for
+    // a deterministic ACCEPT capture. Inert when absent (the layer stays off).
+    if (q.get("ocean") === "1") setOceanOn(true);
+    // BRE-INTEGRATE: ?bsw_demo=N (1..3) is the LABELED capability-demo override
+    // that spawns multiple orcas across the DTAG-segment ethogram. It is NOT a
+    // model estimate (BAM is presence-only) and the chip says so. Inert when
+    // absent, so the homepage default stays at the presence-only 0/1 count.
+    const demoRaw = q.get("bsw_demo");
+    if (demoRaw != null) {
+      const n = parseInt(demoRaw, 10);
+      if (Number.isFinite(n)) setDemoCount(Math.min(3, Math.max(1, n)));
+    }
+  }, []);
 
   // --- WS-INTENT viewport bridge: shared director refs (B.2 / B.7) ----------
   // Created here so both the in-canvas IntentDirectorRig and the out-of-canvas
@@ -1207,7 +1900,7 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
         }}
       >
         <TwinScene
-          onIntent={(intent) => onIntentRef.current?.(intent)}
+          onIntent={handleIntent}
           focus={focus}
           beacons={beacons}
           field={field}
@@ -1217,8 +1910,139 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
             else setTilesFailed(true);
           }}
           intentRefs={intentRefs}
+          selectedStation={selectedStation}
+          pov={pov}
+          demoCount={demoCount}
+          hudHost={hudHost}
+          oceanOn={oceanOn}
+          onSliceState={setSliceState}
         />
       </Canvas>
+      {/* SLICE MOUNT DOM chrome: the honesty chips + spectrogram HUD host, shown
+          only after a station is selected. These are canvas SIBLINGS (no scene
+          global writes) styled by the namespaced bsw-* classes in globals.css.
+          Every honesty label travels verbatim from the accepted /workbench slice:
+          the estimate + confidence chip, "orcas shown: N" presence-gated (0 on
+          absence windows), the count basis, the Orcasound attribution + the
+          live-listen link, and the mandatory representativeness label. */}
+      {selectedStation && (
+        <>
+          <div className="bsw-hud" ref={setHudHost} />
+          {/* BST-INTEGRATE: the reusable camera POV-selection control. Switching
+              drives the EXISTING director via createStationPovController in
+              SliceRig (SEAM 3). Data-driven from STATION_POVS. */}
+          <div className="bsw-pov bsw-glass" role="radiogroup" aria-label="Camera point of view">
+            {STATION_POVS.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                role="radio"
+                aria-checked={pov === p.id}
+                className={pov === p.id ? "bsw-pov-seg bsw-pov-seg-active" : "bsw-pov-seg"}
+                onClick={() => setPov(p.id)}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          {/* BSH-INTEGRATE: interpretive ocean-layer toggle. Default off; turning
+              it on mounts the additive double-diffusion layer and shows the
+              mandatory interpretive chip below. */}
+          <button
+            type="button"
+            aria-pressed={oceanOn}
+            className={oceanOn ? "bsw-ocean-toggle bsw-glass bsw-ocean-toggle-on" : "bsw-ocean-toggle bsw-glass"}
+            onClick={() => setOceanOn((v) => !v)}
+          >
+            interpretive ocean layer · {oceanOn ? "on" : "off"}
+          </button>
+          {sliceState && (
+            <>
+              {sliceState.hasClip ? (
+                <div className="bsw-estimate bsw-glass">
+                  <div className="bsw-estimateLabel">
+                    {sliceState.label || sliceState.status || "loading acoustic estimate…"}
+                  </div>
+                  <div className="bsw-muted">
+                    orcas shown: {sliceState.presence ? sliceState.count : 0} · presence-gated
+                  </div>
+                  {sliceState.countBasisLabel && (
+                    <div className="bsw-muted bsw-spaced">{sliceState.countBasisLabel}</div>
+                  )}
+                  {sliceState.presence && sliceState.behaviors.length > 0 && (
+                    <div className="bsw-muted bsw-spaced">
+                      DTAG-segment behaviors · {sliceState.behaviors.join(" · ")}
+                    </div>
+                  )}
+                  <div className="bsw-muted bsw-spaced">{sliceState.attribution}</div>
+                  {sliceState.streamUrl && (
+                    <a
+                      href={sliceState.streamUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bsw-link"
+                    >
+                      Live-listen (Orcasound)
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <div className="bsw-estimate bsw-glass">
+                  <div className="bsw-estimateLabel">Live-listen only</div>
+                  <div className="bsw-muted">No archived clip bound for this station.</div>
+                  <div className="bsw-muted bsw-spaced">{sliceState.attribution}</div>
+                  {sliceState.streamUrl && (
+                    <a
+                      href={sliceState.streamUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bsw-link"
+                    >
+                      Live-listen (Orcasound)
+                    </a>
+                  )}
+                </div>
+              )}
+              <div className="bsw-legend bsw-glass">
+                <strong>{selectedStation.name ?? "Hydrophone station"}</strong> (
+                {selectedStation.lat.toFixed(4)}, {selectedStation.lng.toFixed(4)}) ·{" "}
+                {sliceState.status}
+                {sliceState.hasClip ? (
+                  <>
+                    <div className="bsw-spaced">measured: audio · spectrogram · SRKW DTAG motion</div>
+                    <div>
+                      modeled: {sliceState.nodeClass} equipment mesh · acoustic inference · 3D
+                      placement
+                    </div>
+                    <div className="bsw-repr">
+                      Kinematics are representative SRKW DTAG motion, not the recorded animal.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bsw-spaced">live-listen only · no archived clip to scrub</div>
+                    <div>modeled: {sliceState.nodeClass} equipment mesh · 3D placement</div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </>
+      )}
+      {/* BSH-INTEGRATE: the mandatory interpretive chip. Rendered whenever the
+          ocean layer is on (independent of the slice chrome) so the locked label
+          is ALWAYS on screen while the layer can show. The layer is a stylized
+          view of real Salish Sea temperature and salinity structure, never
+          measured orca biosonar perception (honesty lock). */}
+      {oceanOn && (
+        <div className="bsw-ocean-chip bsw-glass" role="note">
+          <div className="bsw-ocean-chipLabel">
+            <span className="bsw-ocean-dot" aria-hidden />
+            {INTERPRETIVE_OCEAN_LABEL}
+          </div>
+          <div className="bsw-muted bsw-spaced">{INTERPRETIVE_OCEAN_DETAIL}</div>
+        </div>
+      )}
       {/* WS-INTENT search affordance: search -> resolvePlace -> runPlaceJourney
           on the live director. Resolves offline against the curated gazetteer;
           waypoints are approximate lane points, not a surveyed track. */}

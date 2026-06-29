@@ -44,6 +44,9 @@ interface WorkerResponse {
   freqBins: number;
   timeBins: number;
   hopS: number;
+  dbCeil: number;
+  dbFloor: number;
+  dynamicRangeDb: number;
 }
 
 function downmixToMono(buffer: AudioBuffer): Float32Array {
@@ -108,6 +111,9 @@ export async function createSpectroTimeline(
     fftSize,
     freqBins: result.freqBins,
     timeBins: result.timeBins,
+    dbCeil: result.dbCeil,
+    dbFloor: result.dbFloor,
+    dynamicRangeDb: result.dynamicRangeDb,
   });
 
   const wantHud = opts.buildHud ?? typeof document !== "undefined";

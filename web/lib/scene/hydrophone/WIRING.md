@@ -7,6 +7,26 @@ Owner: BST build lane (BSW slice). Scope: `web/lib/scene/hydrophone/`,
 Built on `three` plus WebAudio only. No new npm dependency. Imports the Camera
 Director and `sceneIntent` as read-only convergence files and never edits them.
 
+## What BST-BUILD added (multi-station deepening)
+
+The slice exercised ONE station (Orcasound Lab). BST-BUILD turned it into a real
+MULTI-STATION player:
+
+- `catalog.ts` drives the rig + player from the REAL station catalog (the same
+  set `GET /api/live-hydrophones` serves). Three Orcasound nodes fall inside the
+  SalishScene tileset extent and are selectable: Orcasound Lab (cabled),
+  North San Juan Channel (mooring), Andrews Bay (cabled, offline).
+- `equipment/` adds a low-poly MODELED variant per node class
+  (`makeStationEquipment(nodeClass, opts)`): the cabled shore rig (existing
+  `makeHydrophoneRig`) and a new subsurface `makeMooringHydrophone`.
+- `povObject.ts` is the reusable camera POV-selection object
+  (`createStationPovController`) the integrator mounts, not a one-off toggle. It
+  drives `director.ts` only.
+- The `/station` sandbox selects any of the three real stations, places the
+  correct modeled variant at its real lat/lng + modeled depth, binds its audio
+  (archived clip for Orcasound Lab; live-listen link only for the others, never
+  synthesised), and switches POVs through the controller.
+
 ## Modules
 
 - `makeHydrophoneRig.ts` `makeHydrophoneRig(opts?)` returns
@@ -46,7 +66,39 @@ Director and `sceneIntent` as read-only convergence files and never edits them.
   a slow `orbit` (`ctx.orbit`, `ctx.orbitSpeed` default 0.03; pass speed 0 for a
   static deterministic overview). Returns `{ pov, stop() }`.
 
-- `index.ts` barrel for the above.
+- `catalog.ts` the real station catalog. `STATION_CATALOG` is transcribed
+  verbatim from the in-repo Orcasound catalogs and equals the in-extent set
+  `GET /api/live-hydrophones` returns. Exposes `listSelectableStations()`,
+  `getStation(idOrSlug)`, `classifyNodeClass(slugOrId)` (MODELED node-class
+  assignment, default `cabled`), `stationPlayerOptions(entry)` (maps to
+  `StationPlayer` options; `null` audio for live-listen-only stations), and
+  `fetchLiveHydrophones()` (async, hits the same `/api/be/api/live-hydrophones`
+  proxy SalishScene uses, maps live records to `StationCatalogEntry[]` for the
+  integrator). `streamUrl` is built exactly as the backend adapter does
+  (`https://live.orcasound.net/listen/{slug}`). Per-station `nodeClass` and
+  `modeledFallbackDepthM` are MODELED; only Orcasound Lab has a license-clear
+  archived clip.
+
+- `equipment/makeStationEquipment(nodeClass, opts)` returns `{ root, dispose }`
+  for the node class. `cabled` delegates to `makeHydrophoneRig`; `mooring`
+  builds `makeMooringHydrophone` (~200 tris: seabed anchor, taut riser,
+  subsurface buoyancy, mid-water element, tether to a small surface marker).
+  Both share the seabed-origin convention and set
+  `root.userData.honesty = "modeled"` and `root.userData.nodeClass`.
+
+- `placement.ts` `stationSeabedPoseForEntry(entry, bounds, sceneDepth, opts)`
+  wires the entry's `modeledFallbackDepthM` into `stationSeabedPose`. The
+  substrate sample still wins, so the live scene uses the real CUDEM seabed
+  depth and the sandbox uses the per-station modeled fallback.
+
+- `povObject.ts` `createStationPovController({ director, getStation, context,
+  initialPov })` returns `{ listPovs, getPov, setPov, refresh, stop }`. `setPov`
+  switches the active POV through the director; `refresh` re-frames the current
+  POV against the latest station (call on station change). `STATION_POVS` is the
+  data-driven list of named POVs (>= 2: hydrophone POV + top-down) the UI
+  renders. Drives `director.ts` only, never `camera.position`.
+
+- `index.ts` barrel for all of the above.
 
 ## POV / director wiring
 
@@ -64,13 +116,21 @@ its true-depth seabed placement read clearly. At integrate time the live
 Salish, fit-accurate `worldUnitsPerMeter` is used instead and the rig scales to
 true geographic size.
 
-## Stream binding
+## Stream binding (multi-station)
 
-`StationPlayer` decodes the archived clip at
-`/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` and carries the live-listen
-URL `https://live.orcasound.net/listen/orcasound-lab` as `streamUrl` (surfaced
-by the UI, not decoded). Attribution shown by the UI:
-`Audio: Orcasound (CC BY-NC-SA 4.0)`.
+Per-station audio comes from `catalog.ts`. Orcasound Lab binds the archived clip
+`/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` (MEASURED) and carries its
+live-listen URL. The other in-extent nodes have NO license-clear archived clip
+in-repo, so `stationPlayerOptions` gives them a `null` `audioUrl`: the player
+stays in the honest `unbound` state and the UI surfaces only the live-listen
+link. We never synthesise audio for a station with no bound clip. Attribution
+(`Audio: Orcasound (CC BY-NC-SA 4.0)`) is shown for every station.
+
+## Equipment-mesh provenance
+
+All equipment meshes are PARAMETRIC `three` geometry built in-repo (no external
+mesh download, no `web/public/hydrophone/` mesh asset, no box pointer). They are
+MODELED/representative, not scans, and carry `userData.honesty = "modeled"`.
 
 ## Mount slots left for the integrator
 

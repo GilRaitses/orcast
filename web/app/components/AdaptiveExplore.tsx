@@ -240,7 +240,14 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
               id: "hydrophone_signal",
               surface: "sidebar",
               priority: 0,
-              props: { station: intent.name ?? null, lat: intent.lat, lng: intent.lng },
+              // streamUrl is carried through from the scene intent so the panel can
+              // offer a live-listen link; previously dropped here. No invented stream.
+              props: {
+                station: intent.name ?? null,
+                lat: intent.lat,
+                lng: intent.lng,
+                streamUrl: intent.streamUrl ?? null,
+              },
             }
           : null;
       void runTurn(ctx, extraPanel);

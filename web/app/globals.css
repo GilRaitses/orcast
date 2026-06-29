@@ -587,3 +587,159 @@ details.explainer p { color: var(--text-muted); font-size: 0.9rem; line-height: 
 .gated-lock { font-size: 0.75rem; color: var(--text-muted); }
 .gated-tip-reason { margin: 0 0 0.45rem; }
 .gated-tip-links { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+/* ── B-side slice chrome (SLICE-INTEGRATE) ─────────────────────────────────
+ * The homepage slice mounts the same honesty chips the /workbench route uses,
+ * so its DOM chrome reuses the workbench.module.css design verbatim, ported
+ * here as GLOBAL namespaced bsw-* classes (SalishScene renders plain class
+ * strings, not a CSS module). Each overlay sits OVER the r3f WebGL canvas, so
+ * backdrop-filter is 0 (the same M3 constraint the station PovChip follows):
+ * depth comes from a fill plus a scrim gradient, never from blurring the WebGL
+ * frame behind it. The LGC design tokens are not built yet, so each token NAME
+ * is referenced as a CSS custom property WITH a local fallback; when LGC ships
+ * these variables upstream the slice adopts them with no code change. */
+.bsw-glass {
+  border-radius: var(--glass-radius, 10px);
+  border: 1px solid var(--glass-stroke-cool, rgba(160, 210, 255, 0.18));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.12)),
+    var(--glass-tint-cool, rgba(8, 38, 61, 0.86));
+  box-shadow: var(--glass-shadow, 0 6px 22px rgba(0, 0, 0, 0.35));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--glass-ink, #cfe6ff);
+}
+.bsw-estimate {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  padding: 10px 14px;
+  font: 12px/1.4 ui-sans-serif, system-ui, sans-serif;
+  max-width: 300px;
+  z-index: 5;
+}
+.bsw-estimateLabel {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.bsw-muted { opacity: 0.85; }
+.bsw-spaced { margin-top: 4px; }
+.bsw-link {
+  color: var(--glass-accent-ink, #8fd0ff);
+  opacity: 0.85;
+}
+.bsw-legend {
+  position: absolute;
+  left: 12px;
+  /* Clear the WS-INTENT search affordance (osa-root: top 14px, a 44px control),
+   * which the workbench route did not have. 64px drops the legend just below the
+   * collapsed icon and the expanded search field so neither clips the honesty
+   * labels, while staying well above the bottom spectrogram HUD. */
+  top: 64px;
+  padding: 10px 12px;
+  font: 11px/1.5 ui-monospace, monospace;
+  max-width: 430px;
+  z-index: 5;
+}
+.bsw-repr {
+  margin-top: 4px;
+  color: var(--glass-warn-ink, #ffe08a);
+}
+.bsw-hud {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 5;
+}
+/* BST-INTEGRATE: camera POV-selection control (hydrophone dive-in / top-down).
+ * A segmented glass control over the WebGL canvas, so the same M3 constraint
+ * holds: backdrop-filter is 0 and depth comes from the .bsw-glass fill, never
+ * from blurring the frame behind it. The LGC token NAMES are referenced with
+ * local fallbacks until LGC ships them upstream. */
+.bsw-pov {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  z-index: 6;
+}
+.bsw-pov-seg {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--glass-ink-muted, rgba(207, 230, 255, 0.7));
+  font: 12px/1 ui-sans-serif, system-ui, sans-serif;
+  padding: 6px 12px;
+  border-radius: var(--glass-radius-inner, 7px);
+  cursor: pointer;
+}
+.bsw-pov-seg:hover {
+  color: var(--glass-ink, #cfe6ff);
+}
+.bsw-pov-seg-active {
+  background: var(--glass-fill-active, rgba(143, 208, 255, 0.18));
+  color: var(--glass-accent-ink, #8fd0ff);
+}
+/* BSH-INTEGRATE: interpretive double-diffusion ocean-layer toggle + the mandatory
+ * honesty chip. The layer is additive and default-off; the chip text is the
+ * locked interpretive label and is shown only while the layer is on. Same M3
+ * over-canvas constraint as the other bsw chrome, so backdrop-filter stays 0 and
+ * depth comes from the .bsw-glass fill. LGC token NAMES carry local fallbacks. */
+.bsw-ocean-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  appearance: none;
+  padding: 7px 12px;
+  font: 12px/1 ui-sans-serif, system-ui, sans-serif;
+  color: var(--glass-ink-muted, rgba(207, 230, 255, 0.7));
+  cursor: pointer;
+  z-index: 6;
+}
+.bsw-ocean-toggle:hover {
+  color: var(--glass-ink, #cfe6ff);
+}
+.bsw-ocean-toggle-on {
+  color: var(--glass-accent-ink, #8fd0ff);
+  border-color: var(--glass-accent-stroke, rgba(143, 208, 255, 0.5));
+}
+.bsw-ocean-chip {
+  position: absolute;
+  right: 12px;
+  bottom: 54px;
+  max-width: 320px;
+  padding: 8px 12px;
+  font: 11px/1.45 ui-monospace, monospace;
+  z-index: 6;
+}
+.bsw-ocean-chipLabel {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.bsw-ocean-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin-right: 6px;
+  background: var(--glass-accent-ink, #8fd0ff);
+  vertical-align: middle;
+}
+
+/* BSS studio HUD panels (managed Central Casting skills). Additive, distinct. */
+.bsw-studio-panel {
+  border-left: 2px solid var(--glass-accent-stroke, rgba(143, 208, 255, 0.4));
+  padding-left: 8px;
+}
+.bsw-studio-attr {
+  font-style: italic;
+  opacity: 0.78;
+}
+.bsw-studio-box {
+  font-family: ui-monospace, monospace;
+  word-break: break-all;
+  opacity: 0.7;
+}

@@ -15,8 +15,8 @@ def test_skill_catalog_matches_manifest_enabled():
     manifest = load_manifest()
     assert set(SKILL_CATALOG.keys()) == set(enabled_skill_ids())
     public_enabled = [sid for sid in enabled_skill_ids() if manifest[sid].tier in ("T0", "T1")]
-    assert len(public_enabled) == 9
-    assert len(SKILL_CATALOG) == 15
+    assert len(public_enabled) == 12
+    assert len(SKILL_CATALOG) == 18
 
 
 def test_manifest_public_skills_are_t0_t1():

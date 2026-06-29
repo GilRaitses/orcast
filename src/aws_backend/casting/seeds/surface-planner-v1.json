@@ -12,7 +12,10 @@
     "fetch_decision_records",
     "fetch_review_dossier_summary",
     "fetch_supervisor_recommendation",
-    "fetch_pending_approval"
+    "fetch_pending_approval",
+    "run_tagtools_step",
+    "render_poster_viz",
+    "capture_behavior"
   ],
   "data_bindings": {
     "gates": "live:/api/gates"
@@ -24,7 +27,7 @@
   "policy": {
     "write_tools": false,
     "planner_mode": true,
-    "allowed_deep_links": ["/gates", "/explore", "/decisions", "/review-dossier/latest", "/moderation", "/"],
+    "allowed_deep_links": ["/gates", "/explore", "/decisions", "/review-dossier/latest", "/moderation", "/studio", "/studio/annotate", "/"],
     "allowed_panels": [
       "map_viewport",
       "explore_trace",
@@ -38,7 +41,10 @@
       "local_area",
       "connections_plan",
       "kayak_plan",
-      "sidequests"
+      "sidequests",
+      "tagtools_step",
+      "poster_viz",
+      "behavior_capture"
     ]
   },
   "active": true

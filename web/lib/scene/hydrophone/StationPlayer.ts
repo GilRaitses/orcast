@@ -9,15 +9,19 @@
 // recreate the source each time playback resumes from a known position.
 
 export interface StationPlayerOptions {
-  /** URL of the real archived clip (e.g. /hydrophone/slice/...m4a). */
-  audioUrl: string;
+  /**
+   * URL of the real archived clip (e.g. /hydrophone/slice/...m4a). When omitted
+   * or null the player is `unbound`: no clip is decoded and only the
+   * live-listen link is surfaced. We never synthesise audio in that case.
+   */
+  audioUrl?: string | null;
   /** Optional live-listen stream URL surfaced by the UI (not decoded here). */
-  streamUrl?: string;
+  streamUrl?: string | null;
   /** Attribution string the UI MUST display (license + source). */
   attribution: string;
 }
 
-export type StationPlayerStatus = "idle" | "loading" | "ready" | "error";
+export type StationPlayerStatus = "idle" | "loading" | "ready" | "error" | "unbound";
 
 type AudioContextCtor = typeof AudioContext;
 
@@ -31,7 +35,8 @@ function resolveAudioContextCtor(): AudioContextCtor | null {
 }
 
 export class StationPlayer {
-  readonly audioUrl: string;
+  /** Decodable clip URL, or null when this station is live-listen only. */
+  readonly audioUrl: string | null;
   readonly streamUrl: string | null;
   readonly attribution: string;
   /** This audio is real, not synthesised. */
@@ -51,13 +56,18 @@ export class StationPlayer {
   private errorMessage: string | null = null;
 
   constructor(opts: StationPlayerOptions) {
-    this.audioUrl = opts.audioUrl;
+    this.audioUrl = opts.audioUrl ?? null;
     this.streamUrl = opts.streamUrl ?? null;
     this.attribution = opts.attribution;
   }
 
   getStatus(): StationPlayerStatus {
     return this.status;
+  }
+
+  /** True when a decodable archived clip is bound (vs live-listen only). */
+  hasClip(): boolean {
+    return this.audioUrl != null && this.audioUrl !== "";
   }
 
   getError(): string | null {
@@ -69,8 +79,19 @@ export class StationPlayer {
     return this.buffer;
   }
 
-  /** Fetch the real clip and decode it. Rejects (and sets error state) on failure. */
+  /**
+   * Fetch the real clip and decode it. When no clip is bound (live-listen
+   * only), resolves into the `unbound` state without touching WebAudio and
+   * without synthesising anything. Rejects (and sets error state) on a real
+   * fetch/decode failure.
+   */
   async load(): Promise<void> {
+    if (!this.hasClip()) {
+      this.status = "unbound";
+      this.errorMessage = null;
+      this.buffer = null;
+      return;
+    }
     const Ctor = resolveAudioContextCtor();
     if (!Ctor) {
       this.fail("WebAudio is unavailable in this environment");
@@ -84,7 +105,7 @@ export class StationPlayer {
         this.gain = this.ctx.createGain();
         this.gain.connect(this.ctx.destination);
       }
-      const res = await fetch(this.audioUrl);
+      const res = await fetch(this.audioUrl as string);
       if (!res.ok) {
         throw new Error(`fetch ${this.audioUrl} failed (${res.status} ${res.statusText})`);
       }

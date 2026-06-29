@@ -180,6 +180,42 @@
       "produces_annotations": ["artifact_citation"],
       "data_bindings": ["live:/api/status"],
       "orchestrator_step": "Ingest"
+    },
+    {
+      "id": "run_tagtools_step",
+      "tier": "T1",
+      "truth_label": "derived",
+      "geo_required": false,
+      "auth": "public",
+      "enabled": true,
+      "wraps": "casting.studio_skills.run_tagtools_step",
+      "produces_annotations": ["artifact_citation"],
+      "data_bindings": ["baked:bss/tagtools/mn09_203a"],
+      "orchestrator_step": "BehaviorPipeline"
+    },
+    {
+      "id": "render_poster_viz",
+      "tier": "T1",
+      "truth_label": "baked",
+      "geo_required": false,
+      "auth": "public",
+      "enabled": true,
+      "wraps": "casting.studio_skills.render_poster_viz",
+      "produces_annotations": ["artifact_citation"],
+      "data_bindings": ["box:bss/poster-viz/mn09_203a"],
+      "orchestrator_step": "BehaviorPipeline"
+    },
+    {
+      "id": "capture_behavior",
+      "tier": "T1",
+      "truth_label": "measured_behavior_modeled_camera",
+      "geo_required": false,
+      "auth": "public",
+      "enabled": true,
+      "wraps": "casting.studio_skills.capture_behavior",
+      "produces_annotations": ["artifact_citation"],
+      "data_bindings": ["baked:bss/tagtools/mn09_203a"],
+      "orchestrator_step": "BehaviorCapture"
     }
   ]
 }

@@ -53,3 +53,94 @@
   background: var(--glass-fill-active, rgba(95, 208, 255, 0.16));
   color: var(--glass-accent-ink, #5fd0ff);
 }
+
+/* Station-selection rack: a left-anchored column of station chips. Same glass
+ * tokens and blur=0-over-canvas constraint as the POV control. */
+.bsw-station-rack {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border-radius: var(--glass-radius, 12px);
+  border: 1px solid var(--glass-stroke-cool, rgba(160, 210, 255, 0.18));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.12)),
+    var(--glass-tint-cool, rgba(8, 38, 61, 0.84));
+  box-shadow: var(--glass-shadow, 0 6px 22px rgba(0, 0, 0, 0.35));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font: 12px/1.2 ui-sans-serif, system-ui, sans-serif;
+  user-select: none;
+  max-width: 260px;
+}
+
+.bsw-station-rack-title {
+  padding: 4px 10px 2px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--glass-ink-muted, rgba(207, 230, 255, 0.6));
+}
+
+.bsw-station {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--glass-radius-inner, 9px);
+  background: transparent;
+  color: var(--glass-ink-muted, rgba(207, 230, 255, 0.72));
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.bsw-station:hover {
+  color: var(--glass-ink, rgba(231, 244, 255, 0.95));
+}
+
+.bsw-station:focus-visible {
+  outline: 2px solid var(--glass-accent-ink, #5fd0ff);
+  outline-offset: 2px;
+}
+
+.bsw-station-active {
+  background: var(--glass-fill-active, rgba(95, 208, 255, 0.16));
+  color: var(--glass-accent-ink, #5fd0ff);
+}
+
+.bsw-station-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.bsw-station-online {
+  background: #5fe0a8;
+}
+
+.bsw-station-offline {
+  background: #8aa0b0;
+}
+
+.bsw-station-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.bsw-station-name {
+  font-size: 12px;
+}
+
+.bsw-station-class {
+  font-size: 10px;
+  opacity: 0.7;
+}

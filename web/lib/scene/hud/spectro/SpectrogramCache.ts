@@ -11,6 +11,9 @@ export interface SpectrogramCacheInit {
   fftSize: number;
   freqBins: number;
   timeBins: number;
+  dbCeil: number; // loudest bin in dB (top of the colormap)
+  dbFloor: number; // dbCeil - dynamicRangeDb (bottom of the colormap)
+  dynamicRangeDb: number; // adaptive normalization span, e.g. 80
 }
 
 export class SpectrogramCache implements SpectrogramFeatures {
@@ -26,6 +29,11 @@ export class SpectrogramCache implements SpectrogramFeatures {
   readonly width: number;
   readonly height: number;
 
+  /** Adaptive-normalization dB range the rgba image was built against. */
+  readonly dbCeil: number;
+  readonly dbFloor: number;
+  readonly dynamicRangeDb: number;
+
   constructor(init: SpectrogramCacheInit) {
     this.rgba = init.rgba;
     this.magnitudes = init.magnitudes;
@@ -36,6 +44,9 @@ export class SpectrogramCache implements SpectrogramFeatures {
     this.timeBins = init.timeBins;
     this.width = init.timeBins;
     this.height = init.freqBins;
+    this.dbCeil = init.dbCeil;
+    this.dbFloor = init.dbFloor;
+    this.dynamicRangeDb = init.dynamicRangeDb;
   }
 
   get hopSize(): number {

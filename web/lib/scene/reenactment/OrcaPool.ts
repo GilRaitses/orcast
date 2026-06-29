@@ -1,12 +1,16 @@
 // OrcaPool: spawn and drive N orca instances for the reenactment. Each instance
 // is a real OrcaController driven by the measured SRKW DTAG driver; the pool
 // only adds scene placement + per-instance clip sample time. No fabricated
-// motion. Demo spawnCount is presence-only (0 or 1); the pool supports N<=nMax.
+// motion. The pool supports N<=nMax (R08 cap 3).
 //
 // Perf note: this uses createOrcaController per instance (the tested path), so
-// each instance loads the mesh once. For N>3 the optimization is to share one
-// loadOrcaMesh + material across rigs (R08); the demo uses N=1 so cost is the
-// single-orca baseline.
+// each instance loads the mesh + driver once at spawn. The R08 shared-asset
+// optimization (one loadOrcaMesh + one makeOrcaMaterial + one BiologgingTrack
+// shared across rigs) requires createOrcaController to accept preloaded assets,
+// which lives in the ORCA-owned stack (web/lib/scene/orca/OrcaController.ts) and
+// is a serialized, O0-coordinated change. It is deferred to BRE-INTEGRATE and
+// flagged; for nMax=3 the per-frame cost is N rig skinning passes either way,
+// and the only saving is one-time spawn load + memory.
 
 import * as THREE from "three";
 import {
@@ -33,6 +37,15 @@ interface PooledOrca {
   controller: OrcaController;
 }
 
+/** Per-instance HUD readout. Behavior label is a disclosed modeled match; the
+ * acoustic label is HUD-only and never affects kinematics. */
+export interface OrcaInstanceLabel {
+  instanceId: string;
+  behaviorName: string;
+  behaviorLabel: string;
+  acoustic?: string;
+}
+
 export interface OrcaPool {
   group: THREE.Group;
   /** (Re)spawn from a classification-derived record. */
@@ -42,6 +55,8 @@ export interface OrcaPool {
   /** Show/hide all instances (presence-gated visibility). */
   setVisible(v: boolean): void;
   count(): number;
+  /** Per-instance behavior + acoustic labels for the HUD. */
+  instanceLabels(): OrcaInstanceLabel[];
   dispose(): void;
 }
 
@@ -92,7 +107,8 @@ export function createOrcaPool(opts: OrcaPoolOptions): OrcaPool {
     for (const p of pooled) {
       // Map the audio playhead into the measured clip window. currentTimeS is
       // already advanced at the timeline playbackRate, so do NOT scale again.
-      const elapsed = clipSampleTime(currentTimeS, p.spec.clip);
+      // phaseOffsetS samples a different REAL moment of the driver per instance.
+      const elapsed = clipSampleTime(currentTimeS, p.spec.clip, p.spec.phaseOffsetS ?? 0);
       p.controller.update(d, elapsed, cam);
     }
   }
@@ -106,6 +122,14 @@ export function createOrcaPool(opts: OrcaPoolOptions): OrcaPool {
     },
     count() {
       return pooled.length;
+    },
+    instanceLabels() {
+      return pooled.map((p) => ({
+        instanceId: p.spec.instanceId,
+        behaviorName: p.spec.clip.behaviorName,
+        behaviorLabel: p.spec.behaviorLabel ?? "",
+        acoustic: p.spec.acousticLabel?.text,
+      }));
     },
     dispose() {
       clearPool();
