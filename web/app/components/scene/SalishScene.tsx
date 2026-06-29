@@ -28,6 +28,7 @@ import {
   type SubstrateField,
 } from "@/lib/scene/substrate";
 import { makeWater2, type Water2Handle } from "@/lib/scene/water2";
+import { BuoyMarker } from "@/lib/scene/markers";
 // --- WS-INTENT viewport bridge (B.2 / B.7) imports --------------------------
 // Phase-A modules mounted by the bridge, plus the camera director (W1) and the
 // search affordance overlay. These are composed, never edited, by WS-INTENT.
@@ -57,7 +58,7 @@ import {
   makeSkyDome,
   makeHorizonRing,
   loadHorizonField,
-  tuneFog,
+  tunedFogColor,
   HORIZON_RING_URL,
   type HorizonField,
 } from "@/lib/scene/decor";
@@ -77,6 +78,22 @@ import {
   BATHY_SCENE_HONESTY_NOTE,
   DEFERRED_MEASURED_OVERLAY,
 } from "@/lib/scene/bathy/honesty";
+// Owner-signed green-survives optic (WFX SIGN_OFF #2, R11), the SAME twin-unit
+// absorption fed to both the Water2Rig (E4) and the OrcaRig env.
+import { PROPOSED_RGB_EXTINCTION } from "@/lib/scene/bathy/style/waterTuning";
+// --- W4 ORCA mount imports (single owner W4) --------------------------------
+// The orca public API (built + sandbox-verified) plus the REAL WFX env producer
+// this wave introduces. createOrcaController assembles the data-driven, WFX-lit
+// SRKW; makeRealWfxEnv PMREMs the scene sky and supplies the twin-unit
+// underwater optic so the orca is lit by the same atmosphere as the water.
+import {
+  createOrcaController,
+  REAL_SRKW_MOTION_URL,
+  ORCA_MESH_URL,
+  type OrcaController,
+  type WfxEnvHandle,
+} from "@/lib/scene/orca";
+import { makeRealWfxEnv } from "@/lib/scene/wfx/realWfxEnv";
 
 // Full-extent multi-LoD tileset (85 tiles, 4 LoD levels, meshopt, validated 0
 // errors). NOT the single-tile pilot; the pilot and pilot.bounds.json are dead
@@ -109,6 +126,25 @@ const SCENE_DEPTH = sceneDepth(TILESET_BOUNDS);
 // foam/column reference, the shoreline tint band) reads this single reference
 // instead of a hardcoded 0, so a future datum change is a one-line edit.
 const SEA_LEVEL_Y = 0;
+
+// --- W4 ORCA mount constants ------------------------------------------------
+// Swim anchor for the integrated orca: San Juan Channel water just NE of the
+// scene centre (the resting-orbit look target at SCENE_CENTER -> scene 0,0), so
+// the animal stays framed in the resting orbit. The motion is REAL SRKW
+// telemetry; this is a sensible modeled swim point, not a tracked position.
+const ORCA_ANCHOR = { lat: 48.57, lng: -123.02 };
+// Body scale. The synthetic SCENE_WIDTH=120 frame is non-metric (metric
+// migration is a later wave), so a true-scale ~7 m animal would be sub-pixel.
+// Scale the body to a readable in-frame size, the watchable scale the sandbox
+// verified. Vertical placement stays the honest datum mapping (depthScale 1).
+const ORCA_BODY_SCALE = 0.5;
+// Depth descent multiplier on top of worldUnitsPerMeter. 1 keeps the honest
+// datum Y = -depth_m * worldUnitsPerMeter (no vertical exaggeration), so the
+// animal rides the water column above the modeled CUDEM seabed.
+const ORCA_DEPTH_SCALE = 1;
+// Real SRKW track playback start (seconds); the track plays from here, capped
+// per-frame by min(dt, 1/30).
+const ORCA_TRACK_START_S = 0;
 
 // --- WS-INTENT viewport bridge constants (B.2 / B.7) ------------------------
 // Resting state per B.7 is a slow continuous orbit around the scene centre, the
@@ -301,6 +337,21 @@ function Water2Rig({ depth }: { depth: number }) {
       level: SEA_LEVEL_Y,
       sunDirection: sun.direction,
       skyColor: skyColor(sun.elevationDeg),
+      // WFX E4: feed the merged depthWater color path the signed-off uniforms
+      // (SIGN_OFF #2 green-survives, R11). Absorption is the SAME twin-unit
+      // optic the OrcaRig env carries (PROPOSED_RGB_EXTINCTION {3,1,3}); the
+      // water divides it by depthColorScale internally. The tints come from the
+      // owner-signed waterTuning via bathyWater2Options above.
+      absorption: new THREE.Vector3(
+        PROPOSED_RGB_EXTINCTION.r,
+        PROPOSED_RGB_EXTINCTION.g,
+        PROPOSED_RGB_EXTINCTION.b,
+      ),
+      refractStrength: 0.035,
+      roughness: 0.12,
+      runup: 0.6,
+      contactSoftness: 0.06,
+      skyZenith: new THREE.Color("#5a86a8"),
     });
     handleRef.current = handle;
     scene.add(handle.mesh);
@@ -320,6 +371,12 @@ function Water2Rig({ depth }: { depth: number }) {
     if (!handle) return;
     handle.renderDepthPrepass(gl, scene, camera as THREE.PerspectiveCamera);
     handle.update(state.clock.elapsedTime, camera);
+    // WFX E5: drive the water's self-contained horizon fog from the live scene
+    // fog so the far water dissolves into the same haze (FogExp2). Linear/no fog
+    // disables it (a no-op), keeping the water self-contained.
+    const f = scene.fog;
+    if (f instanceof THREE.FogExp2) handle.setFog({ color: f.color, density: f.density });
+    else handle.setFog(null);
   });
 
   return null;
@@ -339,8 +396,7 @@ function HydrophoneBeacon({
   const color = online ? "#ffcf33" : "#888";
   return (
     <group position={position}>
-      <mesh
-        position={[0, 6, 0]}
+      <group
         onClick={(e) => {
           e.stopPropagation();
           onSelect(node);
@@ -350,15 +406,10 @@ function HydrophoneBeacon({
           setHovered(true);
         }}
         onPointerOut={() => setHovered(false)}
-        scale={hovered ? 1.4 : 1}
+        scale={hovered ? 1.15 : 1}
       >
-        <coneGeometry args={[1.6, 5, 6]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={hovered ? 0.9 : 0.4} />
-      </mesh>
-      <mesh position={[0, 1.5, 0]}>
-        <cylinderGeometry args={[0.18, 0.18, 9, 6]} />
-        <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.3} />
-      </mesh>
+        <BuoyMarker color={color} hovered={hovered} />
+      </group>
       {hovered && (
         <Html center distanceFactor={120} position={[0, 11, 0]} style={{ pointerEvents: "none" }}>
           <div className="scene-beacon-label">{node.name ?? node.location ?? "Hydrophone"}</div>
@@ -483,7 +534,13 @@ function IntentDirectorRig({
       orbitRef.current = null;
       if (controlsRef.current) controlsRef.current.enabled = false;
       const atmosphere: JourneyAtmosphere = {
-        fog: scene.fog instanceof THREE.Fog ? scene.fog : null,
+        // WFX E3 reconcile: the resting scene fog is now a FogExp2 (above), which
+        // rollInFog masks by easing density. Pass either fog type through so the
+        // journey fog-roll keeps working instead of nulling out on the swap.
+        fog:
+          scene.fog instanceof THREE.Fog || scene.fog instanceof THREE.FogExp2
+            ? scene.fog
+            : null,
         push: (t) => transitionsRef.current.push(t),
       };
       const handle = runPlaceJourney(place, director, atmosphere);
@@ -549,7 +606,11 @@ function IntentDirectorRig({
     handle.worldUnitsPerMeter = fitRadius / geoRadiusMeters(TILESET_BOUNDS);
     if (camera instanceof THREE.PerspectiveCamera) {
       camera.near = Math.max(fitRadius / 2000, 0.01);
-      camera.far = fitRadius * 100;
+      // WFX E2 (R10 Rec C1): tighten the far plane to the 120-unit scene so the
+      // water depth pre-pass reconstructs the seabed column at higher precision.
+      // The Preetham dome forces far-plane depth, so it is never clipped; the
+      // true-scale horizon ring sits within fitRadius*8 (~480 u).
+      camera.far = fitRadius * 8;
       camera.updateProjectionMatrix();
     }
     if (!restingStartedRef.current && !focus) {
@@ -674,9 +735,16 @@ function FogTuneRig() {
   const scene = useThree((s) => s.scene);
   const sun = useScenicSun();
   useEffect(() => {
-    if (scene.fog instanceof THREE.Fog) {
-      tuneFog(scene.fog, { elevationDeg: sun.elevationDeg, azimuthDeg: sun.azimuthDeg });
-    }
+    // WFX E3 (R04): swap the realism linear scene fog for an exponential-squared
+    // fog retuned to the 120-unit scene, so the horizon reads as a soft haze
+    // instead of a hard fog band. Density 0.012 is the sandbox-proven value; the
+    // color stays in the live atmosphere family via tunedFogColor. The journey
+    // fog-roll (runPlaceJourney/rollInFog) already supports FogExp2 by easing
+    // density, and the Water2Rig reads this fog through handle.setFog (E5).
+    scene.fog = new THREE.FogExp2(
+      tunedFogColor({ elevationDeg: sun.elevationDeg, azimuthDeg: sun.azimuthDeg }),
+      0.012,
+    );
   }, [scene, sun]);
   return null;
 }
@@ -750,6 +818,121 @@ function BathyRig({
 }
 // ----------------------------------------------------------------------------
 // END WS-BATHY MOUNT BLOCK
+// ============================================================================
+
+// ============================================================================
+// W4 ORCA MOUNT BLOCK -- the data-driven, WFX-lit SRKW, single owner W4.
+// Mounts the orca controller (mesh + rig + wet-skin material + eyes + mouth +
+// REAL SRKW biologging motion + bounded secondary physics) into the live twin,
+// lit by the SAME WFX environment handle the water reads. The producer
+// (makeRealWfxEnv) owns the unit conversion: it PMREMs the scene sky for the
+// orca's above-water IBL and derives the underwater absorption in TWIN units
+// from the signed green-survives optic (PROPOSED_RGB_EXTINCTION {3,1,3}), the
+// same numbers E4 feeds the water. Passing sandbox-metric into the twin would
+// over-extinguish; passing twin-units into the sandbox would crush to black, so
+// the producer owns the conversion and the orca consumes whatever env it is
+// handed. Mounted AFTER Water2Rig so the orca is part of the opaque depth
+// pre-pass the water already runs (no third full render). HONESTY: modeled
+// animal, real SRKW DTAG telemetry; the humpback track is contrast-only and
+// never drives this orca. Keep W4 additions inside this fence.
+// ----------------------------------------------------------------------------
+function OrcaRig({ worldUnitsPerMeter }: { worldUnitsPerMeter?: number }) {
+  const scene = useThree((s) => s.scene);
+  const gl = useThree((s) => s.gl);
+  const camera = useThree((s) => s.camera);
+  const sun = useScenicSun();
+
+  // The REAL WFX env handle: a PMREM of the scene sky for the orca's IBL, plus
+  // the twin-unit underwater optic. Built once from the live renderer + pinned
+  // sun, disposed on unmount.
+  const env = useMemo<WfxEnvHandle>(
+    () =>
+      makeRealWfxEnv({
+        renderer: gl,
+        sunDirection: sun.direction,
+        sunColor: sun.color,
+        sunIntensity: sun.intensity,
+        waterLevelY: SEA_LEVEL_Y,
+      }),
+    [gl, sun],
+  );
+
+  // R03 env seam (E6): assign the WFX PMREM as scene.environment so the orca's
+  // PBR IBL (and any standard-material scene PBR) is lit by the scene sky, under
+  // the E1 exposure 0.5 so the dark dorsal does not wash out.
+  useEffect(() => {
+    const prev = scene.environment;
+    scene.environment = env.pmremEnvironment;
+    return () => {
+      if (scene.environment === env.pmremEnvironment) scene.environment = prev;
+      env.dispose?.();
+    };
+  }, [scene, env]);
+
+  const anchorRef = useRef<THREE.Group>(null);
+  const controllerRef = useRef<OrcaController | null>(null);
+  const startRef = useRef<number | null>(null);
+  const camWorld = useMemo(() => new THREE.Vector3(), []);
+
+  // Build the controller once the fit scale is known, add c.root at the swim
+  // anchor, and tear it down on unmount. depthScale + worldUnitsPerMeter map the
+  // real depth_m channel onto the scene Y; the body is scaled for visibility.
+  useEffect(() => {
+    if (worldUnitsPerMeter == null) return;
+    let alive = true;
+    let built: OrcaController | null = null;
+    createOrcaController({
+      env,
+      meshUrl: ORCA_MESH_URL,
+      motionUrl: REAL_SRKW_MOTION_URL,
+      worldUnitsPerMeter,
+      depthScale: ORCA_DEPTH_SCALE,
+      timeScale: 1,
+    })
+      .then((c) => {
+        if (!alive) {
+          c.dispose();
+          return;
+        }
+        built = c;
+        controllerRef.current = c;
+        c.root.scale.setScalar(ORCA_BODY_SCALE);
+        anchorRef.current?.add(c.root);
+      })
+      .catch((e) => console.error("orca controller failed", e));
+    return () => {
+      alive = false;
+      const c = built ?? controllerRef.current;
+      if (c) {
+        anchorRef.current?.remove(c.root);
+        c.dispose();
+      }
+      controllerRef.current = null;
+      startRef.current = null;
+    };
+  }, [env, worldUnitsPerMeter]);
+
+  // Advance the real track each frame (capped step), framing-independent: the
+  // controller reads the camera world position for LOD + gaze only.
+  useFrame((state, dt) => {
+    const c = controllerRef.current;
+    if (!c) return;
+    if (startRef.current === null) startRef.current = state.clock.elapsedTime;
+    const elapsed = ORCA_TRACK_START_S + (state.clock.elapsedTime - startRef.current);
+    camera.getWorldPosition(camWorld);
+    c.update(Math.min(dt, 1 / 30), elapsed, camWorld);
+  });
+
+  // Swim anchor in TILESET_BOUNDS at sea level (the same project frame beacons
+  // use). The controller's setDepthPose then drops c.root below this by depth.
+  const [ax, az] = useMemo(
+    () => projectToScene(ORCA_ANCHOR.lat, ORCA_ANCHOR.lng, TILESET_BOUNDS, SCENE_DEPTH),
+    [],
+  );
+  return <group ref={anchorRef} position={[ax, SEA_LEVEL_Y, az]} />;
+}
+// ----------------------------------------------------------------------------
+// END W4 ORCA MOUNT BLOCK
 // ============================================================================
 
 // The composed live twin: mounts the tileset, realism, BVH picking, beacons, and
@@ -856,6 +1039,14 @@ function TwinScene({
       <IntentDirectorRig tiles={tiles} fitRadius={fitRadius} focus={focus} refs={intentRefs} />
       <RealismRig depth={SCENE_DEPTH} exposeHandle={realismHandleRef} />
       <Water2Rig depth={SCENE_DEPTH} />
+      {/* ====================================================================
+          W4 ORCA MOUNT -- data-driven, WFX-lit SRKW, single owner W4. Mounted
+          AFTER Water2Rig so the orca joins the opaque depth pre-pass (no third
+          full render) and is lit by the same WFX env handle that informs the
+          water uniforms (E4). worldUnitsPerMeter is the live fit scale.
+          ==================================================================== */}
+      <OrcaRig worldUnitsPerMeter={scenicWorldUnitsPerMeter} />
+      {/* ======================= END W4 ORCA MOUNT ========================== */}
       {/* ====================================================================
           WS-SCENIC MOUNT -- scenic visuals (terrain tint, sky, horizon, fog),
           single owner WS-SCENIC. Mounted AFTER RealismRig so scene.fog exists
@@ -1007,7 +1198,13 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
       <Canvas
         camera={{ position: [0, 28, 30], fov: 45, near: 1, far: 800 }}
         style={{ width: "100%", height: "100%", background: "linear-gradient(#0b1f33,#08263d)" }}
-        onCreated={({ gl }) => gl.setClearColor("#08263d")}
+        onCreated={({ gl }) => {
+          gl.setClearColor("#08263d");
+          // WFX E1 (R05): the decisive white-sky fix is exposure 0.5 under ACES,
+          // so the Preetham dome and the bright PMREM env stop blowing out.
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 0.5;
+        }}
       >
         <TwinScene
           onIntent={(intent) => onIntentRef.current?.(intent)}

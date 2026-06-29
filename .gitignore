@@ -154,5 +154,6 @@ archive/quarantine/
 infra/orca/biologging/data/**/*.mat
 infra/orca/biologging/data/**/*.nc
 infra/orca/mesh/_src/
+orca3dmodel/
 # Heavy derived biologging tracks (regenerable via the baker) -> the box
 infra/orca/biologging/dev/humpback_mn09_203a_contrast.bin

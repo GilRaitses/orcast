@@ -30,6 +30,11 @@ defaults awaiting operator GO. Do not launch a wave whose decisions are not CONF
   change. Those stay the 3D-TWIN lane's.
 - No new dependencies. One file, one owner per wave. No dev server during a parallel wave; validate
   with type-check (`cd web && npx tsc --noEmit`).
+- EXECUTION HOST (operator directive, 2026-06-28): sub-orchestrators do NOT run dev servers, builds,
+  Playwright captures, or other compute on the local machine. All such work runs on a dedicated
+  aimez AWS host. Type-check / lint / grep static checks may still run repo-locally. Host identity,
+  access, and the code-transfer method for uncommitted edits are pending operator confirmation (see
+  STEP_LOG S07).
 - No deploy, no promotion, no commit by sub-agents. Operator commits on explicit request.
 
 ## Gates

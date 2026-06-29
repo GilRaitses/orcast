@@ -332,9 +332,10 @@ function AdaptiveExploreInner({ signedIn }: { signedIn: boolean }) {
                 </button>
               ))}
             </div>
-            <label>
+            <label className="ask-label">
               Ask about the Salish Sea
               <textarea
+                className="ask-textarea"
                 rows={2}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}

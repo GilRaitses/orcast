@@ -1,0 +1,61 @@
+/* CVP layout partial — additive layout / structure / rhythm only.
+ * Control PAINT (chip, base button/textarea/input, surfaces) is owned by
+ * cvp-controls.css (Agent B1). This file adds NO --glass-* / --text-ink,
+ * no .scene-label, no WFX/.fx-, and redefines NO existing selector. It does
+ * not redefine .ask-* or global .card. It is not imported yet; the W3
+ * integrator adds the import (see WIRING-layout.md).
+ */
+
+/* ── CVP spacing scale (additive, cvp- prefixed) ──────────────────────────
+ * Codifies the de-facto rem rhythm already hand-set as inline literals across
+ * AdaptiveExplore.tsx and InterestForm.tsx (CVP-LAYOUT.md §3.2). Additive only:
+ * does not touch the existing :root block at globals.css:1-13.
+ */
+:root {
+  --cvp-space-xs: 0.35rem; /* label-to-field, tight inline gaps */
+  --cvp-space-sm: 0.4rem;  /* chip-row gap, option gap */
+  --cvp-space-md: 0.6rem;  /* between sub-blocks inside a card */
+  --cvp-space-lg: 1rem;    /* inter-panel (the existing .explore-console gap) */
+  --cvp-space-xl: 1.25rem; /* card padding / shell rhythm */
+}
+
+/* ── Panel rhythm ─────────────────────────────────────────────────────────
+ * Make the existing .explore-console flex gap (globals.css:494, 1rem) the only
+ * inter-panel spacing. Each global .card also carries margin-bottom: 1.25rem
+ * (globals.css:77); this scoped descendant reset zeroes it inside the console
+ * without touching global .card.
+ */
+.explore-console > .card { margin-bottom: 0; }
+
+/* ── Intra-card vertical rhythm helpers (optional) ────────────────────────
+ * Replace repeated inline marginTop/marginBottom literals with one container
+ * gap. Layout only — no surface, no paint. Applied by the integrator as the
+ * OPTIONAL edits described in WIRING-layout.md.
+ */
+.cvp-stack { display: flex; flex-direction: column; gap: var(--cvp-space-md); }
+.cvp-stack--sm { display: flex; flex-direction: column; gap: var(--cvp-space-sm); }
+
+/* ── Get-access form layout (InterestForm.tsx) ────────────────────────────
+ * CSS for classNames already present in the markup (.interest-card,
+ * .interest-options, .interest-links) plus one new row class (.interest-option)
+ * that replaces the inline .row style at InterestForm.tsx:84. Structure only;
+ * field surface/border comes from the reused .ask-input / .ask-label
+ * (globals.css:308-318), and control paint from B1. No copy is set here.
+ */
+.interest-card { display: flex; flex-direction: column; gap: var(--cvp-space-sm); }
+.interest-options { display: flex; flex-direction: column; gap: var(--cvp-space-sm); }
+.interest-option { display: flex; flex-direction: row; align-items: flex-start; gap: var(--cvp-space-xs); }
+.interest-links { display: flex; flex-wrap: wrap; gap: var(--cvp-space-sm); }
+
+/* ── Mobile ───────────────────────────────────────────────────────────────
+ * Reuse ONLY the two established breakpoints. At 980px the .explore-grid
+ * already collapses to one column (globals.css:483), and the composer textarea
+ * and .ask-input fields are width:100%, so the single-column stack needs no
+ * extra rule here. At 768px tighten shell + card padding as a media-scoped
+ * override; card padding is scoped under .explore-console so global .card is
+ * never restyled outside the media query.
+ */
+@media (max-width: 768px) {
+  .explore-shell { padding: var(--cvp-space-lg) var(--cvp-space-lg) 2rem; }
+  .explore-console > .card { padding: var(--cvp-space-lg); }
+}

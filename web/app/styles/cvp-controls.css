@@ -1,0 +1,158 @@
+/* CVP control paint (console-visual-pass, Wave 2 / B1).
+   Additive baseline only. Styles the existing `.chip` class and the bare
+   `button` / `textarea` / `input` / `label` elements directly so the W3
+   integrator needs near-zero className edits. Reuses only the existing :root
+   tokens (--bg, --surface, --surface-2, --border, --text, --text-muted,
+   --accent, --radius, --fail). No --glass-* / --text-ink, no .ask-* redefine,
+   no .scene-label / .fx-, no ghost-text / self-hide / preload, no copy.
+   This file is not imported anywhere; the import is a W3 edit (see
+   WIRING-controls.md). */
+
+/* ── Chips ────────────────────────────────────────────────────────────────
+   Pill control shared by the branch options and starter prompts
+   (button.chip) and the InterestForm result links (a.chip). A class beats a
+   bare element selector, so these rules win over the base `button` paint
+   below and chip buttons read as chips, not primary buttons. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.chip:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.chip:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 184, 216, 0.16);
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Selected state. Formalizes the inline borderColor/color override at
+   AdaptiveExplore.tsx:316-320. Covers data-active and aria-pressed. */
+.chip[data-active="true"],
+.chip[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Anchor variant (a.chip in InterestForm result links). The global
+   `a:hover { text-decoration: underline; }` is lower specificity than these,
+   so links keep the pill look with no underline. */
+a.chip,
+a.chip:hover,
+a.chip:focus-visible {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ── Primary action button ──────────────────────────────────────────────
+   Bare <button> primary appearance: the home Ask button
+   (AdaptiveExplore.tsx:345) and the InterestForm CTA (InterestForm.tsx:101).
+   .chip rules above out-specify this, so chip buttons are unaffected. */
+button {
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 184, 216, 0.16);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* ── Text fields ─────────────────────────────────────────────────────────
+   textarea (AdaptiveExplore.tsx:337) and text/email inputs
+   (InterestForm.tsx:98,99). Scoped away from radio/checkbox so the
+   InterestForm radios (InterestForm.tsx:85-91) stay native and are never
+   stretched to full width or boxed. */
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="search"] {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  font-weight: 400;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 3.5rem;
+  line-height: 1.5;
+}
+
+textarea::placeholder,
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="search"]::placeholder {
+  color: var(--text-muted);
+}
+
+textarea:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="search"]:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 184, 216, 0.16);
+}
+
+textarea:disabled,
+input[type="text"]:disabled,
+input[type="email"]:disabled,
+input[type="search"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Label ───────────────────────────────────────────────────────────────
+   Minimal bare <label> paint for the composer label (AdaptiveExplore.tsx:335).
+   Deliberately light: only `color`, no display/flex-direction. A bare element
+   selector loses to a class, so this does not fight .ask-label (B2 owns the
+   composer label paint) or the .row radio-row labels in InterestForm
+   (InterestForm.tsx:84). Crucially it sets no flex-direction, so the inline
+   radio rows are not stacked or otherwise broken. */
+label {
+  color: var(--text);
+}

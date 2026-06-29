@@ -1,3 +1,5 @@
+@import "./styles/cvp-controls.css";
+@import "./styles/cvp-layout.css";
 :root {
   --bg: #0a0e14;
   --surface: #121821;

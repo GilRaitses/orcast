@@ -81,7 +81,7 @@ export default function InterestForm() {
       <p className="muted" style={{ marginTop: "0.2rem" }}>It is all live. Tell me what brings you and it arrives right away.</p>
       <div className="interest-options" style={{ display: "flex", flexDirection: "column", gap: "0.4rem", margin: "0.5rem 0" }}>
         {AUDIENCES.map((a) => (
-          <label key={a.id} className="row" style={{ gap: "0.45rem", alignItems: "flex-start" }}>
+          <label key={a.id} className="interest-option" style={{ gap: "0.45rem", alignItems: "flex-start" }}>
             <input
               type="radio"
               name="audience"
