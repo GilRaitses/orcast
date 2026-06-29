@@ -123,9 +123,19 @@ CHANNELS: List[Dict[str, Any]] = [
 CHANNEL_NAMES: List[str] = [c["name"] for c in CHANNELS]
 N_CHANNELS = len(CHANNELS)
 
-# Orca dominant stroke band (OG-R_h5_mapping.md section 1.5): about 0.3-1.0 Hz,
-# cruising near 0.4-0.6 Hz. Used both to band-pass real Az and to seed the dev synth.
+# Generic odontocete stroke band kept for backward compatibility (the simulated dev
+# track was seeded with this). For REAL orca use ORCA_STROKE_BAND_HZ below.
 STROKE_BAND_HZ: Tuple[float, float] = (0.3, 1.0)
+
+# CORRECTED orca stroke band. OG-R_h5_mapping.md originally assumed ~0.4-0.6 Hz
+# cruising; OG-DATA's measured open data revises this DOWN: the orca heave (Aw_z)
+# fundamental is ~0.2-0.35 Hz. Verified on the Tennessen et al. 2024 SRKW record
+# oo14_264mprh50 (per-segment dsf median ~0.34 Hz, IQR ~0.17-0.45), consistent with
+# the operator humpback mn09_203a at ~0.23 Hz. The lower edge (0.15 Hz) excludes the
+# slow dive-cycle / gravity-reorientation drift that dominates Aw_z on steep dives;
+# the upper edge (0.6 Hz) leaves burst headroom. The driver must read the
+# per-segment dsf (dominant_stroke_freq), NOT a hard-coded constant.
+ORCA_STROKE_BAND_HZ: Tuple[float, float] = (0.15, 0.6)
 
 DATUM = {
     "name": "NAVD88-0m",
@@ -271,6 +281,61 @@ def stroke_phase_amplitude(
     peak = float(np.percentile(env, 99)) if env.size else 0.0
     amp = np.clip(env / peak, 0.0, 1.0) if peak > 0 else np.zeros_like(env)
     return phase.astype(np.float64), amp.astype(np.float64)
+
+
+def dominant_stroke_freq(
+    az: np.ndarray,
+    fs: float,
+    band: Tuple[float, float] = ORCA_STROKE_BAND_HZ,
+    win_s: float = 60.0,
+) -> Dict[str, Any]:
+    """Per-segment dominant stroke frequency (dsf-style), the value the driver reads.
+
+    Whole-record FFT is biased low because animals glide intermittently and steep
+    dives leak gravity reorientation into the heave axis. This windows the
+    band-limited heave and takes the in-band spectral peak per window, returning the
+    distribution of per-window dominant frequencies. This is the honest per-segment
+    stroke rate (tagtools ``dsf()`` equivalent); it must replace any hard-coded beat.
+    """
+    x = bandpass_fft(np.asarray(az, dtype=np.float64), fs, 0.1, min(1.5, fs * 0.4))
+    w = max(int(win_s * fs), 16)
+    if x.shape[0] < w:
+        w = x.shape[0]
+    freqs = np.fft.rfftfreq(w, d=1.0 / fs)
+    mask = (freqs >= band[0]) & (freqs <= band[1])
+    if not mask.any():
+        return {"band_hz": list(band), "n_windows": 0}
+    peaks: List[float] = []
+    stds: List[float] = []
+    for i in range(0, x.shape[0] - w + 1, w):
+        seg = x[i : i + w]
+        s = float(np.std(seg))
+        if s < 1e-4:
+            continue
+        spec = np.abs(np.fft.rfft(seg - seg.mean())) ** 2
+        peaks.append(float(freqs[mask][int(np.argmax(spec[mask]))]))
+        stds.append(s)
+    if not peaks:
+        return {"band_hz": list(band), "n_windows": 0}
+    arr = np.array(peaks)
+    sd = np.array(stds)
+    # Restrict to ACTIVE-stroking windows (heave variance at/above the median): quiet
+    # glide/surface windows have no real stroke, so their in-band peak floats to noise
+    # and biases the estimate high. The active subset is the credible stroke rate.
+    active = arr[sd >= np.median(sd)]
+    if active.size == 0:
+        active = arr
+    return {
+        "method": "windowed in-band FFT peak over active-stroking windows (dsf-equivalent)",
+        "band_hz": list(band),
+        "window_s": win_s,
+        "n_windows": int(arr.size),
+        "n_active_windows": int(active.size),
+        "median_hz": round(float(np.median(active)), 4),
+        "p25_hz": round(float(np.percentile(active, 25)), 4),
+        "p75_hz": round(float(np.percentile(active, 75)), 4),
+        "all_windows_median_hz": round(float(np.median(arr)), 4),
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -502,12 +567,127 @@ def bake_h5(
         )
 
 
+def _mat_var(mat: Dict[str, Any], *names: str) -> Optional[np.ndarray]:
+    for name in names:
+        if name in mat:
+            return np.asarray(mat[name], dtype=np.float64)
+    return None
+
+
+def bake_mat(
+    input_path: Path,
+    out_rate_hz: float = 25.0,
+    declination_deg: float = 0.0,
+    stroke_band: Tuple[float, float] = ORCA_STROKE_BAND_HZ,
+    simulated_override: Optional[bool] = None,
+) -> Tuple[MotionTrack, Dict[str, Any]]:
+    """Read an OLD-format MATLAB ``.mat`` PRH file (scipy.io.loadmat) -> MotionTrack.
+
+    Targets the calibrated-PRH layout of the Tennessen et al. 2024 open orca DTAG
+    set (``p``, ``pitch``, ``roll``, ``head`` in radians, animal-frame ``Aw`` with
+    column 3 = dorso-ventral heave, scalar ``fs``). These are MAT v5 files, not
+    HDF5, so they are read with scipy rather than h5py.
+
+    The fluke beat is extracted at the NATIVE rate (accurate phase/envelope) then the
+    track is decimated by an integer factor to ``out_rate_hz`` to keep the artifact
+    lean. Returns the track plus a stats dict (envelopes, per-segment dsf) for the
+    manifest / contrast reporting. Caller sets species/role/provenance.
+    """
+    try:
+        import scipy.io as sio  # lazy: only the .mat path needs scipy
+    except ImportError as exc:  # pragma: no cover - environment guard
+        raise SystemExit(
+            "scipy is required to bake a .mat PRH file. Install the pinned offline "
+            "deps: pip install -r infra/orca/biologging/requirements.txt"
+        ) from exc
+
+    mat = sio.loadmat(str(input_path), squeeze_me=True)
+    fs_raw = _mat_var(mat, "fs")
+    if fs_raw is None:
+        raise ValueError("no sample rate (fs) in .mat")
+    fs = float(np.ravel(fs_raw)[0])
+
+    depth = _mat_var(mat, "p", "P", "depth")
+    pitch = _mat_var(mat, "pitch")
+    roll = _mat_var(mat, "roll")
+    head = _mat_var(mat, "head", "heading")
+    aw = _mat_var(mat, "Aw", "Aa")
+    if depth is None or pitch is None or roll is None or head is None or aw is None:
+        raise ValueError("missing one of required .mat vars: p, pitch, roll, head, Aw")
+    depth, pitch, roll, head = (np.ravel(a) for a in (depth, pitch, roll, head))
+    if aw.ndim != 2 or aw.shape[1] < 3:
+        raise ValueError(f"Aw must be (N,3) animal-frame accel; got shape {aw.shape}")
+    az = aw[:, 2]  # dorso-ventral (heave)
+
+    n = min(len(depth), len(pitch), len(roll), len(head), len(az))
+    depth, pitch, roll, head, az = (a[:n] for a in (depth, pitch, roll, head, az))
+
+    head_true = head + np.deg2rad(declination_deg)
+
+    # Fluke beat at native fs, then decimate everything by an integer factor.
+    phase, amp = stroke_phase_amplitude(az, fs, band=stroke_band)
+    factor = max(int(round(fs / out_rate_hz)), 1)
+    sl = slice(0, n, factor)
+    t = np.arange(n, dtype=np.float64)[sl] / fs
+    out_rate_actual = fs / factor
+
+    stats: Dict[str, Any] = {
+        "native_fs_hz": fs,
+        "n_samples_native": int(n),
+        "decimation_factor": factor,
+        "out_rate_hz": round(out_rate_actual, 4),
+        "duration_s": round(float((n - 1) / fs), 1),
+        "depth_range_m": [round(float(np.nanmin(depth)), 3), round(float(np.nanmax(depth)), 3)],
+        "pitch_abs_p95_deg": round(float(np.rad2deg(np.nanpercentile(np.abs(pitch), 95))), 2),
+        "roll_abs_p95_deg": round(float(np.rad2deg(np.nanpercentile(np.abs(roll), 95))), 2),
+        "roll_abs_p99_deg": round(float(np.rad2deg(np.nanpercentile(np.abs(roll), 99))), 2),
+        "fluke_dsf": dominant_stroke_freq(az, fs, band=stroke_band),
+    }
+
+    track = MotionTrack(
+        sample_rate_hz=float(out_rate_actual),
+        t_s=t,
+        body_yaw_rad=head_true[sl],
+        body_pitch_rad=pitch[sl],
+        body_roll_rad=roll[sl],
+        depth_m=depth[sl],
+        fluke_phase_rad=np.mod(phase[sl], 2.0 * np.pi),
+        fluke_amplitude=np.clip(amp[sl], 0.0, 1.0),
+        simulated=bool(simulated_override) if simulated_override is not None else False,
+        provenance=(
+            f"Baked offline from MATLAB PRH {input_path.name!r} by prebake.py "
+            f"(format {FORMAT_NAME} v{FORMAT_VERSION}); fluke beat from animal-frame "
+            f"Aw_z over the corrected orca band {list(stroke_band)} Hz."
+        ),
+        declination_deg_applied=float(declination_deg),
+        source={
+            "type": "mat",
+            "file": input_path.name,
+            "native_fs_hz": fs,
+            "decimation_factor": factor,
+            "out_rate_hz": round(out_rate_actual, 4),
+            "stroke_band_hz": list(stroke_band),
+            "declination_applied": declination_deg != 0.0,
+        },
+        notes=[
+            "Read from OLD-format MATLAB .mat (scipy.io.loadmat), not HDF5.",
+            "Orientation is the file's derived pitch/roll/head product (radians).",
+            f"Decimated {fs:g} Hz -> {out_rate_actual:g} Hz (factor {factor}) for leanness; "
+            "ample for a ~0.2-0.35 Hz fluke.",
+            "head is magnetic unless a declination was supplied; web adds site declination.",
+        ],
+    )
+    return track, stats
+
+
 def _cli(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Bake an animaltags/tagtools H5 biologging file into a rig-DOF "
         "Float32 .bin + JSON manifest (ORCA OG-PREBAKE, Option B)."
     )
-    parser.add_argument("input", type=Path, help="path to the animaltags/tagtools .h5 / .nc file")
+    parser.add_argument(
+        "input", type=Path, help="path to an animaltags/tagtools .h5 / .nc OR a MATLAB .mat PRH file"
+    )
     parser.add_argument(
         "-o",
         "--out-dir",
@@ -551,12 +731,20 @@ def _cli(argv: Optional[Sequence[str]] = None) -> int:
         print(f"error: input not found: {args.input}", file=sys.stderr)
         return 2
 
-    track = bake_h5(
-        args.input,
-        out_rate_hz=args.rate,
-        declination_deg=args.declination,
-        simulated_override=args.simulated,
-    )
+    if args.input.suffix.lower() == ".mat":
+        track, _ = bake_mat(
+            args.input,
+            out_rate_hz=args.rate,
+            declination_deg=args.declination,
+            simulated_override=args.simulated,
+        )
+    else:
+        track = bake_h5(
+            args.input,
+            out_rate_hz=args.rate,
+            declination_deg=args.declination,
+            simulated_override=args.simulated,
+        )
     base = args.name or args.input.stem
     bin_path = args.out_dir / f"{base}.bin"
     manifest_path = args.out_dir / f"{base}.json"

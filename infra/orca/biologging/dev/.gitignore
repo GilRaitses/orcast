@@ -1,0 +1,5 @@
+# Box-bound real orca driver track: the baked .bin (~5.7 MB at 25 Hz over ~136 min)
+# exceeds the ~1.5 MB commit budget for this lane. The committed manifest
+# (orca_srkw_oo14_driver.json) carries the full format spec + driver stats, and the
+# .bin is reproducible from the CC-BY .mat via dev/bake_orca_srkw_driver.py.
+orca_srkw_oo14_driver.bin

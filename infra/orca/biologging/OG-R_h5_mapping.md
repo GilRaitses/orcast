@@ -128,13 +128,26 @@ three bands. The procedure we adopt:
   cut-off `fc2` to about twice the stroke rate.
 - Drop the **high-frequency** band (rapid muscle movement, unsteady flow, strikes).
 
-Orca-appropriate band: orca are mid-sized odontocetes, so their dominant stroke
-frequency sits above the roughly 0.1 to 0.5 Hz band quoted for large baleen whales.
-A practical bandpass for orca is **about 0.3 to 1.0 Hz**, with cruising strokes
-clustering near 0.4 to 0.6 Hz. The exact value per segment is whatever `dsf()`
-returns as `fpk` on that segment, not a hard-coded constant. As a sanity anchor,
-`dsf()` on the bundled tagtools harbor-seal example returns about 1.22 Hz for that
-smaller animal, which is consistent with orca sitting somewhat lower.
+Orca-appropriate band: orca are mid-sized odontocetes. This document originally
+assumed a practical bandpass of about 0.3 to 1.0 Hz with cruising strokes clustering
+near 0.4 to 0.6 Hz. **CORRECTION (OG-DATA, measured):** that 0.4 to 0.6 Hz cruising
+assumption is too high. Measured on the real open killer-whale DTAG data (Tennessen
+et al. 2024 SRKW record `oo14_264mprh50`, CC-BY-4.0), the orca animal-frame heave
+(`Aw_z`) **dominant stroke fundamental is about 0.2 to 0.35 Hz** — a per-segment
+`dsf()`/FFT distribution centered near 0.2 to 0.25 Hz over active-stroking windows
+(active-window dsf median ~0.18 to 0.27 Hz depending on window/band; IQR ~0.15 to
+0.43 Hz), NOT a fixed ~0.5 Hz cruise. This overlaps the operator's measured humpback
+`mn09_203a` fundamental at **~0.23 Hz** (slower, larger animal). The corrected
+extraction band used by the baker is **about 0.15 to 0.6 Hz** (`ORCA_STROKE_BAND_HZ`
+in `prebake.py`); the lower edge excludes the slow dive-cycle / gravity-reorientation
+drift that dominates `Aw_z` on steep dives, the upper edge leaves burst headroom.
+
+The exact value per segment is whatever `dsf()` returns as `fpk` on that segment,
+**read live, never hard-coded**. The driver must take the per-segment dominant stroke
+rate (`prebake.dominant_stroke_freq`, restricted to active-stroking windows) rather
+than any constant. As a sanity anchor, `dsf()` on the bundled tagtools harbor-seal
+example returns about 1.22 Hz for that smaller animal, consistent with the larger
+orca sitting well below it at ~0.2 to 0.35 Hz.
 
 So the driver logic is: take the animal-frame Az (heave) channel, subtract the
 static/orientation component, bandpass to the orca stroke band, and read off the
@@ -242,7 +255,7 @@ typed API `setOrientation(pitch, roll, yaw)`, `setFluke(phase, amplitude)`,
 | `pitch` | `body_pitch` | Nose up or down. tagtools `a2pr` convention: **positive pitch is nose-up**. Radians from `a2pr`, degrees in the in-repo schema, convert as needed. Sign into the rig must be verified against `SKELETON.md` body_pitch sign (reconciliation note below). |
 | `roll` | `body_roll` | Bank into turns. tagtools `a2pr` convention: roll is rotation about the longitudinal axis. Radians from `a2pr`, degrees in-repo. Note orca foraging dives include sustained near-90-degree rolls, so the rig must accept the full roll range, not a small-angle approximation. Sign into the rig must be verified against `SKELETON.md`. |
 | `depth` (from pressure `p`) | world Y on twin datum (vertical position) | Depth is metres **positive down**. The twin datum is NAVD88 0 m equals scene Y 0 (see W2.6 datum dispatch and `infra/3dtwin`). Vertical placement is `Y = -depth * worldUnitsPerMeter`, so the animal sits below the datum. `worldUnitsPerMeter` is about **0.003** in this scene, but the driver must read the **live fit value** (`DEFAULT_WORLD_UNITS_PER_METER` in `web/lib/scene/decor/horizonRing.ts`, or the per-fit value the journey and Salish scenes attach) rather than hard-coding it. This drives the dive trajectory. |
-| accelerometer **Az** oscillation | fluke beat `setFluke(phase, amplitude)` | Take the animal-frame **dorso-ventral (heave, Az)** accelerometer channel, subtract the static gravity/orientation component, and bandpass to the orca stroke band (about 0.3 to 1.0 Hz, with `dsf().fpk` giving the per-segment dominant rate). Feed the instantaneous oscillation **phase** to `setFluke` phase and the oscillation **amplitude / DBA envelope** to `setFluke` amplitude. The rig fluke beat is **dorso-ventral** through the `caudal[]` chain, which matches the physical dorso-ventral propulsion of cetaceans. |
+| accelerometer **Az** oscillation | fluke beat `setFluke(phase, amplitude)` | Take the animal-frame **dorso-ventral (heave, Az)** accelerometer channel, subtract the static gravity/orientation component, and bandpass to the corrected orca stroke band (**about 0.15 to 0.6 Hz**; measured fundamental ~0.2 to 0.35 Hz, NOT the old 0.4 to 0.6 Hz assumption — see the correction in section 1.5), with the per-segment `dsf().fpk` giving the live dominant rate (read live, never hard-coded). Feed the instantaneous oscillation **phase** to `setFluke` phase and the oscillation **amplitude / DBA envelope** to `setFluke` amplitude. The rig fluke beat is **dorso-ventral** through the `caudal[]` chain, which matches the physical dorso-ventral propulsion of cetaceans. |
 | dive / foraging context | optional behavior tint or `speed` | Honest and labeled. `behavior_type`, `dive_phase`, `foraging_indicator`, and `speed` from the schema can tint the twin (for example a foraging label, or scaling apparent effort with speed). This is presentation context, not a measured DOF, and must be labeled as such. Orca cruising speed is roughly 2.1 to 2.7 m per s per Wright et al. 2017, useful as a plausibility bound. |
 
 ### 3.1 Frame conversion (tag NED to three.js scene)

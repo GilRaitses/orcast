@@ -41,6 +41,10 @@ agreement-covered H5 is loaded.
 | `dev/bake_humpback_contrast.py` | Bakes the operator's REAL humpback H5 (`mn09_203a`) as a labeled `simulated: false`, `species: humpback`, `role: contrast` artifact, reusing `prebake.py`'s writer/DSP/format. Validates the baker on real per-sample data and emits the contrast baseline. |
 | `dev/humpback_mn09_203a_contrast.bin` | Baked REAL humpback contrast track (2,797,900 bytes = 99925 samples x 7 channels x 4 bytes). NOT an orca driver. |
 | `dev/humpback_mn09_203a_contrast.json` | Humpback contrast manifest (`simulated: false`, `species: humpback`, `role: contrast`, with a `contrast_baseline` block). |
+| `dev/bake_orca_srkw_driver.py` | Bakes the REAL orca DRIVER fixture from the CC-BY Tennessen 2024 SRKW `.mat` via `prebake.bake_mat`. `simulated: false`, `species: orca`, `ecotype: SRKW`, `role: driver`. |
+| `dev/orca_srkw_oo14_driver.json` | Orca driver manifest + `driver_stats` (depth/roll/pitch envelopes, per-segment fluke dsf). Committed. |
+| `dev/orca_srkw_oo14_driver.bin` | Orca driver track (~5.7 MB @ 25 Hz). **Box-bound (gitignored)**; reproducible from the `.mat` via the baker. |
+| `dev/.gitignore` | Box-binds the >1.5 MB orca driver `.bin`. |
 | `OG-R_h5_mapping.md` | The OG-R research input (schema, parse decision, mapping). Read-only here. |
 
 ## How to bake a real H5 later
@@ -169,6 +173,33 @@ Notes that carry over from OG-R and SKELETON:
   reconstructs it by dead-reckoning (WHOI `ptrack`: swim speed from pitch and depth
   rate, stepped by heading) then georeferenced to GPS surfacings. Any horizontal
   track in the twin must be labeled **reconstructed**, not measured GPS.
+
+## Real orca SRKW driver (Tennessen oo14, box-bound)
+
+The orca twin's DRIVER track, baked from the **real open** Southern Resident killer
+whale DTAG `oo14_264mprh50.mat` (Tennessen et al. 2024, Zenodo 10.5281/zenodo.13308835,
+**CC-BY-4.0**, 50 Hz, ~136.5 min) via `prebake.bake_mat` (new OLD-format MATLAB reader,
+`scipy.io.loadmat`; `scipy` pinned in `requirements.txt`, offline only). Same
+bin/JSON format/version/7 channels as the dev track and humpback contrast.
+
+- **Manifest:** `simulated: false`, `species: orca`, `ecotype: SRKW`, `role: driver`,
+  provenance = Tennessen 2024 Zenodo CC-BY-4.0. Modeled orca motion driven by this open
+  data; identified only by deployment code/sex/population.
+- **Lean / box-bound:** baked at **25 Hz** (decimated from 50 Hz); the `.bin` is ~5.7 MB,
+  over the ~1.5 MB commit budget, so it is **gitignored** (`dev/.gitignore`) and only the
+  manifest + `driver_stats` are committed. Reproduce with
+  `./.venv/bin/python dev/bake_orca_srkw_driver.py`.
+- **Measured on bake:** depth −2.5 to **155 m**; \|roll\| p95 **133°**, \|pitch\| p95 **62°**
+  (full ±π roll present); per-segment active-window fluke **dsf median ~0.18 Hz, IQR
+  ~0.15–0.29 Hz** (corrected orca band 0.15–0.6 Hz).
+- **Fluke correction applied:** the orca heave fundamental is **~0.2–0.35 Hz, NOT the old
+  0.4–0.6 Hz** assumption (see `OG-R_h5_mapping.md` 1.5). The driver reads the per-segment
+  `dominant_stroke_freq` (active-stroking windows), never a constant. `ORCA_STROKE_BAND_HZ`
+  in `prebake.py` is the corrected band.
+
+HONESTY: the orca driver = measured SRKW (Tennessen, CC-BY); the humpback below =
+operator's measured `mn09_203a`, contrast only. Never merged; one species' motion is
+never presented as the other.
 
 ## Humpback contrast baseline (real mn09_203a)
 

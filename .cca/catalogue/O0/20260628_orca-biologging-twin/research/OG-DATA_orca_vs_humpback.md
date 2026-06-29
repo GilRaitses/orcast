@@ -8,18 +8,47 @@ literature **and** a clearly-marked slot for the operator's own humpback whale-t
 DTAG export.
 
 ## Honesty label
-Orca motion is "**modeled, parameterized from cited open killer-whale DTAG data**." The
-humpback baseline is "**from cited humpback DTAG literature**" until the operator's export
-lands, at which point it becomes "**parameterized from the operator's humpback DTAG**".
-No claim is made about a named individual beyond what a loaded file literally contains.
+Orca motion is "**modeled, parameterized from / driven by cited open killer-whale DTAG
+data**" — now grounded in the **measured** SRKW record (Tennessen et al. 2024 `oo14_264m`,
+CC-BY-4.0). The humpback baseline is the **operator's own measured DTAG** (`mn09_203a`,
+"lavaliers_Calf"), used as **contrast only**. The two are never merged and one species'
+motion is never presented as the other. No claim is made about a named individual beyond
+what a loaded file literally contains (deployments identified by code/sex/population).
 
 ---
 
-## 1. Humpback DTAG kinematics (literature baseline)
+## 1. Humpback DTAG kinematics
+
+### 1.0 Operator humpback baseline — MEASURED (`mn09_203a`) — PRIMARY
+
+This is the **operator's own real humpback DTAG**, computed from the per-sample H5 by
+OG-PREBAKE (`dev/humpback_mn09_203a_contrast.{bin,json}`, baked from
+`Visualization_Poster_Appendix/data/dive_analysis.h5`). It is the humpback contrast
+column for this project. **Measured values (128 dives, 5 Hz, ~5.5 h):**
+
+| Quantity | Operator humpback `mn09_203a` (measured) |
+|---|---|
+| Max depth (m) | median **20.85**, max **39.03**, min 6.81 |
+| Descent rate (m/s) | median **0.47** (max 1.25) |
+| Ascent rate (m/s) | median **0.45** (max 1.33) |
+| Dive duration (s) | median **66.7** (max 411) |
+| Bottom duration (s) | median 30.1 |
+| Fluke beat (Hz) | **~0.23** (median inter-stroke 4.4 s, from Aw.3 stroke peaks) |
+| Behavior mix | feeding-dominated: Exploratory dives 35%, Side rolls 22%, Noodle feeding 18%, Kick feeding 9%, Feeding loop 6% |
+
+**This animal is a coastal feeding humpback and is markedly SHALLOWER than the generic
+deep-lunge literature** (mean foraging ~98 m below): median max depth ~21 m, max ~39 m,
+with slow vertical rates (~0.45–0.47 m/s) and short dives (~67 s). Its fluke beat
+(~0.23 Hz) sits at the slow end and overlaps the measured orca fundamental (~0.2–0.35 Hz).
+Use these operator-measured numbers as the humpback column; the literature below is
+secondary context only.
+
+### 1.1 Generic literature baseline (deep-lunge rorqual — context only)
 
 Humpbacks are large rorquals (~12–15 m). Their signature is **deep, powerful
 lunge-feeding** with a **slow, high-amplitude fluke beat** and (for krill) **little
-rolling** — the opposite of orca's fast, sharp, roll-heavy maneuvering.
+rolling** — the opposite of orca's fast, sharp, roll-heavy maneuvering. (Context for
+the deep-lunge mode; the operator's `mn09_203a` is a shallower coastal feeder — use 1.0.)
 
 - **Dive depth.** Feeding-mode dependent. Bubble-net feeding is shallow with an
   observed **~20 m depth-interval limit** (bubble physics) [Wiley et al. 2011]. Subsurface
@@ -44,11 +73,13 @@ rolling** — the opposite of orca's fast, sharp, roll-heavy maneuvering.
   **≈ 1.0 ± 0.6 min**, post-lunge filtration **≈ 46 s**; high feeding rates up to
   **~37 lunges h⁻¹** [Szabo et al. 2023; Simon et al. 2012].
 
-### >>> OPERATOR SLOT — humpback whale-tagger DTAG export (NOT YET PROVIDED) <<<
-The operator will supply a real humpback DTAG export from their separate whale-tagger
-project. **Expected drop path:** `infra/orca/biologging/data/operator_humpback_dtag/`
-(create on arrival, with sibling `LICENSE`/`PROVENANCE`). **Expected schema** — same
-animaltags/tagtools shape as the open orca set, so it slots into the same loader:
+### >>> OPERATOR HUMPBACK — PROVIDED & BAKED (`mn09_203a`) <<<
+The operator's real humpback DTAG export has landed and is baked (see 1.0 above and
+`infra/orca/biologging/OG-PREBAKE_NOTES.md` "Humpback contrast baseline"). Source H5:
+`/Users/gilraitses/whale-behavior-analysis/Visualization_Poster_Appendix/data/dive_analysis.h5`
+(read-only, external; not copied into the repo). It validated `prebake.py` on real
+per-sample animaltags data and produced the measured humpback contrast column. Its
+schema matched the open orca set exactly, slotting into the same loader:
 
 | Field | Type | Meaning | Unit |
 |---|---|---|---|
@@ -101,43 +132,57 @@ Computed directly from the CC-BY Tennessen et al. 2024 `.mat` files + `foraging_
 
 ## 3. Contrast headline
 
-| Axis | **Orca (resident)** | **Humpback** |
+Orca column = **measured SRKW** (Tennessen `oo14_264m`, CC-BY-4.0); humpback column =
+**operator's measured `mn09_203a`** (generic deep-lunge literature kept in parentheses
+for context only).
+
+| Axis | **Orca SRKW (measured, Tennessen oo14)** | **Operator humpback `mn09_203a` (measured)** |
 |---|---|---|
 | Body size | mid odontocete (~6–9 m) | large rorqual (~12–15 m) |
-| Typical foraging depth | shallow median (~4 m), foraging tail to ~150 m | lunge dives ~98 m; bubble-net ≤~20 m |
-| Fluke cadence | **faster** (~0.2–0.35 Hz dom.) | **slower, more powerful** (0.2–0.25 cruise, 0.34 lunge) |
-| Roll / banking | **heavy** — near-90° & inverted rolls (\|roll\|p95 133–171°) | **low for krill** (little roll); turning, not rolling |
-| Maneuvering | sharp, high tortuosity in prey pursuit | discrete lunge bouts; bubble-net spiral |
-| Speed | cruise 2.1–2.7 m s⁻¹, bursts higher | cruise ~2 m s⁻¹, lunge 3.0–3.7 m s⁻¹ |
-| Bout structure | many short dives; foraging dives deeper/longer | 0–6 lunges/dive, ~1 min apart, ~46 s filter |
+| Foraging depth | to **155 m** measured; shallow median, deep foraging tail | median max **20.85 m**, max **39 m** — coastal feeder (*vs ~98 m deep-lunge lit.*) |
+| Descent / ascent | steep dives | **~0.47 / ~0.45 m s⁻¹** measured (*vs lit. lunge 2.0–2.7*) |
+| Dive duration | longer foraging dives | median **66.7 s** measured |
+| Fluke cadence | dom. **~0.2–0.35 Hz** (active dsf med ~0.18–0.27) | **~0.23 Hz** measured (*lit. 0.20 cruise / 0.34 lunge*) |
+| Roll / banking | **heavy** — near-90° & inverted (\|roll\|p95 **133°**) | feeding rolls present (side-rolls 22% of time; *krill lit. = low roll*) |
+| Behavior | sharp, high tortuosity in prey pursuit | feeding-dominated: exploratory dives, side rolls, noodle/kick feeding |
+| Speed | cruise 2.1–2.7 m s⁻¹ [W] | (no per-sample speed; lit. cruise ~2, lunge 3.0–3.7) |
 
-One line: **orca = shallower-median, faster-fluking, roll-heavy, sharp maneuvering;
-humpback = deeper powerful lunges, slow high-amplitude fluking, comparatively flat (low
-roll), discrete lunge bouts.**
+One line: **orca SRKW (measured) = deeper-reaching (to 155 m), roll-heavy (\|roll\|p95
+~133°), fluke ~0.2–0.35 Hz; operator humpback `mn09_203a` (measured) = shallow coastal
+feeder (median ~21 m, max ~39 m), slow fluke ~0.23 Hz, short ~67 s feeding-dominated
+dives — much shallower than generic ~98 m deep-lunge literature.** Contrast only; the
+orca twin is never driven by humpback motion and neither species' motion is shown as the
+other.
 
 ---
 
 ## 4. Concrete parameter table for the OG motion driver
 
 Driver-consumable defaults. Orca rows are **measured from open CC-BY data** where marked
-[D] (download) or [W] Wright 2017; humpback rows are **literature** [L] pending the
-operator export (replace with [O] operator-measured on arrival). Ranges are
-"typical → extreme"; the driver should prefer per-segment live values (e.g. `dsf().fpk`,
-actual `p` track) over these constants and use the table only as bounds/fallback.
+[D] (download) or [W] Wright 2017; humpback rows are now **operator-measured** [O] from
+`mn09_203a` (generic literature [L] kept only where there is no operator measurement, in
+parentheses). Ranges are "typical → extreme"; the driver should prefer per-segment live
+values (e.g. `dsf().fpk`, actual `p` track) over these constants and use the table only as
+bounds/fallback.
 
-| Parameter | Orca (resident) | Humpback | Orca source |
+| Parameter | Orca SRKW (measured) | Operator humpback `mn09_203a` (measured) | Source |
 |---|---|---|---|
-| `depth_typical_m` (foraging) | 5 → 60 | 20 → 100 | [D] p95 16–142 m; [W] |
-| `depth_max_m` | 150 (resident) / 270 obs / 767 (Antarctic cited) | ~150 | [D] foraging_data; cited |
-| `depth_median_m` | ~4 | mode-dependent (~20 bubble-net) | [D] |
-| `descent_rate_mps` | 1.5 → 2.5 | 2.0 → 2.7 | [W] speed; [L] |
-| `ascent_rate_mps` | 1.5 → 2.5 | 2.0 → 2.7 | [W]; [L] |
-| `fluke_hz_cruise` | 0.25 (0.20–0.35) | 0.22 (0.20–0.25) | [D] FFT Aw_z; [L] |
-| `fluke_hz_burst` | up to ~0.5 | 0.34 (lunge) | [D] band; [L] |
-| `cruise_speed_mps` | 2.1 → 2.7 | ~2.0 (lunge 3.0–3.7) | [W]; [L] |
-| `roll_envelope_deg` (p95) | 130 → 180 (inc. inverted) | 15 → 45 (krill; higher fish) | [D] \|roll\|p95; [L] Cade 2016 |
-| `pitch_envelope_deg` (p95) | 40 → 90 | up to 71 (lunge) | [D]; [L] |
-| `bout_structure` | many short dives; deeper foraging dives | 0–6 lunges/dive, ~1 min apart, ~46 s filter | [D]/[W]; [L] |
+| `depth_typical_m` (foraging) | 5 → 60 | **7 → 21 → 39** (coastal feeder) | [D] p95 16–142 m; [O] |
+| `depth_max_m` | 155 measured / 270 obs / 767 (Antarctic cited) | **39** ([L] generic deep-lunge ~98–150) | [D]; [O] |
+| `depth_median_m` (max-depth) | ~4 | **~20.85** | [D]; [O] |
+| `descent_rate_mps` | 1.5 → 2.5 | **~0.47** (max 1.25) ([L] lunge 2.0–2.7) | [W]; [O] |
+| `ascent_rate_mps` | 1.5 → 2.5 | **~0.45** (max 1.33) | [W]; [O] |
+| `fluke_hz_cruise` | ~0.2–0.35 (active dsf med ~0.18–0.27) | **~0.23** | [D] dsf Aw_z; [O] stroke peaks |
+| `fluke_hz_burst` | up to ~0.4 | (~0.34 lunge, [L]) | [D] band; [L] |
+| `dive_duration_s` | longer foraging dives | **median 66.7** (max 411) | [D]/[W]; [O] |
+| `cruise_speed_mps` | 2.1 → 2.7 | (no per-sample speed; [L] ~2.0, lunge 3.0–3.7) | [W]; [L] |
+| `roll_envelope_deg` (p95) | **133** → 180 (inc. inverted) | side-rolls present (22% of time); ([L] krill low roll) | [D] \|roll\|p95; [O] |
+| `pitch_envelope_deg` (p95) | **62** → 90 | (up to 71 lunge, [L]) | [D]; [L] |
+| `bout_structure` | many short dives; deeper foraging dives | feeding-dominated (exploratory dives 35%, side rolls 22%, noodle/kick feeding) | [D]/[W]; [O] |
+
+Labels: **[O] = operator-measured `mn09_203a`** (the humpback contrast column); [D]/[W] =
+measured/derived open orca; [L] = generic literature kept only as context. The operator
+humpback is a **shallow coastal feeder**, not the generic ~98 m deep-lunge profile.
 
 Driver guidance:
 - **Roll is the strongest species discriminator.** Keep the orca roll envelope wide and
@@ -152,6 +197,11 @@ Driver guidance:
 ---
 
 ## 5. Citations + licenses
+- **Operator humpback `mn09_203a`** ("lavaliers_Calf", *Megaptera novaeangliae*) —
+  operator's own **measured** DTAG; baked by OG-PREBAKE to
+  `infra/orca/biologging/dev/humpback_mn09_203a_contrast.{bin,json}` (see
+  `OG-PREBAKE_NOTES.md`). The humpback contrast column. Contrast only; never drives the
+  orca twin.
 - **Tennessen et al. 2024**, Zenodo 10.5281/zenodo.13308835 — **CC-BY-4.0** (downloaded; orca).
 - **Wright et al. 2017**, Movement Ecology 5:3, 10.1186/s40462-017-0094-0 — **CC-BY-4.0** (text).
 - **Simon, Johnson & Madsen 2012**, J. Exp. Biol., 10.1242/jeb.071092 — humpback lunge kinematics.

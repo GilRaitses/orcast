@@ -11,3 +11,6 @@ numpy==1.26.4
 # h5py: reads the animaltags/tagtools HDF5 (a NetCDF-4 file is a valid HDF5 file).
 #       Only needed for baking a REAL H5; the dev-track synthesizer needs numpy only.
 h5py==3.11.0
+# scipy: reads OLD-format MATLAB .mat PRH files (scipy.io.loadmat) such as the
+#        Tennessen et al. 2024 open orca DTAG set (MAT v5, not HDF5). Offline only.
+scipy==1.13.1
