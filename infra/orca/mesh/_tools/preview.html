@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>orca.glb preview (three.js + meshopt)</title>
+<style>
+  html,body{margin:0;background:#0b1a24;color:#cde;font:12px monospace}
+  .panel{position:relative;display:inline-block;border:1px solid #234}
+  .cap{position:absolute;top:4px;left:6px;background:#0009;padding:2px 6px;border-radius:4px;z-index:2}
+  #status{padding:6px 10px;color:#8fd}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<div id="status">loading…</div>
+<div id="row"></div>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
+
+loader.load('/web/public/orca/orca.glb', (gltf) => {
+  const model = gltf.scene;
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  document.getElementById('status').textContent =
+    `loaded ok — bbox(m): X(len)=${size.x.toFixed(2)} Y(up)=${size.y.toFixed(2)} Z(lat)=${size.z.toFixed(2)}  | tris=636`;
+
+  const W = 360, H = 300;
+  const views = [
+    { cap: 'SIDE  (+X right=nose, +Y up)', pos: [0, 0, 16] },
+    { cap: 'TOP   (+X right=nose, -Z up=port)', pos: [0, 16, 0.001] },
+    { cap: '3/4   (front-right-above)', pos: [11, 7, 11] },
+  ];
+  const row = document.getElementById('row');
+  for (const v of views) {
+    const panel = document.createElement('div'); panel.className = 'panel';
+    const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = v.cap;
+    panel.appendChild(cap); row.appendChild(panel);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(W, H); renderer.setClearColor(0x0b1a24, 1);
+    panel.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.add(new THREE.HemisphereLight(0xbfdfff, 0x10202a, 1.5));
+    const d = new THREE.DirectionalLight(0xffffff, 1.5); d.position.set(3, 6, 5); scene.add(d);
+    scene.add(new THREE.AxesHelper(4)); // red=+X green=+Y blue=+Z
+    scene.add(model.clone());
+
+    const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+    cam.position.set(...v.pos); cam.up.set(0, 1, 0); cam.lookAt(0, 0, 0);
+    renderer.render(scene, cam);
+  }
+  window.__loaded = true;
+}, undefined, (err) => {
+  document.getElementById('status').textContent = 'ERROR: ' + (err && err.message || err);
+  window.__loaded = 'error';
+});
+</script>
+</body>
+</html>

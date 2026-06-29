@@ -149,3 +149,10 @@ web/e2e/.results/
 
 # Quarantined legacy frontend (contains old/rotated API keys; never commit)
 archive/quarantine/
+
+# Heavy biologging raw datasets -> the box, not git (re-fetchable via PROVENANCE.md)
+infra/orca/biologging/data/**/*.mat
+infra/orca/biologging/data/**/*.nc
+infra/orca/mesh/_src/
+# Heavy derived biologging tracks (regenerable via the baker) -> the box
+infra/orca/biologging/dev/humpback_mn09_203a_contrast.bin

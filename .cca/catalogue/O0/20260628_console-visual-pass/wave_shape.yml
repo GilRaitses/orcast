@@ -1,0 +1,97 @@
+# CVP (console-visual-pass, baseline design layer), machine-readable shape
+# Home: .cca/catalogue/O0/20260628_console-visual-pass/
+# Canonical prose: WAVESET_CHARTER.md
+# Mirrors the charter exactly: same waves, agents, gates, locked decisions.
+
+version: 1
+family: CVP
+code: CVP
+label: console-visual-pass
+home: .cca/catalogue/O0/20260628_console-visual-pass/
+status: chartered-2026-06-28
+repo_state_verified_against: 97b6397   # main HEAD; advanced past LGC d19fd56 and WFX/ORCA 915e4cc
+
+execution_model:
+  discovery_wave_read_only: true
+  one_file_one_owner: true
+  single_convergence_file_editor_per_wave: true
+  convergence_files:
+    - web/app/globals.css
+    - web/app/components/AdaptiveExplore.tsx
+    - web/app/components/scene/SalishScene.tsx
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check          # cd web && npx tsc --noEmit; never a full build in a parallel wave
+  no_new_dependencies: true
+  rebase_before_integrate: true      # git pull --rebase first
+  serialize_across: [LGC, CXR, 3D-TWIN, WFX, ORCA]   # through O0, on the three hot files
+
+target_surface: web/                 # Next 14 / React 18 / TS 5, plain CSS, no Tailwind
+out_of_scope: [css/, js/, orcast-angular/]
+
+locked_decisions:
+  baseline_layer: "CVP adds component classes (.chip, base button/textarea/input/label, composer layout, panel hierarchy, Get-access form, mobile breakpoints)"
+  not_lgc_identity: "CVP adds NO --glass-*/--text-ink token family, NO ghost-text composer, NO self-hiding dock, NO consent preload (LGC owns those; LGC-W4 layers on top of CVP)"
+  style_only: "CVP changes no anonymous-path copy strings (CXR owns copy redaction)"
+  buoy_marker: "net-new marker module under web/lib/scene/markers/; SalishScene single editor wires it; CVP changes only beacon geometry/scale/material; no camera/framing/re-bake (TWIN owns those)"
+  write_policy: "no commit/push/deploy without explicit operator request"
+
+defects_at_pin:
+  - id: D1-controls
+    finding: ".chip rule absent + no base button/textarea/input/label in globals.css; native unstyled OS controls"
+    proof: "grep -E '\\.chip\\s*\\{' web/app/globals.css returns zero; chip used at web/app/components/AdaptiveExplore.tsx:330"
+  - id: D2-composer
+    finding: "raw <label>Ask about the Salish Sea <textarea rows={2}> composer, no width, cramped"
+    proof: "web/app/components/AdaptiveExplore.tsx:335-343 (does not use .ask-textarea at globals.css:308-318)"
+  - id: D3-beacon
+    finding: "6-sided cone beacon in #ffcf33 dominates the frame"
+    proof: "coneGeometry args={[1.6, 5, 6]} at web/app/components/scene/SalishScene.tsx:354-357"
+
+waves:
+  - id: W1
+    name: discovery
+    parallelism: 5
+    convergence_file_edits: false
+    launch_status: chartered-pending-operator-go
+    agents:
+      - { role: controls-audit,        owns: findings/CVP-CONTROLS.md,         topic: "inventory native unstyled controls; define baseline component-class set vs existing .ask-* classes" }
+      - { role: layout-hierarchy-audit, owns: findings/CVP-LAYOUT.md,          topic: "composer cramping, panel hierarchy, spacing, Get-access form, mobile breakpoints" }
+      - { role: scene-marker-audit,     owns: findings/CVP-MARKER.md,          topic: "cone beacon geometry/scale/material; buoy target; SalishScene wiring seam; hard TWIN boundary" }
+      - { role: globals-boundary-audit, owns: findings/CVP-GLOBALS-BOUNDARY.md, topic: "token-family + .glass-surface/.scene-label ownership; CVP-baseline vs LGC-identity additive boundary by selector" }
+      - { role: adversarial-collision,  owns: findings/CVP-ADVERSARIAL.md,     adversarial: true, topic: "re-verify the 3 defects by grep; full collision map across LGC/CXR/3D-TWIN/WFX/ORCA on the 3 hot files; boundary-violation hunt" }
+    gate: "5 findings docs, each citing real paths; 3 defects re-verified present at the pin; additive (vs LGC) + style-only (vs CXR) boundaries stated by selector and by string; collision map complete; no code changed"
+
+  - id: W2
+    name: build
+    depends_on: [W1]
+    parallelism: 3
+    convergence_file_edits: false     # net-new files + WIRING docs only
+    launch_status: gated-on-O0
+    agents:
+      - { role: baseline-controls-css, owns: web/app/styles/cvp-controls.css, deliverable: ".chip + base button/textarea/input/label + focus/disabled + Get-access field styles; additive only", wiring: WIRING-controls.md }
+      - { role: layout-forms,          owns: web/app/styles/cvp-layout.css,   deliverable: "composer layout + panel hierarchy + Get-access form section + mobile breakpoints", wiring: WIRING-layout.md }
+      - { role: buoy-marker,           owns: web/lib/scene/markers/,          deliverable: "net-new buoy marker factory (geometry/scale/material reading as a buoy); pure module, no scene edits", wiring: WIRING-marker.md }
+    gate: "each module type-checks in isolation; buoy renders in a sandbox/unit check the author Read; every WIRING doc states the exact integration edit; no convergence file touched"
+
+  - id: W3
+    name: integrate
+    depends_on: [W2]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    runs_preflight_first: tools/waves/gates/cvp-preflight.sh
+    note: "git pull --rebase first; apply WIRING into globals.css + AdaptiveExplore.tsx + SalishScene.tsx; serialize vs LGC/CXR/3D-TWIN/WFX/ORCA via O0"
+    gate: "GATED (O0): preflight green on hard checks; tsc + lint clean; single editor per hot file; PF-5 additive + style-only boundary holds by grep; no commit without O0"
+
+  - id: W4
+    name: accept
+    depends_on: [W3]
+    parallelism: 1
+    launch_status: gated-on-O0
+    note: "Playwright capture desktop 1280x900 + mobile; Read-examine frames into gate_screenshots/; before/after"
+    gate: "GATED (O0): Read-examined before/after frames at desktop + mobile show styled controls, uncramped composer, Get-access form, buoy beacon no longer dominating; mobile breakpoints hold; prose gate + cxr deny-terms pass on new copy; honesty intact"
+
+operator_gates:
+  - W1 discovery runs read-only after operator GO
+  - any commit or push (explicit operator request only)
+  - wave-to-wave promotion after the stated gate (W3 integrate + W4 accept are O0-gated)
+  - W3 serialize order on the 3 hot files confirmed against LGC/CXR/3D-TWIN/WFX/ORCA before launch

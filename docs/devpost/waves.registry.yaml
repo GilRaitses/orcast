@@ -1546,11 +1546,41 @@ waves:
     depends_on: [ORCA-OR-R, ORCA-OG-R]
     note: "ORCA-PHYSICS research: bounded secondary dynamics (spring/damped flex, follow-through, drag/banking, spine IK) layered on the OG telemetry pose; HARD LINE: never fabricates trajectory, tracks data within tolerance. Owns web/lib/scene/orca/physics/. Charter: ORCA-PHYSICS_CHARTER.md."
 
+  - id: ORCA-OM-BUILD
+    family: ORCA
+    type: implement
+    status: dispatched
+    depends_on: [ORCA-OM-R]
+    sign_off: .cca/catalogue/O0/20260628_orca-biologging-twin/SIGN_OFF.md
+    operator_gate: O0-signed 2026-06-28; CC-BY mesh download authorized; build-only CLI tooling; STOP on Sketchfab login wall
+    scope_globs: [web/public/orca/**, infra/orca/mesh/**]
+    note: "Wave-0 (net-new, no convergence edit): download CC-BY Killer Whale (Trouvaille), convert to optimized glb (meshopt/KTX2), scale to twin metric frame, write LICENSE.md with attribution."
+
+  - id: ORCA-OG-PREBAKE
+    family: ORCA
+    type: implement
+    status: dispatched
+    depends_on: [ORCA-OG-R]
+    sign_off: .cca/catalogue/O0/20260628_orca-biologging-twin/SIGN_OFF.md
+    operator_gate: O0-signed 2026-06-28; Option B offline pre-bake; labeled-simulated dev track; offline python deps only
+    scope_globs: [infra/orca/biologging/**]
+    note: "Wave-0 (net-new, no web edit, parallel with OM-BUILD): offline h5py/tagtools pre-bake -> Float32Array bin + JSON manifest; synthesize a LABELED SIMULATED per-sample dev track from the aggregated fixture + the baker script."
+
+  - id: ORCA-OG-DATA
+    family: ORCA
+    type: research
+    status: dispatched
+    depends_on: [ORCA-OG-R]
+    sign_off: .cca/catalogue/O0/20260628_orca-biologging-twin/SIGN_OFF.md
+    operator_gate: O0-signed 2026-06-28; agreements assumed in-process; download only openly-licensed orca data; humpback contrast from operator's whale-tagger export (path pending)
+    scope_globs: [.cca/catalogue/O0/20260628_orca-biologging-twin/research/**, infra/orca/biologging/data/**, infra/orca/biologging/sources/**]
+    note: "Web-enabled: find/assess license-clear open orca DTAG/biologging datasets (dive depth + kinematics), download openly-licensed sets w/ provenance+license, and define orca-vs-humpback movement contrast from the operator's humpback whale-tagger DTAG. Must NOT touch prebake.py/requirements.txt (OG-PREBAKE owns them)."
+
   - id: ORCA-BUILD
     family: ORCA
     type: implement
     status: gated
-    depends_on: [ORCA-OM-R, ORCA-OR-R, ORCA-OG-R, ORCA-OMAT-R, ORCA-OEYE-R, ORCA-OMOU-R, ORCA-OPHYS-R]
+    depends_on: [ORCA-OM-BUILD, ORCA-OG-PREBAKE, ORCA-OG-DATA, ORCA-OR-R, ORCA-OMAT-R, ORCA-OEYE-R, ORCA-OMOU-R, ORCA-OPHYS-R]
     operator_gate: O0/operator-gated; mesh download+conversion (OM-BUILD), rig (OR-BUILD), motion driver (OG-BUILD), materials/eyes/mouth/physics builds; new deps O0-decided
     note: "Build lanes after research: orca.glb (meshopt/KTX2)+LICENSE, armature+skinning+OrcaRig API, loadBiologging+driveOrca, skin material (WFX-lit), eyes, mouth, secondary-dynamics physics. Net-new under web/lib/scene/orca/ + web/public/orca/. Honesty: modeled animal, simulated/partnership-gated motion; physics never fabricates trajectory."
 
@@ -1563,6 +1593,46 @@ waves:
     scope_globs:
       - web/app/components/scene/SalishScene.tsx
     note: "Mount the fully dressed + driven orca into the twin underwater view (3D-TWIN W4); commit is operator gate."
+
+  - id: CVP-W1
+    family: CVP
+    type: probe
+    status: chartered
+    home: .cca/catalogue/O0/20260628_console-visual-pass/
+    repo_state_verified_against: 97b6397
+    scope_globs:
+      - .cca/catalogue/O0/20260628_console-visual-pass/findings/**
+    note: "Console visual pass, baseline design layer for web/. W1 discovery: 5 parallel read-only agents (controls audit, layout/hierarchy audit, scene-marker audit + TWIN boundary, globals.css additive boundary vs LGC, adversarial + collision + defect re-verify). Re-verifies the 3 defects at the pin (no .chip rule + no base button/textarea/input/label in globals.css; raw composer at AdaptiveExplore.tsx:335-343; cone beacon coneGeometry at SalishScene.tsx:354-357). Each owns one findings/CVP-<TOPIC>.md. Charter: WAVESET_CHARTER.md."
+  - id: CVP-W2
+    family: CVP
+    type: implement
+    status: chartered
+    depends_on: [CVP-W1]
+    operator_gate: O0-gated; net-new files + WIRING docs only; no convergence edits
+    scope_globs:
+      - web/app/styles/cvp-controls.css
+      - web/app/styles/cvp-layout.css
+      - web/lib/scene/markers/**
+    note: "W2 build (parallel, NEW files): baseline controls/forms CSS (.chip + base button/textarea/input/label + Get-access fields), layout/hierarchy/Get-access form + mobile breakpoints, net-new buoy marker module under web/lib/scene/markers/. Each owns disjoint new files + a WIRING-*.md. tsc/lint clean, no dev server. Additive only: no --glass-*/--text-ink token family, no ghost-text/self-hide/preload, no copy change."
+  - id: CVP-W3
+    family: CVP
+    type: implement
+    status: chartered
+    depends_on: [CVP-W2]
+    operator_gate: O0-gated; single serialized editor; git pull --rebase first; runs cvp-preflight first; serialize globals.css + AdaptiveExplore.tsx + SalishScene.tsx vs LGC/CXR/3D-TWIN/WFX/ORCA; no commit without O0
+    scope_globs:
+      - web/app/globals.css
+      - web/app/components/AdaptiveExplore.tsx
+      - web/app/components/scene/SalishScene.tsx
+    note: "W3 integrate: one editor applies the WIRING into the 3 hot convergence files. Runs tools/waves/gates/cvp-preflight.sh first (must be green on hard checks; writes gate_captures/cvp_preflight.json). PF-5 boundary holds by grep (no LGC tokens, no ghost/self-hide/preload, no copy change)."
+  - id: CVP-W4
+    family: CVP
+    type: accept
+    status: chartered
+    depends_on: [CVP-W3]
+    operator_gate: O0-gated; Read-examined before/after frames at desktop 1280x900 + mobile
+    gate: cvp-preflight
+    note: "W4 accept: Playwright capture desktop 1280x900 + mobile; Read-examine frames into gate_screenshots/; before/after; honest verdict. Controls styled, composer uncramped, Get-access form present, buoy beacon no longer dominating; mobile breakpoints hold; prose gate + cxr deny-terms pass on new copy."
 
 next_wave_set: H1
 
@@ -1681,6 +1751,10 @@ gates:
     script: tools/waves/gates/console-deny-terms.sh
     waves: [CAP-WEB, CXR-2]
     note: grep rendered anonymous-path strings for internal/reviewer deny terms
+  cvp-preflight:
+    script: tools/waves/gates/cvp-preflight.sh
+    waves: [CVP-W3, CVP-W4]
+    note: static battery PF-1..PF-6 (tsc/lint/test/yaml, secret-leak, defect re-verify at the pin, collision, LGC/CXR boundary, prose gate); writes gate_captures/cvp_preflight.json; exits non-zero on hard FAIL, SKIP never fails
 
 quarantine:
   paths:

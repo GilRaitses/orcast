@@ -1,0 +1,166 @@
+# OG-DATA orca biologging dataset manifests
+# Lane: OG-DATA (sourcing). Generated 2026-06-28. Web-enabled research output.
+# Honesty: every entry states species/ecotype, sensors, license (exact), and whether
+# it is downloadable WITHOUT a data-sharing agreement. Only "downloaded: true" sets are
+# present under infra/orca/biologging/data/. Agreement-gated and license-ambiguous sets
+# are flagged, not downloaded.
+
+schema_version: 1
+generated: 2026-06-28
+lane: OG-DATA
+
+datasets:
+
+  - id: tennessen2024_orca_dtag
+    rank: 1
+    status: downloaded            # open + complete + maps to contract
+    species: Orcinus orca
+    ecotype: [Northern Resident (NRKW), Southern Resident (SRKW)]  # fish-eating
+    region: NE Pacific / Salish Sea
+    host: Zenodo
+    title: >-
+      Males miss and females forgo: auditory masking from vessel noise impairs foraging
+      efficiency and success in killer whales — CALIBRATED MOVEMENT DATA AND VARIABLES
+      SUPPORTING ANALYSES
+    doi_version: 10.5281/zenodo.13308835
+    doi_concept: 10.5281/zenodo.13308834
+    url: https://doi.org/10.5281/zenodo.13308835
+    license: CC-BY-4.0           # verified via Zenodo REST API 2026-06-28
+    downloadable_without_agreement: yes
+    tag: DTAG (WHOI suction-cup multisensor)
+    sensors: [depth (p), tri-axial accelerometer (A, Aw animal-frame),
+              tri-axial magnetometer (M, Mw animal-frame), derived pitch/roll/heading,
+              temperature]
+    sample_rate_hz: 50            # calibrated PRH product
+    angle_units: radians
+    file_format: MATLAB v5 .mat (scipy.io.loadmat; no HDF5 needed) + foraging_data.csv
+    files_total: 25 .mat deployments + 1 csv (~2.5 GB) ; raw audio under separate DOIs
+    downloaded_subset:
+      - oo11_224bprh50.mat   # NRKW, ~19.4 min, 7.1 MB
+      - oo14_264mprh50.mat   # SRKW, ~136.5 min, 48.3 MB
+      - foraging_data.csv    # per-dive maxdep/duration/prey-capture, all 25 deployments
+    maps_to_contract: full    # depth+accel+mag+PRH @50Hz; see PROVENANCE.md
+    provider_credit: NOAA Fisheries NWFSC + Fisheries and Oceans Canada
+    notes: >-
+      Single best openly-downloadable orca dive/kinematics dataset. Real per-sample
+      animal-frame channels suitable to parameterize dive depth, pitch/roll attitude,
+      and Az-derived fluke beat for both fish-eating ecotypes.
+
+  - id: wright2017_movement_ecology
+    rank: 2
+    status: paper_open_data_not_open
+    species: Orcinus orca
+    ecotype: [Northern Resident (NRKW)]   # fish-eating, BC
+    region: British Columbia, Canada
+    host: Movement Ecology (BMC) / figshare collection
+    title: >-
+      Fine-scale foraging movements by fish-eating killer whales (Orcinus orca) relate
+      to the vertical distributions and escape responses of salmonid prey
+    doi: 10.1186/s40462-017-0094-0
+    figshare_collection: 10.6084/m9.figshare.c.3696301
+    url: https://link.springer.com/article/10.1186/s40462-017-0094-0
+    license: CC-BY-4.0 (ARTICLE TEXT ONLY)
+    downloadable_without_agreement: no   # underlying DTAG time-series not deposited open
+    tag: DTAG
+    sensors: [depth, tri-axial accelerometer, magnetometer, audio]
+    sample_rate_hz: 50 (2009-2011) / 250 (2012); calibrated to 5 Hz
+    file_format: n/a (no open per-sample deposit located)
+    maps_to_contract: would_map_fully_if_available
+    notes: >-
+      The reference paper underpinning the OG-R rates and the orca stroke-band reasoning.
+      Open-access TEXT; the per-sample tag data is not in an open repository. Use as the
+      cited kinematics source, not as a download. Same NWFSC/DFO lineage as rank 1.
+
+  - id: bubblenet2024_humpback_cats
+    rank: 3   # humpback (contrast reference), open license, but download-blocked here
+    status: open_license_download_blocked
+    species: Megaptera novaeangliae   # HUMPBACK — contrast baseline, not orca
+    region: Southeast Alaska (krill bubble-net feeding)
+    host: Dryad
+    title: Solitary humpback whales manufacture bubble-nets as tools to increase prey intake
+    doi: 10.5061/dryad.m0cfxppbj
+    url: https://datadryad.org/dataset/doi:10.5061/dryad.m0cfxppbj
+    license: CC0-1.0             # verified via Dryad REST API 2026-06-28 (fully open)
+    downloadable_without_agreement: yes_by_license_no_in_this_env
+    tag: CATS (camera+inertial) + UAS photogrammetry
+    sensors: [depth profiles, speed profiles, per-lunge/dive kinematics, breath rate]
+    file_format: CSV (Depth_Profiles, Speed_Profiles, Data_From_CATS, KEY, README)
+    maps_to_contract: partial   # depth + speed profiles; not a raw Aw stream for Az fluke
+    notes: >-
+      License is genuinely open (CC0). Download is gated in this environment by an AWS
+      WAF / within.website Anubis proof-of-work challenge that blocks headless curl AND
+      same-origin browser fetch; a human in a browser can download it freely. NOT
+      agreement-gated. Flagged for a manual pull if an open humpback reference is wanted
+      in addition to the operator's own humpback DTAG export.
+
+  - id: nwfsc_inport_dtags_srkw
+    rank: gated
+    status: agreement_gated_in_process
+    species: Orcinus orca
+    ecotype: [Southern Resident (SRKW)]
+    region: Salish Sea
+    host: NOAA NWFSC InPort / webapps.nwfsc.noaa.gov
+    title: DTAGs SRKW — vessel sound exposure & effects on behavior in Southern Residents
+    url: https://www.fisheries.noaa.gov/inport/item/17972
+    license: not an open data license (agency portal; access conditions apply)
+    downloadable_without_agreement: no
+    tag: DTAG (WHOI)
+    sensors: [sound, pitch, roll, heading, depth]
+    notes: >-
+      The Cascadia/NWFSC SRKW DTAG program referenced in the charter as partnership-gated.
+      Some derived tables are portal-published; the per-sample DTAG records are the
+      agreement-gated source. Treat as in-process per operator direction; do not download.
+
+  - id: antarctic_typeB_satellite_dive
+    rank: gated
+    status: by_request_not_open
+    species: Orcinus orca
+    ecotype: [Type B (seal/penguin-hunting), Type C]
+    region: Antarctic Peninsula / Ross Sea
+    hosts: [Royal Society Biology Letters, Polar Biology, institutional]
+    refs:
+      - Durban & Pitman 2012, Biol. Lett., 10.1098/rsbl.2011.0875
+      - Andrews, Pitman & Ballance 2008, Polar Biol., 10.1007/s00300-008-0487-z
+    license: not openly deposited (data by request from authors/SWFSC)
+    downloadable_without_agreement: no
+    tag: SPOT5 / Mk10-A satellite (Wildlife Computers), Argos
+    sensors: [Argos location; Mk10-A Behavior-Log dive depth bins (TDR-style)]
+    sample_rate: dive-summary bins (NOT high-rate accel)
+    maps_to_contract: depth_only   # no tri-axial accel/magnetometer; cannot drive Az fluke
+    notes: >-
+      Dive depths reported (shallow 7.5-50 m typical, bouts to ~368 m, max 767/499 m;
+      deeper by day). Useful as cited dive-depth ranges for Antarctic ecotypes, but it is
+      satellite/Argos + coarse dive bins, not per-sample kinematics, and not open-deposited.
+
+  - id: norway_herring_killerwhale_dtag
+    rank: gated
+    status: paper_only_data_not_open
+    species: Orcinus orca
+    region: Northern Norway (herring wintering grounds)
+    host: Marine Mammal Science
+    title: >-
+      Feeding characteristics and prey profitability in five herring-feeding killer
+      whales (Orcinus orca) in northern Norway
+    doi: 10.1111/mms.12931
+    license: article paywalled; no open per-sample deposit located
+    downloadable_without_agreement: no
+    tag: multisensor video bio-logger (4K video + inertial)
+    sensors: [video, accelerometer, depth, magnetometer; roll/pitch/jerk kinematic signatures]
+    maps_to_contract: would_map (carousel + deep feeding dives) if released
+    notes: >-
+      Carousel-feeding and deep-feeding dive kinematics for herring-eating orca. No open
+      data deposit found; cite as literature for ecotype contrast.
+
+  - id: tagtools_example_data
+    rank: ambiguous
+    status: license_ambiguous_not_downloaded
+    species: [various; incl. Megaptera novaeangliae (testset7.nc), beaked/Ziphius]
+    host: GitHub animaltags/tagtools_data ; also bundled in tagtools R package (GPL-3)
+    url: https://github.com/animaltags/tagtools_data
+    license: NONE in repo (GitHub default = all rights reserved). Package copies fall
+             under tagtools GPL-3 (a software license, not a clean data license).
+    downloadable_without_agreement: technically_yes_but_unlicensed_data
+    notes: >-
+      testset7.nc is a humpback example; mn12_186a_raw.nc a humpback raw set. No explicit
+      DATA license in the repo, so NOT downloaded under the "openly licensed only" rule.
+      Usable for code testing, not as a license-clear data source.

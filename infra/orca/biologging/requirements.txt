@@ -1,0 +1,13 @@
+# ORCA OG-PREBAKE offline tool dependencies (Option B, see SIGN_OFF.md).
+# OFFLINE / CI ONLY. These are NOT web runtime dependencies and must never be
+# imported by anything under web/. Pinned per the O0 authorization for an isolated
+# infra/orca/biologging/requirements.txt.
+#
+# Install:  python -m pip install -r infra/orca/biologging/requirements.txt
+#
+# numpy: time-base resampling, FFT band-pass / analytic-signal (Hilbert), Float32
+#        artifact assembly. No scipy needed; DSP is done with numpy FFTs.
+numpy==1.26.4
+# h5py: reads the animaltags/tagtools HDF5 (a NetCDF-4 file is a valid HDF5 file).
+#       Only needed for baking a REAL H5; the dev-track synthesizer needs numpy only.
+h5py==3.11.0

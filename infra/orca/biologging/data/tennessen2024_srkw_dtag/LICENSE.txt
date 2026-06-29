@@ -1,0 +1,22 @@
+Creative Commons Attribution 4.0 International (CC-BY-4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+This subset is redistributed under CC-BY-4.0, the license assigned to the source
+Zenodo record (verified via the Zenodo REST API on 2026-06-28:
+metadata.license.id == "cc-by-4.0", access == "open").
+
+REQUIRED ATTRIBUTION
+--------------------
+Tennessen, J.B., Holt, M.M., Wright, B.M., Hanson, M.B., Emmons, C.K., Giles, D.A.,
+Hogan, J.T., Thornton, S.J., Deecke, V.B. (2024). "Males miss and females forgo:
+auditory masking from vessel noise impairs foraging efficiency and success in killer
+whales — CALIBRATED MOVEMENT DATA AND VARIABLES SUPPORTING ANALYSES" [Data set].
+Zenodo. https://doi.org/10.5281/zenodo.13308835
+
+Data were provided by NOAA Fisheries' Northwest Fisheries Science Center (NWFSC) and
+Fisheries and Oceans Canada (DFO) to support reproducibility of the analyses in the
+associated article (Global Change Biology, 2024). Per the record: "Please cite your
+usage of our data." Contact for data-use inquiries: Dr. Jennifer B. Tennessen
+(jtenness@uw.edu).
+
+The CC-BY-4.0 license text applies to the redistributed files in this directory.

@@ -32,6 +32,26 @@ real sensor channels, with the simulated in-repo dtag as the development fixture
 | accelerometer Az oscillation | fluke-beat `setFluke(phase, amplitude)` (stroke rate + power) |
 | dive/foraging context | optional behavior tint / speed (honest, labeled) |
 
+## Real data (agreements assumed in-process; proceed without delay)
+Operator direction 2026-06-28: assume data-sharing agreements are in process and proceed. Train
+the orca motion on **real orca (killer whale) dive patterns and movements** from genuinely-open
+biologging data where it exists, and **contrast against the operator's humpback whale-tagger
+data** (a separate project's real DTAG export, not in this repo) so the orca read is species-true
+and not a humpback's profile.
+
+- **OG-DATA (sourcing, web-enabled):** find license-clear, downloadable open **orca** DTAG /
+  biologging datasets carrying dive depth + kinematics (pressure/accel/magnetometer or at least
+  TDR dive profiles). Likely leads: SRKW DTAG work (NWFSC/Cascadia, mostly agreement-gated -> use
+  only what is openly licensed), bio-logging repositories (Movebank, Dryad, Zenodo, figshare),
+  animaltags/tagtools example sets, published killer-whale kinematics datasets. For each: license,
+  format, sample rates, downloadability. Download only the openly-licensed sets; record provenance
+  + license; flag agreement-gated ones for the in-process partnership.
+- **Humpback contrast:** characterize the operator's humpback whale-tagger DTAG kinematics
+  (dive depth distribution, descent/ascent pitch, fluke-beat rate/amplitude, dive-bout structure)
+  as the baseline, and define the **orca-vs-humpback contrast** (orca: shallower foraging dives,
+  faster fluke cadence, sharper maneuvering; humpback: deeper lunges, slower powerful fluking) so
+  the orca motion parameters are species-specific. Operator must supply the humpback data path.
+
 ## Waves
 - **OG-R (research, read-only):** `infra/orca/biologging/OG-R_h5_mapping.md` - the H5 schema
   (animaltags/tagtools layout), the **H5-parsing decision** (browser h5wasm vs a Python pre-bake
