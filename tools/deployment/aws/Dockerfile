@@ -14,6 +14,7 @@ COPY src ./src
 COPY archive/public-templates-backup-20250720/api/verified-sightings.json ./archive/public-templates-backup-20250720/api/verified-sightings.json
 COPY src/integrations/orcasound_hydrophones_for_orcast.json ./src/integrations/orcasound_hydrophones_for_orcast.json
 COPY data/geo ./data/geo
+COPY data/dtag_analysis_results.json ./data/dtag_analysis_results.json
 
 EXPOSE 8080
 
