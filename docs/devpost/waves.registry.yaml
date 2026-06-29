@@ -1738,6 +1738,84 @@ waves:
     dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSS/
     note: "Annotation UI (from the real h5 schema) + reusable tagtools/animaltags pipeline studio the console can invoke + poster R/ggplot2/Plotly viz registered as managed Central Casting HUD skills + behavior-capture automation reusing the demo-production director. BSS-BUILD/INTEGRATE/ACCEPT. Dispatch-ready packet (genuinely net-new, 3 build + 1 adversarial; annotation route must NOT clobber the existing web/app/workbench/ slice route)."
 
+  # ── BSWR: BSW follow-up remediation (2026-06-29) ──────────────────────────
+  # Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/  Umbrella: PROGRAM.md
+  # Each lane runs R -> Q(gate) -> B -> ADV(loop) -> INT(gate) -> ACCEPT(gate). Verified against origin/main 61ba1d6.
+  - id: BSWR-ACX
+    family: BSWR
+    type: implement
+    status: chartered
+    home: .cca/catalogue/O0/20260629_bsw-followup-remediation/
+    charter: .cca/catalogue/O0/20260629_bsw-followup-remediation/ACX_CHARTER.md
+    dispatch: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/ACX/
+    repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+    waves: [ACX-R, ACX-Q, ACX-B, ACX-TRAIN, ACX-ADV, ACX-ACCEPT]
+    operator_gate: corpora download + new dep (torch) + box compute + schema-claim-widening + commit
+    scope_globs: [infra/acoustic/**, modeling/acoustic/**]
+    note: "acoustic-heads-strengthen. Lift the eval's weak ecotype-TKW head (logreg f1 0.434 / rf 0.277) and resolve whether a coarse call_type head can ship (diagnostic-only today: whistle recall 0.0); single_vs_multiple stays BLOCKED. Serves via classification.json; no convergence edit. torch/embedding is O0-costed, never default."
+  - id: BSWR-STU
+    family: BSWR
+    type: implement
+    status: chartered
+    charter: .cca/catalogue/O0/20260629_bsw-followup-remediation/STU_CHARTER.md
+    dispatch: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STU/
+    repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+    waves: [STU-R, STU-Q, STU-B, STU-INT, STU-ADV, STU-ACCEPT]
+    operator_gate: storage-backing decision + backend deploy/ORCAST_API_BASE + proxy convergence edit + commit
+    scope_globs: [src/aws_backend/routers/**, tests/aws_backend/**, web/lib/annotation/**, "web/app/api/be/[...path]/route.ts"]
+    serialize_across: [R-Alpha, A1]
+    note: "studio-live-persistence. HttpAnnotationStore already POSTs to /api/be/api/dtag/annotations but the backend endpoint does not exist, the proxy does not allow-list it (authenticated, not public), and ORCAST_API_BASE is unwired. Build the route + tests, allow-list it, wire the env; DTAG stays partnership-gated + simulated."
+  - id: BSWR-OCN
+    family: BSWR
+    type: implement
+    status: chartered
+    charter: .cca/catalogue/O0/20260629_bsw-followup-remediation/OCN_CHARTER.md
+    dispatch: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/OCN/
+    repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+    waves: [OCN-R, OCN-Q, OCN-B, OCN-INT, OCN-ADV, OCN-ACCEPT]
+    operator_gate: CC0 CruiseSalish download + WFX depth-seam coordination + convergence edit + GPU capture + commit
+    scope_globs: [web/lib/scene/ocean/**, infra/ocean/**]
+    serialize_across: [WFX, ENV, ORCA, 3D-TWIN]
+    note: "measured-ocean-stratification. Ground the interpretive ocean layer's profile in a measured CC0 CTD cast (NANOOS CruiseSalish / NCEI 0307188; stratification.ts already has the measured-ctd origin enum + names the upgrade) and make the plume depth-aware against the real water surface (R09) via a read-only WFX seam. Layer stays interpretive; no water regression; label passes the module-load guard."
+  - id: BSWR-ENV
+    family: BSWR
+    type: implement
+    status: chartered
+    charter: .cca/catalogue/O0/20260629_bsw-followup-remediation/ENV_CHARTER.md
+    dispatch: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/ENV/
+    repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+    waves: [ENV-R, ENV-Q, ENV-B, ENV-INT, ENV-ADV, ENV-ACCEPT]
+    operator_gate: ORCA ownership coordination + convergence edit + GPU parity capture + commit
+    scope_globs: [web/lib/scene/orca/**, web/lib/scene/reenactment/**, web/app/components/scene/SalishScene.tsx]
+    serialize_across: [ORCA, WFX, OCN, 3D-TWIN]
+    note: "env-handle-consolidation. The slice's SliceRig bakes a SECOND makeRealWfxEnv PMREM only to light the reenactment pool (per web/lib/scene/wfx/WIRING-slice-note.md SEAM 4). ORCA publishes the live WfxEnvHandle it already builds; the slice consumes it; drop the second bake. Exactly one scene.environment writer (OrcaRig) stays; GPU before/after pool-lighting parity."
+  - id: BSWR-PRF
+    family: BSWR
+    type: verify
+    status: chartered
+    charter: .cca/catalogue/O0/20260629_bsw-followup-remediation/PRF_CHARTER.md
+    dispatch: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/PRF/
+    repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+    waves: [PRF-R, PRF-Q, PRF-B, PRF-ADV, PRF-ACCEPT]
+    operator_gate: real client-tier hardware + host run + budget-miss scene-change + commit
+    scope_globs: [infra/render_host/**, scripts/**]
+    note: "client-tier-frametime-verify. The landed ACCEPT frame-time came from the Tesla T4 render host, which the runbook flags as a server-class upper bound, not the binding client tier. Fix a representative client-tier capture method (CDP CPU throttle + GPU-tier emulation, or a real device) and report an honest median + p95 vs the 30fps budget (33.3 ms/frame), BSW-on vs BSW-off. Harness code only; no scene change."
+  - id: BSWR-STX
+    family: BSWR
+    type: implement
+    status: deferred
+    optional: true
+    decision: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STX/findings/STX-DECISION.md
+    charter: .cca/catalogue/O0/20260629_bsw-followup-remediation/STX_CHARTER.md
+    dispatch: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STX/
+    repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+    waves: [STX-R, STX-Q, STX-B, STX-INT, STX-ADV, STX-ACCEPT]
+    depends_on: [TWIN-W2.6, TWIN-W-PERFUX]
+    operator_gate: build-vs-defer decision + 3D-TWIN load-cost budget + convergence edit + GPU capture + commit
+    scope_globs: [web/lib/scene/hydrophone/**, web/lib/scene/tiles/useTilesLayer.ts, web/app/components/scene/SalishScene.tsx]
+    serialize_across: [3D-TWIN, WFX, ORCA, OCN, ENV]
+    note: "station-tileset-extent (OPTIONAL). Wider Puget Sound nodes (Port Townsend, Bush Point; real DCLDE station-days) need a 3D-TWIN-owned tileset-extent change with a measured load-cost trade-off (W-PERFUX: leaf terrain geometry is 74.7% of load). STX-Q may return a deferral decision with cost stated as a valid outcome."
+
 next_wave_set: H1
 
 gates:

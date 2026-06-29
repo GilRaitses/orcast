@@ -1,0 +1,102 @@
+# ACX dispatch shape (acoustic-heads-strengthen)
+# Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/ACX/
+# Charter: ../../ACX_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Purpose: lift the eval's weak ecotype-TKW head and resolve whether a coarse
+# call_type head can ship, to the honest limit the DCLDE-2027 data supports.
+
+version: 1
+family: BSWR
+code: ACX
+label: acoustic-heads-strengthen
+home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/ACX/
+charter: ../../ACX_CHARTER.md
+repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+status: chartered
+
+grounding:
+  landed_model: bam-dclde-salish-v1
+  eval: infra/acoustic/eval_report_dclde_v1.json
+  served: web/public/hydrophone/slice/classification.json
+  pipeline: modeling/acoustic/*.py  # numpy/scipy/sklearn, 129-dim log-mel silhouette
+  corpus: DCLDE-2027 Salish subset, CC-BY-SA-4.0
+  weak_heads:
+    ecotype_tkw: "logreg TKW f1 0.434 / rf TKW f1 0.277; ~19:1 SRKW:TKW; few TKW station-days"
+    call_type: "DIAGNOSTIC only; pulsed_call vs whistle collapsed (whistle recall 0.0); to_strengthen = coarse CK/W/BP relabel OR O0-costed embedding"
+    single_vs_multiple: "BLOCKED; no source-count labels; stays blocked"
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [infra/acoustic/**, modeling/acoustic/**]
+  convergence_files: []   # serves via the public classification.json contract
+  validate_with: "offline reproducible python; tsc only if the served JSON schema changes"
+  verify_on: aimez box dev host (training/compute)
+  heavy_assets_to_box: true
+  deps: "numpy + scipy + scikit-learn (+ joblib) default; torch/embedding is O0-costed only"
+  honesty_label: "estimate + confidence; ship only eval-cleared claims; no count/ID/S1-S40 catalog"
+
+waves:
+  - id: ACX-R
+    name: research-discovery
+    parallelism: 4
+    launch_status: ungated
+    agents:
+      - { role: ACX-R1, owns: findings/ACX-tkw-lift.md, task: "how many added TKW station-days DCLDE-2027 holds; class-balance / threshold-tune / cost-sensitive options on the existing 129-dim features; expected lift envelope." }
+      - { role: ACX-R2, owns: findings/ACX-coarse-call-taxonomy.md, task: "which providers carry a coarse CK/W/BP (or pulsed/whistle) label across >1 station; the honest relabel budget; minority-class support." }
+      - { role: ACX-R3, owns: findings/ACX-embedding-option.md, task: "costed torch/learned-embedding path (model, size, runtime, dep weight) vs feature-only; explicit trade-off for ACX-Q." }
+      - { role: ACX-R4, owns: findings/ACX-adversarial.md, task: "overclaim audit; label-leakage + within-session confound hunt; the minority->majority collapse failure mode; what would make a shipped call_type dishonest." }
+    gate: "four findings exist; the embedding option is costed; no download or dep happened; PAUSE to O0."
+
+  - id: ACX-Q
+    name: qualify-methodology
+    depends_on: [ACX-R]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: ACX-Q1, owns: findings/ACX-METHODOLOGY.md, task: "select ONE path per head (TKW: balance/threshold vs more data vs embedding; call_type: ship-coarse vs stay-diagnostic) with justification + rejected alternatives; state the pass metric per head BEFORE training; flag any new dep / download / cost to O0." }
+    gate: "GATED (O0): methodology + pass metrics fixed; any new dep/download/compute named for an O0 decision; PAUSE."
+
+  - id: ACX-B
+    name: implement-pipeline
+    depends_on: [ACX-Q]
+    parallelism: 2
+    launch_status: gated-on-O0
+    agents:
+      - { role: ACX-B1, owns: modeling/acoustic/heads.py (extend) + modeling/acoustic/features.py (extend only if Q selected new features), task: "implement the selected head method; reproducible offline; no schema change yet." }
+      - { role: ACX-B2, owns: modeling/acoustic/train_eval.py (extend), task: "training + held-out eval harness for the selected heads; emits per-class metrics + confusion + AUPRC + split + confounds." }
+    gate: "pipeline runs end-to-end offline + reproducible; eval harness emits the pass metric; no overclaim baked in; PAUSE."
+
+  - id: ACX-TRAIN
+    name: train-on-box
+    depends_on: [ACX-B]
+    parallelism: 1
+    compute: aimez box dev host
+    launch_status: gated-on-O0
+    agents:
+      - { role: ACX-T1, owns: infra/acoustic/eval_report_dclde_v2.json (new) + web/public/hydrophone/slice/classification.json (extend) + infra/acoustic/PROVENANCE.md, task: "train on the box; emit the new versioned eval; extend classification.json ONLY with eval-cleared fields; weights -> box with a re-fetch pointer." }
+    gate: "GATED (O0): trained heads + reproducible pipeline + honest held-out eval; served JSON carries only eval-cleared claims; weights in box; PAUSE."
+
+  - id: ACX-ADV
+    name: adversarial-review
+    depends_on: [ACX-TRAIN]
+    parallelism: 1
+    launch_status: gated-on-O0
+    loops_with: [ACX-B, ACX-TRAIN]
+    agents:
+      - { role: ACX-ADV1, owns: findings/ACX-ADV_VERDICT.md, task: "re-audit the trained heads for overclaim, minority collapse, leakage; open P0/P1 critiques; loop to ACX-B/ACX-TRAIN until zero open P0/P1." }
+    gate: "zero open P0/P1 OR an honest 'ships without this head' return; PAUSE."
+
+  - id: ACX-ACCEPT
+    name: honest-claim-accept
+    depends_on: [ACX-ADV]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: ACX-ACC, owns: [gate_captures/, ACCEPT_VERDICT.md], task: "on the demo slice clip(s), confirm real output and that the HUD wording matches measured performance exactly; verdict cites eval numbers; hand BRE any new spawn-driving field it consumes." }
+    gate: "GATED (O0): output real + honestly worded; HUD claim never exceeds eval; honest verdict; no commit without O0."
+
+operator_gates:
+  - corpora / audio downloads (license + privacy verified per asset; NC ok; ND/unclear STOP)
+  - new dependency (torch / learned embedding) is O0-costed
+  - model training + box compute (O0-gated)
+  - any classification.json schema change that widens a claim (O0-gated)
+  - any commit or push (explicit operator request only)

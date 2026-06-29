@@ -46,7 +46,6 @@
     "not_claimed": [
       "whale count",
       "pod / individual ID",
-      "ecotype (SRKW vs Bigg's)",
       "call type",
       "single vs multiple callers"
     ],
@@ -54,6 +53,42 @@
     "motion": "measured_srkw_dtag",
     "crossSensor": "illustrative",
     "representativeness": "Kinematics are representative SRKW DTAG motion, not the recorded animal."
+  },
+  "ecotype": {
+    "served": true,
+    "inference": "measured_model_output",
+    "claim": "estimate",
+    "head": "bam-dclde-salish-v2-ecotype",
+    "feature": "Perch 2.0 embedding (EfficientNet-B3, 1536-dim, Apache-2.0)",
+    "headArtifact": "infra/acoustic/ecotype_head_v2.json",
+    "wordingTemplates": [
+      "Estimated ecotype: Southern Resident (SRKW)",
+      "Estimated ecotype: Bigg's / Transient (TKW)"
+    ],
+    "estimate": "SRKW",
+    "wording": "Estimated ecotype: Southern Resident (SRKW)",
+    "confidence": 0.9997,
+    "confidencePct": "99.97%",
+    "confidenceBasis": "mean prior-recalibrated P(SRKW) over 91 present windows; recalibrated toward the ~5% deployment TKW prior (pi_train_tkw 0.2054 -> pi_deploy 0.05)",
+    "rawMeanPTkw": 0.0015,
+    "nWindows": 91,
+    "provenanceChip": "ecotype: learned-embedding estimate (Perch 2.0), cross-station eval - median TKW F1 0.80, AUPRC 0.96; per-station variance",
+    "eval": {
+      "ref": "infra/acoustic/eval_report_dclde_v2.json",
+      "protocol": "leave-station-OUT, 5 seeds, median decides",
+      "median_TKW_f1": 0.805,
+      "median_TKW_recall": 0.788,
+      "median_SRKW_f1": 0.902,
+      "median_TKW_AUPRC": 0.956,
+      "crossStationNote": "this clip's Orcasound Lab recorder is NOT a DCLDE training station; the estimate is cross-station and carries the eval's per-station variance"
+    },
+    "not_claimed": [
+      "whale count",
+      "pod / individual ID",
+      "SRKW S1-S40 catalog call",
+      "call type",
+      "single vs multiple callers"
+    ]
   },
   "windows": [
     {

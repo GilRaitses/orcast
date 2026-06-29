@@ -25,6 +25,7 @@ export {
   analyticHaloclineProfile,
   stratificationToTexture,
 } from "./stratification";
+export { measuredHaloclineProfile } from "./measuredProfile";
 export type {
   StratificationProfile,
   StratificationSample,

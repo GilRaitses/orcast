@@ -57,6 +57,12 @@ export interface DoubleDiffusionOptions {
   opacity?: number;
   /** Plume drift speed multiplier (visual only). */
   speed?: number;
+  /**
+   * World-unit band, just below the surface, over which the plume fades to zero
+   * so the additive field dies at the waterline instead of showing a hard band.
+   * Part of the scalar surface-Y top-clip fed by `surfaceY`. Default 4.
+   */
+  surfaceFade?: number;
 }
 
 export interface DoubleDiffusionLayer {
@@ -99,6 +105,9 @@ const FRAG = /* glsl */ `
   uniform float uOpacity;
   uniform float uTime;
   uniform float uSpeed;
+  uniform float uSurfaceY;     // world Y of the real water surface (scalar seam)
+  uniform float uColumnHeight; // world height of the column; its top maps to uSurfaceY
+  uniform float uSurfaceFade;  // world-unit band over which the plume fades to 0 at the surface
 
   // Cheap hash-based value noise + 3-octave fbm. No texture, no dependency.
   float hash(vec2 p) {
@@ -131,7 +140,7 @@ const FRAG = /* glsl */ `
     float depthFrac = 1.0 - vUv.y;            // 0 surface, 1 deep
     vec4 strat = texture2D(uStrata, vec2(depthFrac, 0.5));
     float salinity = strat.r;                 // 0 fresh .. 1 salty
-    float interface = strat.b;                // band sharpness at the halocline
+    float bandSharp = strat.b;                // band sharpness at the halocline (GLSL: 'interface' is reserved)
 
     float t = uTime * uSpeed;
     // Warm/salty fingers descend; cold/fresh plumes rise. Opposed vertical scroll.
@@ -139,14 +148,25 @@ const FRAG = /* glsl */ `
     float up   = fbm(vec2(vUv.x * 5.0 + 11.0, vUv.y * 7.0 - t * 0.12));
 
     // Salty water below the halocline favors the descending field; fresher water
-    // above favors the rising field. interface boosts contrast at the halocline.
+    // above favors the rising field. bandSharp boosts contrast at the halocline.
     float warmW = salinity;
     float coolW = 1.0 - salinity;
     float warm = down * warmW;
     float cool = up * coolW;
 
     vec3 col = uWarm * warm + uCool * cool;
-    float a = uOpacity * (warm + cool) * (0.55 + 0.9 * interface);
+    float a = uOpacity * (warm + cool) * (0.55 + 0.9 * bandSharp);
+
+    // Scalar surface-Y top-clip (R09 depth-aware plume against the real water
+    // surface). The column top maps to uSurfaceY, fed by the layer's surfaceY.
+    // Never emit a fragment above the surface, and fade the plume to zero across
+    // uSurfaceFade just below it so the additive field dies at the waterline
+    // instead of showing a hard band. This consumes the surface position
+    // read-only; it writes nothing back to the water.
+    float worldY = uSurfaceY - uColumnHeight * depthFrac;
+    if (worldY > uSurfaceY) discard;
+    a *= clamp((uSurfaceY - worldY) / max(uSurfaceFade, 1e-4), 0.0, 1.0);
+
     gl_FragColor = vec4(col, a);
   }
 `;
@@ -168,6 +188,7 @@ export function createDoubleDiffusionLayer(
   const surfaceY = opts.surfaceY ?? 0;
   const opacity = opts.opacity ?? 0.16;
   const speed = opts.speed ?? 1;
+  const surfaceFade = opts.surfaceFade ?? 4;
   const warm = new THREE.Color(opts.warmColor ?? "#c8743c"); // amber-rose, warm/salty
   const cool = new THREE.Color(opts.coolColor ?? "#3fa8b6"); // blue-green, cold/fresh
 
@@ -188,6 +209,9 @@ export function createDoubleDiffusionLayer(
       uOpacity: { value: opacity },
       uTime: { value: 0 },
       uSpeed: { value: speed },
+      uSurfaceY: { value: surfaceY },
+      uColumnHeight: { value: height },
+      uSurfaceFade: { value: surfaceFade },
     },
   });
 
@@ -197,6 +221,27 @@ export function createDoubleDiffusionLayer(
   const planeA = new THREE.Mesh(geometry, material);
   const planeB = new THREE.Mesh(geometry, material);
   planeB.rotation.y = Math.PI / 2;
+
+  // Pre-pass exclusion (R4 on-state seabed-tint fix). The WFX Water2 depth
+  // pre-pass renders the whole scene into an OFFSCREEN target with the water
+  // hidden, to capture the seabed color and depth the water shader samples. This
+  // additive interpretive layer must not tint that seabed color. While the
+  // renderer draws into any offscreen target, suppress this layer's color writes,
+  // and restore them for the on-screen pass. depthWrite is already false, so with
+  // colorWrite off the layer contributes nothing to the pre-pass. When the layer
+  // is disabled the group is not visible and these callbacks never fire, so the
+  // layer-off frame is byte-for-byte untouched. This reads the render state only,
+  // mutating no WFX water, scene.environment, scene.fog, or scene.background.
+  const suppressOffscreen = (renderer: THREE.WebGLRenderer) => {
+    material.colorWrite = renderer.getRenderTarget() === null;
+  };
+  const restoreColorWrite = () => {
+    material.colorWrite = true;
+  };
+  planeA.onBeforeRender = suppressOffscreen;
+  planeB.onBeforeRender = suppressOffscreen;
+  planeA.onAfterRender = restoreColorWrite;
+  planeB.onAfterRender = restoreColorWrite;
 
   const group = new THREE.Group();
   group.name = "interpretive-double-diffusion-layer";

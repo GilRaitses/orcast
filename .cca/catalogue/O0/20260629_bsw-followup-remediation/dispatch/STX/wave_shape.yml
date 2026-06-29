@@ -1,0 +1,98 @@
+# STX dispatch shape (station-tileset-extent, OPTIONAL)
+# Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STX/
+# Charter: ../../STX_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Purpose: decide (with cost) whether to widen the station player to nodes outside
+# the current tileset extent; if so, land it as a 3D-TWIN-owned extent change.
+
+version: 1
+family: BSWR
+code: STX
+label: station-tileset-extent
+home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STX/
+charter: ../../STX_CHARTER.md
+repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+status: chartered
+optional: true
+
+grounding:
+  station_catalog: web/lib/scene/hydrophone/**   # STATION_CATALOG the BST player selects from
+  tiles: web/lib/scene/tiles/useTilesLayer.ts     # 3D-TWIN-owned tileset extent + framing
+  scene: web/app/components/scene/SalishScene.tsx
+  data_exists: "DCLDE-2027 eval references port_townsend + bush_point station-days; the limit is the rendered tileset extent"
+  load_cost: "TWIN-W-PERFUX found load cost is leaf terrain geometry (64 L3 leaves = 74.7% of 75.75 MiB); wider extent has a measured cost"
+  root_cause: "wider nodes need a 3D-TWIN-owned tileset-extent change with a real load-cost trade-off; a cost/coordination decision before any build"
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [web/lib/scene/hydrophone/**, dispatch/STX/**]
+  convergence_files: [web/lib/scene/tiles/useTilesLayer.ts, web/app/components/scene/SalishScene.tsx]
+  serialize_across: [3D-TWIN, WFX, ORCA, OCN, ENV]
+  validate_with: "tsc --noEmit; no next dev during parallel wave"
+  verify_on: GPU render host (ACCEPT frames + load/frame-time)
+  deferrable: true   # STX-Q may return 'defer (cost stated)' as a valid outcome
+
+waves:
+  - id: STX-R
+    name: research-discovery
+    parallelism: 4
+    launch_status: ungated
+    agents:
+      - { role: STX-R1, owns: findings/STX-extent-catalog.md, task: "current tileset extent + STATION_CATALOG bounds; which real nodes fall outside it (Port Townsend, Bush Point, others)." }
+      - { role: STX-R2, owns: findings/STX-twin-ownership.md, task: "how useTilesLayer sets extent + framing; the W2.6 datum + W-PERFUX framing constraints; the cleanest extent-widening seam." }
+      - { role: STX-R3, owns: findings/STX-load-cost.md, task: "the W-PERFUX leaf-geometry cost model; the measured load + frame-time implication of a wider extent." }
+      - { role: STX-R4, owns: findings/STX-adversarial.md, task: "framing regression, load-cost blowup, and the case for deferral." }
+    gate: "four findings exist; no tileset/extent edit; PAUSE to O0."
+
+  - id: STX-Q
+    name: qualify-and-decide
+    depends_on: [STX-R]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: STX-Q1, owns: findings/STX-DECISION.md, task: "return either 'defer (cost stated)' OR a costed, 3D-TWIN-coordinated extent-widening plan with an O0-approved load + frame-time budget." }
+    gate: "GATED (O0): decision returned (defer or proceed-with-budget); if defer, the lane closes here; PAUSE."
+
+  - id: STX-B
+    name: implement-extent
+    depends_on: [STX-Q]
+    parallelism: 1
+    launch_status: gated-on-O0   # only if STX-Q said proceed
+    agents:
+      - { role: STX-B1, owns: web/lib/scene/hydrophone/** (catalog widen) + net-new prep, task: "3D-TWIN-coordinated catalog + extent prep; no unilateral tileset edit." }
+    gate: "prep tsc clean; coordinated with 3D-TWIN; no convergence edit yet; PAUSE."
+
+  - id: STX-INT
+    name: integrate-extent
+    depends_on: [STX-B]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: STX-INT1, owns: web/lib/scene/tiles/useTilesLayer.ts (single editor) + web/app/components/scene/SalishScene.tsx, task: "git pull --rebase first; land the extent + catalog change; serialize vs 3D-TWIN/WFX/ORCA/OCN/ENV; tsc clean." }
+    gate: "GATED (O0): single-editor extent edit; tsc clean; no commit; PAUSE."
+
+  - id: STX-ADV
+    name: adversarial-review
+    depends_on: [STX-INT]
+    parallelism: 1
+    launch_status: gated-on-O0
+    loops_with: [STX-B, STX-INT]
+    agents:
+      - { role: STX-ADV1, owns: findings/STX-ADV_VERDICT.md, task: "audit framing + load-cost regression vs the approved budget; open P0/P1; loop until within budget." }
+    gate: "within budget; zero open P0/P1; PAUSE."
+
+  - id: STX-ACCEPT
+    name: gpu-extent-accept
+    depends_on: [STX-ADV]
+    parallelism: 1
+    compute: GPU render host
+    launch_status: gated-on-O0
+    agents:
+      - { role: STX-ACC, owns: [gate_screenshots/, gate_captures/, ACCEPT_VERDICT.md], task: "GPU frames at the wider extent at rest/near; Read-examine; load + frame-time within the approved budget; verdict cites measured numbers." }
+    gate: "GATED (O0): wider nodes render with resting framing intact; load/frame-time within budget; Read-examined; no commit without O0."
+
+operator_gates:
+  - the build-vs-defer decision (STX-Q returns to O0)
+  - 3D-TWIN coordination + the load-cost budget
+  - the convergence edit slot (single editor, serialized)
+  - GPU render-host capture (cost / host time)
+  - any commit or push (explicit operator request only)

@@ -1,0 +1,19 @@
+# PRF over-budget quantisation probe (local, macOS pure-headless, no host).
+# Re-run 2026-06-29 to cite the vsync-quantised buckets for the ADV-1 O0 decision
+# (Option-1 quantised over-budget oracle). A page burns a FIXED WALL-CLOCK time per
+# rAF callback; the harness's exact separate-sampler loop (frametime_client_tier.mjs
+# sampleFrames) reads the rAF interval. Confirms the original probe within noise.
+#
+# Reading: the rAF interval quantises to refresh multiples (~16.7 / 33.3 / 50 ms).
+#  busy < one refresh  -> clamped ~17 ms  (true cost < one refresh; PASS-with-margin)
+#  busy ~25 ms         -> p95 spills to the ~33 ms bucket (at/over one refresh)
+#  busy ~45 ms         -> median spills to the ~50 ms bucket (FAIL 30fps, real miss)
+# The throttle=4x rows stay clamped: a WALL-CLOCK burn is not slowed by CPU-throughput
+# throttle (ADV-2 probe artifact, NOT a harness defect; real fixed-work scene frames
+# DO spill under throttle). subRefreshProven:false stands (see vsync_smoke_local.json).
+busy=2ms throttle=1x          {"n":145,"med":17.3,"p95":17.8,"max":17.9}
+busy=10ms throttle=1x         {"n":145,"med":17.4,"p95":17.8,"max":19.4}
+busy=25ms throttle=1x         {"n":100,"med":17.8,"p95":35.4,"max":36.4}
+busy=45ms throttle=1x         {"n":56,"med":51.7,"p95":53,"max":53.2}
+busy=5ms throttle=4x          {"n":145,"med":17.3,"p95":17.8,"max":18.4}
+busy=10ms throttle=4x         {"n":145,"med":17.5,"p95":17.8,"max":19.4}

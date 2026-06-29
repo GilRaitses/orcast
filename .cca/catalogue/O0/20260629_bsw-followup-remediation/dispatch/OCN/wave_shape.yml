@@ -1,0 +1,101 @@
+# OCN dispatch shape (measured-ocean-stratification)
+# Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/OCN/
+# Charter: ../../OCN_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Purpose: ground the interpretive ocean layer's profile in a measured CC0 CTD
+# cast and make the plume depth-aware against the real water surface; no WFX regression.
+
+version: 1
+family: BSWR
+code: OCN
+label: measured-ocean-stratification
+home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/OCN/
+charter: ../../OCN_CHARTER.md
+repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+status: chartered
+
+grounding:
+  stratification: web/lib/scene/ocean/stratification.ts   # StratificationOrigin already has "measured-ctd"; analyticHaloclineProfile is stylized
+  layer: web/lib/scene/ocean/{interpretiveOceanLayer,doubleDiffusion,perf,index}.ts
+  dataset: "NANOOS CruiseSalish CTD / NCEI Accession 0307188 (CC0); named in stratification.ts as the gated measured upgrade (BSW-R09)"
+  depth_seam: "WFX Water2 water-surface depth handle (read-only); overlaps the ENV consolidation lane"
+  guard_warning: "interpretiveOceanLayer.ts module-load forbidden-claim guard crashed once on a negated 'biosonar perception' phrase; wording is gated"
+  root_cause: "profile is a stylized analytic curve; layer is not clipped against the measured water surface; measured-ctd enum exists but no baked profile, no depth clip"
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [web/lib/scene/ocean/**, infra/ocean/**]
+  convergence_files: [web/lib/scene/ocean/interpretiveOceanLayer.ts, web/app/components/scene/SalishScene.tsx]
+  serialize_across: [WFX, ENV, ORCA, 3D-TWIN]
+  validate_with: "offline reproducible python for the bake; tsc --noEmit for the web module; no next dev during parallel wave"
+  verify_on: GPU render host (ACCEPT frames + frame-time A/B)
+  heavy_assets_to_box: true   # raw CTD casts -> box; baked profile JSON + provenance in-repo
+  honesty_label: "measured cast (depth/temp/salinity) vs interpretive double-diffusion visualization; passes prose gate + module-load guard"
+  no_water_regression: true   # layer-off frames pixel-equivalent to pre-OCN WFX; no scene.environment/fog/background write
+
+waves:
+  - id: OCN-R
+    name: research-discovery
+    parallelism: 4
+    web_enabled: true   # read-only dataset survey; download is gated to OCN-Q/B
+    launch_status: ungated
+    agents:
+      - { role: OCN-R1, owns: findings/OCN-ctd-data.md, task: "NANOOS CruiseSalish / NCEI 0307188 format, access, CC0 confirm; variables + depth range of a Salish cast; offline parse path with no heavy runtime dep." }
+      - { role: OCN-R2, owns: findings/OCN-bake-path.md, task: "turn a real cast into a StratificationProfile origin: measured-ctd with an honest provenance line, reusing stratificationToTexture." }
+      - { role: OCN-R3, owns: findings/OCN-depth-clip-seam.md, task: "the WFX Water2 water-surface depth read API; how the plume clips against the surface read-only; the overlap with the ENV lane." }
+      - { role: OCN-R4, owns: findings/OCN-adversarial.md, task: "honesty-label correctness, the module-load guard, water-regression risk, perf budget of the depth-aware path." }
+    gate: "four findings exist; CC0 confirmed but NOT downloaded; no WFX or SalishScene edit; PAUSE to O0."
+
+  - id: OCN-Q
+    name: qualify-methodology
+    depends_on: [OCN-R]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: OCN-Q1, owns: findings/OCN-METHODOLOGY.md, task: "fix the ingestion+bake method and the read-only depth-clip seam shape; the exact honesty label; the pass metric (layer-off pixel-equivalence + layer-on plausibility + frame-time budget); name the CC0 download + the WFX-seam coordination for O0." }
+    gate: "GATED (O0): method + label + pass metric fixed; CC0 download + WFX-seam coordination named; PAUSE."
+
+  - id: OCN-B
+    name: implement-bake-and-clip
+    depends_on: [OCN-Q]
+    parallelism: 2
+    launch_status: gated-on-O0
+    agents:
+      - { role: OCN-B1, owns: infra/ocean/bake_ctd_profile.py (new) + web/lib/scene/ocean/measuredProfile.ts (new), task: "offline CTD bake (box) -> measured StratificationProfile JSON + provenance; the web loader; raw cast -> box." }
+      - { role: OCN-B2, owns: web/lib/scene/ocean/depthClip.ts (new), task: "depth-aware plume clip consuming the read-only WFX surface-depth handle; no WFX mutation; default-off additive depthWrite:false preserved." }
+    gate: "bake reproducible offline; web modules tsc clean; no WFX/SalishScene mutation; PAUSE."
+
+  - id: OCN-INT
+    name: integrate-layer
+    depends_on: [OCN-B]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: OCN-INT1, owns: web/lib/scene/ocean/interpretiveOceanLayer.ts (single editor) + web/app/components/scene/SalishScene.tsx (only if a new param is needed), task: "git pull --rebase first; wire the measured profile + depth clip into the layer; exact honesty label; serialize vs WFX/ENV/ORCA/3D-TWIN; tsc + prose-gate clean." }
+    gate: "GATED (O0): single-editor wire; label passes guard + prose gate; tsc clean; no commit; PAUSE."
+
+  - id: OCN-ADV
+    name: adversarial-review
+    depends_on: [OCN-INT]
+    parallelism: 1
+    launch_status: gated-on-O0
+    loops_with: [OCN-B, OCN-INT]
+    agents:
+      - { role: OCN-ADV1, owns: findings/OCN-ADV_VERDICT.md, task: "re-audit label honesty, the guard, water regression (layer-off equivalence), perf; open P0/P1; loop to OCN-B/OCN-INT until zero open P0/P1." }
+    gate: "zero open P0/P1; PAUSE."
+
+  - id: OCN-ACCEPT
+    name: gpu-frame-accept
+    depends_on: [OCN-ADV]
+    parallelism: 1
+    compute: GPU render host
+    launch_status: gated-on-O0
+    agents:
+      - { role: OCN-ACC, owns: [gate_screenshots/, gate_captures/, ACCEPT_VERDICT.md], task: "GPU before/after frames (layer-off = WFX unchanged; layer-on = depth-clipped measured profile, physically plausible); Read-examine; frame-time A/B within budget; verdict cites measured numbers." }
+    gate: "GATED (O0): layer-off pixel-equivalent + layer-on plausible + frame-time within budget; Read-examined; honest verdict; no commit without O0."
+
+operator_gates:
+  - CC0 CruiseSalish CTD download (license-clear; record provenance + NCEI accession; raw -> box)
+  - WFX water-surface depth-seam coordination (read-only; overlaps ENV)
+  - the convergence edit slot (single editor, serialized)
+  - GPU render-host capture (cost / host time)
+  - any commit or push (explicit operator request only)

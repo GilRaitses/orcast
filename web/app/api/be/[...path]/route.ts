@@ -44,6 +44,10 @@ const PROTECTED_PATHS = [
   "api/decision-records",
   "api/review-dossier",
   "api/journal",
+  // The DTAG annotation write/read path. Authenticated-by-default already (not in
+  // PUBLIC_GET_PATHS and not a public POST), so this entry is documentation only
+  // and changes nothing at runtime: a session or agent token is required.
+  "api/dtag/annotations",
 ];
 
 function matchesPath(path: string, entries: string[]): boolean {

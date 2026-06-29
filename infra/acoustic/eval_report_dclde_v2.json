@@ -1,0 +1,904 @@
+{
+  "model_version": "bam-dclde-salish-v2",
+  "supersedes": "bam-dclde-salish-v1",
+  "train_run_id": "61ba1d6-20260629T175224Z",
+  "created_utc": "2026-06-29T17:52:24.077975+00:00",
+  "corpus": {
+    "name": "DCLDE-2027 collated annotations, Salish-Sea subset",
+    "license": "CC-BY-SA-4.0",
+    "license_note": "ShareAlike + attribution carried on this eval and on all weights/embeddings/inference derivatives",
+    "attribution": "DCLDE-2027 killer whale annotations (DFO Canada / NOAA NCEI), CC-BY-SA-4.0; cite doi:10.25921/15ey-mh50",
+    "doi": "https://doi.org/10.25921/15ey-mh50",
+    "source_url": "https://storage.googleapis.com/noaa-passive-bioacoustic/dclde/2027/dclde_2027_killer_whales/"
+  },
+  "task": "SRKW vs Bigg's (TKW) on call windows; strengthen the weak TKW head",
+  "protocol": {
+    "split": "leave-station-OUT (whole stations held out; test recorders never in train)",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "decides_on": "median across seeds (never best seed)",
+    "operating_point": "P(TKW) threshold maximizing TKW f1 on an inner-validation TRAIN station, frozen and applied to test",
+    "confidence": "reported P(TKW) recalibrated from the sampled train prior toward the ~5% deployment prior (honesty; does not move the decision threshold)",
+    "support_floor_per_seed": "TKW test support >= ~186 windows AND >= 3 test station-days; >= 2 TKW stations retained in train"
+  },
+  "pass_metric": {
+    "fixed_before_training": true,
+    "median_TKW_f1_gt": 0.434,
+    "median_TKW_recall_ge": 0.478,
+    "median_SRKW_f1_ge": 0.84,
+    "rule": "MEDIAN across seeds must satisfy ALL three; per-seed spread reported.",
+    "baseline_v1": {
+      "logreg_TKW_f1": 0.434,
+      "rf_TKW_f1": 0.277,
+      "SRKW_f1": 0.8725,
+      "split_v1": "leave-station-DAY-out"
+    }
+  },
+  "paths": {
+    "feature_only": {
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "per_seed": [
+        {
+          "seed": 0,
+          "test_stations": [
+            "StrGeoN1",
+            "StrGeoS1"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.38,
+            "guarded": 0.38,
+            "macro_f1_max": 0.42,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.38,
+          "inner_val_station": "BoundaryPass",
+          "pi_train_minority": 0.1181,
+          "pi_deploy": 0.05,
+          "n_test_windows": 602,
+          "n_train_windows": 3184,
+          "support_floor": {
+            "test_min_windows": 405,
+            "test_min_station_days": 4,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.5942,
+              "recall": 0.8325,
+              "f1": 0.6934,
+              "support": 197
+            },
+            "TKW": {
+              "precision": 0.8988,
+              "recall": 0.7235,
+              "f1": 0.8016,
+              "support": 405
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.38,
+            "TKW_f1": 0.8016,
+            "TKW_recall": 0.7235,
+            "SRKW_f1": 0.6934
+          },
+          "minority_auprc_ovr": 0.9304,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                164,
+                33
+              ],
+              [
+                112,
+                293
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.6589,
+            "minority_mean_recalibrated": 0.5596
+          }
+        },
+        {
+          "seed": 1,
+          "test_stations": [
+            "StraitofGeorgia"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.94,
+            "guarded": 0.96,
+            "macro_f1_max": 0.98,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.96,
+          "inner_val_station": "SwanChan",
+          "pi_train_minority": 0.1779,
+          "pi_deploy": 0.05,
+          "n_test_windows": 790,
+          "n_train_windows": 2996,
+          "support_floor": {
+            "test_min_windows": 248,
+            "test_min_station_days": 5,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.7849,
+              "recall": 0.9963,
+              "f1": 0.878,
+              "support": 542
+            },
+            "TKW": {
+              "precision": 0.9804,
+              "recall": 0.4032,
+              "f1": 0.5714,
+              "support": 248
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.94,
+            "TKW_f1": 0.5938,
+            "TKW_recall": 0.4274,
+            "SRKW_f1": 0.8814
+          },
+          "minority_auprc_ovr": 0.8178,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                540,
+                2
+              ],
+              [
+                148,
+                100
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.5495,
+            "minority_mean_recalibrated": 0.4856
+          }
+        },
+        {
+          "seed": 2,
+          "test_stations": [
+            "StrGeoS1",
+            "SwanChan"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.02,
+            "guarded": 0.02,
+            "macro_f1_max": 0.02,
+            "guarded_feasible": false
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.02,
+          "inner_val_station": "StrGeoN1",
+          "pi_train_minority": 0.1767,
+          "pi_deploy": 0.05,
+          "n_test_windows": 452,
+          "n_train_windows": 3334,
+          "support_floor": {
+            "test_min_windows": 192,
+            "test_min_station_days": 3,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 1.0,
+              "recall": 0.4,
+              "f1": 0.5714,
+              "support": 260
+            },
+            "TKW": {
+              "precision": 0.5517,
+              "recall": 1.0,
+              "f1": 0.7111,
+              "support": 192
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.02,
+            "TKW_f1": 0.7111,
+            "TKW_recall": 1.0,
+            "SRKW_f1": 0.5714
+          },
+          "minority_auprc_ovr": 0.8213,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                104,
+                156
+              ],
+              [
+                0,
+                192
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.8593,
+            "minority_mean_recalibrated": 0.7858
+          }
+        },
+        {
+          "seed": 3,
+          "test_stations": [
+            "StrGeoN1",
+            "SwanChan"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.02,
+            "guarded": 0.12,
+            "macro_f1_max": 0.98,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.12,
+          "inner_val_station": "HaroStraitSouth",
+          "pi_train_minority": 0.1652,
+          "pi_deploy": 0.05,
+          "n_test_windows": 638,
+          "n_train_windows": 3148,
+          "support_floor": {
+            "test_min_windows": 261,
+            "test_min_station_days": 3,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.9938,
+              "recall": 0.4218,
+              "f1": 0.5922,
+              "support": 377
+            },
+            "TKW": {
+              "precision": 0.5439,
+              "recall": 0.9962,
+              "f1": 0.7037,
+              "support": 261
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.02,
+            "TKW_f1": 0.6574,
+            "TKW_recall": 1.0,
+            "SRKW_f1": 0.4357
+          },
+          "minority_auprc_ovr": 0.7842,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                159,
+                218
+              ],
+              [
+                1,
+                260
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.8461,
+            "minority_mean_recalibrated": 0.698
+          }
+        },
+        {
+          "seed": 4,
+          "test_stations": [
+            "HaroStraitSouth",
+            "StrGeoN1"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.02,
+            "guarded": 0.02,
+            "macro_f1_max": 0.36,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.02,
+          "inner_val_station": "StraitofGeorgia",
+          "pi_train_minority": 0.1706,
+          "pi_deploy": 0.05,
+          "n_test_windows": 931,
+          "n_train_windows": 2855,
+          "support_floor": {
+            "test_min_windows": 294,
+            "test_min_station_days": 3,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.8691,
+              "recall": 0.6044,
+              "f1": 0.713,
+              "support": 637
+            },
+            "TKW": {
+              "precision": 0.4836,
+              "recall": 0.8027,
+              "f1": 0.6036,
+              "support": 294
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.02,
+            "TKW_f1": 0.6036,
+            "TKW_recall": 0.8027,
+            "SRKW_f1": 0.713
+          },
+          "minority_auprc_ovr": 0.7497,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                385,
+                252
+              ],
+              [
+                58,
+                236
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.569,
+            "minority_mean_recalibrated": 0.4443
+          }
+        }
+      ],
+      "median": {
+        "TKW_f1": 0.7037,
+        "TKW_recall": 0.8027,
+        "SRKW_f1": 0.6934
+      },
+      "spread": {
+        "TKW_f1": {
+          "min": 0.5714,
+          "median": 0.7037,
+          "max": 0.8016,
+          "per_seed": [
+            0.8016,
+            0.5714,
+            0.7111,
+            0.7037,
+            0.6036
+          ]
+        },
+        "TKW_recall": {
+          "min": 0.4032,
+          "median": 0.8027,
+          "max": 1.0,
+          "per_seed": [
+            0.7235,
+            0.4032,
+            1.0,
+            0.9962,
+            0.8027
+          ]
+        },
+        "TKW_precision": {
+          "min": 0.4836,
+          "median": 0.5517,
+          "max": 0.9804,
+          "per_seed": [
+            0.8988,
+            0.9804,
+            0.5517,
+            0.5439,
+            0.4836
+          ]
+        },
+        "SRKW_f1": {
+          "min": 0.5714,
+          "median": 0.6934,
+          "max": 0.878,
+          "per_seed": [
+            0.6934,
+            0.878,
+            0.5714,
+            0.5922,
+            0.713
+          ]
+        }
+      },
+      "verdict": {
+        "checks": {
+          "TKW_f1_gt_0.434": true,
+          "TKW_recall_ge_0.478": true,
+          "SRKW_f1_ge_0.84": false
+        },
+        "passes": false
+      },
+      "TKW_auprc": {
+        "median": 0.8178,
+        "min": 0.7497,
+        "max": 0.9304,
+        "per_seed": [
+          0.9304,
+          0.8178,
+          0.8213,
+          0.7842,
+          0.7497
+        ]
+      },
+      "per_fold_full_pass": "0/5 folds meet ALL three per-fold (median decides per O0)",
+      "feature_description": "129-dim scipy log-mel silhouette (no torch/librosa)"
+    },
+    "perch_embedding": {
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "per_seed": [
+        {
+          "seed": 0,
+          "test_stations": [
+            "StrGeoN1",
+            "StrGeoS1"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.84,
+            "guarded": 0.84,
+            "macro_f1_max": 0.84,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.84,
+          "inner_val_station": "BoundaryPass",
+          "pi_train_minority": 0.1184,
+          "pi_deploy": 0.05,
+          "n_test_windows": 595,
+          "n_train_windows": 3168,
+          "support_floor": {
+            "test_min_windows": 398,
+            "test_min_station_days": 4,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.5091,
+              "recall": 0.9949,
+              "f1": 0.6735,
+              "support": 197
+            },
+            "TKW": {
+              "precision": 0.9952,
+              "recall": 0.5251,
+              "f1": 0.6875,
+              "support": 398
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.84,
+            "TKW_f1": 0.6875,
+            "TKW_recall": 0.5251,
+            "SRKW_f1": 0.6735
+          },
+          "minority_auprc_ovr": 0.9752,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                196,
+                1
+              ],
+              [
+                189,
+                209
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.6212,
+            "minority_mean_recalibrated": 0.5652
+          }
+        },
+        {
+          "seed": 1,
+          "test_stations": [
+            "StraitofGeorgia"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.96,
+            "guarded": 0.96,
+            "macro_f1_max": 0.96,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.96,
+          "inner_val_station": "SwanChan",
+          "pi_train_minority": 0.1764,
+          "pi_deploy": 0.05,
+          "n_test_windows": 787,
+          "n_train_windows": 2976,
+          "support_floor": {
+            "test_min_windows": 248,
+            "test_min_station_days": 5,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.7624,
+              "recall": 1.0,
+              "f1": 0.8652,
+              "support": 539
+            },
+            "TKW": {
+              "precision": 1.0,
+              "recall": 0.3226,
+              "f1": 0.4878,
+              "support": 248
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.96,
+            "TKW_f1": 0.4878,
+            "TKW_recall": 0.3226,
+            "SRKW_f1": 0.8652
+          },
+          "minority_auprc_ovr": 0.9562,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                539,
+                0
+              ],
+              [
+                168,
+                80
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.5584,
+            "minority_mean_recalibrated": 0.4584
+          }
+        },
+        {
+          "seed": 2,
+          "test_stations": [
+            "StrGeoS1",
+            "SwanChan"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.02,
+            "guarded": 0.02,
+            "macro_f1_max": 0.02,
+            "guarded_feasible": false
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.02,
+          "inner_val_station": "StrGeoN1",
+          "pi_train_minority": 0.1757,
+          "pi_deploy": 0.05,
+          "n_test_windows": 451,
+          "n_train_windows": 3312,
+          "support_floor": {
+            "test_min_windows": 191,
+            "test_min_station_days": 3,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.9609,
+              "recall": 0.85,
+              "f1": 0.902,
+              "support": 260
+            },
+            "TKW": {
+              "precision": 0.8235,
+              "recall": 0.9529,
+              "f1": 0.8835,
+              "support": 191
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.02,
+            "TKW_f1": 0.8835,
+            "TKW_recall": 0.9529,
+            "SRKW_f1": 0.902
+          },
+          "minority_auprc_ovr": 0.9719,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                221,
+                39
+              ],
+              [
+                9,
+                182
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.8434,
+            "minority_mean_recalibrated": 0.7907
+          }
+        },
+        {
+          "seed": 3,
+          "test_stations": [
+            "StrGeoN1",
+            "SwanChan"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.02,
+            "guarded": 0.02,
+            "macro_f1_max": 0.02,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.02,
+          "inner_val_station": "HaroStraitSouth",
+          "pi_train_minority": 0.1654,
+          "pi_deploy": 0.05,
+          "n_test_windows": 632,
+          "n_train_windows": 3131,
+          "support_floor": {
+            "test_min_windows": 255,
+            "test_min_station_days": 3,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.9113,
+              "recall": 0.8992,
+              "f1": 0.9052,
+              "support": 377
+            },
+            "TKW": {
+              "precision": 0.8538,
+              "recall": 0.8706,
+              "f1": 0.8621,
+              "support": 255
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.02,
+            "TKW_f1": 0.8621,
+            "TKW_recall": 0.8706,
+            "SRKW_f1": 0.9052
+          },
+          "minority_auprc_ovr": 0.934,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                339,
+                38
+              ],
+              [
+                33,
+                222
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.6272,
+            "minority_mean_recalibrated": 0.538
+          }
+        },
+        {
+          "seed": 4,
+          "test_stations": [
+            "HaroStraitSouth",
+            "StrGeoN1"
+          ],
+          "operating_points_val": {
+            "tkw_f1_max": 0.02,
+            "guarded": 0.02,
+            "macro_f1_max": 0.02,
+            "guarded_feasible": true
+          },
+          "shipped_operating_point": "guarded",
+          "operating_threshold": 0.02,
+          "inner_val_station": "StraitofGeorgia",
+          "pi_train_minority": 0.1709,
+          "pi_deploy": 0.05,
+          "n_test_windows": 925,
+          "n_train_windows": 2838,
+          "support_floor": {
+            "test_min_windows": 288,
+            "test_min_station_days": 3,
+            "meets_floor": true
+          },
+          "per_class": {
+            "SRKW": {
+              "precision": 0.906,
+              "recall": 0.9231,
+              "f1": 0.9145,
+              "support": 637
+            },
+            "TKW": {
+              "precision": 0.8225,
+              "recall": 0.7882,
+              "f1": 0.805,
+              "support": 288
+            }
+          },
+          "diagnostic_tkw_f1_max_point": {
+            "threshold": 0.02,
+            "TKW_f1": 0.805,
+            "TKW_recall": 0.7882,
+            "SRKW_f1": 0.9145
+          },
+          "minority_auprc_ovr": 0.9014,
+          "confusion": {
+            "labels": [
+              "SRKW",
+              "TKW"
+            ],
+            "matrix": [
+              [
+                588,
+                49
+              ],
+              [
+                61,
+                227
+              ]
+            ]
+          },
+          "recalibrated_confidence": {
+            "minority_mean_raw": 0.5831,
+            "minority_mean_recalibrated": 0.4996
+          }
+        }
+      ],
+      "median": {
+        "TKW_f1": 0.805,
+        "TKW_recall": 0.7882,
+        "SRKW_f1": 0.902
+      },
+      "spread": {
+        "TKW_f1": {
+          "min": 0.4878,
+          "median": 0.805,
+          "max": 0.8835,
+          "per_seed": [
+            0.6875,
+            0.4878,
+            0.8835,
+            0.8621,
+            0.805
+          ]
+        },
+        "TKW_recall": {
+          "min": 0.3226,
+          "median": 0.7882,
+          "max": 0.9529,
+          "per_seed": [
+            0.5251,
+            0.3226,
+            0.9529,
+            0.8706,
+            0.7882
+          ]
+        },
+        "TKW_precision": {
+          "min": 0.8225,
+          "median": 0.8538,
+          "max": 1.0,
+          "per_seed": [
+            0.9952,
+            1.0,
+            0.8235,
+            0.8538,
+            0.8225
+          ]
+        },
+        "SRKW_f1": {
+          "min": 0.6735,
+          "median": 0.902,
+          "max": 0.9145,
+          "per_seed": [
+            0.6735,
+            0.8652,
+            0.902,
+            0.9052,
+            0.9145
+          ]
+        }
+      },
+      "verdict": {
+        "checks": {
+          "TKW_f1_gt_0.434": true,
+          "TKW_recall_ge_0.478": true,
+          "SRKW_f1_ge_0.84": true
+        },
+        "passes": true
+      },
+      "TKW_auprc": {
+        "median": 0.9562,
+        "min": 0.9014,
+        "max": 0.9752,
+        "per_seed": [
+          0.9752,
+          0.9562,
+          0.9719,
+          0.934,
+          0.9014
+        ]
+      },
+      "per_fold_full_pass": "3/5 folds meet ALL three per-fold (median decides per O0)",
+      "feature_description": "perch_v2 (EfficientNet-B3, 1536-dim, Apache-2.0)",
+      "embedding_license": "CC-BY-SA-4.0 (corpus ShareAlike travels onto this embedding derivative); embedding model Apache-2.0",
+      "n_rows_dropped_failed_fetch": 23
+    }
+  },
+  "overall": {
+    "selected_path": "perch_embedding",
+    "ships": true,
+    "note": "PROPOSED only; the served classification.json change is the separate ACX-ACCEPT gate."
+  },
+  "honesty": {
+    "reported_as": "estimate + confidence",
+    "not_claimed": [
+      "whale count",
+      "pod / individual ID",
+      "SRKW S1-S40 catalog call"
+    ],
+    "call_type": "STAYS DIAGNOSTIC, not wired (assert_shippable refuses it)",
+    "single_vs_multiple": "BLOCKED (no source-count labels)",
+    "known_confounds": [
+      "TKW rests on 6 stations / 12 station-days / a few encounters; leave-station-out TKW metrics are still few-encounter and reported with per-seed spread, not a single point",
+      "sampled TKW prior (~20% of the SRKW/TKW pool from keep-all-TKW + SRKW-cap=40) differs from the ~5% deployment prior; reported confidence is prior-recalibrated, raw precision/f1 remain prior-sensitive",
+      "leave-station-OUT closes the leave-station-day-out 'recognize the recorder' confound from v1",
+      "129-dim silhouette is presence-oriented; the Perch embedding path tests whether a learned representation lifts TKW",
+      "per-fold variance is high: the MEDIAN decides (O0 lock), but individual leave-station-out folds disagree (e.g. the StraitofGeorgia-only fold shows low TKW recall). The threshold-free TKW AUPRC (median ~0.96 for Perch) is the most robust single indicator; f1 variance is largely operating-point instability across stations, not a separation failure",
+      "site/habitat confound checked and NOT supported: the within-Strait-of-Georgia fold is the WEAKEST (recall collapses), and a cross-region fold (Haro Strait + StrGeoN1) generalizes, which argues the Perch lift reflects call morphology, not Strait-of-Georgia site acoustics"
+    ],
+    "contract_note": "v2 is an eval artifact only; web/public/hydrophone/slice/classification.json is UNCHANGED. Promoting any cleared head is the separate ACX-ACCEPT count-basis/contract gate."
+  }
+}

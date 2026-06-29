@@ -1,0 +1,98 @@
+# STU dispatch shape (studio-live-persistence)
+# Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STU/
+# Charter: ../../STU_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Purpose: build the backend annotations endpoint the client store already posts
+# to, allow-list it (authenticated, not public) through the proxy, wire the env.
+
+version: 1
+family: BSWR
+code: STU
+label: studio-live-persistence
+home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/STU/
+charter: ../../STU_CHARTER.md
+repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+status: chartered
+
+grounding:
+  client_store: web/lib/annotation/store.ts          # HttpAnnotationStore -> /api/be/api/dtag/annotations
+  wire_schema: web/lib/annotation/serialize.ts        # toSubmissionRequest + AnnotationSubmissionResponse
+  store_factory: web/lib/annotation/factory.ts        # http vs in-memory
+  provenance: web/lib/annotation/provenance.ts
+  backend_router: src/aws_backend/routers/dtag.py     # READ-ONLY today; no annotations endpoint
+  proxy: web/app/api/be/[...path]/route.ts            # isPublicRequest allow-list; API_BASE = ORCAST_API_BASE
+  root_cause: "client write path built to a contract; backend endpoint + proxy allow-list + deploy env never landed"
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [src/aws_backend/routers/**, tests/aws_backend/**, web/lib/annotation/**]
+  convergence_files: ["web/app/api/be/[...path]/route.ts", web/lib/annotation/factory.ts]
+  serialize_across: [R-Alpha, A1]
+  validate_with: "pytest for the backend route; tsc --noEmit for the web wiring; no next dev during parallel wave"
+  verify_on: deployed App Runner backend (ACCEPT only)
+  honesty_label: "annotations are community-authored + provenance-tagged; simulated deployment stays labeled simulated"
+  auth: "authenticated WorkOS user OR agent token; NOT public; no annotations entry in the public POST allow-list"
+
+waves:
+  - id: STU-R
+    name: research-discovery
+    parallelism: 4
+    launch_status: ungated
+    agents:
+      - { role: STU-R1, owns: findings/STU-contract.md, task: "the exact wire schema the backend must serve: toSubmissionRequest body, AnnotationSubmissionResponse, list + get shapes, deployment_id filter." }
+      - { role: STU-R2, owns: findings/STU-backend-surface.md, task: "dtag router + config + the existing nine-table DynamoDB model; where annotations should live; how other write routes (community/sighting) authenticate + persist." }
+      - { role: STU-R3, owns: findings/STU-proxy-env.md, task: "isPublicRequest model, the agent-token path (agentAuth), and the ORCAST_API_BASE deploy wiring; the minimal authenticated allow-list change." }
+      - { role: STU-R4, owns: findings/STU-adversarial.md, task: "injection, PII leakage, auth bypass, idempotency / double-submit, provenance tampering; what would make the write path unsafe." }
+    gate: "four findings exist; no backend or proxy edit happened; PAUSE to O0."
+
+  - id: STU-Q
+    name: qualify-methodology
+    depends_on: [STU-R]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: STU-Q1, owns: findings/STU-METHODOLOGY.md, task: "fix the endpoint design: route shape, request/response schema, auth tier (session/agent, not public), storage backing (DynamoDB table vs cache), idempotency; name the deploy/env change for an O0 decision." }
+    gate: "GATED (O0): endpoint design + storage backing fixed; deploy/env change named; PAUSE."
+
+  - id: STU-B
+    name: implement-backend
+    depends_on: [STU-Q]
+    parallelism: 2
+    launch_status: gated-on-O0
+    agents:
+      - { role: STU-B1, owns: src/aws_backend/routers/dtag.py (extend) OR src/aws_backend/routers/annotations.py (new, per Q), task: "net-new POST + GET(list, filter by deployment_id) + GET {id} conforming to the client wire schema; authenticated; simulated stays labeled." }
+      - { role: STU-B2, owns: tests/aws_backend/test_dtag_annotations.py, task: "round-trip + auth-rejection + provenance-validation + bad-input tests; offline, deterministic." }
+    gate: "backend route + tests green offline; conforms to the client contract; no proxy edit yet; PAUSE."
+
+  - id: STU-INT
+    name: integrate-proxy-wiring
+    depends_on: [STU-B]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: STU-INT1, owns: "web/app/api/be/[...path]/route.ts (single editor) + web/lib/annotation/factory.ts (confirm)", task: "git pull --rebase first; add api/dtag/annotations to the authenticated path (NOT public); confirm http store wiring; tsc clean; serialize vs R-Alpha/A1." }
+    gate: "GATED (O0): single-editor proxy edit; authenticated not public; tsc clean; no commit without O0; PAUSE."
+
+  - id: STU-ADV
+    name: adversarial-review
+    depends_on: [STU-INT]
+    parallelism: 1
+    launch_status: gated-on-O0
+    loops_with: [STU-B, STU-INT]
+    agents:
+      - { role: STU-ADV1, owns: findings/STU-ADV_VERDICT.md, task: "run the security audit against the wired path (injection, PII, auth bypass, double-submit, provenance tamper); open P0/P1; loop to STU-B/STU-INT until zero open P0/P1." }
+    gate: "zero open P0/P1; PAUSE."
+
+  - id: STU-ACCEPT
+    name: live-roundtrip-accept
+    depends_on: [STU-ADV]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: STU-ACC, owns: [gate_captures/, ACCEPT_VERDICT.md], task: "live create -> list -> get against the deployed backend; verdict cites real responses; the simulated deployment stays labeled simulated end-to-end." }
+    gate: "GATED (O0): live round-trip succeeds; deploy/env (ORCAST_API_BASE) is a human gate; honest verdict; no commit without O0."
+
+operator_gates:
+  - storage-backing decision (DynamoDB table vs cache) is O0-decided
+  - backend deploy + ORCAST_API_BASE env config (human gate)
+  - the proxy convergence edit slot (single editor, serialized)
+  - any commit or push (explicit operator request only)

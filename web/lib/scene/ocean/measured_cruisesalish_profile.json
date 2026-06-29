@@ -1,0 +1,327 @@
+{
+  "origin": "measured-ctd",
+  "provenance": "Measured CTD cast of depth, temperature, and salinity. NANOOS CruiseSalish, NCEI Accession 0307188, CC0 1.0, DOI 10.25921/jgrz-v584. Cruise BOLD085 station 25, 2008-08-14, eastern Strait of Juan de Fuca near 48.40 N 123.01 W. This is a nearby analog cast, not an on-site San Juan Channel / Orcasound Lab node station. Halocline depth and density gradient are derived from the cast. The mixing motion is a stylized interpretation, not measured microstructure and not how an animal senses its surroundings.",
+  "maxDepthM": 164.3,
+  "samples": [
+    {
+      "depthM": 1.05,
+      "temperatureC": 10.81,
+      "salinityPsu": 30.47
+    },
+    {
+      "depthM": 3.641,
+      "temperatureC": 10.784,
+      "salinityPsu": 30.483
+    },
+    {
+      "depthM": 6.233,
+      "temperatureC": 10.737,
+      "salinityPsu": 30.508
+    },
+    {
+      "depthM": 8.824,
+      "temperatureC": 10.67,
+      "salinityPsu": 30.544
+    },
+    {
+      "depthM": 11.415,
+      "temperatureC": 10.62,
+      "salinityPsu": 30.578
+    },
+    {
+      "depthM": 14.006,
+      "temperatureC": 10.584,
+      "salinityPsu": 30.612
+    },
+    {
+      "depthM": 16.598,
+      "temperatureC": 10.548,
+      "salinityPsu": 30.646
+    },
+    {
+      "depthM": 19.189,
+      "temperatureC": 10.512,
+      "salinityPsu": 30.679
+    },
+    {
+      "depthM": 21.78,
+      "temperatureC": 10.469,
+      "salinityPsu": 30.709
+    },
+    {
+      "depthM": 24.371,
+      "temperatureC": 10.415,
+      "salinityPsu": 30.731
+    },
+    {
+      "depthM": 26.963,
+      "temperatureC": 10.362,
+      "salinityPsu": 30.754
+    },
+    {
+      "depthM": 29.554,
+      "temperatureC": 10.308,
+      "salinityPsu": 30.777
+    },
+    {
+      "depthM": 32.145,
+      "temperatureC": 10.257,
+      "salinityPsu": 30.817
+    },
+    {
+      "depthM": 34.737,
+      "temperatureC": 10.206,
+      "salinityPsu": 30.86
+    },
+    {
+      "depthM": 37.328,
+      "temperatureC": 10.156,
+      "salinityPsu": 30.903
+    },
+    {
+      "depthM": 39.919,
+      "temperatureC": 10.105,
+      "salinityPsu": 30.946
+    },
+    {
+      "depthM": 42.51,
+      "temperatureC": 10.055,
+      "salinityPsu": 30.989
+    },
+    {
+      "depthM": 45.102,
+      "temperatureC": 10.004,
+      "salinityPsu": 31.032
+    },
+    {
+      "depthM": 47.693,
+      "temperatureC": 9.954,
+      "salinityPsu": 31.074
+    },
+    {
+      "depthM": 50.284,
+      "temperatureC": 9.903,
+      "salinityPsu": 31.117
+    },
+    {
+      "depthM": 52.875,
+      "temperatureC": 9.776,
+      "salinityPsu": 31.235
+    },
+    {
+      "depthM": 55.467,
+      "temperatureC": 9.645,
+      "salinityPsu": 31.357
+    },
+    {
+      "depthM": 58.058,
+      "temperatureC": 9.513,
+      "salinityPsu": 31.48
+    },
+    {
+      "depthM": 60.649,
+      "temperatureC": 9.381,
+      "salinityPsu": 31.602
+    },
+    {
+      "depthM": 63.24,
+      "temperatureC": 9.25,
+      "salinityPsu": 31.725
+    },
+    {
+      "depthM": 65.832,
+      "temperatureC": 9.118,
+      "salinityPsu": 31.847
+    },
+    {
+      "depthM": 68.423,
+      "temperatureC": 8.987,
+      "salinityPsu": 31.969
+    },
+    {
+      "depthM": 71.014,
+      "temperatureC": 8.855,
+      "salinityPsu": 32.092
+    },
+    {
+      "depthM": 73.606,
+      "temperatureC": 8.723,
+      "salinityPsu": 32.214
+    },
+    {
+      "depthM": 76.197,
+      "temperatureC": 8.592,
+      "salinityPsu": 32.337
+    },
+    {
+      "depthM": 78.788,
+      "temperatureC": 8.46,
+      "salinityPsu": 32.459
+    },
+    {
+      "depthM": 81.379,
+      "temperatureC": 8.33,
+      "salinityPsu": 32.58
+    },
+    {
+      "depthM": 83.971,
+      "temperatureC": 8.291,
+      "salinityPsu": 32.617
+    },
+    {
+      "depthM": 86.562,
+      "temperatureC": 8.252,
+      "salinityPsu": 32.653
+    },
+    {
+      "depthM": 89.153,
+      "temperatureC": 8.213,
+      "salinityPsu": 32.689
+    },
+    {
+      "depthM": 91.744,
+      "temperatureC": 8.174,
+      "salinityPsu": 32.726
+    },
+    {
+      "depthM": 94.336,
+      "temperatureC": 8.135,
+      "salinityPsu": 32.762
+    },
+    {
+      "depthM": 96.927,
+      "temperatureC": 8.097,
+      "salinityPsu": 32.798
+    },
+    {
+      "depthM": 99.518,
+      "temperatureC": 8.058,
+      "salinityPsu": 32.834
+    },
+    {
+      "depthM": 102.11,
+      "temperatureC": 8.019,
+      "salinityPsu": 32.871
+    },
+    {
+      "depthM": 104.701,
+      "temperatureC": 7.98,
+      "salinityPsu": 32.907
+    },
+    {
+      "depthM": 107.292,
+      "temperatureC": 7.941,
+      "salinityPsu": 32.943
+    },
+    {
+      "depthM": 109.883,
+      "temperatureC": 7.902,
+      "salinityPsu": 32.98
+    },
+    {
+      "depthM": 112.475,
+      "temperatureC": 7.864,
+      "salinityPsu": 33.016
+    },
+    {
+      "depthM": 115.066,
+      "temperatureC": 7.825,
+      "salinityPsu": 33.052
+    },
+    {
+      "depthM": 117.657,
+      "temperatureC": 7.786,
+      "salinityPsu": 33.088
+    },
+    {
+      "depthM": 120.248,
+      "temperatureC": 7.747,
+      "salinityPsu": 33.125
+    },
+    {
+      "depthM": 122.84,
+      "temperatureC": 7.719,
+      "salinityPsu": 33.151
+    },
+    {
+      "depthM": 125.431,
+      "temperatureC": 7.715,
+      "salinityPsu": 33.154
+    },
+    {
+      "depthM": 128.022,
+      "temperatureC": 7.712,
+      "salinityPsu": 33.157
+    },
+    {
+      "depthM": 130.613,
+      "temperatureC": 7.708,
+      "salinityPsu": 33.16
+    },
+    {
+      "depthM": 133.205,
+      "temperatureC": 7.704,
+      "salinityPsu": 33.163
+    },
+    {
+      "depthM": 135.796,
+      "temperatureC": 7.7,
+      "salinityPsu": 33.166
+    },
+    {
+      "depthM": 138.387,
+      "temperatureC": 7.697,
+      "salinityPsu": 33.169
+    },
+    {
+      "depthM": 140.979,
+      "temperatureC": 7.693,
+      "salinityPsu": 33.172
+    },
+    {
+      "depthM": 143.57,
+      "temperatureC": 7.689,
+      "salinityPsu": 33.175
+    },
+    {
+      "depthM": 146.161,
+      "temperatureC": 7.686,
+      "salinityPsu": 33.179
+    },
+    {
+      "depthM": 148.752,
+      "temperatureC": 7.682,
+      "salinityPsu": 33.182
+    },
+    {
+      "depthM": 151.344,
+      "temperatureC": 7.678,
+      "salinityPsu": 33.185
+    },
+    {
+      "depthM": 153.935,
+      "temperatureC": 7.675,
+      "salinityPsu": 33.188
+    },
+    {
+      "depthM": 156.526,
+      "temperatureC": 7.671,
+      "salinityPsu": 33.191
+    },
+    {
+      "depthM": 159.117,
+      "temperatureC": 7.667,
+      "salinityPsu": 33.194
+    },
+    {
+      "depthM": 161.709,
+      "temperatureC": 7.664,
+      "salinityPsu": 33.197
+    },
+    {
+      "depthM": 164.3,
+      "temperatureC": 7.66,
+      "salinityPsu": 33.2
+    }
+  ]
+}

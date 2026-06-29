@@ -28,11 +28,22 @@ const base = process.env.ORCAST_DEV_BASE || 'http://127.0.0.1:3010';
 // ORCAST_GL=gpu  -> real GPU via ANGLE/EGL (NVIDIA on the aimez-gpu-capture T4)
 // ORCAST_GL=swiftshader (default) -> software GL (CPU host, correctness only)
 const glMode = (process.env.ORCAST_GL || 'swiftshader').toLowerCase();
+// ORCAST_VSYNC=uncapped (default) -> attempt to disable the GPU vsync cap. VERIFIED
+// LIMIT (PRF-ADV, gate_captures/vsync_smoke_local.json): in pure headless these
+// flags do NOT free-run rAF below 16.67ms; the synthetic compositor BeginFrame
+// still paces at ~60Hz. They are kept because (a) they are harmless and may uncap
+// on the Linux/Xvfb host, and (b) the rAF interval still SPACES OUT for over-budget
+// frames (>16.67ms work -> ~33.3ms; >33.3ms -> ~50ms), so it is a valid quantised
+// 30fps over/under-budget oracle even when capped. Set ORCAST_VSYNC=default to omit.
+const vsyncMode = (process.env.ORCAST_VSYNC || 'uncapped').toLowerCase();
+const uncapArgs = vsyncMode === 'uncapped'
+  ? ['--disable-gpu-vsync', '--disable-frame-rate-limit']
+  : [];
 const args = glMode === 'gpu'
   ? ['--use-gl=angle', '--use-angle=gl-egl', '--enable-gpu', '--ignore-gpu-blocklist',
-     '--no-sandbox', `--window-size=${vw},${vh}`]
+     '--no-sandbox', `--window-size=${vw},${vh}`, ...uncapArgs]
   : ['--use-gl=angle', '--use-angle=swiftshader-webgl', '--enable-unsafe-swiftshader',
-     '--ignore-gpu-blocklist', '--no-sandbox', `--window-size=${vw},${vh}`];
+     '--ignore-gpu-blocklist', '--no-sandbox', `--window-size=${vw},${vh}`, ...uncapArgs];
 
 const browser = await chromium.launch({ headless: true, args });
 const page = await browser.newPage({ viewport: { width: vw, height: vh } });
@@ -104,7 +115,7 @@ try {
 } catch {}
 
 console.log(JSON.stringify({
-  route, out, canvas, glMode, glRenderer,
+  route, out, canvas, glMode, vsyncMode, glRenderer,
   errorCount: errs.length,
   errors: errs.slice(0, 12),
   frameTime,

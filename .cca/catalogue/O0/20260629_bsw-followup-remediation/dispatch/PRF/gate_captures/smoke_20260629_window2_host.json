@@ -1,0 +1,30 @@
+{
+  "mode": "smoke",
+  "glMode": "gpu",
+  "page": "trivial-empty-raf",
+  "uncapped": {
+    "vsyncMode": "uncapped",
+    "frames": 146,
+    "meanMs": 17.22,
+    "medianMs": 17.2,
+    "p95Ms": 17.3,
+    "p99Ms": 17.3,
+    "maxMs": 17.3,
+    "minMs": 17.1,
+    "fps": 58.1
+  },
+  "capped_control": {
+    "vsyncMode": "default",
+    "frames": 151,
+    "meanMs": 16.67,
+    "medianMs": 16.7,
+    "p95Ms": 16.7,
+    "p99Ms": 16.8,
+    "maxMs": 16.8,
+    "minMs": 16.6,
+    "fps": 60
+  },
+  "subRefreshProven": false,
+  "verdict": "FAIL: uncapped median 17.2ms not < 16.67ms -> cap NOT broken; no frame-time number is valid.",
+  "_note": "BSWR host-window-2 capture. Trivial empty-rAF page does NOT break the host vsync cap (expected). The real WebGL scene DOES free-run sub-refresh in the --ab run (median ~1.6ms on T4), which is where the tier number is read. Captured directly via SSM because the driver's set -e aborts on the mjs non-zero exit before printing."
+}

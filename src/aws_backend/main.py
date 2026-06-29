@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .routers import (
+    annotations,
     community,
     deprecated,
     dtag,
@@ -87,6 +88,7 @@ def create_app() -> FastAPI:
     app.include_router(timeseries.router)
     app.include_router(deprecated.router)
     app.include_router(dtag.router)
+    app.include_router(annotations.router)
     app.include_router(interest.router)
 
     return app

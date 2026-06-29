@@ -1,0 +1,285 @@
+{
+  "mode": "ab",
+  "method": "emulated client tier (method X): real T4 GPU + CDP CPU throttle + client viewport + vsync-quantised rAF sampler. NOT a sub-refresh frame-time meter (subRefreshProven:false, vsync_smoke_local.json); it is a vsync-QUANTISED 30fps over-budget oracle (PRF-ADV1-DECISION.md, Option 1).",
+  "budgetMs": 33.33,
+  "quantisation": "rAF interval clamps to refresh multiples ~16.7 / 33.3 / 50 ms; it cannot distinguish a 5ms frame from a 16ms frame (both read ~16.7ms). A clamped ~16.7ms median is PASS-with-margin, NEVER reported as the measured frame-time.",
+  "honesty": "emulated client tier = CPU-throttled LOWER BOUND on a server-class T4 GPU. A miss (sustained >=50ms bucket) is dispositive and real; a clamped ~16.7ms pass does NOT certify the real client GPU (the GPU work is not throttled). Emulated, not a real device.",
+  "verdict_legend": {
+    "median <~25ms": "clamped at one refresh -> PASS 30fps with margin",
+    "~25-42ms": "at/under the 30fps (33.3ms) budget",
+    ">=~42ms": "FAIL 30fps, the miss is real"
+  },
+  "glMode": "gpu",
+  "vsyncMode": "uncapped",
+  "cpuThrottle": 4,
+  "viewport": "1280x800@1",
+  "warmupMs": 2000,
+  "sampleMs": 10000,
+  "runs": 3,
+  "arms": [
+    {
+      "label": "pair1-off",
+      "url": "http://127.0.0.1:3010/",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 4,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 407,
+          "frames": 2594,
+          "meanMs": 3.86,
+          "medianMs": 3.8,
+          "p95Ms": 4.8,
+          "p99Ms": 6,
+          "maxMs": 10.8,
+          "minMs": 1,
+          "fps": 259.3
+        },
+        {
+          "run": 1,
+          "warmDrops": 446,
+          "frames": 1602,
+          "meanMs": 6.25,
+          "medianMs": 4,
+          "p95Ms": 18.5,
+          "p99Ms": 32.8,
+          "maxMs": 55.9,
+          "minMs": 0.1,
+          "fps": 159.9
+        },
+        {
+          "run": 2,
+          "warmDrops": 8,
+          "frames": 1050,
+          "meanMs": 9.88,
+          "medianMs": 9,
+          "p95Ms": 19.1,
+          "p99Ms": 30.6,
+          "maxMs": 437.9,
+          "minMs": 0.2,
+          "fps": 101.2
+        }
+      ],
+      "medianOfMediansMs": 4,
+      "worstRunP95Ms": 19.1,
+      "errorCount": 12,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    },
+    {
+      "label": "pair1-on",
+      "url": "http://127.0.0.1:3010/?station=48.5583362,-123.1735774,Orcasound%20Lab&bsw_demo=3&ocean=1",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 4,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 131,
+          "frames": 369,
+          "meanMs": 27.11,
+          "medianMs": 23.9,
+          "p95Ms": 48,
+          "p99Ms": 137.5,
+          "maxMs": 680.3,
+          "minMs": 1,
+          "fps": 36.9
+        },
+        {
+          "run": 1,
+          "warmDrops": 116,
+          "frames": 398,
+          "meanMs": 25.15,
+          "medianMs": 22.2,
+          "p95Ms": 40.1,
+          "p99Ms": 125,
+          "maxMs": 771.5,
+          "minMs": 0.6,
+          "fps": 39.8
+        },
+        {
+          "run": 2,
+          "warmDrops": 205,
+          "frames": 840,
+          "meanMs": 11.92,
+          "medianMs": 11.8,
+          "p95Ms": 14.4,
+          "p99Ms": 28.5,
+          "maxMs": 34.6,
+          "minMs": 0.9,
+          "fps": 83.9
+        }
+      ],
+      "medianOfMediansMs": 22.2,
+      "worstRunP95Ms": 48,
+      "errorCount": 12,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved) — but p95 spills to a higher bucket: intermittent over-refresh frames present"
+      }
+    },
+    {
+      "label": "pair2-light",
+      "url": "http://127.0.0.1:3010/?station=48.5583362,-123.1735774,Orcasound%20Lab&view=topdown",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 4,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 195,
+          "frames": 1015,
+          "meanMs": 9.87,
+          "medianMs": 9.7,
+          "p95Ms": 11.7,
+          "p99Ms": 16.5,
+          "maxMs": 31.3,
+          "minMs": 0.9,
+          "fps": 101.3
+        },
+        {
+          "run": 1,
+          "warmDrops": 169,
+          "frames": 964,
+          "meanMs": 10.39,
+          "medianMs": 10,
+          "p95Ms": 13,
+          "p99Ms": 17.4,
+          "maxMs": 33.3,
+          "minMs": 1.4,
+          "fps": 96.2
+        },
+        {
+          "run": 2,
+          "warmDrops": 206,
+          "frames": 1075,
+          "meanMs": 9.31,
+          "medianMs": 9.1,
+          "p95Ms": 11.2,
+          "p99Ms": 16.1,
+          "maxMs": 27,
+          "minMs": 0.7,
+          "fps": 107.4
+        }
+      ],
+      "medianOfMediansMs": 9.7,
+      "worstRunP95Ms": 13,
+      "errorCount": 12,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    },
+    {
+      "label": "pair2-heavy",
+      "url": "http://127.0.0.1:3010/?station=48.5583362,-123.1735774,Orcasound%20Lab&view=topdown&ocean=1&bsw_demo=3",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 4,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 163,
+          "frames": 855,
+          "meanMs": 11.71,
+          "medianMs": 11.5,
+          "p95Ms": 13.9,
+          "p99Ms": 20.5,
+          "maxMs": 35.5,
+          "minMs": 0.6,
+          "fps": 85.4
+        },
+        {
+          "run": 1,
+          "warmDrops": 182,
+          "frames": 868,
+          "meanMs": 11.53,
+          "medianMs": 11.3,
+          "p95Ms": 13.8,
+          "p99Ms": 19.4,
+          "maxMs": 31.5,
+          "minMs": 0.7,
+          "fps": 86.7
+        },
+        {
+          "run": 2,
+          "warmDrops": 161,
+          "frames": 925,
+          "meanMs": 10.83,
+          "medianMs": 10.6,
+          "p95Ms": 13.4,
+          "p99Ms": 16.8,
+          "maxMs": 33.3,
+          "minMs": 1.3,
+          "fps": 92.4
+        }
+      ],
+      "medianOfMediansMs": 11.3,
+      "worstRunP95Ms": 13.9,
+      "errorCount": 12,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    }
+  ]
+}

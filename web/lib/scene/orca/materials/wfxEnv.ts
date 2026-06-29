@@ -126,3 +126,84 @@ export function makeSandboxWfxEnv(opts: SandboxWfxEnvOptions): WfxEnvHandle {
     },
   };
 }
+
+// ============================================================================
+// Live WfxEnvHandle registry (ENV-handle-consolidation, BSWR-ENV).
+//
+// The live twin builds exactly one real WfxEnvHandle (the OrcaRig component, via
+// makeRealWfxEnv in web/lib/scene/wfx/realWfxEnv.ts). OrcaRig is also the sole
+// scene.environment writer. Before this registry the homepage slice baked a
+// SECOND PMREM only to light its reenactment pool, because ORCA published no way
+// to read the existing handle. This registry is that publication channel: OrcaRig
+// pushes its live handle here after build and clears it on dispose, and the slice
+// borrows it for the pool instead of baking a duplicate.
+//
+// Ownership and lifetime (LOCKED, ENV-Q decisions 3 + 4):
+//   - OrcaRig is the SOLE owner and SOLE disposer of the handle. The registry only
+//     holds a borrowed reference. It NEVER disposes, and it NEVER touches
+//     scene.environment, so the single-writer invariant is preserved.
+//   - Valid after build, cleared on dispose. getLiveWfxEnv returns the handle only
+//     between OrcaRig's set and clear.
+//   - clearLiveWfxEnv is identity-guarded: it only nulls the holder when the
+//     current value is the exact handle passed, so a recompute or out-of-order
+//     teardown cannot wipe a newer handle.
+//   - Borrowers must NEVER call dispose on a handle read from here, and must re-key
+//     (rebuild) on handle-identity change rather than mutate in place.
+//
+// Reactivity: getLiveWfxEnv is the snapshot and subscribeLiveWfxEnv is the
+// subscribe, the pair a React consumer reads through
+// useSyncExternalStore(subscribeLiveWfxEnv, getLiveWfxEnv, getLiveWfxEnv). The
+// snapshot is reference-stable between notifications (it returns the module
+// holder, which only changes on set/clear), so it satisfies the store contract.
+// This module stays React-free; the hook call lives in the consumer.
+
+let liveWfxEnv: WfxEnvHandle | null = null;
+const liveWfxEnvListeners = new Set<() => void>();
+
+function emitLiveWfxEnv(): void {
+  for (const listener of liveWfxEnvListeners) listener();
+}
+
+/**
+ * Publish the live WfxEnvHandle. Called by the owner (OrcaRig) after it builds the
+ * handle. Stores a borrowed reference and notifies subscribers. Does nothing if the
+ * same handle is published again. The owner remains responsible for disposal.
+ */
+export function setLiveWfxEnv(handle: WfxEnvHandle): void {
+  if (liveWfxEnv === handle) return;
+  liveWfxEnv = handle;
+  emitLiveWfxEnv();
+}
+
+/**
+ * Read the current live WfxEnvHandle, or null before the owner has published one
+ * (or after it cleared on dispose). This is the useSyncExternalStore snapshot; it
+ * is reference-stable between notifications. Borrowers must NOT dispose the handle
+ * and must re-key on identity change.
+ */
+export function getLiveWfxEnv(): WfxEnvHandle | null {
+  return liveWfxEnv;
+}
+
+/**
+ * Clear the published handle on owner dispose. Identity-guarded: only nulls the
+ * holder when the current value is exactly `handle`, so a stale clear cannot wipe a
+ * newer handle published by a rebuild. The owner calls this BEFORE handle.dispose().
+ */
+export function clearLiveWfxEnv(handle: WfxEnvHandle): void {
+  if (liveWfxEnv !== handle) return;
+  liveWfxEnv = null;
+  emitLiveWfxEnv();
+}
+
+/**
+ * Subscribe to live-handle changes. Returns an unsubscribe. Paired with
+ * getLiveWfxEnv for useSyncExternalStore so a React consumer re-renders when the
+ * owner publishes or clears the handle.
+ */
+export function subscribeLiveWfxEnv(listener: () => void): () => void {
+  liveWfxEnvListeners.add(listener);
+  return () => {
+    liveWfxEnvListeners.delete(listener);
+  };
+}

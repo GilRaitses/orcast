@@ -1,0 +1,59 @@
+== P0: split-leakage + leave-station-OUT (per seed) ==
+  [PASS] seed0 station intersection empty  shared=set()
+  [PASS] seed0 station-day intersection empty  n_shared=0
+  [PASS] seed0 soundfile intersection empty  n_shared=0
+  [PASS] seed0 leave-station-OUT for TKW (no TKW test station in TKW train)  overlap=set()
+  [PASS] seed0 >=2 TKW stations retained in train  tkw_train_stations=[np.str_('BoundaryPass'), np.str_('HaroStraitSouth'), np.str_('StraitofGeorgia'), np.str_('SwanChan')]
+  [PASS] seed0 support floor met (>=186 TKW windows AND >=3 station-days)  win=405 days=4
+  [PASS] seed1 station intersection empty  shared=set()
+  [PASS] seed1 station-day intersection empty  n_shared=0
+  [PASS] seed1 soundfile intersection empty  n_shared=0
+  [PASS] seed1 leave-station-OUT for TKW (no TKW test station in TKW train)  overlap=set()
+  [PASS] seed1 >=2 TKW stations retained in train  tkw_train_stations=[np.str_('BoundaryPass'), np.str_('HaroStraitSouth'), np.str_('StrGeoN1'), np.str_('StrGeoS1'), np.str_('SwanChan')]
+  [PASS] seed1 support floor met (>=186 TKW windows AND >=3 station-days)  win=248 days=5
+  [PASS] seed2 station intersection empty  shared=set()
+  [PASS] seed2 station-day intersection empty  n_shared=0
+  [PASS] seed2 soundfile intersection empty  n_shared=0
+  [PASS] seed2 leave-station-OUT for TKW (no TKW test station in TKW train)  overlap=set()
+  [PASS] seed2 >=2 TKW stations retained in train  tkw_train_stations=[np.str_('BoundaryPass'), np.str_('HaroStraitSouth'), np.str_('StrGeoN1'), np.str_('StraitofGeorgia')]
+  [PASS] seed2 support floor met (>=186 TKW windows AND >=3 station-days)  win=192 days=3
+  [PASS] seed3 station intersection empty  shared=set()
+  [PASS] seed3 station-day intersection empty  n_shared=0
+  [PASS] seed3 soundfile intersection empty  n_shared=0
+  [PASS] seed3 leave-station-OUT for TKW (no TKW test station in TKW train)  overlap=set()
+  [PASS] seed3 >=2 TKW stations retained in train  tkw_train_stations=[np.str_('BoundaryPass'), np.str_('HaroStraitSouth'), np.str_('StrGeoS1'), np.str_('StraitofGeorgia')]
+  [PASS] seed3 support floor met (>=186 TKW windows AND >=3 station-days)  win=261 days=3
+  [PASS] seed4 station intersection empty  shared=set()
+  [PASS] seed4 station-day intersection empty  n_shared=0
+  [PASS] seed4 soundfile intersection empty  n_shared=0
+  [PASS] seed4 leave-station-OUT for TKW (no TKW test station in TKW train)  overlap=set()
+  [PASS] seed4 >=2 TKW stations retained in train  tkw_train_stations=[np.str_('BoundaryPass'), np.str_('StrGeoS1'), np.str_('StraitofGeorgia'), np.str_('SwanChan')]
+  [PASS] seed4 support floor met (>=186 TKW windows AND >=3 station-days)  win=294 days=3
+== P0: served classification.json contract UNCHANGED ==
+  [PASS] model_version still bam-srkw-presence-v0 (not v1/v2)  bam-srkw-presence-v0
+  [PASS] classes == ['srkw_call_presence'] only (no ecotype/call_type field)  ['srkw_call_presence']
+  [PASS] ecotype (SRKW vs Bigg's) still in not_claimed  ['whale count', 'pod / individual ID', "ecotype (SRKW vs Bigg's)", 'call type', 'single vs multiple callers']
+  [PASS] call type still in not_claimed
+  [PASS] single vs multiple still in not_claimed
+  [PASS] spawnCountBasis still 'presence_only'  presence_only
+  [PASS] no pod/individual-ID claim outside the not_claimed disclaimer
+  [PASS] no S1-S40 catalog call in served JSON
+  [PASS] no TKW/Bigg's presence assertion class in served JSON
+== P0: heads guard refuses call_type + single_vs_multiple ==
+  [PASS] assert_shippable('call_type') refuses
+  [PASS] assert_shippable('single_vs_multiple') refuses
+== P0: v2 eval verdict is honest (no overclaim baked in) ==
+  [PASS] feature_only verdict.passes == False (SRKW f1 guard fails)  median={'TKW_f1': 0.7037, 'TKW_recall': 0.8027, 'SRKW_f1': 0.6934}
+  [PASS] v2 overall ships == False; classification.json untouched  no reliable lift; ecotype wording unchanged; classification.json untouched.
+  [PASS] perch_embedding status == not_run (box gate; not evaluated on partial)  perch embedding cache absent (perch_embeddings_v1.npz); run perch_embed.py on th
+== P0: promotion.json cannot flip the static acoustic contract ==
+  [PASS] promotion.json is kernel track (kernel_version present, no acoustic/classification key)  keys=['applied_at', 'decision_id', 'effective_confidence', 'kernel_version', 'promoted', 'repr_id', 'reviewer', 'run_id']
+  [PASS] classification.json loader has NO promotion linkage
+== P1: confounds + spread disclosed in v2 eval ==
+  [PASS] recorder/encounter + few-station confound disclosed
+  [PASS] prior mismatch / recalibration disclosed
+  [PASS] per-seed spread present for TKW f1 / recall / SRKW f1
+  [PASS] recalibrated confidence recorded per seed
+
+== ADV SUMMARY: 50/50 checks PASS, 0 FAIL ==
+ZERO open P0/P1.

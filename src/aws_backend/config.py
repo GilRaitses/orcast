@@ -20,6 +20,7 @@ class Settings:
     journal_table: str = os.getenv("ORCAST_JOURNAL_TABLE", "orcast-user-journal")
     partner_keys_table: str = os.getenv("ORCAST_PARTNER_KEYS_TABLE", "orcast-partner-api-keys")
     managed_agents_table: str = os.getenv("ORCAST_MANAGED_AGENTS_TABLE", "")
+    dtag_annotations_table: str = os.getenv("ORCAST_DTAG_ANNOTATIONS_TABLE", "orcast-dtag-annotations")
     raw_payload_bucket: str = os.getenv("ORCAST_RAW_PAYLOAD_BUCKET", "orcast-raw-payloads")
     reports_bucket: str = os.getenv("ORCAST_REPORTS_BUCKET", "orcast-probability-reports")
     # Where fitted kernel coefficients + gate report live. Empty == reuse the

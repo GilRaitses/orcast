@@ -1,0 +1,285 @@
+{
+  "mode": "ab",
+  "method": "emulated client tier (method X): real T4 GPU + CDP CPU throttle + client viewport + vsync-quantised rAF sampler. NOT a sub-refresh frame-time meter (subRefreshProven:false, vsync_smoke_local.json); it is a vsync-QUANTISED 30fps over-budget oracle (PRF-ADV1-DECISION.md, Option 1).",
+  "budgetMs": 33.33,
+  "quantisation": "rAF interval clamps to refresh multiples ~16.7 / 33.3 / 50 ms; it cannot distinguish a 5ms frame from a 16ms frame (both read ~16.7ms). A clamped ~16.7ms median is PASS-with-margin, NEVER reported as the measured frame-time.",
+  "honesty": "emulated client tier = CPU-throttled LOWER BOUND on a server-class T4 GPU. A miss (sustained >=50ms bucket) is dispositive and real; a clamped ~16.7ms pass does NOT certify the real client GPU (the GPU work is not throttled). Emulated, not a real device.",
+  "verdict_legend": {
+    "median <~25ms": "clamped at one refresh -> PASS 30fps with margin",
+    "~25-42ms": "at/under the 30fps (33.3ms) budget",
+    ">=~42ms": "FAIL 30fps, the miss is real"
+  },
+  "glMode": "gpu",
+  "vsyncMode": "uncapped",
+  "cpuThrottle": 1,
+  "viewport": "1280x800@1",
+  "warmupMs": 2000,
+  "sampleMs": 10000,
+  "runs": 3,
+  "arms": [
+    {
+      "label": "pair1-off",
+      "url": "http://127.0.0.1:3010/",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 1,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 2365,
+          "frames": 11094,
+          "meanMs": 0.9,
+          "medianMs": 0.8,
+          "p95Ms": 1.2,
+          "p99Ms": 2.6,
+          "maxMs": 182.9,
+          "minMs": 0,
+          "fps": 1109.3
+        },
+        {
+          "run": 1,
+          "warmDrops": 2171,
+          "frames": 11015,
+          "meanMs": 0.91,
+          "medianMs": 0.8,
+          "p95Ms": 1.3,
+          "p99Ms": 3.3,
+          "maxMs": 52.4,
+          "minMs": 0,
+          "fps": 1101.4
+        },
+        {
+          "run": 2,
+          "warmDrops": 2180,
+          "frames": 10917,
+          "meanMs": 0.92,
+          "medianMs": 0.8,
+          "p95Ms": 1.3,
+          "p99Ms": 3.3,
+          "maxMs": 53.9,
+          "minMs": 0,
+          "fps": 1091.6
+        }
+      ],
+      "medianOfMediansMs": 0.8,
+      "worstRunP95Ms": 1.3,
+      "errorCount": 12,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    },
+    {
+      "label": "pair1-on",
+      "url": "http://127.0.0.1:3010/?station=48.5583362,-123.1735774,Orcasound%20Lab&bsw_demo=3&ocean=1",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 1,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 902,
+          "frames": 4322,
+          "meanMs": 2.31,
+          "medianMs": 2.1,
+          "p95Ms": 3.1,
+          "p99Ms": 5,
+          "maxMs": 18,
+          "minMs": 0.2,
+          "fps": 432.1
+        },
+        {
+          "run": 1,
+          "warmDrops": 921,
+          "frames": 4420,
+          "meanMs": 2.26,
+          "medianMs": 2.1,
+          "p95Ms": 3.2,
+          "p99Ms": 5.1,
+          "maxMs": 11.8,
+          "minMs": 0.2,
+          "fps": 441.9
+        },
+        {
+          "run": 2,
+          "warmDrops": 874,
+          "frames": 4318,
+          "meanMs": 2.32,
+          "medianMs": 2.2,
+          "p95Ms": 3.2,
+          "p99Ms": 4.8,
+          "maxMs": 10.5,
+          "minMs": 0.2,
+          "fps": 431.6
+        }
+      ],
+      "medianOfMediansMs": 2.1,
+      "worstRunP95Ms": 3.2,
+      "errorCount": 18,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:113: 'interface' : Illegal use of reserved word\nERROR: 0:113: 'interface' : syntax error\n\u0000\n\n  108: \n  109:   void main() {\n  110:     float depthFrac = 1.0 - vUv.y;            // 0 surface, 1 deep\n  111:     vec4 strat = texture2D(uStrata, vec2(depthFrac, 0.5));\n  112:     float salinity = strat.r;                 // 0 fresh .. 1 salty\n> 113:     float interface = strat.b;                // band sharpness at the halocline\n  114: \n  115:     float t = uTime * uSpeed;\n  116:     // Warm/salty fingers descend; cold/fresh plumes rise. Opposed vertical scroll.\n  117:     float down = fbm(vec2(vUv.x * 5.0, vUv.y * 7.0 + t * 0.15));\n  118:     float up   = fbm(vec2(vUv.x * 5.0 + 11.0, vUv.y * 7.0 - t * 0.12));\n  119: ",
+        "THREE.WebGLProgram: Shader Error 1282 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:213: 'interface' : Illegal use of reserved word\nERROR: 0:213: 'interface' : syntax error\n\u0000\n\n  208: \n  209:   void main() {\n  210:     float depthFrac = 1.0 - vUv.y;            // 0 surface, 1 deep\n  211:     vec4 strat = texture2D(uStrata, vec2(depthFrac, 0.5));\n  212:     float salinity = strat.r;                 // 0 fresh .. 1 salty\n> 213:     float interface = strat.b;                // band sharpness at the halocline\n  214: \n  215:     float t = uTime * uSpeed;\n  216:     // Warm/salty fingers descend; cold/fresh plumes rise. Opposed vertical scroll.\n  217:     float down = fbm(vec2(vUv.x * 5.0, vUv.y * 7.0 + t * 0.15));\n  218:     float up   = fbm(vec2(vUv.x * 5.0 + 11.0, vUv.y * 7.0 - t * 0.12));\n  219: ",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    },
+    {
+      "label": "pair2-light",
+      "url": "http://127.0.0.1:3010/?station=48.5583362,-123.1735774,Orcasound%20Lab&view=topdown",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 1,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 1010,
+          "frames": 4787,
+          "meanMs": 2.1,
+          "medianMs": 1.9,
+          "p95Ms": 3.4,
+          "p99Ms": 5.3,
+          "maxMs": 108.4,
+          "minMs": 0.1,
+          "fps": 477
+        },
+        {
+          "run": 1,
+          "warmDrops": 828,
+          "frames": 4447,
+          "meanMs": 2.25,
+          "medianMs": 2.2,
+          "p95Ms": 3.2,
+          "p99Ms": 5.4,
+          "maxMs": 13.2,
+          "minMs": 0.1,
+          "fps": 444.7
+        },
+        {
+          "run": 2,
+          "warmDrops": 796,
+          "frames": 4527,
+          "meanMs": 2.21,
+          "medianMs": 2.1,
+          "p95Ms": 3.3,
+          "p99Ms": 5.3,
+          "maxMs": 10,
+          "minMs": 0.1,
+          "fps": 452.6
+        }
+      ],
+      "medianOfMediansMs": 2.1,
+      "worstRunP95Ms": 3.4,
+      "errorCount": 12,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    },
+    {
+      "label": "pair2-heavy",
+      "url": "http://127.0.0.1:3010/?station=48.5583362,-123.1735774,Orcasound%20Lab&view=topdown&ocean=1&bsw_demo=3",
+      "glRenderer": "ANGLE (NVIDIA Corporation, Tesla T4/PCIe/SSE2, OpenGL ES 3.2)",
+      "glMode": "gpu",
+      "vsyncMode": "uncapped",
+      "cpuThrottle": 1,
+      "viewport": "1280x800@1",
+      "warmupMs": 2000,
+      "sampleMs": 10000,
+      "runs": [
+        {
+          "run": 0,
+          "warmDrops": 826,
+          "frames": 4233,
+          "meanMs": 2.36,
+          "medianMs": 2.2,
+          "p95Ms": 3.2,
+          "p99Ms": 5.1,
+          "maxMs": 11.2,
+          "minMs": 0.1,
+          "fps": 423.2
+        },
+        {
+          "run": 1,
+          "warmDrops": 836,
+          "frames": 4383,
+          "meanMs": 2.28,
+          "medianMs": 2.2,
+          "p95Ms": 3.1,
+          "p99Ms": 4.8,
+          "maxMs": 10.1,
+          "minMs": 0.2,
+          "fps": 438.2
+        },
+        {
+          "run": 2,
+          "warmDrops": 862,
+          "frames": 4508,
+          "meanMs": 2.22,
+          "medianMs": 2.1,
+          "p95Ms": 3,
+          "p99Ms": 5.1,
+          "maxMs": 11.4,
+          "minMs": 0.2,
+          "fps": 450.6
+        }
+      ],
+      "medianOfMediansMs": 2.2,
+      "worstRunP95Ms": 3.2,
+      "errorCount": 18,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:113: 'interface' : Illegal use of reserved word\nERROR: 0:113: 'interface' : syntax error\n\u0000\n\n  108: \n  109:   void main() {\n  110:     float depthFrac = 1.0 - vUv.y;            // 0 surface, 1 deep\n  111:     vec4 strat = texture2D(uStrata, vec2(depthFrac, 0.5));\n  112:     float salinity = strat.r;                 // 0 fresh .. 1 salty\n> 113:     float interface = strat.b;                // band sharpness at the halocline\n  114: \n  115:     float t = uTime * uSpeed;\n  116:     // Warm/salty fingers descend; cold/fresh plumes rise. Opposed vertical scroll.\n  117:     float down = fbm(vec2(vUv.x * 5.0, vUv.y * 7.0 + t * 0.15));\n  118:     float up   = fbm(vec2(vUv.x * 5.0 + 11.0, vUv.y * 7.0 - t * 0.12));\n  119: ",
+        "THREE.WebGLProgram: Shader Error 1282 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:213: 'interface' : Illegal use of reserved word\nERROR: 0:213: 'interface' : syntax error\n\u0000\n\n  208: \n  209:   void main() {\n  210:     float depthFrac = 1.0 - vUv.y;            // 0 surface, 1 deep\n  211:     vec4 strat = texture2D(uStrata, vec2(depthFrac, 0.5));\n  212:     float salinity = strat.r;                 // 0 fresh .. 1 salty\n> 213:     float interface = strat.b;                // band sharpness at the halocline\n  214: \n  215:     float t = uTime * uSpeed;\n  216:     // Warm/salty fingers descend; cold/fresh plumes rise. Opposed vertical scroll.\n  217:     float down = fbm(vec2(vUv.x * 5.0, vUv.y * 7.0 + t * 0.15));\n  218:     float up   = fbm(vec2(vUv.x * 5.0 + 11.0, vUv.y * 7.0 - t * 0.12));\n  219: ",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "verdict": {
+        "bucket": "~16.7ms (one refresh)",
+        "reading": "PASS 30fps with margin (true cost < one refresh; vsync-quantised, sub-refresh headroom unresolved)"
+      }
+    }
+  ]
+}

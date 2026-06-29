@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type MutableRefObject,
+} from "react";
 import { Canvas, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -90,6 +98,13 @@ import {
   createOrcaController,
   REAL_SRKW_MOTION_URL,
   ORCA_MESH_URL,
+  // ENV-handle-consolidation: ORCA-owned live-handle registry. OrcaRig publishes
+  // (set/clear); SliceRig borrows the single live handle via useSyncExternalStore
+  // instead of baking a second PMREM.
+  setLiveWfxEnv,
+  clearLiveWfxEnv,
+  getLiveWfxEnv,
+  subscribeLiveWfxEnv,
   type OrcaController,
   type WfxEnvHandle,
 } from "@/lib/scene/orca";
@@ -126,6 +141,7 @@ import {
 // pulls the promoted layer + its locked on-screen labels.
 import {
   createDoubleDiffusionLayer,
+  measuredHaloclineProfile,
   INTERPRETIVE_OCEAN_LABEL,
   INTERPRETIVE_OCEAN_DETAIL,
   type DoubleDiffusionLayer,
@@ -906,11 +922,20 @@ function OrcaRig({ worldUnitsPerMeter }: { worldUnitsPerMeter?: number }) {
   // R03 env seam (E6): assign the WFX PMREM as scene.environment so the orca's
   // PBR IBL (and any standard-material scene PBR) is lit by the scene sky, under
   // the E1 exposure 0.5 so the dark dorsal does not wash out.
+  //
+  // ENV-handle-consolidation: OrcaRig also PUBLISHES this single live handle to
+  // the ORCA-owned registry so the homepage slice can borrow it for the
+  // reenactment pool instead of baking a second PMREM. OrcaRig stays the sole
+  // owner/disposer and the sole scene.environment writer. The clear is
+  // identity-guarded and runs BEFORE dispose so a borrower never reads a freed
+  // texture through the registry.
   useEffect(() => {
     const prev = scene.environment;
     scene.environment = env.pmremEnvironment;
+    setLiveWfxEnv(env);
     return () => {
       if (scene.environment === env.pmremEnvironment) scene.environment = prev;
+      clearLiveWfxEnv(env);
       env.dispose?.();
     };
   }, [scene, env]);
@@ -997,10 +1022,12 @@ function OrcaRig({ worldUnitsPerMeter }: { worldUnitsPerMeter?: number }) {
 //     select. No second director is created and the per-frame director.update
 //     stays owned by IntentDirectorRig. See the WS-INTENT review note in
 //     web/lib/scene/camera/WIRING-slice-note.md.
-//   SEAM 4 (WFX env): a second makeRealWfxEnv PMREM bake lights ONLY the
-//     reenactment pool's materials (passed to createOrcaPool); it is never
-//     assigned to scene.environment, so OrcaRig remains the lone writer. The
-//     consolidation follow-up (ORCA exposes its env handle) is in
+//   SEAM 4 (WFX env, CONSOLIDATED): the slice no longer bakes its own PMREM. It
+//     borrows OrcaRig's single live WfxEnvHandle from the ORCA-owned registry
+//     (setLiveWfxEnv/getLiveWfxEnv, read here via useSyncExternalStore) and hands
+//     it to createOrcaPool, so one PMREM lights both the orca and the pool. It is
+//     never assigned to scene.environment, so OrcaRig remains the lone writer and
+//     the sole owner/disposer of the handle (the slice never disposes it). See
 //     web/lib/scene/wfx/WIRING-slice-note.md.
 //   SEAM 6 (first paint): the STFT/WebAudio bake and all slice loads fire ONLY
 //     after a station is selected; nothing here runs on first paint.
@@ -1117,6 +1144,7 @@ function SliceRig({
   field,
   worldUnitsPerMeter,
   demoCount,
+  captureFreezeT,
   intentRefs,
   hudHost,
   onSliceState,
@@ -1128,6 +1156,9 @@ function SliceRig({
   // BRE-INTEGRATE: labeled capability-demo orca count (1..3) from ?bsw_demo. When
   // null, the homepage spawns exactly BAM's presence-only estimate (0/1).
   demoCount?: number | null;
+  // ENV-ACCEPT: when set, freeze the slice timeline at this playhead (paused) and
+  // hold the camera static for a deterministic headless capture. null = normal play.
+  captureFreezeT?: number | null;
   intentRefs: IntentBridgeRefs;
   hudHost: HTMLDivElement | null;
   onSliceState: (s: SliceState) => void;
@@ -1140,27 +1171,23 @@ function SliceRig({
   );
   const hasClip = entry.audio.kind === "archived-clip";
   const clipUrl = entry.audio.audioUrl ?? null;
-  const gl = useThree((s) => s.gl);
   const camera = useThree((s) => s.camera);
-  const sun = useScenicSun();
 
-  // SEAM 4: pool-only WFX env. PMREMs the same scene sky for the reenactment
-  // materials' IBL and carries the twin-unit underwater optic. It is passed to
-  // createOrcaPool ONLY; it is NEVER assigned to scene.environment (OrcaRig is
-  // the sole writer). One-time PMREM bake, disposed on unmount; no third render
-  // pass is added (the pool joins the existing opaque depth pre-pass).
-  const env = useMemo<WfxEnvHandle>(
-    () =>
-      makeRealWfxEnv({
-        renderer: gl,
-        sunDirection: sun.direction,
-        sunColor: sun.color,
-        sunIntensity: sun.intensity,
-        waterLevelY: SEA_LEVEL_Y,
-      }),
-    [gl, sun],
+  // SEAM 4 (consolidated, ENV-handle-consolidation): the slice no longer bakes a
+  // second PMREM. It BORROWS OrcaRig's single live WFX env handle from the
+  // ORCA-owned registry for the reenactment pool. OrcaRig owns and disposes the
+  // handle and stays the sole scene.environment writer; the slice is a borrower
+  // and NEVER disposes it. useSyncExternalStore re-renders when OrcaRig publishes
+  // or clears the handle, so the presence-gated spawn below re-runs once the
+  // handle is live. wfxEnv is null before OrcaRig has built it (the spawn is
+  // skipped, mirroring the authority gate). A change in handle identity re-keys
+  // the pool effect, which tears down and REBUILDS the pool, the required path
+  // because the pool eyes pin their envMap at build with no live update.
+  const wfxEnv = useSyncExternalStore(
+    subscribeLiveWfxEnv,
+    getLiveWfxEnv,
+    getLiveWfxEnv,
   );
-  useEffect(() => () => env.dispose?.(), [env]);
 
   // Modeled seabed depth (metres, negative below sea level): the LIVE CUDEM
   // substrate field first, then this station's modeled fallback (from the
@@ -1266,8 +1293,16 @@ function SliceRig({
         }
         timelineRef.current = tl;
         if (tl.hud && hudHost) tl.hud.mount(hudHost);
-        // Station-select is a user gesture, so resuming WebAudio is permitted.
-        tl.authority.seek(SLICE_DEFAULT_T, { play: true });
+        // Normal navigation: station-select is a user gesture, so resuming
+        // WebAudio and playing is permitted. ENV-ACCEPT capture: when
+        // captureFreezeT is set, seek to that playhead and HOLD it paused so the
+        // reenactment pose is constant every frame (the driver reads the frozen
+        // authority.currentTimeS), yielding a deterministic headless frame.
+        if (captureFreezeT != null) {
+          tl.authority.seek(captureFreezeT, { play: false });
+        } else {
+          tl.authority.seek(SLICE_DEFAULT_T, { play: true });
+        }
         setAuthority(tl.authority);
       })
       .catch((e) => {
@@ -1296,7 +1331,7 @@ function SliceRig({
   }, [hudHost, entry]);
 
   // BRE: presence-gated reenactment pool from the BAM classification, lit by the
-  // pool-only WFX env. worldUnitsPerMeter is the live fit scale (honest depth);
+  // borrowed live WFX env handle. worldUnitsPerMeter is the live fit scale (honest depth);
   // body readability comes from the bodyScale on the spawn record (SEAM-aligned
   // with OrcaRig). Added imperatively once the authority exists.
   const poolGroupRef = useRef<THREE.Group>(null);
@@ -1305,7 +1340,11 @@ function SliceRig({
   const countBasisRef = useRef<string>("");
   const behaviorsRef = useRef<string[]>([]);
   useEffect(() => {
-    if (!authority) return;
+    // Gate on BOTH the audio authority AND the borrowed live WFX handle. wfxEnv is
+    // null until OrcaRig has built and published its env; skipping here (and
+    // re-running when the handle arrives, via the dep below) mirrors the existing
+    // authority gate and avoids spawning a pool with no env.
+    if (!authority || !wfxEnv) return;
     let alive = true;
     let pool: OrcaPool | null = null;
     let driver: TimelineDriver | null = null;
@@ -1340,7 +1379,7 @@ function SliceRig({
       // cost is identical at nMax=3 (BUILD finding) and the change is additive to
       // ORCA-owned code. See web/lib/scene/reenactment/WIRING.md.
       pool = createOrcaPool({
-        env,
+        env: wfxEnv,
         bounds: TILESET_BOUNDS,
         sceneDepth: SCENE_DEPTH,
         worldUnitsPerMeter: worldUnitsPerMeter ?? 1,
@@ -1372,7 +1411,11 @@ function SliceRig({
       driverRef.current = null;
       behaviorsRef.current = [];
     };
-  }, [authority, env, station.lat, station.lng, worldUnitsPerMeter, demoCount]);
+    // wfxEnv is in the deps so a change in OrcaRig's published handle identity
+    // re-keys this effect: the cleanup below disposes the current pool and a fresh
+    // pool is rebuilt against the new handle. Rebuild, not setEnv, because the pool
+    // eyes pin their envMap at construction with no live update path.
+  }, [authority, wfxEnv, station.lat, station.lng, worldUnitsPerMeter, demoCount]);
 
   // SEAM 3 stands: the reusable POV-selection object drives the EXISTING
   // SalishScene director (intentRefs). It creates NO second director and does
@@ -1392,7 +1435,12 @@ function SliceRig({
     const controller = createStationPovController({
       director,
       getStation: () => ({ lat: station.lat, lng: station.lng, seabedDepthM }),
-      context: (p) => (p === "topdown" ? { orbit: true } : {}),
+      // Top-down adds a slow continuous orbit in normal use. Under an ENV-ACCEPT
+      // capture (captureFreezeT set) the orbit is suppressed so the camera holds a
+      // fixed overview after the fly-in settles, which keeps the frozen frame
+      // pixel-stable across runs. The hydrophone fly-in already settles static.
+      context: (p) =>
+        p === "topdown" ? { orbit: captureFreezeT == null } : {},
       initialPov: pov,
     });
     povCtlRef.current = controller;
@@ -1401,7 +1449,7 @@ function SliceRig({
       controller.stop();
       povCtlRef.current = null;
     };
-  }, [intentRefs, station.lat, station.lng, seabedDepthM, pov]);
+  }, [intentRefs, station.lat, station.lng, seabedDepthM, pov, captureFreezeT]);
 
   // Drive loop: one clock (BSH authority) -> reenactment (BRE). The director is
   // advanced by IntentDirectorRig, not here. Chip state is pushed only when the
@@ -1448,7 +1496,7 @@ function SliceRig({
       {/* BST rig + BRE reenactment pool, both anchored at the station and added
           imperatively. The slice adds NO lights and mutates NO scene global; it
           is lit by the live twin (SkyRig sky, OrcaRig scene.environment) and the
-          pool-only WFX env. */}
+          borrowed live WFX env handle (OrcaRig-owned). */}
       <group ref={rigGroupRef} />
       <group ref={poolGroupRef} />
     </group>
@@ -1482,8 +1530,16 @@ function OceanProcessRig({ surfaceY }: { surfaceY: number }) {
   const layerRef = useRef<DoubleDiffusionLayer | null>(null);
   useEffect(() => {
     const layer = createDoubleDiffusionLayer({
+      // OCN: ground the profile in a measured CC0 CruiseSalish CTD cast (NCEI
+      // 0307188, nearby-analog). The visualization stays interpretive; only the
+      // halocline placement and band sharpness come from the measured cast. The
+      // provenance is guarded by assertNoForbiddenClaim inside the factory.
+      profile: measuredHaloclineProfile(),
       width: SCENE_WIDTH * 1.4,
       height: 70,
+      // surfaceY feeds the scalar surface-Y top-clip so the plume dies at the
+      // real water surface. SEA_LEVEL_Y today; migrate to the single live
+      // WfxEnvHandle.underwater.waterLevelY once the ENV lane publishes it.
       surfaceY,
     });
     layer.setEnabled(true);
@@ -1513,6 +1569,7 @@ function TwinScene({
   selectedStation,
   pov,
   demoCount,
+  captureFreezeT,
   hudHost,
   oceanOn,
   onSliceState,
@@ -1534,6 +1591,9 @@ function TwinScene({
   // BRE-INTEGRATE: labeled capability-demo orca count (1..3) from ?bsw_demo, or
   // null for the homepage default (BAM presence-only 0/1).
   demoCount: number | null;
+  // ENV-ACCEPT: ?capture_t freeze playhead (paused) for a deterministic headless
+  // capture frame, or null for normal playback. Forwarded to SliceRig.
+  captureFreezeT: number | null;
   hudHost: HTMLDivElement | null;
   // BSH-INTEGRATE: when true, mount the additive default-off ocean-process layer.
   oceanOn: boolean;
@@ -1639,8 +1699,8 @@ function TwinScene({
           the BST rig + BRE reenactment at the selected station as in-scene
           objects (SEAM 1+2: no scene.background/fog/environment writes) and
           drives a dive-to-rig POV on the EXISTING director (SEAM 3). The
-          pool-only WFX env lives inside SliceRig and is never assigned to
-          scene.environment (SEAM 4). worldUnitsPerMeter is the live fit scale.
+          borrowed live WFX env handle (OrcaRig-owned) lights the pool and is never
+          assigned to scene.environment (SEAM 4). worldUnitsPerMeter is the live fit scale.
           ==================================================================== */}
       {selectedStation && (
         <SliceRig
@@ -1649,6 +1709,7 @@ function TwinScene({
           field={field}
           worldUnitsPerMeter={scenicWorldUnitsPerMeter}
           demoCount={demoCount}
+          captureFreezeT={captureFreezeT}
           intentRefs={intentRefs}
           hudHost={hudHost}
           onSliceState={onSliceState}
@@ -1764,6 +1825,12 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
   // BSH-INTEGRATE: the interpretive double-diffusion ocean layer toggle. Default
   // OFF; the layer is only mounted (and the mandatory chip shown) when this is on.
   const [oceanOn, setOceanOn] = useState(false);
+  // ENV-ACCEPT capture freeze: ?capture_t=<seconds> seeks the slice timeline to
+  // that playhead and HOLDS it paused (no real-delta advance), and suppresses the
+  // top-down orbit, so a headless render produces a pixel-stable frozen frame for
+  // the GPU parity diff. null in normal navigation, so the timeline plays as usual
+  // and top-down keeps its slow orbit. Capture-only, inert when the param absent.
+  const [captureFreezeT, setCaptureFreezeT] = useState<number | null>(null);
   const handleIntent = useCallback((intent: SceneIntent) => {
     if (intent.type === "hydrophone") {
       setSelectedStation({
@@ -1815,6 +1882,14 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
     if (demoRaw != null) {
       const n = parseInt(demoRaw, 10);
       if (Number.isFinite(n)) setDemoCount(Math.min(3, Math.max(1, n)));
+    }
+    // ENV-ACCEPT: ?capture_t=<seconds> freezes the slice timeline at that playhead
+    // (paused) and holds the camera static for a deterministic headless frame.
+    // Inert when absent. A bare ?capture_t (no value) freezes at SLICE_DEFAULT_T.
+    const captureRaw = q.get("capture_t");
+    if (captureRaw != null) {
+      const ct = parseFloat(captureRaw);
+      setCaptureFreezeT(Number.isFinite(ct) ? ct : SLICE_DEFAULT_T);
     }
   }, []);
 
@@ -1913,6 +1988,7 @@ export default function SalishScene({ onIntent, focus }: SalishSceneProps) {
           selectedStation={selectedStation}
           pov={pov}
           demoCount={demoCount}
+          captureFreezeT={captureFreezeT}
           hudHost={hudHost}
           oceanOn={oceanOn}
           onSliceState={setSliceState}

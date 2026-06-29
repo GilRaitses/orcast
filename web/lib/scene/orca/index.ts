@@ -7,6 +7,16 @@ export { makeOrcaMaterial } from "./materials/orcaMaterial";
 export type { OrcaMaterialHandle, OrcaMaterialOptions } from "./materials/orcaMaterial";
 export { makeSandboxWfxEnv } from "./materials/wfxEnv";
 export type { WfxEnvHandle } from "./materials/wfxEnv";
+// ENV-handle-consolidation: ORCA-owned live-handle registry. OrcaRig publishes its
+// single live WfxEnvHandle here; the homepage slice borrows it (via
+// useSyncExternalStore over subscribe + snapshot) instead of baking a duplicate
+// PMREM. OrcaRig stays the sole owner/disposer and sole scene.environment writer.
+export {
+  setLiveWfxEnv,
+  getLiveWfxEnv,
+  clearLiveWfxEnv,
+  subscribeLiveWfxEnv,
+} from "./materials/wfxEnv";
 export { makeOrcaEyes } from "./eyes/orcaEyes";
 export { makeOrcaMouth } from "./mouth/orcaMouth";
 export { loadBiologging, driveOrca } from "./motion/biologging";

@@ -157,3 +157,7 @@ infra/orca/mesh/_src/
 orca3dmodel/
 # Heavy derived biologging tracks (regenerable via the baker) -> the box
 infra/orca/biologging/dev/humpback_mn09_203a_contrast.bin
+
+# Heavy raw CTD casts (CC0 CruiseSalish / NCEI 0307188) -> the box, not git.
+# Only the small baked profile JSON + provenance ship in-repo (see infra/ocean/PROVENANCE.md).
+infra/ocean/data/**

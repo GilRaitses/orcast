@@ -334,6 +334,233 @@ def train_head_from_manifest(manifest_path: str | Path, out_report: str | Path |
     return report
 
 
+# --------------------------------------------------------------------------
+# ACX v2 ecotype-TKW strengthen harness (leave-station-OUT, operating-point
+# selection, prior recalibration, multi-seed median). Shared by BOTH the
+# feature-only path and the Perch-embedding path: each gets a feature matrix X
+# aligned 1:1 to the same labels/station keys and is evaluated on the identical
+# protocol fixed in dispatch/ACX/findings/ACX-METHODOLOGY.md. Pure functions; no
+# I/O here, no served-contract change. numpy + sklearn only.
+# --------------------------------------------------------------------------
+
+def leave_station_out_indices(station, station_day, y, seed: int = 0,
+                              minority: str = "TKW",
+                              min_min_windows: int = 186, min_min_days: int = 3,
+                              keep_train_min_stations: int = 2):
+    """Hold out WHOLE stations for test (leave-station-OUT, not -day-out), so the
+    test recorders are never seen in training. Greedily add minority-bearing
+    stations to the test fold until the test minority support floor is met
+    (>= min_min_windows windows AND >= min_min_days station-days), always leaving
+    >= keep_train_min_stations minority stations in train so TKW is learnable.
+    Returns (train_idx, test_idx, test_stations, meets_floor)."""
+    station = np.asarray(station, dtype=object)
+    station_day = np.asarray(station_day, dtype=object)
+    y = np.asarray(y, dtype=object)
+    rng = np.random.default_rng(seed)
+    min_stations = [s for s in sorted(set(station.tolist()))
+                    if int((y[station == s] == minority).sum()) > 0]
+    if len(min_stations) < keep_train_min_stations + 1:
+        raise ValueError(
+            f"need > {keep_train_min_stations} {minority} stations for leave-station-out; "
+            f"have {len(min_stations)}")
+    order = min_stations[:]
+    rng.shuffle(order)
+    test: list = []
+    for s in order:
+        if len(min_stations) - len(test) <= keep_train_min_stations:
+            break
+        test.append(s)
+        mask = np.isin(station, test)
+        tkw_w = int((y[mask] == minority).sum())
+        tkw_d = len(set(station_day[mask & (y == minority)].tolist()))
+        if tkw_w >= min_min_windows and tkw_d >= min_min_days:
+            break
+    test_mask = np.isin(station, test)
+    tkw_w = int((y[test_mask] == minority).sum())
+    tkw_d = len(set(station_day[test_mask & (y == minority)].tolist()))
+    meets_floor = tkw_w >= min_min_windows and tkw_d >= min_min_days
+    return (np.where(~test_mask)[0], np.where(test_mask)[0], sorted(test),
+            {"test_min_windows": tkw_w, "test_min_station_days": tkw_d, "meets_floor": meets_floor})
+
+
+def select_operating_points(p_minority_val, y_val, minority: str = "TKW",
+                            majority: str = "SRKW", majority_floor: float = 0.84,
+                            grid=None) -> dict:
+    """Pick P(minority) decision thresholds on an inner validation set (a held-out
+    TRAIN station; never the test fold). Returns three operating points so O0 sees
+    the full trade:
+      - 'tkw_f1_max'   : maximizes minority f1, ignoring the majority (diagnostic
+                         ceiling; typically overshoots and degrades the majority).
+      - 'guarded'      : maximizes minority f1 SUBJECT TO majority f1 >= majority_floor
+                         on validation (the shippable point that respects the guard).
+                         Falls back to 'macro_f1_max' if no threshold satisfies it.
+      - 'macro_f1_max' : maximizes the mean of minority + majority f1 (balanced).
+    """
+    from sklearn.metrics import f1_score
+    grid = np.linspace(0.02, 0.98, 49) if grid is None else np.asarray(grid)
+    p = np.asarray(p_minority_val)
+    y = np.asarray(y_val)
+    ymin = (y == minority).astype(int)
+    ymaj = (y == majority).astype(int)
+    rows = []
+    for t in grid:
+        pred_min = (p >= t).astype(int)
+        pred_maj = 1 - pred_min
+        f1_min = f1_score(ymin, pred_min, zero_division=0)
+        f1_maj = f1_score(ymaj, pred_maj, zero_division=0)
+        rows.append((float(t), f1_min, f1_maj))
+    tkw_f1_max = max(rows, key=lambda r: r[1])[0]
+    macro_f1_max = max(rows, key=lambda r: 0.5 * (r[1] + r[2]))[0]
+    guarded_pool = [r for r in rows if r[2] >= majority_floor]
+    guarded = (max(guarded_pool, key=lambda r: r[1])[0] if guarded_pool else macro_f1_max)
+    return {"tkw_f1_max": tkw_f1_max, "guarded": guarded, "macro_f1_max": macro_f1_max,
+            "guarded_feasible": bool(guarded_pool)}
+
+
+def recalibrate_prior(p, pi_train: float, pi_deploy: float):
+    """Correct P(minority|x) from the sampled training prior to the deployment
+    prior via the prior-odds transform. Used for HONEST reported confidence; does
+    not change the threshold decision (that stays at the frozen operating point)."""
+    p = np.clip(np.asarray(p, dtype=np.float64), 1e-6, 1 - 1e-6)
+    num = p * (pi_deploy / pi_train)
+    den = num + (1.0 - p) * ((1.0 - pi_deploy) / (1.0 - pi_train))
+    return num / den
+
+
+def evaluate_ecotype_path(X, y, station, station_day, *, seeds=(0, 1, 2, 3, 4),
+                          minority: str = "TKW", majority: str = "SRKW",
+                          pi_deploy: float = 0.05,
+                          min_min_windows: int = 186, min_min_days: int = 3):
+    """Run the shared leave-station-OUT, operating-point, multi-seed protocol on
+    one feature matrix X (feature-only OR Perch embeddings). Returns per-seed
+    results, the median, and the per-seed spread for TKW f1 / TKW recall / SRKW f1.
+
+    Per seed: hold out whole stations for test (support floor enforced); within
+    train, hold out one station as inner validation to pick the P(TKW) threshold;
+    refit on full train; apply the frozen threshold to test; recalibrate reported
+    confidence toward pi_deploy. The pass metric (median TKW f1 > 0.434, TKW recall
+    >= 0.478, SRKW f1 >= 0.84) is applied by the caller to the returned medians."""
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, average_precision_score
+
+    X = np.asarray(X, dtype=np.float64)
+    y = np.asarray(y, dtype=object)
+    station = np.asarray(station, dtype=object)
+    station_day = np.asarray(station_day, dtype=object)
+    classes = [majority, minority]
+    per_seed = []
+
+    for seed in seeds:
+        tr_idx, te_idx, test_stations, floor = leave_station_out_indices(
+            station, station_day, y, seed=seed, minority=minority,
+            min_min_windows=min_min_windows, min_min_days=min_min_days)
+
+        # Inner validation: hold out one TRAIN station (most-minority, deterministic
+        # by seed) to pick the operating point without touching the test fold.
+        tr_station = station[tr_idx]
+        tr_min_stations = sorted({s for s in set(tr_station.tolist())
+                                  if int((y[tr_idx][tr_station == s] == minority).sum()) > 0})
+        rng = np.random.default_rng(1000 + seed)
+        val_station = tr_min_stations[int(rng.integers(len(tr_min_stations)))]
+        val_mask = tr_station == val_station
+        core_idx = tr_idx[~val_mask]
+        val_idx = tr_idx[val_mask]
+
+        scaler = StandardScaler().fit(X[core_idx])
+        clf = LogisticRegression(max_iter=3000, class_weight="balanced")
+        clf.fit(scaler.transform(X[core_idx]), y[core_idx])
+        min_col = list(clf.classes_).index(minority)
+        p_val = clf.predict_proba(scaler.transform(X[val_idx]))[:, min_col]
+        ops = select_operating_points(p_val, y[val_idx], minority=minority, majority=majority)
+
+        # Refit on FULL train, apply each frozen threshold to test.
+        scaler_full = StandardScaler().fit(X[tr_idx])
+        clf_full = LogisticRegression(max_iter=3000, class_weight="balanced")
+        clf_full.fit(scaler_full.transform(X[tr_idx]), y[tr_idx])
+        min_col_f = list(clf_full.classes_).index(minority)
+        p_te = clf_full.predict_proba(scaler_full.transform(X[te_idx]))[:, min_col_f]
+        yt = y[te_idx]
+
+        def _metrics_at(thresh):
+            pred = np.where(p_te >= thresh, minority, majority)
+            p, r, f1, support = precision_recall_fscore_support(
+                yt, pred, labels=classes, average=None, zero_division=0)
+            cm = confusion_matrix(yt, pred, labels=classes)
+            return ({c: {"precision": round(float(p[i]), 4), "recall": round(float(r[i]), 4),
+                         "f1": round(float(f1[i]), 4), "support": int(support[i])}
+                     for i, c in enumerate(classes)},
+                    {"labels": classes, "matrix": cm.astype(int).tolist()})
+
+        # The 'guarded' operating point is the shippable one (max TKW f1 s.t. SRKW
+        # f1 >= floor on validation); the verdict is measured here. 'tkw_f1_max' is
+        # recorded as the diagnostic ceiling that shows the majority cost.
+        per_class, cm = _metrics_at(ops["guarded"])
+        diag_pc, _ = _metrics_at(ops["tkw_f1_max"])
+
+        auprc_min = None
+        if (yt == minority).any() and (yt == majority).any():
+            auprc_min = round(float(average_precision_score((yt == minority).astype(int), p_te)), 4)
+
+        pi_train = float((y[tr_idx] == minority).mean())
+        p_te_recal = recalibrate_prior(p_te, pi_train, pi_deploy)
+
+        per_seed.append({
+            "seed": int(seed),
+            "test_stations": test_stations,
+            "operating_points_val": {k: (round(float(v), 3) if isinstance(v, float) else v)
+                                     for k, v in ops.items()},
+            "shipped_operating_point": "guarded",
+            "operating_threshold": round(float(ops["guarded"]), 3),
+            "inner_val_station": val_station,
+            "pi_train_minority": round(pi_train, 4),
+            "pi_deploy": pi_deploy,
+            "n_test_windows": int(len(te_idx)),
+            "n_train_windows": int(len(tr_idx)),
+            "support_floor": floor,
+            "per_class": per_class,
+            "diagnostic_tkw_f1_max_point": {
+                "threshold": round(float(ops["tkw_f1_max"]), 3),
+                "TKW_f1": diag_pc[minority]["f1"], "TKW_recall": diag_pc[minority]["recall"],
+                "SRKW_f1": diag_pc[majority]["f1"],
+            },
+            "minority_auprc_ovr": auprc_min,
+            "confusion": {"labels": classes, "matrix": cm["matrix"]},
+            "recalibrated_confidence": {
+                "minority_mean_raw": round(float(p_te[yt == minority].mean()) if (yt == minority).any() else 0.0, 4),
+                "minority_mean_recalibrated": round(float(p_te_recal[yt == minority].mean()) if (yt == minority).any() else 0.0, 4),
+            },
+        })
+
+    def _stat(getter):
+        vals = sorted(getter(s) for s in per_seed)
+        return {"min": round(min(vals), 4), "median": round(float(np.median(vals)), 4),
+                "max": round(max(vals), 4), "per_seed": [round(getter(s), 4) for s in per_seed]}
+
+    spread = {
+        "TKW_f1": _stat(lambda s: s["per_class"][minority]["f1"]),
+        "TKW_recall": _stat(lambda s: s["per_class"][minority]["recall"]),
+        "TKW_precision": _stat(lambda s: s["per_class"][minority]["precision"]),
+        "SRKW_f1": _stat(lambda s: s["per_class"][majority]["f1"]),
+    }
+    median = {
+        "TKW_f1": spread["TKW_f1"]["median"],
+        "TKW_recall": spread["TKW_recall"]["median"],
+        "SRKW_f1": spread["SRKW_f1"]["median"],
+    }
+    return {"seeds": list(seeds), "per_seed": per_seed, "median": median, "spread": spread}
+
+
+def passes_metric(median: dict) -> dict:
+    """Apply the FIXED ACX-Q pass metric to a path's median across seeds."""
+    checks = {
+        "TKW_f1_gt_0.434": median["TKW_f1"] > 0.434,
+        "TKW_recall_ge_0.478": median["TKW_recall"] >= 0.478,
+        "SRKW_f1_ge_0.84": median["SRKW_f1"] >= 0.84,
+    }
+    return {"checks": checks, "passes": all(checks.values())}
+
+
 if __name__ == "__main__":
     import sys
     if "--head-manifest" in sys.argv:

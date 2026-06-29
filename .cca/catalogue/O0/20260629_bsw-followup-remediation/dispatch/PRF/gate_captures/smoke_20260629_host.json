@@ -1,0 +1,30 @@
+{
+  "mode": "smoke",
+  "glMode": "gpu",
+  "page": "trivial-empty-raf",
+  "uncapped": {
+    "vsyncMode": "uncapped",
+    "frames": 146,
+    "meanMs": 17.15,
+    "medianMs": 17.1,
+    "p95Ms": 17.2,
+    "p99Ms": 17.3,
+    "maxMs": 17.3,
+    "minMs": 17,
+    "fps": 58.3
+  },
+  "capped_control": {
+    "vsyncMode": "default",
+    "frames": 151,
+    "meanMs": 16.67,
+    "medianMs": 16.7,
+    "p95Ms": 16.7,
+    "p99Ms": 16.8,
+    "maxMs": 16.8,
+    "minMs": 16.6,
+    "fps": 60
+  },
+  "subRefreshProven": false,
+  "verdict": "FAIL: uncapped median 17.1ms not < 16.67ms -> cap NOT broken; no frame-time number is valid.",
+  "_capture_note": "Run on the GPU host (aimez-gpu-capture, Tesla T4) inside the batched BSWR host window via scripts/perf/client_tier_frametime.sh --smoke. The harness exits non-zero by design when subRefreshProven is false, so the driver's auto-save was skipped; this is the verbatim host stdout JSON. ADV-3 outcome: the Linux/Xvfb/T4 host does NOT make --disable-gpu-vsync / --disable-frame-rate-limit free-run the trivial-page rAF below one refresh; it clamps at ~16.67ms exactly like pure headless. Option-1 vsync-quantised over-budget oracle stands as the primary method; no bonus sub-refresh numbers."
+}

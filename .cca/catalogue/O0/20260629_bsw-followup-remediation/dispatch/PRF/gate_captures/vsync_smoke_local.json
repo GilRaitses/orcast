@@ -1,0 +1,30 @@
+{
+  "mode": "smoke",
+  "_note": "Re-run 2026-06-29 (local macOS pure-headless) for the ADV-1 O0 decision. Confirms the flag-only vsync uncap does NOT free-run rAF below one refresh in pure headless: uncapped median 17.4ms is not < 16.67ms. subRefreshProven:false stands and is recorded honestly. The capped control locks clean at 16.7ms/60fps. The quantised over-budget oracle (overbudget_probe_local.txt) is the adopted method per PRF-ADV1-DECISION.md.",
+  "glMode": "gpu",
+  "page": "trivial-empty-raf",
+  "uncapped": {
+    "vsyncMode": "uncapped",
+    "frames": 145,
+    "meanMs": 17.34,
+    "medianMs": 17.4,
+    "p95Ms": 17.8,
+    "p99Ms": 17.8,
+    "maxMs": 18,
+    "minMs": 16.7,
+    "fps": 57.7
+  },
+  "capped_control": {
+    "vsyncMode": "default",
+    "frames": 152,
+    "meanMs": 16.67,
+    "medianMs": 16.7,
+    "p95Ms": 17.5,
+    "p99Ms": 17.6,
+    "maxMs": 17.7,
+    "minMs": 15.7,
+    "fps": 60
+  },
+  "subRefreshProven": false,
+  "verdict": "FAIL: uncapped median 17.4ms not < 16.67ms -> cap NOT broken in pure headless; no SUB-REFRESH frame-time number is valid. The vsync-quantised over-budget oracle (16.7/33.3/50ms buckets) is the adopted 30fps verdict method per PRF-ADV1-DECISION.md."
+}

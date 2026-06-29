@@ -1,0 +1,86 @@
+# PRF dispatch shape (client-tier-frametime-verify)
+# Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/PRF/
+# Charter: ../../PRF_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Purpose: produce an honest client-tier frame-time for the homepage twin with BSW
+# features on, against the 30fps budget; the T4 numbers are a server-class upper bound.
+
+version: 1
+family: BSWR
+code: PRF
+label: client-tier-frametime-verify
+home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/PRF/
+charter: ../../PRF_CHARTER.md
+repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+status: chartered
+
+grounding:
+  runbook: infra/render_host/RUNBOOK.md          # perf caveat: T4 is server-class upper bound, not the binding client tier
+  harness: infra/render_host/render_route.mjs    # opt-in rAF frame-time sampler + viewport override (added this session)
+  driver: infra/render_host/render.sh            # SSM to GPU (Tesla T4) or CPU/SwiftShader host
+  budget: "30fps client-tier = 33.3 ms/frame; the binding number is not yet measured"
+  root_cause: "real-GPU upper bound + software-GL fallback exist, but no representative client-tier measurement and no agreed client-tier capture method"
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [infra/render_host/**, scripts/**, dispatch/PRF/**]
+  convergence_files: []   # verification lane; harness code only, no scene change
+  validate_with: "the harness runs headless on the host; tsc only if a web helper is touched"
+  verify_on: isolated host (serial; concurrent contexts corrupt frame-time)
+  honesty: "emulated tier reported as 'emulated client tier (method X)', never as a real device; real device is a human gate"
+  cdp_allowed: "Emulation.setCPUThrottlingRate + GPU-tier emulation OK; Input.* NOT used (focus-sensitive)"
+
+waves:
+  - id: PRF-R
+    name: research-discovery
+    parallelism: 4
+    launch_status: ungated
+    agents:
+      - { role: PRF-R1, owns: findings/PRF-client-tier.md, task: "what hardware tier the 30fps budget is defined against; representative client GPU/CPU classes; the stated target device." }
+      - { role: PRF-R2, owns: findings/PRF-capture-method.md, task: "CDP CPU throttling + GPU-tier emulation on the render host vs a real client device; using the rAF sampler in render_route.mjs; how to get a stable median + p95." }
+      - { role: PRF-R3, owns: findings/PRF-scenes.md, task: "the homepage twin with BSW features on (slice + spectrogram + multi-orca pool + ocean layer) and the BSW-on vs BSW-off A/B." }
+      - { role: PRF-R4, owns: findings/PRF-adversarial.md, task: "is an emulated number honest + representative; how a throttled profile lies; vsync + headless caveats." }
+    gate: "four findings exist; no host run beyond read-only inspection; PAUSE to O0."
+
+  - id: PRF-Q
+    name: qualify-methodology
+    depends_on: [PRF-R]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: PRF-Q1, owns: findings/PRF-METHODOLOGY.md, task: "fix the client tier, the capture method (emulated-with-method-X or real-device), and the pass metric (sustained median + p95 vs 33.3 ms/frame); flag any real-hardware need for O0." }
+    gate: "GATED (O0): tier + method + pass metric fixed; real-hardware need named; PAUSE."
+
+  - id: PRF-B
+    name: implement-capture-harness
+    depends_on: [PRF-Q]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: PRF-B1, owns: infra/render_host/frametime_client_tier.mjs (new) OR scripts/perf/client_tier_frametime.sh (new), task: "client-tier capture harness: throttling + sampler config + BSW-on/off A/B driver; no scene change." }
+    gate: "harness runs headless; emits median + p95 + method; no scene change; PAUSE."
+
+  - id: PRF-ADV
+    name: adversarial-review
+    depends_on: [PRF-B]
+    parallelism: 1
+    launch_status: gated-on-O0
+    loops_with: [PRF-B]
+    agents:
+      - { role: PRF-ADV1, owns: findings/PRF-ADV_VERDICT.md, task: "audit representativeness + honesty of the number; open P0/P1; loop to PRF-B until the method is defensible." }
+    gate: "method defensible; zero open P0/P1; PAUSE."
+
+  - id: PRF-ACCEPT
+    name: measured-frametime-accept
+    depends_on: [PRF-ADV]
+    parallelism: 1
+    compute: isolated host (serial)
+    launch_status: gated-on-O0
+    agents:
+      - { role: PRF-ACC, owns: [gate_captures/, ACCEPT_VERDICT.md], task: "run the capture serial; write median + p95 + exact method to gate_captures/; honest verdict vs the 30fps budget; BSW-on vs BSW-off A/B; if missed, recommend a separate optimization lane to O0." }
+    gate: "GATED (O0): measured client-tier frame-time captured + method recorded; honest verdict (no reassurance bias); no scene change; no commit without O0."
+
+operator_gates:
+  - real client-tier hardware acquisition (human gate)
+  - host run cost / time (human gate)
+  - a budget miss implying a scene change (returns a separate optimization lane to O0)
+  - any commit or push (explicit operator request only)

@@ -1,0 +1,5 @@
+A gpu, NO uncap                        {"n":120,"med":16.7,"min":15.6,"max":17.7}
+B gpu + 2 uncap flags                  {"n":114,"med":17.7,"min":16.7,"max":18.8}
+C gpu + uncap + disable-features       {"n":110,"med":18.2,"min":16.8,"max":18.9}
+D swiftshader + uncap                  {"n":111,"med":18.2,"min":16.8,"max":18.9}
+E gpu + uncap + disable-threaded       {"n":111,"med":18.1,"min":16.8,"max":18.8}

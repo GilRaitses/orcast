@@ -1,0 +1,98 @@
+# ENV dispatch shape (env-handle-consolidation)
+# Home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/ENV/
+# Charter: ../../ENV_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Purpose: ORCA publishes its live WfxEnvHandle; the slice consumes it for the
+# reenactment pool; drop the slice's duplicate makeRealWfxEnv PMREM bake. No regression.
+
+version: 1
+family: BSWR
+code: ENV
+label: env-handle-consolidation
+home: .cca/catalogue/O0/20260629_bsw-followup-remediation/dispatch/ENV/
+charter: ../../ENV_CHARTER.md
+repo_state_verified_against: 61ba1d69ee36cf605f7ba741bdaa1defa8762834
+status: chartered
+
+grounding:
+  seam_doc: web/lib/scene/wfx/WIRING-slice-note.md      # SEAM 4: the slice bakes a SECOND PMREM only to light the pool; ORCA should publish its handle
+  wfx_env: web/lib/scene/wfx/realWfxEnv.ts               # makeRealWfxEnv (the duplicate bake)
+  orca_env: web/lib/scene/orca/materials/wfxEnv.ts
+  orca_controller: web/lib/scene/orca/{OrcaController,index}.ts   # OrcaRig builds the live WfxEnvHandle + is the sole scene.environment writer
+  pool: web/lib/scene/reenactment/OrcaPool.ts            # createOrcaPool env input
+  slice_mount: web/app/components/scene/SalishScene.tsx  # SliceRig second makeRealWfxEnv call
+  root_cause: "ORCA never published an accessor for its WfxEnvHandle, so the slice baked a second PMREM as a scoped stopgap"
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [web/lib/scene/orca/**, web/lib/scene/reenactment/**]
+  convergence_files: [web/app/components/scene/SalishScene.tsx, web/lib/scene/orca/OrcaController.ts]
+  serialize_across: [ORCA, WFX, OCN, 3D-TWIN]
+  validate_with: "tsc --noEmit; no next dev during parallel wave"
+  verify_on: GPU render host (parity frames + frame-time A/B)
+  invariant: "exactly one scene.environment writer (OrcaRig); ENV removes a second BAKE, never adds a second writer"
+
+waves:
+  - id: ENV-R
+    name: research-discovery
+    parallelism: 4
+    launch_status: ungated
+    agents:
+      - { role: ENV-R1, owns: findings/ENV-orca-ownership.md, task: "where OrcaRig/OrcaController builds the WfxEnvHandle, its lifecycle, and the cleanest additive accessor shape (ref vs accessor)." }
+      - { role: ENV-R2, owns: findings/ENV-slice-consumer.md, task: "how SliceRig feeds createOrcaPool today and the minimal change to consume a published handle." }
+      - { role: ENV-R3, owns: findings/ENV-lifecycle-disposal.md, task: "env texture ownership, dispose order, and the single-scene.environment-writer invariant." }
+      - { role: ENV-R4, owns: findings/ENV-adversarial.md, task: "double-write / disposed-texture / lighting-mismatch failure modes; what proves pool-lighting parity." }
+    gate: "four findings exist; no SalishScene or controller edit; PAUSE to O0."
+
+  - id: ENV-Q
+    name: qualify-methodology
+    depends_on: [ENV-R]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: ENV-Q1, owns: findings/ENV-METHODOLOGY.md, task: "fix the accessor API (ref vs accessor + lifecycle contract) and the slice consumption; state the parity pass metric; coordinate ownership with the ORCA lane." }
+    gate: "GATED (O0): accessor API + consumption + parity metric fixed; ORCA ownership coordinated; PAUSE."
+
+  - id: ENV-B
+    name: implement-accessor
+    depends_on: [ENV-Q]
+    parallelism: 2
+    launch_status: gated-on-O0
+    agents:
+      - { role: ENV-B1, owns: web/lib/scene/orca/materials/wfxEnv.ts (extend) + web/lib/scene/orca/index.ts (export), task: "ORCA-owned additive accessor publishing the live WfxEnvHandle with a defined lifecycle; no change to when/how ORCA builds the env." }
+      - { role: ENV-B2, owns: web/lib/scene/reenactment/OrcaPool.ts (only if the pool input needs adapting), task: "prepare the slice-side consumer to accept a published handle; do NOT edit SalishScene yet." }
+    gate: "accessor net-new/extend; tsc clean; no SalishScene edit; PAUSE."
+
+  - id: ENV-INT
+    name: integrate-and-drop-bake
+    depends_on: [ENV-B]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: ENV-INT1, owns: web/app/components/scene/SalishScene.tsx (single editor), task: "git pull --rebase first; wire SliceRig to the published handle; remove the second makeRealWfxEnv call; serialize vs ORCA/WFX/OCN/3D-TWIN; tsc clean." }
+    gate: "GATED (O0): single-editor wire + second bake dropped; one scene.environment writer; tsc clean; no commit; PAUSE."
+
+  - id: ENV-ADV
+    name: adversarial-review
+    depends_on: [ENV-INT]
+    parallelism: 1
+    launch_status: gated-on-O0
+    loops_with: [ENV-B, ENV-INT]
+    agents:
+      - { role: ENV-ADV1, owns: findings/ENV-ADV_VERDICT.md, task: "audit the single-writer invariant (grep/AST), disposal order, disposed-texture reads, lighting parity; open P0/P1; loop to ENV-B/ENV-INT until zero open P0/P1." }
+    gate: "zero open P0/P1; one scene.environment writer confirmed; PAUSE."
+
+  - id: ENV-ACCEPT
+    name: gpu-parity-accept
+    depends_on: [ENV-ADV]
+    parallelism: 1
+    compute: GPU render host
+    launch_status: gated-on-O0
+    agents:
+      - { role: ENV-ACC, owns: [gate_screenshots/, gate_captures/, ACCEPT_VERDICT.md], task: "GPU before/after frames prove the pool is lit identically with one fewer PMREM bake; Read-examine; frame-time A/B (parity or better); verdict cites measured numbers." }
+    gate: "GATED (O0): pool-lighting parity Read-examined; one fewer bake confirmed; frame-time at parity or better; no commit without O0."
+
+operator_gates:
+  - ORCA ownership coordination (the accessor is ORCA-owned)
+  - the convergence edit slot (single editor, serialized)
+  - GPU render-host capture (cost / host time)
+  - any commit or push (explicit operator request only)
