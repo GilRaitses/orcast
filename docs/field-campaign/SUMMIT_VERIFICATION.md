@@ -100,7 +100,7 @@ Addressed the remaining map caveats and researched orca ML integration.
 ### Findings from the new suite (ACTION REQUIRED)
 
 1. **HeatmapLayer v3.65 removal** — caught and fixed (above).
-2. **Google Maps key rejected → demo-key quota exhausted.** The live site loads Maps with `AIzaSyAzDCC0LpxT7GvViweeY4QbLWpfNV-_GGc`, but Google rejects it and falls back to the rate-limited demo key, which is now over quota (`Maps Demo Key limit reached ... project=293403666260`). Result: **map tiles currently do not render on production.** This is a GCP infra action, not code: verify the key's project (`orca-904de`) has Maps JavaScript API enabled, active billing, and HTTP-referrer allowlist including `https://orcast.org/*`, `https://d2gslju5drx74c.cloudfront.net/*`. Until fixed, maps will be blank/throttled for users.
+2. **Google Maps key rejected → demo-key quota exhausted.** The live site loads Maps with `GOOGLE_API_KEY_REDACTED`, but Google rejects it and falls back to the rate-limited demo key, which is now over quota (`Maps Demo Key limit reached ... project=293403666260`). Result: **map tiles currently do not render on production.** This is a GCP infra action, not code: verify the key's project (`orca-904de`) has Maps JavaScript API enabled, active billing, and HTTP-referrer allowlist including `https://orcast.org/*`, `https://d2gslju5drx74c.cloudfront.net/*`. Until fixed, maps will be blank/throttled for users.
 
 ## Maps build — landing hero + data truth (2026-06-19)
 

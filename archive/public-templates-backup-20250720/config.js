@@ -4,7 +4,7 @@
 window.ORCA_CONFIG = {
     // Firebase configuration
     firebase: {
-        apiKey: "AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU",
+        apiKey: "GOOGLE_API_KEY_REDACTED",
         authDomain: "orca-tracking-904de.firebaseapp.com",
         projectId: "orca-tracking-904de",
         storageBucket: "orca-tracking-904de.appspot.com",
@@ -14,7 +14,7 @@ window.ORCA_CONFIG = {
     
     // API Keys
     apiKeys: {
-        GOOGLE_MAPS: "AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU"
+        GOOGLE_MAPS: "GOOGLE_API_KEY_REDACTED"
     },
     
     // Map configuration

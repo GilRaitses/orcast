@@ -291,7 +291,7 @@ class ORCASTDashboardValidator:
         external_apis = [
             ('https://live.orcasound.net/api/json/feeds', 'Orcasound Live Feeds'),
             ('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9449880&product=water_level&datum=MLLW&format=json&units=english&time_zone=lst_ldt&application=orcast&begin_date=20250101&end_date=20250102', 'NOAA Tides API'),
-            ('https://maps.googleapis.com/maps/api/js?key=AIzaSyD9aM6oj1wpVG-VungMtIpyNWeHp3Q7XjU&libraries=visualization', 'Google Maps API')
+            ('https://maps.googleapis.com/maps/api/js?key=GOOGLE_API_KEY_REDACTED&libraries=visualization', 'Google Maps API')
         ]
         
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:

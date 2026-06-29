@@ -323,7 +323,7 @@ class InternalAgentAPI {
             if (window.ORCASTMultiAgentSystem) {
                 this.agentOrchestra = new window.ORCASTMultiAgentSystem({
                     firebaseConfig: {
-                        apiKey: "AIzaSyCqHFjW-FQVFGqZj5K8GZj8xJZP3r8jdRI",
+                        apiKey: "GOOGLE_API_KEY_REDACTED",
                         authDomain: "orca-904de.firebaseapp.com",
                         projectId: "orca-904de"
                     },

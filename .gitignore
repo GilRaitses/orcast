@@ -115,3 +115,37 @@ config/redis_connection.env
 
 # External research data (license-gated, do not commit)
 data/external/
+
+# Working-tree cleanup (2026-06-28): secrets, OS cruft, build artifacts, heavy media
+# Billing exports (account-sensitive)
+billingreport.csv
+docs/Cloud_Billing_Incident_*_files/
+
+# macOS metadata
+.DS_Store
+
+# Editor/backup files
+*.bak
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.bcf
+*.fdb_latexmk
+*.fls
+*.out
+*.run.xml
+*.toc
+
+# Heavy regenerable media (demo videos live on their hosted URL, not in git)
+*.mp4
+*.webm
+*.mov
+docs/devpost/figures/_demo-run/
+
+# Playwright/e2e run artifacts
+web/e2e/.results/
+
+# Quarantined legacy frontend (contains old/rotated API keys; never commit)
+archive/quarantine/
