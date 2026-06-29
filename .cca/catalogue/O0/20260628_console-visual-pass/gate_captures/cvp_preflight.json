@@ -1,0 +1,27 @@
+{
+  "gate": "cvp-preflight",
+  "lane": "CVP",
+  "repo_state_verified_against": "97b6397",
+  "head": "97b6397",
+  "generated_at": "2026-06-29T02:20:02Z",
+  "summary": {"pass": 7, "fail": 0, "skip": 9},
+  "verdict": "PASS",
+  "checks": [
+    {"id": "PF-1.yaml:wave_shape.yml", "verdict": "PASS", "detail": "valid YAML"},
+    {"id": "PF-1.yaml:waves.registry.yaml", "verdict": "PASS", "detail": "valid YAML"},
+    {"id": "PF-1.tsc", "verdict": "SKIP", "detail": "CVP_STATIC=0 (heavy node checks disabled for dry run)"},
+    {"id": "PF-1.lint", "verdict": "SKIP", "detail": "CVP_STATIC=0 (heavy node checks disabled for dry run)"},
+    {"id": "PF-1.test", "verdict": "SKIP", "detail": "CVP_STATIC=0 (heavy node checks disabled for dry run)"},
+    {"id": "PF-1.readlints", "verdict": "SKIP", "detail": "ReadLints is an editor-run check; integrator records 0 on touched files"},
+    {"id": "PF-2.secrets", "verdict": "PASS", "detail": "secret-leak scan clean"},
+    {"id": "PF-3.chip", "verdict": "PASS", "detail": "D1 present: no .chip rule in globals.css"},
+    {"id": "PF-3.composer", "verdict": "PASS", "detail": "D2 present: raw composer (Ask about the Salish Sea + rows={2})"},
+    {"id": "PF-3.beacon", "verdict": "PASS", "detail": "D3 present: cone beacon coneGeometry args={[1.6, 5, 6]}"},
+    {"id": "PF-4.rebase", "verdict": "SKIP", "detail": "git pull --rebase is an operator action; run before W3 integrate"},
+    {"id": "PF-4.worktree", "verdict": "PASS", "detail": "3 hot files clean in the working tree (no concurrent hold)"},
+    {"id": "PF-5.tokens", "verdict": "SKIP", "detail": "no CVP edits vs the pin yet; runs at W2/W3"},
+    {"id": "PF-5.lgc", "verdict": "SKIP", "detail": "no CVP edits vs the pin yet; runs at W2/W3"},
+    {"id": "PF-5.copy", "verdict": "SKIP", "detail": "no CVP edits vs the pin yet; runs at W2/W3"},
+    {"id": "PF-6.prose", "verdict": "SKIP", "detail": "new copy clears prose gate + cxr deny-terms on W4 render captures; run tools/waves/gates/console-deny-terms.sh"}
+  ]
+}

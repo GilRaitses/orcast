@@ -3,19 +3,20 @@
 Decisions that lock the CVP charter. Confirmed items are marked CONFIRMED; the rest are proposed
 defaults awaiting operator GO. Do not launch a wave whose decisions are not CONFIRMED.
 
-## Proposed (awaiting operator GO)
+## CONFIRMED (operator GO, 2026-06-28)
 
 1. **Separate baseline lane.** CVP is a separate fast lane that ships the full console visual pass as
    the baseline design layer, NOT folded into LGC and NOT superseding it. LGC-W4 layers its
-   liquid-glass identity on top of the CVP baseline. Default: separate lane. Proposed.
+   liquid-glass identity on top of the CVP baseline. CONFIRMED.
 2. **Full console pass scope.** CVP adds the component design system (`.chip`, base
    `button` / `textarea` / `input` / `label`, composer layout, panel hierarchy, the Get-access form,
    mobile breakpoints), fixes the cramped composer, and reshapes the beacon to read as a buoy.
-   Default: full pass. Proposed.
+   CONFIRMED.
 3. **Collision serialize order.** The three hot files (`globals.css`, `AdaptiveExplore.tsx`,
    `SalishScene.tsx`) are shared with LGC / CXR / 3D-TWIN / WFX / ORCA. W3 integration is a single
    serialized editor, gated on O0 confirming the order against those lanes, with `git pull --rebase`
-   first. Default: serialize through O0, CVP baseline before LGC identity. Proposed.
+   first. CONFIRMED at the policy level: serialize through O0, CVP baseline before LGC identity. The
+   exact per-file order against the live lane states is re-confirmed at the W3 gate (still O0-gated).
 
 ## Hard rails (non-negotiable)
 

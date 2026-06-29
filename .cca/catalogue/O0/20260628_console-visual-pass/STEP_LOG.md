@@ -26,3 +26,15 @@
   `docs/devpost/waves.registry.yaml`.
 - Status: CHARTERED, pending operator GO on the DECISION_RECORD items and the W3 serialize order,
   then W1 launch. W2 build, W3 integrate, and W4 accept are O0-gated.
+
+## 2026-06-28 — S02 operator GO, W1 dispatched
+
+- Operator confirmed DECISION_RECORD items 1-3 ("go"): separate baseline lane, full console pass,
+  serialize through O0 with CVP baseline before LGC identity. The exact W3 per-file serialize order
+  stays O0-gated and is re-confirmed at the W3 gate.
+- Dispatched W1 discovery (read-only) to a background sub-orchestrator running the five disjoint
+  agents from `W1_DISPATCH.md` (A1 controls, A2 layout, A3 scene-marker + TWIN boundary, A4
+  globals.css additive boundary vs LGC, A5 adversarial + collision + defect re-verify). Each writes
+  only its `findings/CVP-<TOPIC>.md`; no edits to `web/`; no dev server; no commit. The
+  sub-orchestrator writes `findings/SYNTHESIS_cvp.md` (the W2 build split) and pauses, returning to
+  O0. W2/W3/W4 remain O0-gated.
