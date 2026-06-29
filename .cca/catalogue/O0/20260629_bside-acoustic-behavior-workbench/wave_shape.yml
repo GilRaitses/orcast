@@ -1,0 +1,150 @@
+# B-side acoustic + behavior research workbench, machine-readable shape
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/
+# Canonical prose: PROGRAM.md + the five BSW-*_CHARTER.md files
+# Feeds: the B-side demo campaign (.cca/catalogue/O0/20260628_demo-production/)
+
+version: 1
+family: BSW
+code: BSW
+label: bside-acoustic-behavior-workbench
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/
+status: chartered-2026-06-29
+repo_state_verified_against: 240570e961913fb610c2765a4ef77cace3f216f1
+
+execution_model:
+  research_wave_read_only: true
+  one_file_one_owner: true
+  convergence_files:                         # not edited in research; serialize via O0 in integrate
+    - web/app/components/scene/SalishScene.tsx
+    - web/app/globals.css
+    - web/app/components/AdaptiveExplore.tsx
+    - web/app/components/ActiveSurfaceHost.tsx
+  serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  honesty_label: "measured (audio/DTAG) vs modeled (mesh/motion-map/equipment) vs interpretive (ocean layer); no standins in the demo"
+  built_on: three + WebAudio                 # new audio/FFT/3D/R dependency = costed recommendation, not default
+  frame_budget: 60fps-desktop / 30fps-laptop # new passes join the depth pre-pass or are costed
+  heavy_assets_to_box: true                   # audio, model weights, baked tracks, large h5 derivatives -> S3, gitignored
+
+grounding_paths:
+  hydrophone_api: src/aws_backend/routers/read.py            # GET /api/live-hydrophones
+  hydrophone_adapter: src/aws_backend/sources/orcasound.py
+  hydrophone_catalog: src/integrations/orcasound_hydrophones_for_orcast.json   # + live_orcasound_feeds.json
+  onc_spectrogram: src/aws_backend/routers/onc.py            # static PNG, needs ONC_API_TOKEN
+  spectrogram_panel: web/app/components/console/HydrophoneSignalPanel.tsx
+  dtag_api: src/aws_backend/routers/dtag.py                  # /api/dtag/* (fixture simulated)
+  orca_stack: web/lib/scene/orca/                            # controller/rig/materials/eyes/mouth/physics/motion
+  orca_real_motion: web/public/orca/motion/orca_srkw_oo14_driver.json   # + .bin (Tennessen 2024, CC-BY-4.0)
+  scene_project: web/lib/sceneIntent.ts                      # projectToScene, TILESET_BOUNDS, SEA_LEVEL_Y
+  scene_convergence: web/app/components/scene/SalishScene.tsx
+  camera_director: web/lib/scene/camera/director.ts
+  console_turn: web/app/components/AdaptiveExplore.tsx       # + ActiveSurfaceHost.tsx, web/lib/uiIntent.ts
+  managed_skills: src/aws_backend/casting/skills.py          # + docs/devpost/casting/SKILL_CATALOG.md
+  analysis_h5: /Users/gilraitses/whale-behavior-analysis/Visualization_Poster_Appendix/data/dive_analysis.h5
+  h5_schema: /Users/gilraitses/whale-behavior-analysis/dive_analysis_schema_flat.json
+  poster_viz: /Users/gilraitses/whale-behavior-analysis/Visualization_Poster_Appendix/scripts/
+  demo_director: .cca/catalogue/O0/20260628_demo-production/
+
+waves:
+  # ---- Wave 1: the deep research wave shell (read-only) ----
+  - id: BSW-RESEARCH
+    name: bside-research
+    parallelism: 14
+    convergence_file_edits: false
+    launch_status: chartered-pending-O0-dispatch
+    agents:
+      - { role: BSW-R01, owns: research/BSW-R01_orcasound_audio.md,      topic: Orcasound archived-audio access (S3 bucket/HLS layout, formats, license/CC) + pick 1 station + a real clip with a known SRKW encounter for the slice }
+      - { role: BSW-R02, owns: research/BSW-R02_annotation_corpora.md,   topic: community annotation corpora (Pod.Cast/OrcaHello/ONC/Watkins/DCLDE) - label schemas (call-type, pod/ecotype, count), licenses, sizes }
+      - { role: BSW-R03, owns: research/BSW-R03_acoustic_ml.md,          topic: acoustic ML methods + HONEST feasibility of a small real model (spectrogram CNN/embeddings/OrcaHello); achievable claim for count+type; eval metrics }
+      - { role: BSW-R04, owns: research/BSW-R04_kinematic_ethogram.md,   topic: DTAG kinematic behavior classification from dive_analysis.h5 (annotations+tagtools) -> ethogram -> behavior->motion-clip mapping for the orca rig }
+      - { role: BSW-R05, owns: research/BSW-R05_acoustic_behavior_coupling.md, topic: acoustic<->behavior coupling (e.g. echolocation buzz->foraging dive) grounded in literature; what classification drives in the replay }
+      - { role: BSW-R06, owns: research/BSW-R06_spectro_hud.md,          topic: spectrogram HUD tech (WebAudio/AudioWorklet FFT, canvas/WebGL render over r3f, scrub-seek sync); compute-neutral; lib survey + three-only fallback }
+      - { role: BSW-R07, owns: research/BSW-R07_station_player_camera.md, topic: station player + camera POV-selection object extending LGC; hydrophone POV vs top-down; director.ts integration; equipment-model options + license }
+      - { role: BSW-R08, owns: research/BSW-R08_multiorca_reenactment.md, topic: multi-orca instancing + scrub-synced timeline; perf budget (joins depth pre-pass, LOD); spawn-from-classification record contract }
+      - { role: BSW-R09, owns: research/BSW-R09_ocean_process_layer.md,  topic: double-diffusion/thermohaline layer - real Salish Sea stratification data sources + stylized volumetric render + the interpretive honesty framing }
+      - { role: BSW-R10, owns: research/BSW-R10_annotation_studio_viz.md, topic: annotation studio UX + bringing poster R/ggplot2/Plotly viz to the web (server-render PNG vs JS port) as managed HUD skills }
+      - { role: BSW-R11, owns: research/BSW-R11_tagtools_pipeline.md,    topic: tagtools/animaltags pipeline studio stages (calibration, orientation, stroke/glide, ODBA, dive detection) as reusable console-invokable skills }
+      - { role: BSW-R12, owns: research/BSW-R12_skill_catalog_capture.md, topic: extend Central Casting + the demo-production director to register HUD/viz/pipeline skills and to block/camera/screen-test + capture classified orca-behavior scenes }
+      - { role: BSW-R13, owns: research/BSW-R13_integration_seams.md,    topic: read-only seam map - exact plug points in AdaptiveExplore/ActiveSurfaceHost/uiIntent/SalishScene/director; LGC-token dependency; serialize plan vs LGC/CVP/WFX/ORCA/3D-TWIN }
+      - { role: BSW-R14, owns: research/BSW-R14_adversarial.md,          adversarial: true, topic: no-standin/honesty audit, compute-neutral perf audit, data-licensing+privacy audit, deadline-vs-scope audit, collision-lock audit, overclaim hunt }
+    gate: "report to O0: 14 findings + research/SYNTHESIS_bside.md; each cites real files/paths; perf+model claims carry numbers; ranked build plan + the REAL slice spec; no code changed"
+
+  # ---- The real demo slice (built this pass, after synthesis) ----
+  - id: BSW-SLICE-DEF
+    name: real-slice-spec
+    depends_on: [BSW-RESEARCH]
+    parallelism: 1
+    launch_status: signed-2026-06-29
+    sign_off: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/SIGN_OFF.md
+    gate: "O0/operator sign-off: exact station + real clip + acoustic & annotation datasets + honest model target + behavior->motion mapping for one real end-to-end slice (no standins). OWNER: NC authorized; acoustic = statistical silhouette of labeled categories reported as estimate+confidence (not hard count/ID)."
+
+  - id: BSW-SLICE-BUILD
+    name: real-slice-build
+    depends_on: [BSW-SLICE-DEF]
+    parallelism: 4
+    convergence_file_edits: false              # net-new modules + sandboxes only
+    launch_status: dispatched-2026-06-29
+    note: "real slice lanes: BST (hydrophone model+player+POV), BSH (WebAudio spectro HUD), BAM (real silhouette classifier on the clip), BRE (behavior-driven orca reenactment). Net-new; verified on the aimez box dev hosts (GPU render host), not local. Heavy assets to the box."
+    gate: "real audio plays, real spectrogram scrubs, real classifier output, real DTAG reenactment - all in sandboxes; tsc/lint clean; no convergence edits; no commit without O0"
+
+  - id: BSW-SLICE-INTEGRATE
+    name: real-slice-integrate
+    depends_on: [BSW-SLICE-BUILD]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    note: "land the slice into SalishScene.tsx + console; serialize vs LGC/CVP/WFX/ORCA/3D-TWIN"
+    gate: "GATED (O0): slice lands; tsc + copy-gate clean; GPU-host frame Read-examined; no commit without O0"
+
+  - id: BSW-SLICE-ACCEPT
+    name: real-slice-accept
+    depends_on: [BSW-SLICE-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    gate: "GATED (O0): pick station -> equipment model underwater; play clip -> spectrogram scrubs; classifier shows real output; orca(s) reenact on real DTAG kinematics from both POVs; honesty labels intact; captured as B-side demo beats via the director process"
+
+  # ---- Breadth charters (phased build after the slice) ----
+  - id: BSW-BST
+    name: hydrophone-station-player
+    depends_on: [BSW-RESEARCH]
+    charter: BSW-STATION_CHARTER.md
+    launch_status: gated-on-O0
+    note: "hydrophone equipment model + station player + camera POV object (BST-BUILD/INTEGRATE/ACCEPT). Owns web/lib/scene/hydrophone/, web/public/hydrophone/, web/app/(sandbox)/station/."
+
+  - id: BSW-BAM
+    name: acoustic-classifier-mlops
+    depends_on: [BSW-RESEARCH]
+    charter: BSW-ACOUSTIC-ML_CHARTER.md
+    launch_status: gated-on-O0
+    note: "community-annotation MLops + first real acoustic classifier (BAM-DATA/PIPELINE/TRAIN/ACCEPT). Owns infra/acoustic/, modeling/acoustic/. Weights to the box."
+
+  - id: BSW-BSH
+    name: spectrogram-hud-ocean-layer
+    depends_on: [BSW-RESEARCH]
+    charter: BSW-SPECTRO-HUD_CHARTER.md
+    launch_status: gated-on-O0
+    note: "WebAudio spectrogram HUD + interpretive double-diffusion layer (BSH-BUILD/INTEGRATE/ACCEPT). Owns web/lib/scene/hud/spectro/, web/lib/scene/ocean/."
+
+  - id: BSW-BRE
+    name: scrub-synced-reenactment
+    depends_on: [BSW-RESEARCH, BSW-BAM, BSW-BSH]
+    charter: BSW-REENACTMENT_CHARTER.md
+    launch_status: gated-on-O0
+    note: "multi-orca reenactment synced to the spectrogram playhead + camera POV (BRE-BUILD/INTEGRATE/ACCEPT). Owns web/lib/scene/reenactment/, web/lib/scene/orca/motion/clips/."
+
+  - id: BSW-BSS
+    name: annotation-studio-managed-skills
+    depends_on: [BSW-RESEARCH]
+    charter: BSW-STUDIO-SKILLS_CHARTER.md
+    launch_status: gated-on-O0
+    note: "annotation UI + tagtools pipeline studio + poster-viz managed HUD skills + behavior-capture automation (BSS-BUILD/INTEGRATE/ACCEPT). Owns web/app/(workbench)/, infra/tagtools/, src/aws_backend/casting/ additions."
+
+operator_gates:
+  - research wave runs read-only (dispatch pending operator go)
+  - all downloads (audio, annotation corpora, datasets, meshes) - license/privacy verified, O0-gated
+  - model training + compute/host use (O0-gated)
+  - the real slice spec sign-off (SIGN_OFF.md)
+  - integrate into convergence files (single editor, O0-gated, serialize_across)
+  - any commit or push (explicit operator request only)
+  - new runtime dependency adoption (operator/O0 decision)

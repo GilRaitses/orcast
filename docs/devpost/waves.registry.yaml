@@ -1634,6 +1634,104 @@ waves:
     gate: cvp-preflight
     note: "W4 accept: Playwright capture desktop 1280x900 + mobile; Read-examine frames into gate_screenshots/; before/after; honest verdict. Controls styled, composer uncramped, Get-access form present, buoy beacon no longer dominating; mobile breakpoints hold; prose gate + cxr deny-terms pass on new copy."
 
+  - id: BSW-RESEARCH
+    family: BSW
+    type: research
+    status: chartered
+    home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/
+    repo_state_verified_against: 240570e961913fb610c2765a4ef77cace3f216f1
+    serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]
+    operator_gate: dispatch pending operator go; research read-only; all downloads/training/integrate/commit gated
+    note: "B-side acoustic + behavior research workbench. 14 read-only research agents (BSW-R01..R14): Orcasound archived audio + station/clip pick, community annotation corpora, acoustic ML feasibility (honest count+type), DTAG kinematic ethogram -> motion clips, acoustic<->behavior coupling, WebAudio spectrogram HUD, station player + camera POV object, multi-orca scrub-synced reenactment, interpretive double-diffusion ocean layer, annotation-studio + poster-viz HUD skills, tagtools pipeline studio, managed skill catalog + demo-capture, integration seams, adversarial (no-standin/license/perf/overclaim). NO STANDINS. Writes research/SYNTHESIS_bside.md + a REAL slice spec, then PAUSE to O0. Dispatch: ORCHESTRATOR_DISPATCH_PROMPT.md."
+
+  - id: BSW-SLICE-DEF
+    family: BSW
+    type: gate
+    status: signed
+    depends_on: [BSW-RESEARCH]
+    sign_off: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/SIGN_OFF.md
+    operator_gate: O0/operator signed 2026-06-29; OWNER authorized NC (non-commercial/conservation); acoustic target = statistical silhouette of labeled categories (presence/call-type/single-vs-multiple) as estimate+confidence, no hard count/ID
+    note: "Locked the ONE real demo slice: Orcasound Lab station, the NC-cleared Orcasound clip + Pod.Cast/OrcaHello + DCLDE-2027 labels (provenance+license per asset), the honest silhouette model target, the behavior->motion mapping. No standins, no overclaim."
+
+  - id: BSW-SLICE-BUILD
+    family: BSW
+    type: implement
+    status: dispatched
+    depends_on: [BSW-SLICE-DEF]
+    operator_gate: O0-gated; net-new modules + sandboxes; downloads/training license-verified (NC authorized); verified on the aimez box dev hosts (GPU render host); no convergence edits; no commit
+    note: "Build the real slice across BST (hydrophone model+player+POV), BSH (WebAudio spectro HUD), BAM (real silhouette classifier on the clip), BRE (behavior-driven orca reenactment). Real audio/spectrogram/classifier/DTAG kinematics, all in sandboxes; verified on real box hosts."
+
+  - id: BSW-SLICE-INTEGRATE
+    family: BSW
+    type: implement
+    status: gated
+    depends_on: [BSW-SLICE-BUILD]
+    operator_gate: O0-gated; single editor; serialize vs LGC/CVP/WFX/ORCA/3D-TWIN
+    scope_globs:
+      - web/app/components/scene/SalishScene.tsx
+      - web/app/globals.css
+      - web/app/components/AdaptiveExplore.tsx
+      - web/app/components/ActiveSurfaceHost.tsx
+    note: "Land the slice into the live twin + console; tsc + copy-gate clean; GPU-host frame Read-examined; no commit without O0."
+
+  - id: BSW-SLICE-ACCEPT
+    family: BSW
+    type: accept
+    status: gated
+    depends_on: [BSW-SLICE-INTEGRATE]
+    operator_gate: O0-gated; Read-examined frames + a scrub clip; captured as B-side demo beats
+    note: "Pick station -> equipment model underwater; play clip -> spectrogram scrubs; classifier shows real output; orca(s) reenact on real DTAG kinematics from hydrophone POV + top-down; honesty labels intact. Capture via the demo-production director process."
+
+  - id: BSW-BST
+    family: BSW
+    type: implement
+    status: gated
+    depends_on: [BSW-RESEARCH]
+    charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-STATION_CHARTER.md
+    operator_gate: O0-gated; net-new then single-editor integrate; serialize vs convergence lanes
+    scope_globs: [web/lib/scene/hydrophone/**, web/public/hydrophone/**, "web/app/(sandbox)/station/**"]
+    note: "Hydrophone equipment model + station player + camera POV-selection object (hydrophone POV / top-down) extending LGC tokens; binds the unused streamUrl + real Orcasound archived audio. BST-BUILD/INTEGRATE/ACCEPT."
+
+  - id: BSW-BAM
+    family: BSW
+    type: implement
+    status: gated
+    depends_on: [BSW-RESEARCH]
+    charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-ACOUSTIC-ML_CHARTER.md
+    operator_gate: O0-gated; data/training license + compute gated; honest metrics; weights to the box
+    scope_globs: [infra/acoustic/**, modeling/acoustic/**]
+    note: "Community-annotation MLops + first REAL acoustic classifier (presence/call-type/[count if real], honest eval). BAM-DATA/PIPELINE/TRAIN/ACCEPT. No standins, no overclaim."
+
+  - id: BSW-BSH
+    family: BSW
+    type: implement
+    status: gated
+    depends_on: [BSW-RESEARCH]
+    charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-SPECTRO-HUD_CHARTER.md
+    operator_gate: O0-gated; net-new then single-editor integrate; compute-neutral; no water regression
+    scope_globs: [web/lib/scene/hud/spectro/**, web/lib/scene/ocean/**]
+    note: "Scrubbable WebAudio spectrogram HUD over the twin (no ONC token) + the labeled-interpretive double-diffusion ocean-process layer. BSH-BUILD/INTEGRATE/ACCEPT."
+
+  - id: BSW-BRE
+    family: BSW
+    type: implement
+    status: gated
+    depends_on: [BSW-RESEARCH, BSW-BAM, BSW-BSH]
+    charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-REENACTMENT_CHARTER.md
+    operator_gate: O0-gated; net-new then single-editor integrate; never fabricates trajectory/counts
+    scope_globs: [web/lib/scene/reenactment/**, web/lib/scene/orca/motion/clips/**]
+    note: "Scrub/slow audio -> multi-orca reenactment driven by classified behavior (kinematic) + real DTAG motion, synced to the spectrogram playhead; camera POV via director.ts. BRE-BUILD/INTEGRATE/ACCEPT."
+
+  - id: BSW-BSS
+    family: BSW
+    type: implement
+    status: gated
+    depends_on: [BSW-RESEARCH]
+    charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-STUDIO-SKILLS_CHARTER.md
+    operator_gate: O0-gated; net-new then single-editor integrate; Central Casting tier/honesty preserved
+    scope_globs: ["web/app/(workbench)/**", infra/tagtools/**, src/aws_backend/casting/**]
+    note: "Annotation UI (from the real h5 schema) + reusable tagtools/animaltags pipeline studio the console can invoke + poster R/ggplot2/Plotly viz registered as managed Central Casting HUD skills + behavior-capture automation reusing the demo-production director. BSS-BUILD/INTEGRATE/ACCEPT."
+
 next_wave_set: H1
 
 gates:

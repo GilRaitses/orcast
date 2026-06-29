@@ -1,0 +1,7 @@
+# Heavy acoustic assets -> box (S3), never git. Re-fetch via PROVENANCE.md.
+data/
+models/*.joblib
+models/*.npz
+*.wav
+*.ts
+*.m3u8

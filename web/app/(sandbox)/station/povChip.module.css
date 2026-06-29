@@ -1,0 +1,55 @@
+/* Local glass POV control for the station sandbox.
+ *
+ * The LGC design tokens are not built yet, so every token NAME is referenced as
+ * a CSS custom property WITH a local fallback. When LGC lands and defines these
+ * variables upstream, this control adopts them with no code change.
+ *
+ * HARD constraint M3: this sits over the r3f canvas, so there is NO
+ * backdrop-filter and blur is 0. Depth comes from a fill plus a scrim gradient
+ * only, never from blurring the WebGL frame behind it. */
+
+.bsw-glass {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  padding: 4px;
+  border-radius: var(--glass-radius, 12px);
+  border: 1px solid var(--glass-stroke-cool, rgba(160, 210, 255, 0.18));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.12)),
+    var(--glass-tint-cool, rgba(8, 38, 61, 0.84));
+  box-shadow: var(--glass-shadow, 0 6px 22px rgba(0, 0, 0, 0.35));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font: 12px/1 ui-sans-serif, system-ui, sans-serif;
+  user-select: none;
+}
+
+.bsw-segment {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 9px 16px;
+  border-radius: var(--glass-radius-inner, 9px);
+  background: transparent;
+  color: var(--glass-ink-muted, rgba(207, 230, 255, 0.72));
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.bsw-segment:hover {
+  color: var(--glass-ink, rgba(231, 244, 255, 0.95));
+}
+
+.bsw-segment:focus-visible {
+  outline: 2px solid var(--glass-accent-ink, #5fd0ff);
+  outline-offset: 2px;
+}
+
+.bsw-segment-active {
+  background: var(--glass-fill-active, rgba(95, 208, 255, 0.16));
+  color: var(--glass-accent-ink, #5fd0ff);
+}

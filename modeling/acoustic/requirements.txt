@@ -1,0 +1,7 @@
+# BAM acoustic classifier — offline, reproducible deps. No torch, no librosa.
+# Audio decode is done by system ffmpeg (see fetch_orcasound_clip.py); WAV is
+# read with scipy.io.wavfile. Versions are floors verified locally.
+numpy>=1.26
+scipy>=1.11
+scikit-learn>=1.3
+joblib>=1.3

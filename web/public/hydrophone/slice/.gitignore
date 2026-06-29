@@ -1,0 +1,4 @@
+# Heavy real audio artifact -> box (S3), gitignored. Re-fetch via PROVENANCE.md.
+*.m4a
+*.wav
+*.mp3

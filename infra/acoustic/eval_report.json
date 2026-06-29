@@ -1,0 +1,84 @@
+{
+  "model_version": "bam-srkw-presence-v0",
+  "train_run_id": "240570e-20260629T093736Z",
+  "created_utc": "2026-06-29T09:37:36.939313+00:00",
+  "task": "binary SRKW-call presence vs absence per window",
+  "feature": {
+    "window_s": 3.0,
+    "hop_s": 1.5,
+    "n_features": 129,
+    "log_mel_bands": 40,
+    "fft": 2048,
+    "fft_hop": 512,
+    "description": "log-mel power spectrogram per-band mean/std/p90 + spectral-shape stats; scipy+numpy, no librosa"
+  },
+  "data": {
+    "station": "Orcasound Lab (rpi_orcasound_lab)",
+    "session": "1629941419",
+    "bout": "210825_1922-2007_OS_SRKW_L",
+    "license": "CC BY-NC-SA 4.0",
+    "attribution": "Orcasound - orcasound.net",
+    "label_basis": "bout-level weak labels",
+    "pos_windows": 1065,
+    "neg_windows": 999,
+    "train_windows": 1443,
+    "test_windows": 619,
+    "split": "temporal within each pool (first 70% train, last 30% test, 1-window gap)"
+  },
+  "models": {
+    "logreg": {
+      "precision": 0.9778,
+      "recall": 0.9655,
+      "f1": 0.9716,
+      "accuracy": 0.9709,
+      "auprc": 0.9975,
+      "roc_auc": 0.9971,
+      "confusion_tn_fp_fn_tp": [
+        293,
+        7,
+        11,
+        308
+      ]
+    },
+    "rf": {
+      "precision": 0.9846,
+      "recall": 1.0,
+      "f1": 0.9922,
+      "accuracy": 0.9919,
+      "auprc": 1.0,
+      "roc_auc": 1.0,
+      "confusion_tn_fp_fn_tp": [
+        295,
+        5,
+        0,
+        319
+      ]
+    }
+  },
+  "selected_model": "rf",
+  "label_qc": {
+    "feature": "hi_lo_log (log high>=4kHz / low band energy)",
+    "pos_mean": -0.2052,
+    "neg_mean": -0.4373,
+    "centroid_pos_mean_hz": 5237.5,
+    "centroid_neg_mean_hz": 4799.8
+  },
+  "honesty": {
+    "claim": "binary SRKW-call presence, estimate + confidence",
+    "hud_claim_ok": true,
+    "reported_as": "estimate + confidence",
+    "not_claimed": [
+      "whale count",
+      "pod / individual ID",
+      "ecotype (SRKW vs Bigg's)",
+      "call type",
+      "single vs multiple callers"
+    ],
+    "known_confounds": [
+      "positives (in-bout) and negatives (pre-bout) are different times of the same session; the model may exploit session-level acoustic differences, not call morphology alone",
+      "bout-level labels: in-bout windows include non-vocal gaps mislabeled positive; reported metrics are an upper bound on per-call detection",
+      "single hydrophone, single bout; cross-station / cross-day generalization NOT evaluated here"
+    ],
+    "to_strengthen": "align Pod.Cast / OrcaHello / DCLDE-2027 per-annotation windows for window-level labels, call-type, and single-vs-multiple heads (STOP-to-O0: corpora fetch + alignment)"
+  }
+}

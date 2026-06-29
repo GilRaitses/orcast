@@ -1,0 +1,124 @@
+/* Route-scoped styles for the B-side acoustic + behavior workbench (/workbench).
+ *
+ * Every overlay here sits OVER the r3f WebGL canvas, so backdrop-filter is 0
+ * (the same M3 constraint the station PovChip follows): depth comes from a fill
+ * plus a scrim gradient, never from blurring the WebGL frame behind it.
+ *
+ * The LGC design tokens are not built yet, so each token NAME is referenced as a
+ * CSS custom property WITH a local fallback. When LGC ships these variables
+ * upstream this route adopts them with no code change. Nothing here touches a
+ * global stylesheet; all names are namespaced bsw-* and module-scoped. */
+
+.bsw-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.bsw-canvasWrap {
+  position: absolute;
+  inset: 0;
+}
+
+.bsw-glass {
+  border-radius: var(--glass-radius, 10px);
+  border: 1px solid var(--glass-stroke-cool, rgba(160, 210, 255, 0.18));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.12)),
+    var(--glass-tint-cool, rgba(8, 38, 61, 0.86));
+  box-shadow: var(--glass-shadow, 0 6px 22px rgba(0, 0, 0, 0.35));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--glass-ink, #cfe6ff);
+}
+
+.bsw-views {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  font: 11px ui-monospace, monospace;
+}
+
+.bsw-segment {
+  appearance: none;
+  border: 1px solid var(--glass-stroke-cool, rgba(120, 180, 220, 0.4));
+  border-radius: var(--glass-radius-inner, 6px);
+  padding: 4px 10px;
+  cursor: pointer;
+  color: var(--glass-ink, #cfe6ff);
+  background: var(--glass-fill, rgba(20, 70, 100, 0.9));
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.bsw-segment:hover {
+  color: var(--glass-ink-bright, #e7f4ff);
+}
+
+.bsw-segment:focus-visible {
+  outline: 2px solid var(--glass-accent-ink, #5fd0ff);
+  outline-offset: 2px;
+}
+
+.bsw-segmentActive {
+  color: var(--glass-accent-ink-on-fill, #04161f);
+  background: var(--glass-fill-active, rgba(180, 220, 255, 0.92));
+}
+
+.bsw-estimate {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  padding: 10px 14px;
+  font: 12px/1.4 ui-sans-serif, system-ui, sans-serif;
+  max-width: 300px;
+}
+
+.bsw-estimateLabel {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.bsw-muted {
+  opacity: 0.85;
+}
+
+.bsw-spaced {
+  margin-top: 4px;
+}
+
+.bsw-link {
+  color: var(--glass-accent-ink, #8fd0ff);
+  opacity: 0.85;
+}
+
+.bsw-legend {
+  position: absolute;
+  left: 12px;
+  top: 52px;
+  padding: 10px 12px;
+  font: 11px/1.5 ui-monospace, monospace;
+  max-width: 430px;
+}
+
+.bsw-repr {
+  margin-top: 4px;
+  color: var(--glass-warn-ink, #ffe08a);
+}
+
+.bsw-hud {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+.bsw-loading {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #9fb6c8;
+  font: 13px/1.5 ui-sans-serif, system-ui, sans-serif;
+}
