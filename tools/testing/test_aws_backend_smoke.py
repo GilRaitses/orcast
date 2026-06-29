@@ -10,14 +10,18 @@ in-memory backend, but accepts any deployed App Runner URL.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from typing import Any, Dict, Tuple
 
 import requests
 
+# Header the backend's require_api_key dependency checks for the shared key.
+_HEADERS: Dict[str, str] = {}
+
 
 def request_json(method: str, base_url: str, path: str, payload: Dict[str, Any] | None = None) -> Tuple[int, Dict[str, Any]]:
-    response = requests.request(method, f"{base_url.rstrip('/')}{path}", json=payload, timeout=30)
+    response = requests.request(method, f"{base_url.rstrip('/')}{path}", json=payload, headers=_HEADERS or None, timeout=30)
     response.raise_for_status()
     return response.status_code, response.json()
 
@@ -25,8 +29,15 @@ def request_json(method: str, base_url: str, path: str, payload: Dict[str, Any] 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Smoke test an ORCAST AWS backend deployment.")
     parser.add_argument("--base-url", default="http://localhost:8080", help="Backend base URL")
+    parser.add_argument(
+        "--api-key",
+        default=os.environ.get("ORCAST_API_KEY", ""),
+        help="Shared API key (X-ORCAST-Key) for auth-gated endpoints; defaults to $ORCAST_API_KEY.",
+    )
     args = parser.parse_args()
     base_url = args.base_url.rstrip("/")
+    if args.api_key:
+        _HEADERS["X-ORCAST-Key"] = args.api_key
 
     checks = [
         ("GET", "/health", None),
@@ -80,7 +91,7 @@ def main() -> int:
     assert report_body["report"]["report_id"] == report_id
     print(f"GET /api/reports/{report_id}: {status_code}")
 
-    csv_response = requests.get(f"{base_url}/api/reports/{report_id}.csv", timeout=30)
+    csv_response = requests.get(f"{base_url}/api/reports/{report_id}.csv", headers=_HEADERS or None, timeout=30)
     csv_response.raise_for_status()
     assert "hotspot_id,name,center_latitude" in csv_response.text
     print(f"GET /api/reports/{report_id}.csv: {csv_response.status_code}")
