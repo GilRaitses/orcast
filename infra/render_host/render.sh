@@ -15,13 +15,20 @@
 # render JSON (canvas present?, console/page error count) printed to stdout.
 set -euo pipefail
 
-INSTANCE="i-04a649f91274e9fce"          # aimez-services
+# Render target: gpu (aimez-gpu-capture T4, real GPU WebGL) | cpu (aimez-services,
+# SwiftShader). Default gpu. Override: ORCAST_RENDER_TARGET=cpu infra/render_host/render.sh ...
+TARGET="${ORCAST_RENDER_TARGET:-gpu}"
+if [ "$TARGET" = "gpu" ]; then
+  INSTANCE="i-0e66ac03c729ebe02"        # aimez-gpu-capture (Tesla T4)
+  GLMODE="gpu"
+else
+  INSTANCE="i-04a649f91274e9fce"        # aimez-services (CPU/SwiftShader)
+  GLMODE="swiftshader"
+fi
 BUCKET="198456344617-us-west-2-orcast-aws-backend-reports"
 REGION="us-west-2"
 PREFIX="render-host"
 PORT="3010"
-KEY="$HOME/.ssh/pax-ec2-key.pem"        # only used by the optional fast rsync path
-HOST="ubuntu@44.197.243.177"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PROOF="${REPO_ROOT}/.cca/catalogue/O0/20260628_render-host/proof"
 
@@ -62,11 +69,11 @@ if [ "$SYNC" = "1" ]; then
   aws s3 cp "${REPO_ROOT}/infra/render_host/render_route.mjs" \
     "s3://$BUCKET/$PREFIX/code/render_route.mjs" --region "$REGION" --only-show-errors
   echo ">> host: pull + extract code (node_modules preserved), refresh render script"
-  ssm "\"mkdir -p /home/ubuntu/orcast/shots\",\"$(dock_aws s3 cp s3://$BUCKET/$PREFIX/code/orcast-web.tgz /w/orcast-web.tgz --only-show-errors)\",\"tar -C /home/ubuntu/orcast -xzf /home/ubuntu/orcast/orcast-web.tgz\",\"$(dock_aws s3 cp s3://$BUCKET/$PREFIX/code/render_route.mjs /w/render_route.mjs --only-show-errors)\",\"chown -R ubuntu:ubuntu /home/ubuntu/orcast/web /home/ubuntu/orcast/render_route.mjs\""
+  ssm "\"mkdir -p /home/ubuntu/orcast/shots\",\"$(dock_aws s3 cp s3://$BUCKET/$PREFIX/code/orcast-web.tgz /w/orcast-web.tgz --only-show-errors)\",\"tar -C /home/ubuntu/orcast -xzf /home/ubuntu/orcast/orcast-web.tgz\",\"$(dock_aws s3 cp s3://$BUCKET/$PREFIX/code/render_route.mjs /w/render_route.mjs --only-show-errors)\",\"chown -R ubuntu:ubuntu /home/ubuntu/orcast\""
 fi
 
-echo ">> host: ensure deps + dev server on :$PORT, then render $ROUTE"
-ssm "\"su - ubuntu -c 'cd ~/orcast/web && [ -d node_modules/.bin ] || npm ci'\",\"su - ubuntu -c 'cd ~/orcast/web && (curl -sf -o /dev/null http://127.0.0.1:$PORT/ || (nohup npx next dev -p $PORT -H 127.0.0.1 >~/orcast/next-dev.log 2>&1 & sleep 12))'\",\"su - ubuntu -c 'for i in \$(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:$PORT/ && break; sleep 2; done'\",\"su - ubuntu -c 'node ~/orcast/render_route.mjs $ROUTE ~/orcast/shots/shot.png $WAITMS'\",\"$(dock_aws s3 cp /w/shots/shot.png s3://$BUCKET/$PREFIX/shots/shot.png --only-show-errors)\""
+echo ">> host: ensure deps + dev server on :$PORT, then render $ROUTE (GL=$GLMODE)"
+ssm "\"su - ubuntu -c 'cd ~/orcast/web && [ -d node_modules/.bin ] || npm ci'\",\"su - ubuntu -c 'cd ~/orcast/web && (curl -sf -o /dev/null http://127.0.0.1:$PORT/ || (nohup npx next dev -p $PORT -H 127.0.0.1 >~/orcast/next-dev.log 2>&1 & sleep 12))'\",\"su - ubuntu -c 'for i in \$(seq 1 40); do curl -sf -o /dev/null http://127.0.0.1:$PORT/ && break; sleep 2; done'\",\"su - ubuntu -c 'ORCAST_GL=$GLMODE node ~/orcast/render_route.mjs $ROUTE ~/orcast/shots/shot.png $WAITMS'\",\"$(dock_aws s3 cp /w/shots/shot.png s3://$BUCKET/$PREFIX/shots/shot.png --only-show-errors)\""
 
 OUTNAME="$(echo "$ROUTE" | sed 's#^/##; s#/#_#g')_$(date +%H%M%S).png"
 echo ">> pull frame -> $PROOF/$OUTNAME"
