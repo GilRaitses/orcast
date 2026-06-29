@@ -1,0 +1,290 @@
+{
+  "generated_at": "2026-06-27T06:24:39.050839+00:00",
+  "storage_backend": "aws",
+  "fit_plan_id": "fitplan_ada6bc2eafaeffa2",
+  "fit_plan_uri": "file:///Users/gilraitses/orcast/data/models/fit_plan.json",
+  "dataset_snapshot_id": "snap_84cef468f100c665",
+  "snapshot_manifest_uri": "file:///Users/gilraitses/orcast/data/models/snapshot_manifest.json",
+  "data_window": {
+    "start": "2020-01-01T00:00:00+00:00",
+    "end": "2026-06-27T23:00:00+00:00",
+    "bin_hours": 1.0,
+    "timezone": "UTC",
+    "streams": [
+      "acoustic_detections",
+      "env_currents",
+      "inaturalist_verified",
+      "noaa_ndbc_stdmet",
+      "obis_verified",
+      "orcahello_reviewed_detector_outcomes",
+      "spatial_grid_covariates",
+      "station_uptime"
+    ]
+  },
+  "input_hashes": {
+    "acoustic_detections:haro_strait": "141cd1040dbba5896d34cf89f00148bef6261dd0cb3cec748248b7a31df21271",
+    "station_uptime:das_possession_bar": "c817e4c6e4d1f28e769c863e99997ce5e7334bca669dbea95eda5ead29ff4a89",
+    "station_uptime:rpi_andrews_bay": "1bf241a6b36072c9db2b2b0851d7eb5fb2f566c285bcea59f5bd68bb0d40a7df",
+    "station_uptime:rpi_bush_point": "b14b7c53fdbd52bdf68cbe44cf4132a4cffd977e27c7cc726eee0f45928c7c60",
+    "station_uptime:rpi_mast_center": "2dd751bfcfffb2b53aa239adf0016d9a4ece1ade223ebe0166727a404bd0cc9f",
+    "station_uptime:rpi_north_sjc": "c1f7dc526da22c089623a9ca835f8546f99313e55ce2e0e7707794eca032243a",
+    "station_uptime:rpi_orcasound_lab": "750a7ed6ff48150ae48dbe7948450948db25bacd47d8d522df04adfc573d52ae",
+    "station_uptime:rpi_point_robinson": "106c644e8d7fe5d154b7d028cbec33d88385618790b08ace0883f1649b74419e",
+    "station_uptime:rpi_port_townsend": "ff90ba941e4cf8bdd5b7888811fbe55da5c987482182912fd02f8135b44b088f",
+    "station_uptime:rpi_sunset_bay": "131db5de538ec32ea9ab31f39f694a242ada6ec5ddbb915f08b0073abb10445f",
+    "env_currents:pooled": "bc5112cca438b59dfcea75b218fb24ae7abcfac74b11f724ce85abe89bd30a4a",
+    "orcahello_reviewed_detector_outcomes:andrews_bay": "dcf90190c2ae4a9f9f97c45a4849e309ce6bcfd18821a3fe20b6e79691f99ded",
+    "orcahello_reviewed_detector_outcomes:haro_strait": "6a2b17de5a60e94a74a1b0cc2c5e7730da89d8ac4a9f7c91cd87ec032e2c0806",
+    "orcahello_reviewed_detector_outcomes:north_san_juan_channel": "2a105a94d9e29177fb88e1e9854ed040663eec15bff239a0d5c0172c402b20fd",
+    "orcahello_reviewed_detector_outcomes:orcasound_lab": "ac6121c598b349f37cb1d7f2b690c81d00c4c84683b3ce9707993a8138426329",
+    "noaa_ndbc_stdmet:46088": "eafd6d8bd4d8db901e422b32f2a396ea5a9c1230807d99f1bfc7b6d5a5b46cd7",
+    "spatial_grid_covariates:san_juan_pilot": "2b0484dc8231dfe1d91caff396681e4ea3b80f15ce3ed1954c9c8f1f6188038d",
+    "inaturalist_verified:salish_sea": "2bd9b9b2739d4b963e9d2f5432a5db31125a4560f09b0591cb59cfba9c3dad4d",
+    "obis_verified:salish_sea": "bf9ed3a809241c0910d0233f57fe6abcd653098ac381685315c27459bc0ccf92"
+  },
+  "ingest_run_ids": [],
+  "n_stations_acoustic": 1,
+  "n_detections": 761,
+  "n_stations_uptime": 9,
+  "n_current_records": 18480,
+  "bin_hours": 1.0,
+  "detections_unreviewed_candidates": true,
+  "level0_detector_qc": {
+    "status": "active",
+    "truth_label": "live",
+    "outcome_counts": {
+      "unknown": 42,
+      "false_positive": 186,
+      "unreviewed": 111,
+      "confirmed": 81
+    },
+    "n_reviewed_labels": 420,
+    "confirmed_fraction": 0.1929,
+    "false_positive_rate": 0.6019,
+    "unknown_fraction": 0.1,
+    "per_station": {
+      "andrews_bay": {
+        "unknown": 13
+      },
+      "haro_strait": {
+        "false_positive": 186,
+        "unknown": 19,
+        "unreviewed": 111,
+        "confirmed": 81
+      },
+      "north_san_juan_channel": {
+        "unknown": 9
+      },
+      "orcasound_lab": {
+        "unknown": 1
+      }
+    },
+    "required_before_full_confidence": true
+  },
+  "spatial_covariates": {
+    "status": "active",
+    "truth_label": "live",
+    "cell_count": 12209,
+    "depth_m_min": -320.0,
+    "depth_m_max": 1.0,
+    "nearest_shore_m_min": 17.4,
+    "nearest_shore_m_max": 7954.9
+  },
+  "detectability_covariates": {
+    "status": "active",
+    "truth_label": "live",
+    "record_count": 7215,
+    "stations": [
+      "46088"
+    ],
+    "span": [
+      "2026-05-08T00:00:00+00:00",
+      "2026-06-27T05:30:00+00:00"
+    ],
+    "note": "Used as detectability/noise metadata; not yet a fitted animal-behavior kernel."
+  },
+  "external_validation": {
+    "status": "active",
+    "truth_label": "live",
+    "record_counts": {
+      "obis_verified": 292,
+      "inaturalist_verified": 9
+    },
+    "note": "Held-out validation only; not used for temporal kernel fitting."
+  },
+  "tide_model": "harmonic",
+  "tide_reconstruction_r2": 0.8470809929517612,
+  "tide_onsets_detected": 4213,
+  "acoustic_span": [
+    "2020-09-28T04:15:03.495901+00:00",
+    "2021-05-09T11:00:21.174203+00:00"
+  ],
+  "currents_span": [
+    "2020-01-01T00:00:00+00:00",
+    "2026-06-27T23:00:00+00:00"
+  ],
+  "tide_overlaps_acoustic": true,
+  "n_bins": 5361,
+  "effort_assumed_continuous": true,
+  "season_extrapolated": true,
+  "season_phase_coverage": 0.75,
+  "phase_coverage": {
+    "diel": 1.0,
+    "tide": 1.0,
+    "lunar": 1.0,
+    "season": 0.75
+  },
+  "covariates_excluded": {
+    "season": "dropped: phase coverage 0.75 < 0.90 (kernel would be extrapolated)"
+  },
+  "level1_psth": {
+    "diel": {
+      "modulation": 0.5914997777330963,
+      "null_z": 0.051144257172520656,
+      "null_p": 0.46107784431137727,
+      "beats_null": false
+    },
+    "tide": {
+      "modulation": 0.6071019023575438,
+      "null_z": 0.0599412688523151,
+      "null_p": 0.437125748502994,
+      "beats_null": false
+    },
+    "lunar": {
+      "modulation": 0.9876057159246754,
+      "null_z": 4.420466091766033,
+      "null_p": 0.001996007984031936,
+      "beats_null": true
+    },
+    "season": {
+      "modulation": 1.3376605690776318,
+      "null_z": 4.8116056570708725,
+      "null_p": 0.003992015968063872,
+      "beats_null": true
+    }
+  },
+  "level1_cross_station": {
+    "testable": false,
+    "reason": "not testable with 1 station",
+    "n_stations": 1
+  },
+  "family": "negbin",
+  "dispersion_alpha": 46.07015982447912,
+  "pearson_dispersion": 1.5296694010066538,
+  "poisson_pearson_dispersion": 9.502879516204745,
+  "covariates_fit": [
+    "diel",
+    "tide",
+    "lunar"
+  ],
+  "intercept": -2.234119359249604,
+  "station_effects": {
+    "haro_strait": 0.0
+  },
+  "metrics": {
+    "n": 5361,
+    "deviance": 5686.890604550541,
+    "loglik": -3098.099285572177,
+    "null_loglik": -3282.942361088272,
+    "mcfadden_r2": 0.0563040879751604,
+    "aic": 6222.198571144354,
+    "bic": 6307.828346594112
+  },
+  "cv": {
+    "n_folds": 5,
+    "n_pass": 2,
+    "mean_deviance_skill": -0.04730031489935951,
+    "gate_pass": false,
+    "null_test": {
+      "successes": 2,
+      "trials": 5,
+      "observed_rate": 0.4,
+      "null_p": 0.5,
+      "p_value": 0.8125,
+      "ci_95_lower": 0.053,
+      "ci_95_upper": 0.853,
+      "interpretation": "pass rate not significantly different from chance",
+      "significant_at_alpha_05": false
+    }
+  },
+  "baseline_scorecard": {
+    "climatology": {
+      "status": "live",
+      "mean_deviance_skill": -0.04730031489935951,
+      "folds_passing": 2,
+      "n_folds": 5
+    },
+    "single_covariate": {
+      "status": "planned"
+    },
+    "persistence": {
+      "status": "planned"
+    },
+    "recent_density": {
+      "status": "planned"
+    }
+  },
+  "pit": {
+    "held_out": true,
+    "family": "negbin",
+    "n": 5361,
+    "ks_stat": 0.008281454843160008,
+    "ks_pval": 0.8526731473746637,
+    "calibrated": true
+  },
+  "pit_poisson": {
+    "held_out": true,
+    "family": "poisson",
+    "n": 5361,
+    "ks_stat": 0.07913846619941867,
+    "ks_pval": 1.1894537061610728e-29,
+    "calibrated": false
+  },
+  "overdispersion": {
+    "poisson_pearson_dispersion": 9.502879516204745,
+    "nb_dispersion_alpha": 46.07015982447912,
+    "poisson_pit_calibrated": false,
+    "nb_pit_calibrated": true,
+    "note": "Negative binomial (NB2) absorbs the count overdispersion that makes the Poisson PIT/time-rescaling gates fail on the single-station data."
+  },
+  "psth_vs_kernel_diagnostic": {
+    "diel": {
+      "correlation": 0.6345899682794205,
+      "agrees": false
+    },
+    "tide": {
+      "correlation": 0.6192206169245429,
+      "agrees": false
+    },
+    "lunar": {
+      "correlation": 0.3041891251623279,
+      "agrees": false
+    }
+  },
+  "time_rescaling": {
+    "per_station": {
+      "haro_strait": {
+        "pass_exp": false,
+        "ks_exp_pval": 0.0,
+        "n_rescaled_ieis": 760
+      }
+    },
+    "pooled_n": 760,
+    "pooled_mean": 1.0340380344888773,
+    "pooled_ks_exp_pval": 0.0,
+    "pooled_pass_exp": false,
+    "in_sample": true,
+    "evaluation_scope": "in_sample"
+  },
+  "confidence": 0.0,
+  "status": "fitted",
+  "repr_id": "repr_96cc7ce94f4a5ed6",
+  "kernel_version": "repr_96cc7ce94f4a5ed6",
+  "artifact_uris": {
+    "fitted_kernels": "representations/repr_96cc7ce94f4a5ed6/fitted_kernels.json",
+    "representation": "representations/repr_96cc7ce94f4a5ed6/representation.json",
+    "fit_report": "runs/run_21687b911959df1c/fit_report.json",
+    "run_manifest": "runs/run_21687b911959df1c/manifest.json"
+  },
+  "run_id": "run_21687b911959df1c"
+}

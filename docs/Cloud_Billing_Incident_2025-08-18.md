@@ -137,6 +137,8 @@ Actions completed on 2025-08-18 (UTC):
   5) Enable both “Detailed usage cost data” and “Pricing data” (recommended).
   6) Save. Data will start flowing within ~24 hours.
 
+Verification status (2025-08-18T04:10:41Z): Export enabled in Console. No tables listed yet in `billing_export` (expected; allow several hours). We'll verify presence of `gcp_billing_export_v1_*` and `gcp_billing_pricing_*` tables and update this section once they appear.
+
 ### Projects and Billing Accounts
 
 - Project `orca-466204` → Billing Account `01EA83-AD2B99-EEEBC1` (billing enabled)

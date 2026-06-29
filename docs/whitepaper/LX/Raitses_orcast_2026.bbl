@@ -277,6 +277,47 @@
       \verb 1304.7224
       \endverb
     \endentry
+    \entry{diggle2010}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=61825262c35ef138ae7eb2daa7dbf6ab}{%
+           family={Diggle},
+           familyi={D\bibinitperiod},
+           given={Peter\bibnamedelima J.},
+           giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=1153ae4bffd8b3977b65de3a83369b2e}{%
+           family={Menezes},
+           familyi={M\bibinitperiod},
+           given={Raquel},
+           giveni={R\bibinitperiod}}}%
+        {{hash=e577c1abc517bcc0f02fd3d768f32818}{%
+           family={Su},
+           familyi={S\bibinitperiod},
+           given={Ting-li},
+           giveni={T\bibinithyphendelim l\bibinitperiod}}}%
+      }
+      \strng{namehash}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{fullhash}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{fullhashraw}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{bibnamehash}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{authorbibnamehash}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{authornamehash}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{authorfullhash}{68516fea5468c4d2c41e48ff764e02a4}
+      \strng{authorfullhashraw}{68516fea5468c4d2c41e48ff764e02a4}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the Royal Statistical Society: Series C (Applied Statistics)}
+      \field{number}{2}
+      \field{title}{Geostatistical inference under preferential sampling}
+      \field{volume}{59}
+      \field{year}{2010}
+      \field{pages}{191\bibrangedash 232}
+      \range{pages}{42}
+      \verb{doi}
+      \verb 10.1111/j.1467-9876.2009.00701.x
+      \endverb
+    \endentry
     \entry{arxiv220511710}{article}{}{}
       \name{author}{5}{}{%
         {{hash=2c356388f1ad2f309473cb9f850b2d0b}{%
@@ -865,6 +906,56 @@
       \verb 1807.01696
       \endverb
     \endentry
+    \entry{olson2018}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=684de375df5578d43c3e69982b84bafb}{%
+           family={Olson},
+           familyi={O\bibinitperiod},
+           given={Jennifer\bibnamedelima K.},
+           giveni={J\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=1f394c326b65c22a16cd936726bcd206}{%
+           family={Wood},
+           familyi={W\bibinitperiod},
+           given={Jason},
+           giveni={J\bibinitperiod}}}%
+        {{hash=16aeb108319e0276e0ffc4402041d675}{%
+           family={Osborne},
+           familyi={O\bibinitperiod},
+           given={Richard\bibnamedelima W.},
+           giveni={R\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=94324650e83d835a88521c3d19fe70b8}{%
+           family={Barrett-Lennard},
+           familyi={B\bibinithyphendelim L\bibinitperiod},
+           given={Lance},
+           giveni={L\bibinitperiod}}}%
+        {{hash=a1490a661787270239aab736d5a9d293}{%
+           family={Larson},
+           familyi={L\bibinitperiod},
+           given={Shawn},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{d84f9ba4b0306fbf79c4d5c6d8374256}
+      \strng{fullhash}{750ddacb329568f4943beae6e8520cfe}
+      \strng{fullhashraw}{750ddacb329568f4943beae6e8520cfe}
+      \strng{bibnamehash}{d84f9ba4b0306fbf79c4d5c6d8374256}
+      \strng{authorbibnamehash}{d84f9ba4b0306fbf79c4d5c6d8374256}
+      \strng{authornamehash}{d84f9ba4b0306fbf79c4d5c6d8374256}
+      \strng{authorfullhash}{750ddacb329568f4943beae6e8520cfe}
+      \strng{authorfullhashraw}{750ddacb329568f4943beae6e8520cfe}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Endangered Species Research}
+      \field{title}{Sightings of southern resident killer whales in the {Salish Sea} 1976--2014: the importance of a long-term opportunistic dataset}
+      \field{volume}{37}
+      \field{year}{2018}
+      \field{pages}{105\bibrangedash 118}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.3354/esr00918
+      \endverb
+    \endentry
     \entry{arxiv13053635}{article}{}{}
       \name{author}{4}{}{%
         {{hash=4aac4e150abe4e0fa02ea7ba7d834476}{%
@@ -1036,6 +1127,74 @@
       \verb{eprint}
       \verb 2406.03075
       \endverb
+    \endentry
+    \entry{thornton2022}{report}{}{}
+      \name{author}{9}{}{%
+        {{hash=ad7b48f0f792642a807e172f5d801559}{%
+           family={Thornton},
+           familyi={T\bibinitperiod},
+           given={Sheila\bibnamedelima J.},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=87920522701d0014342fbdb013e9222f}{%
+           family={Toews},
+           familyi={T\bibinitperiod},
+           given={Scott},
+           giveni={S\bibinitperiod}}}%
+        {{hash=915265096898a74f0a5e6c80b6de6b6c}{%
+           family={Stredulinsky},
+           familyi={S\bibinitperiod},
+           given={Eva},
+           giveni={E\bibinitperiod}}}%
+        {{hash=513a73d414de015c3640e2d3c3e62554}{%
+           family={Gavrilchuk},
+           familyi={G\bibinitperiod},
+           given={Katherine},
+           giveni={K\bibinitperiod}}}%
+        {{hash=b328b747aa94586cb599707bc9d5d326}{%
+           family={Konrad},
+           familyi={K\bibinitperiod},
+           given={Christine},
+           giveni={C\bibinitperiod}}}%
+        {{hash=71c91398ad4b4c8994a4c0011c69c4bf}{%
+           family={Burnham},
+           familyi={B\bibinitperiod},
+           given={Rianna},
+           giveni={R\bibinitperiod}}}%
+        {{hash=6efbcdb7fabe06b035e128b1c8e06873}{%
+           family={Noren},
+           familyi={N\bibinitperiod},
+           given={Dawn\bibnamedelima P.},
+           giveni={D\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=e426e7e14cc227d002d025ee652d4cd9}{%
+           family={Holt},
+           familyi={H\bibinitperiod},
+           given={Marla\bibnamedelima M.},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=3fb6ccca28516c26151f051bbf6c6fad}{%
+           family={Vagle},
+           familyi={V\bibinitperiod},
+           given={Svein},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {DFO Canadian Science Advisory Secretariat (CSAS)}%
+      }
+      \strng{namehash}{7cd5218bf55e5f585e7f91a8c7dd865f}
+      \strng{fullhash}{a7e3893deb25823de887599a0b8f0e36}
+      \strng{fullhashraw}{a7e3893deb25823de887599a0b8f0e36}
+      \strng{bibnamehash}{7cd5218bf55e5f585e7f91a8c7dd865f}
+      \strng{authorbibnamehash}{7cd5218bf55e5f585e7f91a8c7dd865f}
+      \strng{authornamehash}{7cd5218bf55e5f585e7f91a8c7dd865f}
+      \strng{authorfullhash}{a7e3893deb25823de887599a0b8f0e36}
+      \strng{authorfullhashraw}{a7e3893deb25823de887599a0b8f0e36}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{2022/037}
+      \field{title}{Southern Resident Killer Whale ({Orcinus orca}) summer distribution and habitat use in the southern {Salish Sea} and the {Swiftsure Bank} area (2009 to 2020)}
+      \field{type}{Research Document}
+      \field{year}{2022}
     \endentry
     \entry{arxiv210314025}{online}{}{}
       \name{author}{1}{}{%

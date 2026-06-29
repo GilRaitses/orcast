@@ -78,5 +78,5 @@
     ]
   },
   "reason": "s_space precursor assembled from the CAND set (density grid + depth) with an explicit effort-confound warning. k_salmon now includes an informational lag scan summary, but Level 3 remains withheld pending held-out skill vs density baseline, reliability/PIT, a validated effort model, and held-out visual validation. No confidence promoted.",
-  "generated_at": "2026-06-27T16:27:11.944538+00:00"
+  "generated_at": "2026-06-27T20:46:13.624763+00:00"
 }

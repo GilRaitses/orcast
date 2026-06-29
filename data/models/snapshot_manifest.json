@@ -1,0 +1,214 @@
+{
+  "schema_version": "orcast/snapshot_manifest/v1",
+  "fit_plan_id": "fitplan_ada6bc2eafaeffa2",
+  "data_window": {
+    "start": "2020-01-01T00:00:00+00:00",
+    "end": "2026-06-27T23:00:00+00:00",
+    "bin_hours": 1.0,
+    "timezone": "UTC",
+    "streams": [
+      "acoustic_detections",
+      "env_currents",
+      "inaturalist_verified",
+      "noaa_ndbc_stdmet",
+      "obis_verified",
+      "orcahello_reviewed_detector_outcomes",
+      "spatial_grid_covariates",
+      "station_uptime"
+    ]
+  },
+  "streams": [
+    {
+      "stream": "acoustic_detections",
+      "station": "haro_strait",
+      "record_count": 761,
+      "span": [
+        "2020-09-28T04:15:03.495901+00:00",
+        "2021-05-09T11:00:21.174203+00:00"
+      ],
+      "sha256": "141cd1040dbba5896d34cf89f00148bef6261dd0cb3cec748248b7a31df21271"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "das_possession_bar",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "c817e4c6e4d1f28e769c863e99997ce5e7334bca669dbea95eda5ead29ff4a89"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_andrews_bay",
+      "record_count": 344,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "1bf241a6b36072c9db2b2b0851d7eb5fb2f566c285bcea59f5bd68bb0d40a7df"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_bush_point",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "b14b7c53fdbd52bdf68cbe44cf4132a4cffd977e27c7cc726eee0f45928c7c60"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_mast_center",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "2dd751bfcfffb2b53aa239adf0016d9a4ece1ade223ebe0166727a404bd0cc9f"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_north_sjc",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "c1f7dc526da22c089623a9ca835f8546f99313e55ce2e0e7707794eca032243a"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_orcasound_lab",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "750a7ed6ff48150ae48dbe7948450948db25bacd47d8d522df04adfc573d52ae"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_point_robinson",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "106c644e8d7fe5d154b7d028cbec33d88385618790b08ace0883f1649b74419e"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_port_townsend",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "ff90ba941e4cf8bdd5b7888811fbe55da5c987482182912fd02f8135b44b088f"
+    },
+    {
+      "stream": "station_uptime",
+      "station": "rpi_sunset_bay",
+      "record_count": 343,
+      "span": [
+        "2026-06-20T00:13:56.283169+00:00",
+        "2026-06-27T06:01:59.105571+00:00"
+      ],
+      "sha256": "131db5de538ec32ea9ab31f39f694a242ada6ec5ddbb915f08b0073abb10445f"
+    },
+    {
+      "stream": "env_currents",
+      "station": "pooled",
+      "record_count": 18480,
+      "span": [
+        "2020-01-01T00:00:00+00:00",
+        "2026-06-27T23:00:00+00:00"
+      ],
+      "sha256": "bc5112cca438b59dfcea75b218fb24ae7abcfac74b11f724ce85abe89bd30a4a"
+    },
+    {
+      "stream": "orcahello_reviewed_detector_outcomes",
+      "station": "andrews_bay",
+      "record_count": 13,
+      "span": [
+        "2026-03-22T08:53:59+00:00",
+        "2026-06-16T06:27:59+00:00"
+      ],
+      "sha256": "dcf90190c2ae4a9f9f97c45a4849e309ce6bcfd18821a3fe20b6e79691f99ded"
+    },
+    {
+      "stream": "orcahello_reviewed_detector_outcomes",
+      "station": "haro_strait",
+      "record_count": 397,
+      "span": [
+        "2020-09-28T04:15:03.495901+00:00",
+        "2025-01-01T02:09:21.249223+00:00"
+      ],
+      "sha256": "6a2b17de5a60e94a74a1b0cc2c5e7730da89d8ac4a9f7c91cd87ec032e2c0806"
+    },
+    {
+      "stream": "orcahello_reviewed_detector_outcomes",
+      "station": "north_san_juan_channel",
+      "record_count": 9,
+      "span": [
+        "2026-03-13T03:26:29+00:00",
+        "2026-03-25T04:57:50+00:00"
+      ],
+      "sha256": "2a105a94d9e29177fb88e1e9854ed040663eec15bff239a0d5c0172c402b20fd"
+    },
+    {
+      "stream": "orcahello_reviewed_detector_outcomes",
+      "station": "orcasound_lab",
+      "record_count": 1,
+      "span": [
+        "2026-01-13T08:22:57+00:00",
+        "2026-01-13T08:22:57+00:00"
+      ],
+      "sha256": "ac6121c598b349f37cb1d7f2b690c81d00c4c84683b3ce9707993a8138426329"
+    },
+    {
+      "stream": "noaa_ndbc_stdmet",
+      "station": "46088",
+      "record_count": 7215,
+      "span": [
+        "2026-05-08T00:00:00+00:00",
+        "2026-06-27T05:30:00+00:00"
+      ],
+      "sha256": "eafd6d8bd4d8db901e422b32f2a396ea5a9c1230807d99f1bfc7b6d5a5b46cd7"
+    },
+    {
+      "stream": "spatial_grid_covariates",
+      "station": "san_juan_pilot",
+      "record_count": 12209,
+      "span": [
+        "2026-06-22T14:36:02.638043+00:00",
+        "2026-06-27T06:05:41.388142+00:00"
+      ],
+      "sha256": "2b0484dc8231dfe1d91caff396681e4ea3b80f15ce3ed1954c9c8f1f6188038d"
+    },
+    {
+      "stream": "inaturalist_verified",
+      "station": "salish_sea",
+      "record_count": 9,
+      "span": [
+        "2026-06-09T02:53:25+00:00",
+        "2026-06-21T00:00:00+00:00"
+      ],
+      "sha256": "2bd9b9b2739d4b963e9d2f5432a5db31125a4560f09b0591cb59cfba9c3dad4d"
+    },
+    {
+      "stream": "obis_verified",
+      "station": "salish_sea",
+      "record_count": 292,
+      "span": [
+        "2020-07-12T17:40:15+00:00",
+        "2025-12-19T21:55:05+00:00"
+      ],
+      "sha256": "bf9ed3a809241c0910d0233f57fe6abcd653098ac381685315c27459bc0ccf92"
+    }
+  ],
+  "ingest_run_ids": [],
+  "snap_id": "snap_84cef468f100c665"
+}

@@ -17,6 +17,8 @@ interface PathStep {
   route: string;
   title: string;
   description: string;
+  truthLabel: string;
+  badgeClass: 'badge--live' | 'badge--historical' | 'badge--demo';
 }
 
 interface PeekState {
@@ -84,7 +86,7 @@ interface PeekState {
           <li *ngFor="let step of steps; let i = index">
             <a [routerLink]="step.route" class="card card--hover step-card">
               <span class="step-num">{{ i + 1 }}</span>
-              <span class="badge badge--live">Live API</span>
+              <span class="badge" [ngClass]="step.badgeClass">{{ step.truthLabel }}</span>
               <h3>{{ step.title }}</h3>
               <p>{{ step.description }}</p>
             </a>
@@ -92,13 +94,14 @@ interface PeekState {
         </ol>
 
         <a [routerLink]="extra.route" class="card card--hover extra-card">
-          <span class="badge badge--live">Live API</span>
+          <span class="badge" [ngClass]="extra.badgeClass">{{ extra.truthLabel }}</span>
           <h3>{{ extra.title }}</h3>
           <p>{{ extra.description }}</p>
         </a>
 
         <p class="demo-disclaimer">
-          The chat-style map demos are scripted. The report page and CSV export call the live API on AWS.
+          The chat-style map demos are scripted. Report and historical pages call the live AWS API.
+          Recent sightings uses stored database events (historical freshness), not a live stream.
         </p>
       </section>
 
@@ -443,24 +446,32 @@ export class LandingComponent implements OnInit, OnDestroy {
     {
       route: '/reports',
       title: 'Probability report',
-      description: 'See where sightings cluster this week. Download a report for your trip.'
+      description: 'See where sightings cluster this week. Download a report for your trip.',
+      truthLabel: 'Live API',
+      badgeClass: 'badge--live',
     },
     {
       route: '/historical',
       title: 'Historical sightings',
-      description: 'Cross-validated OBIS sightings on a map.'
+      description: 'Cross-validated OBIS sightings on a map.',
+      truthLabel: 'Live API',
+      badgeClass: 'badge--live',
     },
     {
       route: '/ml-predictions',
       title: 'Probability map',
-      description: 'Map of sighting probability for a region you choose. Same scoring as the report page.'
+      description: 'Map of sighting probability for a region you choose. Same scoring as the report page.',
+      truthLabel: 'Live API',
+      badgeClass: 'badge--live',
     }
   ];
 
   extra: PathStep = {
     route: '/realtime',
     title: 'Recent sightings',
-    description: 'Sightings from our database on a map.'
+    description: 'Sightings from our database on a map (historical event stream, not live hydrophone feed).',
+    truthLabel: 'Historical data',
+    badgeClass: 'badge--historical',
   };
 
   constructor(

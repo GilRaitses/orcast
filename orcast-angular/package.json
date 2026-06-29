@@ -1,7 +1,7 @@
 {
   "name": "orcast-angular",
   "version": "1.0.0",
-  "description": "ORCAST Multi-Agent Whale Research Platform - Angular Version",
+  "description": "orcast San Juan islands pilot — Angular map and reports surface",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

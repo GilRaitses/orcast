@@ -1,5 +1,7 @@
 # Data wiring: the prerequisite layer
 
+**Waves registry:** [WAVES_REGISTRY.md](../devpost/WAVES_REGISTRY.md) (canonical IDs D1–D4).
+
 Gate principle: nothing in the forecast program (covariate library, PSTH, kernel fitting, forecast surface, instrument-panel UX) starts until every data source below is ingested, stored, scheduled, and validated. This doc is the definition of "all data wired" and the build waves to get there. Methodology context: [FORECAST_KERNELS.md](FORECAST_KERNELS.md), [CALIBRATION_STUDIES.md](CALIBRATION_STUDIES.md).
 
 ## Locked defaults
@@ -40,20 +42,20 @@ Backed by S3 NDJSON (append/merge per month partition); MemoryStore mirror for l
 
 ## Build waves (all gate the modeling work)
 
-### Wave 1 - independent fetchers + compute + storage (no deploy, code + tests)
+### D1 — independent fetchers + compute + storage (no deploy, code + tests)
 - `timeseries.py` - the TimeSeriesStore (S3 NDJSON + memory) + tests.
 - `covariates.py` - pure compute: solar (sunrise/sunset, daylight, solar elevation), diel hour-angle, lunar phase/illumination from (timestamp, lat, lng). No deps beyond stdlib math; tests against known dates.
 - `sources/orcahello_history.py` - paged pull of the full OrcaHello archive (in-region + all), normalized to acoustic-detection records (timestamp, station, lat, lng, confidence, reviewed/found labels). Tests with a mocked paged payload.
 - `sources/noaa.py` (extend) - historical date-range pull for water level + add a currents station; return series. Tests with mocked NOAA JSON.
 - `sources/salmon.py` - Albion + DART run-timing index adapter; return a daily index series. Tests with mocked source payload.
 
-### Wave 2 - ingest orchestration + backfill + schedule + deploy
+### D2 — ingest orchestration + backfill + schedule + deploy
 - An ingest orchestrator that pulls each adapter and writes via TimeSeriesStore; a one-time backfill entrypoint; wire into the scheduled ingestion; infra for any new bucket/prefix; deploy. Backfill the OrcaHello + NOAA history.
 
-### Wave 3 - real sightings + effort
+### D3 — real sightings + effort
 - Replace OBIS local seed with the live OBIS API; enable iNaturalist; start station-uptime logging.
 
-### Wave 4 - spatial inputs (for L3)
+### D4 — spatial inputs (for L3)
 - Bathymetry static layer (GEBCO/NOAA clip).
 
 ## Definition of done ("all data wired")

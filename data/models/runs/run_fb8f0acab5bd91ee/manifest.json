@@ -1,0 +1,51 @@
+{
+  "schema_version": "orcast/fit_run/v1",
+  "snap_id": "snap_7b32a8e97d9cd5d7",
+  "repr_id": "repr_46c561feb18ef281",
+  "fit_plan_id": "fitplan_ada6bc2eafaeffa2",
+  "generated_at": "2026-06-22T14:42:39.046840+00:00",
+  "data_window": {
+    "start": "2020-01-01T00:00:00+00:00",
+    "end": "2026-06-22T23:00:00+00:00",
+    "bin_hours": 1.0,
+    "timezone": "UTC",
+    "streams": [
+      "acoustic_detections",
+      "env_currents",
+      "inaturalist_verified",
+      "noaa_ndbc_stdmet",
+      "obis_verified",
+      "orcahello_reviewed_detector_outcomes",
+      "spatial_grid_covariates",
+      "station_uptime"
+    ]
+  },
+  "input_hashes": {
+    "acoustic_detections:haro_strait": "141cd1040dbba5896d34cf89f00148bef6261dd0cb3cec748248b7a31df21271",
+    "station_uptime:das_possession_bar": "58418226b0df43633f740001d2296c24cce2086003deb8c8d77cf681d7eddb08",
+    "station_uptime:rpi_andrews_bay": "0e24dedea953651154c94395863892ffaa23da053c0a27a5b64c825529ae8fcb",
+    "station_uptime:rpi_bush_point": "e71d82c021e40bd5e670e9556bdbe300c8f59de6f517256db63836dee1d0794e",
+    "station_uptime:rpi_mast_center": "996491970caf28f2ffe37072657345ae7f18f1d95a494667a04d8619fd500385",
+    "station_uptime:rpi_north_sjc": "0cb5ab23cade0fde8ce0c3a8613930bd0ebc8f72e9ec96b303701c981539ce83",
+    "station_uptime:rpi_orcasound_lab": "cf0447535687170a001895c96a9875689f3bf5484eb703f9cfc1f7f885792429",
+    "station_uptime:rpi_point_robinson": "56cd4ed18141f070412bf80711252ebededbce659aed558047a9e06a3fac0db8",
+    "station_uptime:rpi_port_townsend": "86731c101eccd0a467eddadedac594d6387fc1890df9132f603501dfb119dfbb",
+    "station_uptime:rpi_sunset_bay": "10fdff6b0956eab52f1ee7879d6f59a7ddd3d05122e808321976f619ca8aa12d",
+    "env_currents:pooled": "27653999ac377cc5493ef978a6719fc91ee7fea7e4781355f02f0d7c39b77973",
+    "orcahello_reviewed_detector_outcomes:andrews_bay": "dcf90190c2ae4a9f9f97c45a4849e309ce6bcfd18821a3fe20b6e79691f99ded",
+    "orcahello_reviewed_detector_outcomes:haro_strait": "d7c745c47f456986342bd41e2cd3f305d05de6b6afcd43ea5552559a22532240",
+    "orcahello_reviewed_detector_outcomes:north_san_juan_channel": "2a105a94d9e29177fb88e1e9854ed040663eec15bff239a0d5c0172c402b20fd",
+    "orcahello_reviewed_detector_outcomes:orcasound_lab": "ac6121c598b349f37cb1d7f2b690c81d00c4c84683b3ce9707993a8138426329",
+    "noaa_ndbc_stdmet:46088": "fd3790b4a466b51c44eb66bcd06fd12350c9b82c9ecb967f45cf3e4d394e1e77",
+    "spatial_grid_covariates:san_juan_pilot": "c5e04325fe2b660e47d5f17947d4fc07a453526f380de5af05e8f1f47acef320",
+    "inaturalist_verified:salish_sea": "8290d69f1577268dfb14fb39ea7e043fcf61b24b2f1244abb66afbae1715547c",
+    "obis_verified:salish_sea": "533364c728d9269fde182c98bad1e13f4b3f257e3b20e0519dd5e2c53ef3d174"
+  },
+  "output_hashes": {
+    "fitted_kernels": "69f359685b6089b6181f13d7383399f7a13060eb3e6bd41a0aa75e90346b8399",
+    "fit_report": "3b20eb4ae14ba9d12724e491ac43f0c2b374a6a223426f04955e93ab6a9b24e6"
+  },
+  "status": "fitted",
+  "confidence": 0.0,
+  "run_id": "run_fb8f0acab5bd91ee"
+}

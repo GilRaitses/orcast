@@ -1,0 +1,14 @@
+# Offline kernel-estimation dependencies.
+#
+# These are for fitting/validation only and are intentionally NOT added to the
+# deployed App Runner image (tools/deployment/aws/requirements.txt). The service
+# loads pre-fitted coefficients via src/aws_backend/kernel_model/serve.py, which
+# depends on nothing beyond the stdlib + the existing covariates module.
+#
+# Install for offline work with:  pip install -r modeling/requirements.txt
+numpy>=1.26
+scipy>=1.11
+pandas>=2.0
+statsmodels>=0.14
+matplotlib>=3.7
+pytest>=7.4

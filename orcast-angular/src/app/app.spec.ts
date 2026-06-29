@@ -16,8 +16,8 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should expose the ORCAST Angular title', () => {
+  it('should expose the orcast title', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.componentInstance.title).toBe('ORCAST Angular');
+    expect(fixture.componentInstance.title).toBe('orcast');
   });
 });

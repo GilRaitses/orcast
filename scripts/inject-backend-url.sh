@@ -48,41 +48,62 @@ echo "Injected BACKEND_URL=${BACKEND_URL} into production environment files and 
 if [ -f "$MANIFEST" ]; then
   python3 <<'PY'
 import json
+import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 root = Path(".")
 manifest = json.loads((root / "infra/aws/state/deployment-manifest.json").read_text())
 handoff = root / "HANDOFF_STATUS.md"
-text = handoff.read_text()
-lines = [
-    "# ORCAST AWS Handoff — Coordination Status",
-    "",
-    f"**Last updated:** {manifest.get('backed_up_at', 'auto')}",
-    "",
-    "## Live URLs",
-    "",
-    "```",
-    f"BACKEND_URL={manifest['backend_url']}",
-    f"CLOUDFRONT_URL={manifest['cloudfront_url']}",
-    f"FRONTEND_BUCKET={manifest['frontend_bucket']}",
-    f"DISTRIBUTION_ID={manifest.get('distribution_id', '')}",
-    f"AWS_REGION={manifest['region']}",
-    "```",
-    "",
-    "Run `bash scripts/inject-backend-url.sh` before any production build.",
-]
-if "## Stream status" in text:
-    lines.append("")
-    lines.append(text[text.index("## Stream status"):])
+
+url_lines = {
+    "BACKEND_URL": manifest["backend_url"],
+    "CLOUDFRONT_URL": manifest["cloudfront_url"],
+    "FRONTEND_BUCKET": manifest["frontend_bucket"],
+    "DISTRIBUTION_ID": manifest.get("distribution_id", ""),
+    "AWS_REGION": manifest["region"],
+}
+
+stamp = manifest.get("backed_up_at") or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+if not handoff.exists():
+    body = (
+        "# orcast AWS handoff — coordination status\n\n"
+        f"**Last updated:** {stamp}\n\n"
+        "## Live URLs\n\n```\n"
+        + "\n".join(f"{k}={v}" for k, v in url_lines.items())
+        + "\n```\n\n"
+        "Run `bash scripts/inject-backend-url.sh` before any production Angular build.\n"
+    )
+    handoff.write_text(body)
+    print("Created HANDOFF_STATUS.md with Live URLs block")
 else:
-    lines.extend([
-        "",
-        "## Verification",
-        "",
-        "- `python3 tools/testing/test_aws_backend_smoke.py --base-url <BACKEND_URL>`",
-        "- CloudFront `/reports` generates a probability report",
-    ])
-handoff.write_text("\n".join(lines) + "\n")
-print("Updated HANDOFF_STATUS.md from deployment manifest")
+    text = handoff.read_text()
+    if "**Last updated:**" in text:
+        text = re.sub(r"\*\*Last updated:\*\* [^\n]+", f"**Last updated:** {stamp}", text, count=1)
+    else:
+        text = re.sub(r"(# [^\n]+\n)", rf"\1\n**Last updated:** {stamp}\n", text, count=1)
+
+    if "## Live URLs" in text and "```" in text:
+        def replace_url_block(match: re.Match[str]) -> str:
+            block = match.group(0)
+            for key, value in url_lines.items():
+                if re.search(rf"^{key}=", block, flags=re.M):
+                    block = re.sub(rf"^{key}=.*$", f"{key}={value}", block, flags=re.M)
+                else:
+                    block = block.rstrip("`").rstrip("\n") + f"\n{key}={value}\n```"
+            return block
+
+        text = re.sub(r"## Live URLs\n\n```[\s\S]*?```", replace_url_block, text, count=1)
+    else:
+        insert = (
+            "\n## Live URLs\n\n```\n"
+            + "\n".join(f"{k}={v}" for k, v in url_lines.items())
+            + "\n```\n"
+        )
+        text = text.rstrip() + insert
+
+    handoff.write_text(text if text.endswith("\n") else text + "\n")
+    print("Patched Live URLs in HANDOFF_STATUS.md (preserved other sections)")
 PY
 fi

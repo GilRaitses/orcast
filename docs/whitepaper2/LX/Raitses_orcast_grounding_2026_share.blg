@@ -1,15 +1,15 @@
 [0] Config.pm:308> INFO - This is Biber 2.20
 [0] Config.pm:311> INFO - Logfile is 'Raitses_orcast_grounding_2026_share.blg'
-[28] biber-darwin:340> INFO - === Thu Jun 25, 2026, 22:51:37
-[34] Biber.pm:420> INFO - Reading 'Raitses_orcast_grounding_2026_share.bcf'
-[66] Biber.pm:994> INFO - Found 36 citekeys in bib section 0
-[72] Biber.pm:4463> INFO - Processing section 0
-[76] Biber.pm:4654> INFO - Looking for bibtex file 'references2.bib' for section 0
-[78] bibtex.pm:1713> INFO - LaTeX decoding ...
-[88] bibtex.pm:1519> INFO - Found BibTeX data source 'references2.bib'
-[176] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[176] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[176] Biber.pm:4283> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
-[176] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
-[192] bbl.pm:676> INFO - Writing 'Raitses_orcast_grounding_2026_share.bbl' with encoding 'UTF-8'
-[198] bbl.pm:779> INFO - Output to Raitses_orcast_grounding_2026_share.bbl
+[30] biber-darwin:340> INFO - === Fri Jun 26, 2026, 23:46:24
+[37] Biber.pm:420> INFO - Reading 'Raitses_orcast_grounding_2026_share.bcf'
+[72] Biber.pm:994> INFO - Found 36 citekeys in bib section 0
+[78] Biber.pm:4463> INFO - Processing section 0
+[83] Biber.pm:4654> INFO - Looking for bibtex file 'references2.bib' for section 0
+[84] bibtex.pm:1713> INFO - LaTeX decoding ...
+[96] bibtex.pm:1519> INFO - Found BibTeX data source 'references2.bib'
+[190] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[190] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[190] Biber.pm:4283> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[191] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[207] bbl.pm:676> INFO - Writing 'Raitses_orcast_grounding_2026_share.bbl' with encoding 'UTF-8'
+[213] bbl.pm:779> INFO - Output to Raitses_orcast_grounding_2026_share.bbl

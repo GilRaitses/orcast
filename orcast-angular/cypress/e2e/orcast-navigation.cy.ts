@@ -21,6 +21,7 @@ describe('orcast navigation', () => {
       cy.contains('.step-card', 'Historical sightings').should('be.visible')
       cy.contains('.step-card', 'Probability map').should('be.visible')
       cy.get('.badge--live').should('exist')
+      cy.get('.badge--historical').should('exist')
     })
 
     it('links to the partners page', () => {

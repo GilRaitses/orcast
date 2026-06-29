@@ -1,0 +1,37 @@
+{
+  "schema_version": "orcast/level0_detector_qc/v1",
+  "generated_at": "2026-06-27T06:24:39.050839+00:00",
+  "dataset_snapshot_id": "snap_84cef468f100c665",
+  "level0_detector_qc": {
+    "status": "active",
+    "truth_label": "live",
+    "outcome_counts": {
+      "unknown": 42,
+      "false_positive": 186,
+      "unreviewed": 111,
+      "confirmed": 81
+    },
+    "n_reviewed_labels": 420,
+    "confirmed_fraction": 0.1929,
+    "false_positive_rate": 0.6019,
+    "unknown_fraction": 0.1,
+    "per_station": {
+      "andrews_bay": {
+        "unknown": 13
+      },
+      "haro_strait": {
+        "false_positive": 186,
+        "unknown": 19,
+        "unreviewed": 111,
+        "confirmed": 81
+      },
+      "north_san_juan_channel": {
+        "unknown": 9
+      },
+      "orcasound_lab": {
+        "unknown": 1
+      }
+    },
+    "required_before_full_confidence": true
+  }
+}

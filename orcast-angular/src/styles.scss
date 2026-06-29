@@ -134,6 +134,11 @@ body {
   color: var(--live-ink);
 }
 
+.badge--historical {
+  background: var(--demo-bg);
+  color: var(--demo-ink);
+}
+
 .badge--demo {
   background: var(--demo-bg);
   color: var(--demo-ink);

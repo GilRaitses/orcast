@@ -48,6 +48,7 @@ Do not use unless quoting an API field (e.g. `model_version`):
 | Score grid lead | Map of sighting probability for a region you choose. Same scoring as the report page. |
 | Recent sightings | Sightings from our database on a map |
 | Demo badge (live) | Live API |
+| Demo badge (historical) | Historical data |
 | Demo badge (scripted) | Demo only |
 | Demo disclaimer | The chat-style map demos are scripted. The report page and CSV export call the live API on AWS. |
 | Partners lead | (use medium description) |

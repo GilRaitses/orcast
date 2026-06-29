@@ -1,0 +1,138 @@
+{
+  "Comment": "orcast forecast orchestrator. Runs ingest -> fit+gate -> (if gates pass) draft promotion -> human sign-off -> apply promotion. Each Task wraps an existing function; ARNs are placeholders resolved by infra/aws/template.yaml. See docs/devpost/H0_ARCHITECTURE.md.",
+  "StartAt": "Ingest",
+  "States": {
+    "Ingest": {
+      "Type": "Task",
+      "Comment": "Pull external sources + community-approved sightings into the time-series store (wraps state.run_ingestion + ingest_timeseries.refresh_recent).",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${IngestFunctionArn}",
+        "Payload": { "mode": "refresh" }
+      },
+      "ResultPath": "$.ingest",
+      "Retry": [
+        { "ErrorEquals": ["States.ALL"], "IntervalSeconds": 30, "MaxAttempts": 2, "BackoffRate": 2.0 }
+      ],
+      "Next": "FreezeSnapshot"
+    },
+
+    "FreezeSnapshot": {
+      "Type": "Task",
+      "Comment": "Pin ingest outputs into snapshot_manifest.json before fitting (wraps modeling.fit_kernels.freeze_dataset_snapshot).",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${FitKernelsFunctionArn}",
+        "Payload": { "mode": "freeze_snapshot", "bin_hours": 1.0 }
+      },
+      "ResultSelector": {
+        "snap_id.$": "$.Payload.dataset_snapshot_id",
+        "status.$": "$.Payload.status"
+      },
+      "ResultPath": "$.snapshot",
+      "Next": "FitAndGate"
+    },
+
+    "FitAndGate": {
+      "Type": "Task",
+      "Comment": "Build design, fit the LNP kernels, run every fitness gate, emit fitted_kernels.json + fit_report.json (wraps modeling.fit_kernels.run_fit).",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${FitKernelsFunctionArn}",
+        "Payload": {
+          "bin_hours": 1.0,
+          "dataset_snapshot_id.$": "$.snapshot.snap_id"
+        }
+      },
+      "ResultSelector": {
+        "status.$": "$.Payload.status",
+        "confidence.$": "$.Payload.confidence",
+        "gates.$": "$.Payload.gates_summary"
+      },
+      "ResultPath": "$.fit",
+      "Retry": [
+        { "ErrorEquals": ["States.ALL"], "IntervalSeconds": 30, "MaxAttempts": 1, "BackoffRate": 2.0 }
+      ],
+      "Next": "GatesPassed?"
+    },
+
+    "GatesPassed?": {
+      "Type": "Choice",
+      "Comment": "Automated gates are necessary but not sufficient; a passing fit is only eligible for promotion, not auto-promoted.",
+      "Choices": [
+        {
+          "And": [
+            { "Variable": "$.fit.status", "StringEquals": "fitted" },
+            { "Variable": "$.fit.confidence", "NumericGreaterThanEquals": 0.6 }
+          ],
+          "Next": "DraftPromotion"
+        }
+      ],
+      "Default": "HoldLowConfidence"
+    },
+
+    "DraftPromotion": {
+      "Type": "Task",
+      "Comment": "Bedrock promotion supervisor drafts a structured promote/hold recommendation citing gate evidence (wraps promotion.supervisor; deterministic fallback if Bedrock is unavailable).",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PromotionSupervisorFunctionArn}",
+        "Payload.$": "$.fit"
+      },
+      "ResultPath": "$.recommendation",
+      "Next": "AwaitHumanDecision"
+    },
+
+    "AwaitHumanDecision": {
+      "Type": "Task",
+      "Comment": "Pause for the consequential human step. The reviewer reads the recommendation + raw gates in the UI and POSTs /api/decision-records, which calls SendTaskSuccess/SendTaskFailure with this token.",
+      "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "Parameters": {
+        "FunctionName": "${RequestHumanApprovalFunctionArn}",
+        "Payload": {
+          "taskToken.$": "$$.Task.Token",
+          "recommendation.$": "$.recommendation",
+          "fit.$": "$.fit"
+        }
+      },
+      "ResultPath": "$.decision",
+      "TimeoutSeconds": 604800,
+      "Catch": [
+        { "ErrorEquals": ["States.Timeout"], "ResultPath": "$.decision", "Next": "HoldLowConfidence" }
+      ],
+      "Next": "HumanVerdict?"
+    },
+
+    "HumanVerdict?": {
+      "Type": "Choice",
+      "Choices": [
+        { "Variable": "$.decision.verdict", "StringEquals": "promote", "Next": "ApplyPromotion" }
+      ],
+      "Default": "HoldLowConfidence"
+    },
+
+    "ApplyPromotion": {
+      "Type": "Task",
+      "Comment": "Promote the displayed confidence for the approved fit and write the immutable decision record (wraps the promote handler + decision-records table).",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${ApplyPromotionFunctionArn}",
+        "Payload.$": "$.decision"
+      },
+      "ResultPath": "$.applied",
+      "Next": "Done"
+    },
+
+    "HoldLowConfidence": {
+      "Type": "Pass",
+      "Comment": "Forecast stays the default surface but broad/low-confidence. The gates raise confidence over time; they never flip a visibility switch.",
+      "Result": { "promoted": false },
+      "ResultPath": "$.applied",
+      "Next": "Done"
+    },
+
+    "Done": {
+      "Type": "Succeed"
+    }
+  }
+}

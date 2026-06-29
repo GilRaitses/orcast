@@ -1,0 +1,190 @@
+\section{Section 1: Demo Beat Audit}
+
+Each beat shows the actual still frame captured by the Playwright walkthrough, followed by three items: what the beat is supposed to demonstrate, what a first-time judge sees, and what to fix.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 01, Home (\texttt{/})}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-01-home.png}
+\end{center}
+
+\textbf{Storyboard intent.} Establish that the system always shows the forecast but bounds the confidence it displays to what the statistical gate battery has earned. The integrity conditions block shows the model's honest self-assessment.
+
+\textbf{What a judge sees.} A dark map with red sighting pins, a large ``0\%'' Forecast Confidence label, a list of technical caveats, and four navigation buttons. The ``Automation'' chip in the top-right corner and ``agent@orcast.dev'' are visible but small. There are no probability-coloured map cells visible, the sighting pins dominate.
+
+\textbf{What is missing or confusing.}
+\begin{itemize}
+\item 0\% confidence is the correct value (no human promotion yet) but a judge reading this for the first time sees a broken product, not an honest one. The explanation is present but requires careful reading.
+\item The map shows sighting pins but no hotspot confidence cells. The spatial forecast is the product, it is invisible in this frame.
+\item The ``Run re-fit'' button is prominent and cyan. To a judge it reads as ``the system is not ready; please run it first.'' The button's prominence undercuts the ``always-on forecast'' claim.
+\end{itemize}
+
+\begin{p1box}
+\textbf{P1, Fix before Saturday.} Pan the map to a hotspot cluster or zoom into Haro Strait so at least one confidence-coloured cell is visible before the provenance modal opens in Beat 02. Consider narrating why 0\% is the honest answer: ``No promotion has happened yet. The model fitted. The gates told it not to display high confidence. That's the product.''
+\end{p1box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 02, Provenance modal}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-02-provenance.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show that every map cell traces back to its kernels, gate verdicts, and data. The provenance modal is the ``why is this cell hot?'' drilldown.
+
+\textbf{What a judge sees.} A modal titled ``Why is this cell hot?'' over the map. Shows coordinates, modelled intensity 0.0978, confidence 0\%, six integrity conditions, a yellow ``Temporal-only, latitude not modeled'' banner, a kernel contributions table (diel: no signal; lunar: beats null), and a ``Nearby sightings'' section that is cut off.
+
+\textbf{What is missing or confusing.}
+\begin{itemize}
+\item The PSTH kernel plots are blank white boxes labelled ``fixed kernel shape (offline fit artifact)''. To a judge this reads as broken image placeholders.
+\item The yellow warning banner ``Temporal-only, latitude not modeled'' is alarming. It reads as a system limitation warning, not an integrity condition.
+\item The modal is dense. A judge will not read six bullet-point integrity conditions in a 3-minute demo.
+\end{itemize}
+
+\begin{p0box}
+\textbf{P0, Kernel PSTH plots render as blank white boxes.} This makes the product look like it has missing assets. The kernel shape images are described as ``offline fit artifacts'' which is technically accurate (they come from S3) but visually broken. Fix: either load the actual PSTH shape PNGs from S3 into the response, or remove the placeholder images and show the modulation values only.
+\end{p0box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 03, Fitness gates (\texttt{/gates})}
+
+\begin{center}
+\includegraphics[width=0.75\linewidth]{beat-03-gates.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show the full statistical gate battery: PSTH vs phase-shuffle null, time-rescaling goodness-of-fit, held-out cross-validation, PIT calibration. Show that the system surfaces integrity conditions rather than hiding a failing model.
+
+\textbf{What a judge sees.} An extremely data-dense page. Status: fitted, confidence 0\%, promoted badge. Integrity conditions block. Evidence chain hash (cryptic). Level 1: four kernel panels, all showing blank white PSTH plots with modulation values below. Gate table showing diel/tide fail (red), lunar/season pass (green). Level 0 QC scorecard. CV: 3/5 folds passing, mean deviance skill $-0.018$, gate: caution. Time-rescaling GOF: KS p=0.000, fail. PIT calibration: KS p=0.992, pass.
+
+\textbf{What is missing or confusing.}
+\begin{itemize}
+\item PSTH plots are blank again, same broken-image issue as Beat 02.
+\item The ``promoted'' badge next to ``confidence 0\%'' is contradictory to a judge who hasn't read the whitepaper. The model was promoted but confidence is still 0\%, the relationship between promotion and displayed confidence is not explained.
+\item The page requires scrolling; the screenshot captures only the top half. A judge watching video will not read the full gate battery.
+\end{itemize}
+
+\begin{p0box}
+\textbf{P0, PSTH plot blank boxes.} Same fix as Beat 02.
+\end{p0box}
+
+\begin{p1box}
+\textbf{P1, Narrate the contradiction.} During Beat 03, explicitly say: ``The model was promoted but the effective confidence gate caps it at 0\% because deviance skill is negative. The gate is doing its job.'' This turns an apparent contradiction into a demonstration of honesty.
+\end{p1box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 04, Surface planner (\texttt{/explore?planner=1})}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-04-planner.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show Central Casting: the managed agent resolves a cast role, dispatches skills, and produces a structured step-log with grounding references before narrating.
+
+\textbf{What a judge sees.} Explore page with a map (small, left column) and a chat panel (right). The cast badge ``CAST: EXPLORE-GUIDE-V1'' is visible. The question ``Which gates block promotion right now?'' is pre-filled. The response shows ``SURFACE PLANNER $\cdot$ SURFACE-PLANNER-V1 $\cdot$ SCHEMA 1.0.0'' with a 6-step interaction trace expanded: resolve\_agent, plan\_output, 4 skill\_invocations. Deep-link buttons: Gates, Moderation, Explore pin. Narration credit: Vercel AI Gateway.
+
+\textbf{What is missing or confusing.}
+\begin{itemize}
+\item The cast badge says ``EXPLORE-GUIDE-V1'' (the chat agent) but the panel header shows ``SURFACE PLANNER $\cdot$ SURFACE-PLANNER-V1''. The distinction between the explore guide and the surface planner is not clear to a judge.
+\item The 6-step trace is collapsed in a disclosure widget. A judge watching video will not expand it in the 15 seconds this beat is on screen.
+\item The grounding benchmark claim (0\% uncited rate) belongs here but Beat 4b was excluded from the recording. The benchmark is the strongest proof-point and it does not appear on camera.
+\end{itemize}
+
+\begin{p1box}
+\textbf{P1, Consider re-including Beat 4b.} The grounding benchmark (0\% uncited) is the strongest AMI-alignment proof point. A 15-second static slide showing the figure-mp3 benchmark scope diagram would add it. The demo is 2m 12s, 15 more seconds is acceptable.
+\end{p1box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 05, Sighting check (\texttt{/ask})}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-05-ask.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show that the sighting check separates encounter likelihood from species identification, grounded in the gate data, not a yes/no oracle.
+
+\textbf{What a judge sees.} A structured 3-part Bedrock response: (a) encounter likelihood 9.8\% baseline, lunar favours presence, but cross-validation skill is negative so treat cautiously; (b) cannot confirm the sighting was an orca; (c) yes, report it with instructions and nearby verified sightings context. Sources linked at bottom. Bedrock badge visible.
+
+\textbf{What is missing or confusing.}
+\begin{itemize}
+\item The pre-filled question ``I saw a black dorsal fin from shore, could it have been an orca?'' makes it obvious this is a seeded demo rather than a live sighting check.
+\item The ``Submit a shore report'' button is visible but the flow from sighting check to journal to moderation is not demonstrated in this beat, it requires context from Beat 06.
+\end{itemize}
+
+\begin{notebox}
+\textbf{No P0 or P1 gaps.} This is the strongest beat. The response quality is high, the limits are disclosed honestly, and the Bedrock attribution is visible. The main note is that the pre-filled question is obviously seeded, acceptable for a Playwright demo.
+\end{notebox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 06a, Field journal (\texttt{/journal})}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-06-journal.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show that field notes are private until the observer publishes them to the community queue.
+
+\textbf{What a judge sees.} A long list of journal entries, all reading ``agent orcast sighting $\cdot$ Lime Kiln Point $\cdot$ agent@orcast.dev $\cdot$ Automated agent smoke test entry.'' Multiple identical entries, same location, same content, same observer.
+
+\begin{p0box}
+\textbf{P0, The journal is full of automated smoke test entries.} This is the most damaging beat in the deck. A judge sees what looks like a system filling its own journal with junk data, not field researchers posting notes. The ``Automated agent smoke test entry.'' label and the dozens of identical entries make it obvious this is test scaffolding.
+
+\textbf{Fix before Saturday.} Option A (preferred): Before re-recording, manually create 3--5 realistic journal entries from the test user (e.g.\ ``Transiting pod, 5+ animals, foraging behaviour near Shaw Island'') and delete the smoke test entries. Option B: Seed realistic entries via the agent credentials during the Playwright setup step rather than using the generic smoke test content. The journal beat must show what a field researcher would actually write.
+\end{p0box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 06b, Community moderation queue (\texttt{/moderation})}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-06-moderation.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show that shore reports are quarantined until a human approves. Approval attaches attribution and a low reliability weight before the observation influences the model.
+
+\textbf{What a judge sees.} Community moderation queue with 7+ pending entries. The first 5 are ``Lime Kiln Point $\cdot$ Automated agent smoke test entry.'' from agent@orcast.dev. The bottom two are real-looking: ``Cattle Point $\cdot$ Spread out, foraging $\cdot$ 5 animals $\cdot$ Kayak Group'' and ``Lime Kiln Point $\cdot$ Northbound, close to shore $\cdot$ 3 animals $\cdot$ Demo Observer''.
+
+\textbf{What is missing or confusing.}
+\begin{itemize}
+\item The 5 smoke test entries at the top of the queue contradict the citizen-science framing.
+\item The real sightings at the bottom are good but buried under test data.
+\end{itemize}
+
+\begin{p1box}
+\textbf{P1, Clear smoke test entries from the queue before re-recording.} Approve or reject the smoke test entries so only realistic submissions appear. The queue then shows what the governance workflow is actually for: real field data being reviewed before it influences the model.
+\end{p1box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 07, DynamoDB proof slide}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-07-dynamodb.png}
+\end{center}
+
+\textbf{Storyboard intent.} Show that DynamoDB is the primary system of record with all nine on-demand tables active.
+
+\textbf{What a judge sees.} A static slide titled ``Amazon DynamoDB -- primary database'' with a table listing 6 entries. Subtitle: ``Six on-demand tables.'' Tables shown: sightings (124), community-submissions (3), decision-records (0+), hotspots (73), reports (181), ingestion-runs (319).
+
+\begin{p0box}
+\textbf{P0, The slide shows 6 tables and says ``Six on-demand tables.'' The submission claims 9 tables.} The missing tables are: user-journal, partner-api-keys, managed-agents. The subtitle and table count directly contradict the submission copy and the whitepaper.
+
+Additionally, \texttt{decision-records} shows ``0+'' items. The live database has 3 items (confirmed by Q1c). This is a DynamoDB approximate ItemCount cache lag but it reads as ``zero records'' to a judge.
+
+\textbf{Fix before Saturday.} Update \texttt{web/public/demo-slides/dynamodb-proof.png} to show all 9 tables. Options: (a) update the static HTML/image that generates the proof slide; (b) take a fresh AWS Console screenshot showing all 9 tables; (c) rebuild the slide with the correct table list and live item counts. Priority: this is the only piece of direct database evidence in the submission, it must show 9 tables.
+\end{p0box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Beat 08, Architecture close (static slide)}
+
+\begin{center}
+\includegraphics[width=\linewidth]{beat-08-architecture.png}
+\end{center}
+
+\textbf{Storyboard intent.} Close the demo with the full system architecture diagram showing all deployed services.
+
+\textbf{What a judge sees.} A white diagram with a light yellow auto-layout box structure. The Mermaid-generated architecture diagram, the OLD version with the DynamoDB column of boxes in the centre. The new TikZ fig-08 architecture diagram (four-band, clean, corrected Vercel AI Gateway label) was built but is not what appears here.
+
+\begin{p0box}
+\textbf{P0, Beat 08 shows the old Mermaid architecture diagram, not the new TikZ fig-08.} The new TikZ diagram was built and copied to \texttt{web/public/demo-slides/architecture.png} in the Q2 remediation. But this beat screenshot shows the old Mermaid version. Either the copy did not take effect, or the Playwright screenshot was captured before the file was replaced.
+
+\textbf{Fix before re-recording.} Verify that \texttt{web/public/demo-slides/architecture.png} is the new TikZ figure (check file size and timestamp), then re-run the demo recording. The new diagram has a five-band layout with correct Vercel AI Gateway labelling, DynamoDB as primary system of record, and Central Casting properly boxed.
+\end{p0box}

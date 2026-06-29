@@ -49,6 +49,7 @@ Wave IDs:
   selfhost-preflight  GP Phase A static preflight (secret scan + syntax + .ddb verify)
   selfhost-gate       GP Phase B live battery (edge/proxy authz + co-tenant + SSH SG)
   copy-gate           Prose gate: hard-fail em/en dash + arrows, report semicolons/colons/voice (.cca/PROSE_GATE_RULES.md)
+  console-deny-grep   Console deny-term grep on rendered anonymous-path captures (CXR-2)
   mlops-gate          MLM study ladder (L0-L3) + honesty guard (served confidence <= earned)
 
 Environment (optional):
@@ -191,6 +192,9 @@ case "$WAVE" in
     ;;
   copy-gate|prose-gate|copygate)
     run "$GATES/copy-gate.sh"
+    ;;
+  console-deny-grep|console-deny|cxr-deny)
+    run "$GATES/console-deny-terms.sh"
     ;;
   mlops-gate|mlops)
     run "$GATES/mlops-gate.sh"

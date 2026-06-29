@@ -1,0 +1,79 @@
+flowchart TB
+  user["Viewer / Reviewer / External agent"]
+
+  subgraph vercel [Vercel]
+    nextapp["Next.js: forecast, gates, explore, ask, journal, moderation"]
+    proxy["/api/be proxy WorkOS + agent key"]
+    planproxy["/api/interactions/plan + prepare proxy"]
+    gateway["Vercel AI Gateway narration"]
+    v1["/api/v1 partner gateway"]
+  end
+
+  subgraph aws [AWS us-west-2]
+    apprunner["App Runner: FastAPI"]
+
+    subgraph casting [Central Casting]
+      prepare["/api/interactions/prepare"]
+      plan["/api/interactions/plan"]
+      narrate["/api/interactions/narrate"]
+    end
+
+    bedrock["Amazon Bedrock Haiku + Sonnet"]
+
+    subgraph ddb [DynamoDB PRIMARY]
+      t1["sightings"]
+      t2["community-submissions"]
+      t3["decision-records"]
+      t4["user-journal"]
+      t5["hotspots"]
+      t6["reports"]
+      t7["ingestion-runs"]
+      t8["api-keys partner"]
+      t9["managed-agents"]
+    end
+
+    aurora["RDS PostgreSQL exploration sessions not system of record"]
+
+    s3["S3: time-series + fit artifacts"]
+
+    subgraph orch [Step Functions]
+      ingest["ingest"]
+      fit["fit Lambda"]
+      sup["supervisor"]
+      appr["human approval"]
+      apply["apply promotion"]
+    end
+
+    eb["EventBridge schedule"]
+  end
+
+  user --> nextapp
+  user -.->|partner key| v1
+  nextapp --> proxy
+  nextapp --> planproxy
+  nextapp --> gateway
+  v1 --> apprunner
+  proxy --> apprunner
+  planproxy --> prepare
+  planproxy --> plan
+  gateway --> narrate
+  prepare --> apprunner
+  plan --> apprunner
+  narrate --> apprunner
+  apprunner --> casting
+  apprunner --> bedrock
+  apprunner ==>|reads writes| ddb
+  apprunner -->|session turns only| aurora
+  apprunner --> s3
+  apprunner --> orch
+  fit --> s3
+  ingest --> apprunner
+  appr --> apprunner
+  eb --> apprunner
+
+  classDef primary fill:#1f6feb,stroke:#0b3d91,stroke-width:3px,color:#ffffff;
+  classDef secondary fill:#eaeef2,stroke:#8b949e,stroke-width:1px,color:#24292f;
+  classDef planned fill:#f6f8fa,stroke:#8b949e,stroke-width:1px,stroke-dasharray:4 4,color:#57606a;
+  class ddb primary;
+  class s3,bedrock,v1,aurora,gateway secondary;
+  class t8,t9 secondary;

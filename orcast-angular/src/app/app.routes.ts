@@ -42,9 +42,7 @@ export const routes: Routes = [
     path: 'contribute',
     loadComponent: () => import('./components/contribute/contribute.component').then(c => c.ContributeComponent)
   },
-  // Archived demo/agent routes — quarantined from the public UI.
-  // These components carried legacy ORCAST/multi-agent copy and are no longer
-  // linked from nav, landing, or footer. Redirect direct hits to live pages.
+  // Legacy bookmarks → live routes (components quarantined under archive/quarantine/)
   { path: 'agent-spatial-demo', redirectTo: 'reports', pathMatch: 'full' },
   { path: 'agent-demo', redirectTo: 'reports', pathMatch: 'full' },
   { path: 'main-map', redirectTo: 'historical', pathMatch: 'full' },

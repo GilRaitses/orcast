@@ -1,15 +1,15 @@
 [0] Config.pm:308> INFO - This is Biber 2.20
 [0] Config.pm:311> INFO - Logfile is '../Build/Raitses_orcast_2026_share.blg'
-[28] biber-darwin:340> INFO - === Thu Jun 25, 2026, 22:50:49
-[33] Biber.pm:420> INFO - Reading './../Build/Raitses_orcast_2026_share.bcf'
-[67] Biber.pm:991> INFO - Using all citekeys in bib section 0
-[74] Biber.pm:4463> INFO - Processing section 0
-[78] Biber.pm:4654> INFO - Looking for bibtex file 'references.bib' for section 0
-[81] bibtex.pm:1713> INFO - LaTeX decoding ...
-[148] bibtex.pm:1519> INFO - Found BibTeX data source './references.bib'
-[635] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[635] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[635] Biber.pm:4283> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
-[635] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
-[706] bbl.pm:676> INFO - Writing '../Build/Raitses_orcast_2026_share.bbl' with encoding 'UTF-8'
-[743] bbl.pm:779> INFO - Output to ../Build/Raitses_orcast_2026_share.bbl
+[30] biber-darwin:340> INFO - === Fri Jun 26, 2026, 12:28:38
+[38] Biber.pm:420> INFO - Reading '../Build/Raitses_orcast_2026_share.bcf'
+[74] Biber.pm:991> INFO - Using all citekeys in bib section 0
+[82] Biber.pm:4463> INFO - Processing section 0
+[86] Biber.pm:4654> INFO - Looking for bibtex file 'references.bib' for section 0
+[89] bibtex.pm:1713> INFO - LaTeX decoding ...
+[159] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[673] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[673] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[673] Biber.pm:4283> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[673] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[751] bbl.pm:676> INFO - Writing '../Build/Raitses_orcast_2026_share.bbl' with encoding 'UTF-8'
+[794] bbl.pm:779> INFO - Output to ../Build/Raitses_orcast_2026_share.bbl

@@ -1,0 +1,36 @@
+{
+  "date": "2026-06-27T07:43:29.441Z",
+  "numErrors": 0,
+  "numWarnings": 0,
+  "numInfos": 1,
+  "issues": [
+    {
+      "type": "CONTENT_VALIDATION_INFO",
+      "path": "pilot.glb",
+      "message": "pilot.glb caused validation infos",
+      "severity": "INFO",
+      "causes": [
+        {
+          "type": "CONTENT_VALIDATION_INFO",
+          "path": "pilot.glb",
+          "message": "Content pilot.glb caused validation infos",
+          "severity": "INFO",
+          "causes": [
+            {
+              "type": "CONTENT_VALIDATION_INFO",
+              "path": "/extensionsUsed/1",
+              "message": "Cannot validate an extension as it is not supported by the validator: 'EXT_meshopt_compression'.",
+              "severity": "INFO"
+            },
+            {
+              "type": "CONTENT_VALIDATION_INFO",
+              "path": "/buffers/0",
+              "message": "This object may be unused.",
+              "severity": "INFO"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

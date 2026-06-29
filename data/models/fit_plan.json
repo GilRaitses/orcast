@@ -1,0 +1,29 @@
+{
+  "schema_version": "orcast/fit_plan/v1",
+  "model": "negbin_glm_lnp",
+  "bin_hours": 1.0,
+  "covariates_candidate": [
+    "diel",
+    "tide",
+    "lunar",
+    "season"
+  ],
+  "exclusion_rules": [
+    "drop tide when currents do not overlap acoustic detections",
+    "drop cyclic covariates when phase coverage < 0.90"
+  ],
+  "minimums": {
+    "detections": 300,
+    "station_bins": 500
+  },
+  "gates": [
+    "level1_psth_phase_shuffle",
+    "time_blocked_cv",
+    "held_out_pit",
+    "time_rescaling_in_sample",
+    "psth_vs_kernel_diagnostic"
+  ],
+  "primary_family": "negbin",
+  "confidence_policy": "CV or time-rescaling required before nonzero confidence; PIT credit requires time-rescaling; Level 1 null can add support.",
+  "fit_plan_id": "fitplan_ada6bc2eafaeffa2"
+}

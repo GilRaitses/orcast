@@ -1,0 +1,16 @@
+# Container-image Lambda for the kernel-fit stage of the orchestrator.
+# Carries scipy/statsmodels (not shipped in the App Runner backend image) and
+# runs modeling.fit_kernels against the S3 time-series store.
+FROM public.ecr.aws/lambda/python:3.12
+
+# Modeling dependencies (numpy/scipy/statsmodels/pandas/matplotlib) + boto3.
+COPY modeling/requirements.txt ./modeling-requirements.txt
+RUN pip install --no-cache-dir -r modeling-requirements.txt boto3
+
+# Application code + static geo assets, onto the Lambda task root (on sys.path).
+COPY src ${LAMBDA_TASK_ROOT}/src
+COPY modeling ${LAMBDA_TASK_ROOT}/modeling
+COPY data/geo ${LAMBDA_TASK_ROOT}/data/geo
+
+# handler = module.function
+CMD ["modeling.lambda_handler.handler"]

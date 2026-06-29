@@ -2,7 +2,7 @@
 
 Design for making the map heat a **modeled probability surface** built from environmental and temporal kernels (tide, salmon run, diurnal, lunar, seasonal/solar) estimated from data, with reported sightings repositioned to **validation, social, and citizen-science** roles.
 
-Status: design / study program. Nothing here is fitted yet. This document defines the model, the studies to estimate it, the honesty constraints, and a phased build. It is the methodology counterpart to [../ml/ORCA_ML_INTEGRATION.md](../ml/ORCA_ML_INTEGRATION.md). The estimation/calibration methods (PSTH, reverse correlation, LNP, signal detection, population decoding) and the leveled plan with fitness gates are in [CALIBRATION_STUDIES.md](CALIBRATION_STUDIES.md).
+Status: active study program with a partial Level 1-2 fit. The current fit report (`data/models/fit_report.json`) uses single-station acoustic candidates and fits `diel` and `lunar` temporal kernels with negative-binomial GLM gates; tide and season are excluded from the joint fit because current data do not overlap the acoustic window and annual phase coverage is incomplete. Each fit carries `dataset_snapshot_id`, `fit_plan_id`, and a versioned `snapshot_manifest.json` with pinned `frozen_data` when the orchestrator `FreezeSnapshot` stage runs. This document still defines the broader model, studies, honesty constraints, and phased build. The estimation/calibration methods and leveled plan with fitness gates are in [CALIBRATION_STUDIES.md](CALIBRATION_STUDIES.md).
 
 ## The core idea
 
@@ -125,8 +125,8 @@ The detection/validation layer needs real controls, not a static legend:
 
 ## Phased build (forecast is default throughout; it sharpens, it never hides)
 
-- **Phase 0 (now):** this doc + a covariate library (tide/diel/lunar/season computed; salmon adapter stub) + the instrument-panel overlay UX. The forecast is the default surface; pre-fit it is broad and low-confidence (prior-driven), shown with explicit uncertainty, not faked precision.
-- **Phase 1:** assemble >=1 year of acoustic detections + covariates; fit `k_diel`, `k_tide`, `k_lunar`, `k_season` from acoustic; publish kernel curves with CIs; stand up the validation harness; the forecast sharpens and its confidence rises.
+- **Phase 0 (completed/in progress):** this doc + a covariate library (tide/diel/lunar/season computed; salmon adapter stub) + the instrument-panel overlay UX. The forecast is the default surface; pre-fit it is broad and low-confidence (prior-driven), shown with explicit uncertainty, not faked precision.
+- **Phase 1 (partially live):** assemble acoustic detections + covariates; current real-data fit uses one station and fits `k_diel` and `k_lunar` only. `k_tide` and `k_season` remain withheld from the joint fit until overlapping historical current data and fuller annual coverage are wired. Publish kernel curves with CIs; stand up the validation harness; the forecast sharpens and its confidence rises.
 - **Phase 2:** add `k_salmon` and `s_space`; full `lambda(x,t)`; backtest vs baselines; forecast confidence reflects held-out skill.
 - **Phase 3:** richer uncertainty-aware display (confidence, not just intensity); per-ecotype models if labels support it.
 
@@ -140,4 +140,4 @@ The detection/validation layer needs real controls, not a static legend:
 ## What this is not
 
 - Not a claim that orcas are predictable to the hour today. It is a framework to estimate and honestly validate that, with the hydrophone network as the de-biased instrument and sightings as referee + community.
-- Not a backend change yet; this is the study and architecture design to schedule.
+- Not a claim that the full kernel stack is complete; the current implementation is a partial temporal fit with explicit caveats.

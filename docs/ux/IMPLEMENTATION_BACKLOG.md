@@ -1,5 +1,7 @@
 # Implementation backlog (Phase 6 design to build)
 
+**Waves registry:** [WAVES_REGISTRY.md](../devpost/WAVES_REGISTRY.md) (canonical IDs U1–U6).
+
 Prioritized build items derived from [USER_JOURNEYS.md](USER_JOURNEYS.md), [DYNAMIC_MAP_UX.md](DYNAMIC_MAP_UX.md), and [MAP_DATA_TRUTH.md](MAP_DATA_TRUTH.md). Each item names the journey it serves and the target files. This is the scoping input for the next (separately confirmed) build phase; nothing here is built yet.
 
 ## Priority tiers
@@ -42,15 +44,15 @@ Prioritized build items derived from [USER_JOURNEYS.md](USER_JOURNEYS.md), [DYNA
 
 ```mermaid
 flowchart TB
-  w1["Wave 1: geo-region util + water mask asset"] --> w2["Wave 2: data-truth filters (sightings/feeds/pods)"]
-  w1 --> w3["Wave 3: MapPreset + landing heatmap hero"]
-  w2 --> w4["Wave 4: page preset adoption + themed cards + connectors"]
-  w3 --> w4
-  w4 --> w5["Wave 5: carry-forward state + mobile + copy"]
-  w5 --> w6["Wave 6: E2E + visual-regression test suite (from prior discussion)"]
+  U1["U1: geo-region util + water mask asset"] --> U2["U2: data-truth filters (sightings/feeds/pods)"]
+  U1 --> U3["U3: MapPreset + landing heatmap hero"]
+  U2 --> U4["U4: page preset adoption + themed cards + connectors"]
+  U3 --> U4
+  U4 --> U5["U5: carry-forward state + mobile + copy"]
+  U5 --> U6["U6: E2E + visual-regression test suite"]
 ```
 
-Wave 1 is the dependency for the P0 truth fixes and should land first. The E2E/visual-regression suite (separately specced earlier) becomes the gate once the new map UX exists, so these exact regressions cannot ship again.
+U1 is the dependency for the P0 truth fixes and should land first. The E2E/visual-regression suite (U6) becomes the gate once the new map UX exists, so these exact regressions cannot ship again.
 
 ## Open questions for the build phase
 

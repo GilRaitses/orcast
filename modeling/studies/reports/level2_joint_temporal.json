@@ -30,5 +30,5 @@
     "run_id": "run_21687b911959df1c"
   },
   "reason": "Level 2 gate not met: held-out skill does not beat climatology (mean_deviance_skill=-0.04730031489935951); time-rescaling KS fails (in-sample); single-covariate baseline planned; season withheld by phase coverage (<0.9). Confidence stays 0% (honest).",
-  "generated_at": "2026-06-27T07:00:50.698228+00:00"
+  "generated_at": "2026-06-27T20:45:42.826891+00:00"
 }

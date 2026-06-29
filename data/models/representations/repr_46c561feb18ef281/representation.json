@@ -1,0 +1,43 @@
+{
+  "schema_version": "orcast/representation/v1",
+  "model": "negbin_glm_lnp",
+  "family": "negbin",
+  "bin_hours": 1.0,
+  "covariates_fit": [
+    "diel",
+    "lunar"
+  ],
+  "covariates_excluded": {
+    "tide": "dropped: phase coverage 0.42 < 0.90 (kernel would be extrapolated)",
+    "season": "dropped: phase coverage 0.75 < 0.90 (kernel would be extrapolated)"
+  },
+  "coefficients": {
+    "intercept": -2.1269743035902775,
+    "station_effects": {
+      "haro_strait": 0.0
+    },
+    "kernels": {
+      "diel": {
+        "cos": [
+          -0.2419408487140895,
+          0.022740202068578852
+        ],
+        "sin": [
+          -0.432560501771497,
+          0.24393387291331572
+        ]
+      },
+      "lunar": {
+        "cos": [
+          0.46447180697925117,
+          0.06718725079508908
+        ],
+        "sin": [
+          0.48502428221420135,
+          -0.22792951343033982
+        ]
+      }
+    },
+    "dispersion_alpha": 53.25412977114573
+  }
+}

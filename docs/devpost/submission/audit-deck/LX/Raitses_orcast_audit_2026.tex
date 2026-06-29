@@ -1,0 +1,82 @@
+\documentclass[10pt]{article}
+\usepackage[letterpaper,top=0.7in,bottom=0.8in,left=0.8in,right=0.8in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\usepackage{mdframed}
+
+\graphicspath{{Figures/}}
+
+%% Colour palette
+\definecolor{P0red}{RGB}{200,40,40}
+\definecolor{P1amber}{RGB}{200,130,0}
+\definecolor{P2gray}{RGB}{100,100,100}
+\definecolor{okgreen}{RGB}{40,140,60}
+\definecolor{notebg}{RGB}{245,245,255}
+
+%% Severity boxes
+\newmdenv[backgroundcolor=P0red!15,linecolor=P0red,linewidth=1pt,
+          innertopmargin=4pt,innerbottommargin=4pt]{p0box}
+\newmdenv[backgroundcolor=P1amber!15,linecolor=P1amber,linewidth=1pt,
+          innertopmargin=4pt,innerbottommargin=4pt]{p1box}
+\newmdenv[backgroundcolor=notebg,linecolor=gray!40,linewidth=0.5pt,
+          innertopmargin=4pt,innerbottommargin=4pt]{notebox}
+
+\newcommand{\Pz}[1]{\textbf{\textcolor{P0red}{[P0 — #1]}}}
+\newcommand{\Po}[1]{\textbf{\textcolor{P0red}{[P0]}}}
+\newcommand{\Pp}[1]{\textbf{\textcolor{P1amber}{[P1 — #1]}}}
+\newcommand{\Ppp}[1]{\textbf{\textcolor{P2gray}{[P2 — #1]}}}
+\newcommand{\OK}[1]{\textbf{\textcolor{okgreen}{[OK — #1]}}}
+
+%% Section format
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\titlespacing*{\section}{0pt}{1.0em}{0.4em}
+\titlespacing*{\subsection}{0pt}{0.7em}{0.2em}
+
+%% Header/footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small orcast submission audit deck}
+\fancyhead[R]{\small 2026-06-25}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries orcast Submission Audit Deck}\\[0.4em]
+{\normalsize Gil Raitses $\cdot$ 2026-06-25 $\cdot$ Deadline: June 29, 2026 5:00 PM}\\[0.2em]
+{\small Physical world model fusion for orca encounter forecasting and community platform for field researchers}
+\end{center}
+
+\vspace{0.5em}
+\begin{notebox}
+\textbf{How to use this deck.} Read top to bottom. Every \textbf{\textcolor{P0red}{[P0]}} item must be fixed before submission. \textbf{\textcolor{P1amber}{[P1]}} items should be fixed if time allows. \textbf{\textcolor{P2gray}{[P2]}} items are minor. Mark in the margins what you intend to fix, then execute Section 5 (Fix Checklist) in order.
+\end{notebox}
+
+\tableofcontents
+\newpage
+
+\input{Sections/D1_beats}
+\newpage
+\input{Sections/D2_submission_copy}
+\newpage
+\input{Sections/D3_figures}
+\newpage
+\input{Sections/D4_whitepapers}
+\newpage
+\input{Sections/D5_checklist}
+
+\end{document}

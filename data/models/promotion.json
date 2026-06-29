@@ -1,0 +1,10 @@
+{
+  "promoted": true,
+  "kernel_version": "fit-v1",
+  "repr_id": null,
+  "run_id": null,
+  "effective_confidence": 0.0,
+  "decision_id": "decision_822c3bd55fbb",
+  "reviewer": "reviewer@example.com",
+  "applied_at": "2026-06-28T19:47:52.398291+00:00"
+}

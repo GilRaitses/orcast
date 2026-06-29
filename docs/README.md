@@ -13,7 +13,7 @@
 🔍 **Real Database Integration** - Live sightings from production endpoints  
 🧠 **Multi-Agent AI Orchestration** - Gemma 3 powered coordination  
 🎤 **Live Hydrophone Network** - Real-time acoustic monitoring  
-📊 **ML Prediction Visualization** - PINN and behavioral models on map  
+📊 **ML Prediction Visualization** - kernel-forecast (LNP/GLM) intensity on map *(legacy hackathon copy mentioned "PINN"; the honest modeling approach is the leveled kernel/LNP program, not a full PINN -- see SYNTHESIS_signal_modeling.md / M2)*  
 
 ### 🚀 **Live Demo Endpoints**
 | Endpoint | Purpose | Status |
@@ -63,7 +63,7 @@ ORCAST (Real-time AI Platform)
 ├── Angular Frontend (Live AI Demo + Map Interface)
 ├── Multi-Agent AI System (Gemma 3 Orchestration)
 ├── Real Database Integration (Production Endpoints)
-├── ML Pipeline (PINN + Behavioral Models)
+├── ML Pipeline (kernel-forecast LNP/GLM; legacy "PINN" label retired)
 ├── Forecast Clouds System (Probability Visualization)
 └── Live Data Sources (NOAA, DFO, Hydrophones)
 ```

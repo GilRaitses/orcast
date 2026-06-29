@@ -30,35 +30,35 @@ import { BackendService } from '../../services/backend.service';
           <div class="map-header">
             <h3>San Juan Islands</h3>
             <span class="map-mode">Probability map</span>
-          </div>
+            </div>
           <div class="map-container" #mapContainer>
             <div id="live-map"></div>
-          </div>
-        </div>
-
+                </div>
+              </div>
+              
         <div class="data-panel">
           <h3>Live API data</h3>
           <div class="stat" *ngIf="sightingsLoaded >= 0">
             <span class="label">Sightings on map</span>
             <span class="value">{{ sightingsLoaded }}</span>
-          </div>
+              </div>
           <div class="stat" *ngIf="gridPoints >= 0">
             <span class="label">Grid points</span>
             <span class="value">{{ gridPoints }}</span>
-          </div>
+                </div>
           <div class="stat" *ngIf="maxProbability >= 0">
             <span class="label">Max probability</span>
             <span class="value">{{ (maxProbability * 100) | number:'1.1-1' }}%</span>
-          </div>
+              </div>
           <div class="stat" *ngIf="modelVersion">
             <span class="label">Model</span>
             <span class="value mono">{{ modelVersion }}</span>
           </div>
-
+          
           <div class="env-block" *ngIf="environmentalSummary">
             <h4>Conditions</h4>
             <p>{{ environmentalSummary }}</p>
-          </div>
+        </div>
 
           <div class="summary-block">
             <h4>Report summary</h4>
@@ -73,7 +73,7 @@ import { BackendService } from '../../services/backend.service';
             </button>
             <p class="summary-text" *ngIf="summaryText">{{ summaryText }}</p>
           </div>
-        </div>
+                </div>
       </div>
     </div>
   `,
@@ -337,15 +337,15 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
       const sightings = await firstValueFrom(this.backendService.getHistoricalSightings());
       this.sightingsLoaded = sightings.length;
       sightings.slice(0, 80).forEach(sighting => {
-        const marker = new google.maps.Marker({
-          position: { lat: sighting.latitude, lng: sighting.longitude },
-          map: this.map,
+      const marker = new google.maps.Marker({
+        position: { lat: sighting.latitude, lng: sighting.longitude },
+        map: this.map,
           title: `${sighting.pod} · ${sighting.date}`,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
             scale: 6,
             fillColor: '#4fc3f7',
-            fillOpacity: 0.8,
+          fillOpacity: 0.8,
             strokeColor: '#fff',
             strokeWeight: 1
           }
@@ -363,7 +363,7 @@ export class LiveAIDemoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.modelVersion = grid.metadata.modelVersion || grid.model;
       grid.predictions.slice(0, 120).forEach(point => {
         const circle = new google.maps.Circle({
-          map: this.map,
+        map: this.map,
           center: { lat: point.latitude, lng: point.longitude },
           radius: 400,
           fillColor: '#4fc3f7',

@@ -1,0 +1,84 @@
+\section{Section 3: Submission Figures Audit}
+
+\subsection{System architecture (fig-08)}
+
+\begin{center}
+\includegraphics[width=\linewidth]{fig-08-architecture.png}
+\end{center}
+
+\textbf{Review.} This is the new TikZ five-band architecture diagram. Compare this with what appears in Beat 08, if Beat 08 shows the old Mermaid auto-layout, the \texttt{web/public/demo-slides/architecture.png} file has not been updated.
+
+\textbf{Adversarial reading.} A judge scanning this in 5 seconds sees: five horizontal bands (Users, Vercel, AWS App Runner, AWS Data, AWS Orchestration), DynamoDB as the central primary box, arrows routing through bands. The Vercel AI Gateway is now correctly labelled as ``explore guide chat (claude-haiku-4.5).''
+
+\textbf{What works.} The band structure communicates the deployment layers clearly. DynamoDB's primacy is visually reinforced. Central Casting is boxed and labelled.
+
+\textbf{What to check before submitting.}
+\begin{itemize}
+\item The text is small at submission image scale. Check that band labels (``Users'', ``Vercel'', ``AWS App Runner'') are readable when the image is shown at 800px wide.
+\item Confirm \texttt{web/public/demo-slides/architecture.png} matches this figure (check file size: should be $\approx$120--140 KB).
+\end{itemize}
+
+\begin{p0box}
+\textbf{P0, Verify architecture.png in demo-slides is this TikZ version before re-recording.} Run: \texttt{ls -lh web/public/demo-slides/architecture.png}, the file should be $>100$\,KB and dated after June 25. If it is smaller and older, copy the TikZ figure again.
+\end{p0box}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{DynamoDB ERD (fig-01)}
+
+\begin{center}
+\includegraphics[width=\linewidth]{fig-01-erd.png}
+\end{center}
+
+\textbf{Review.} Nine-table ERD with row-level FK edge attachment, lilac headers, and legend. Matches the reference style from the decision-valued maps paper (arXiv:2602.11295, Figure 2).
+
+\textbf{Adversarial reading.} A judge sees clean table boxes and dashed FK arrows. The tables are legible. The ``log FK'' badges on FK rows are accurate (DynamoDB enforces no FK constraints). The notation box at the bottom explains the legend.
+
+\textbf{What works.} Table names are on single lines. Field text does not wrap. FK labels sit at the source (dependent) end. The S3 artifact has a dashed border distinguishing it from DynamoDB tables.
+
+\textbf{Issues.}
+\begin{itemize}
+\item ``status: pending\,\textbar\,approved\,\textbar\,rejected'' may render as ``status: pending $-$ approved $-$ rejected'' in some rendering environments due to the \texttt{\textbackslash textbar} substitution.
+\item At hackathon submission image scale, the field text in the TBLS (small) tables is very small.
+\end{itemize}
+
+\begin{notebox}
+\textbf{No P0 or P1 gaps.} This figure is publication-quality. Submit as-is.
+\end{notebox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Grounding benchmark: evidence-binding failure and measurement (fig-mp1)}
+
+\begin{center}
+\includegraphics[width=\linewidth]{fig-mp1.png}
+\end{center}
+
+\textbf{Review.} Multi-panel Figure 1: (A) orcast governance chain schema, (B) $R_\text{uncited}$ bar chart across 8 scenarios.
+
+\textbf{Adversarial reading.} Panel (A) shows a DynamoDB governance chain diagram, it is a small, dense TikZ figure. Panel (B) shows a bar chart where Scenario 4 (step-log) achieves 0\% and the Maps-only baseline is 60--100\%. The 0\% bar is visually distinct.
+
+\textbf{Issues.}
+\begin{itemize}
+\item Panel (A) is small and the text inside is very small. A judge may not be able to read the DynamoDB table names.
+\item Panel (B) is the critical panel. The ``0\%'' label on the green bar should be readable at submission scale, check this.
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Grounding hierarchy and scope (fig-mp3)}
+
+\begin{center}
+\includegraphics[width=\linewidth]{fig-mp3.png}
+\end{center}
+
+\textbf{Review.} Multi-panel Figure 3: (A) $R_\text{uncited}$ hierarchy across scenarios, (B) scope Venn diagram positioning the paper relative to pax and AMI.
+
+\textbf{Adversarial reading.} Panel (A) is the clearest of the three MP figures, a simple bar chart with step-log in green at 0\% and other scenarios in the 60--100\% range. Panel (B) is the scope Venn, three overlapping circles (pax, this paper, AMI). This reads as positioning not evidence.
+
+\textbf{Issues.}
+\begin{itemize}
+\item Panel (B) (scope Venn) may confuse a judge who does not know what ``pax'' is. The Venn is useful for AMI positioning but not for a general hackathon judge.
+\item Panel (A) is strong evidence. Consider using this figure alone (cropped to Panel A only) for the Devpost description if space allows.
+\end{itemize}
+
+\begin{notebox}
+\textbf{No P0 or P1 gaps in the figures themselves.} The main action item is verifying that \texttt{web/public/demo-slides/architecture.png} is the new TikZ version before re-recording.
+\end{notebox}

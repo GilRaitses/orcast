@@ -12,11 +12,14 @@ console** — frosted-glass surfaces over a live map, a single-focus center mode
 self-hiding chat/dock, and consent-gated layout persistence — but built as a
 **whale-behavior research tool** instead of a pedestrian-routing tool.
 
-It is framework-portable. The reference is React/Next + Tailwind; ORCAST is
-Angular 18 + vanilla-JS modules + Firebase. Two of the three core pieces (design
-tokens, focus model) are framework-free and port verbatim. The third
-(GlassSurface) is a thin presentational contract reproducible as an Angular
-component or a plain CSS utility. Nothing here requires React.
+**Target surface (verified): `web/` — Next.js 14 + React 18 + TS 5 (`orcast-web`).**
+This is the SAME stack as the pax reference, so the port is near-verbatim React,
+not a framework rewrite. The orcast LGC waveset is already chartered against `web/`
+(`docs/devpost/waves.registry.yaml`, family `LGC`, `LGC-W0…W7`); this manifest is
+its design input. The legacy `orcast-angular/` and the root `css/`+`js/` bundles
+are NOT the target and should not receive the port. Where a legacy surface ever
+needs it, the design tokens and the (framework-free) focus model still port as-is
+and GlassSurface reduces to a CSS utility — but the live work is `web/`.
 
 It is **not** a code drop. It is the charter input: tokens, contracts, behavior
 rules, honesty locks, a qualification rubric, and a wave plan ORCAST can run
@@ -45,8 +48,9 @@ researcher-only panes.
 
 ## 2. Part A — Design tokens (port verbatim)
 
-Framework-agnostic CSS custom properties. Drop into ORCAST `css/base.css`
-`:root`. Channels are space-separated RGB so they compose with `rgb(... / a)`.
+Framework-agnostic CSS custom properties. Drop into the `:root` of
+`web/app/globals.css` (the orcast `web/` target; `css/base.css` only if a legacy
+surface is ever in scope). Channels are space-separated RGB so they compose with `rgb(... / a)`.
 These values are the audited set from the reference build — do not edit a value
 without re-running the M1 contrast gate.
 
@@ -137,31 +141,19 @@ backdrop-filter: blur(12px);
 border: 1px solid rgb(var(--glass-hairline) / 0.5);
 ```
 
-### Angular reference shape (portable rewrite)
+### Port target: `web/` React (near-verbatim)
 
-```typescript
-// orcast: components/glass-surface/glass-surface.component.ts (sketch)
-@Component({
-  selector: 'glass-surface',
-  template: `<div [class]="classes" [ngStyle]="style"><ng-content></ng-content></div>`,
-})
-export class GlassSurfaceComponent {
-  @Input() opacity = 0.74;
-  @Input() blur = 12;            // 0 disables backdrop-filter
-  @Input() tint: 'frost' | 'cool' = 'frost';
-  @Input() scrim = false;
-  @Input() hairline: 'light' | 'none' = 'light';
-  @Input() fadeOnIdle = false;
-  // build `style.background` with the max(opacity, floor) clamp,
-  // add backdrop-filter ONLY when blur > 0, add hairline border when 'light'.
-}
-```
+Because `web/` is React/TS, copy `pax_v0/components/ui/GlassSurface.tsx` into
+`web/app/components/ui/GlassSurface.tsx` essentially as-is (adjust import aliases
+to the orcast `web/` tsconfig paths). No rewrite. The prop contract above is the
+React component's prop contract unchanged.
 
-Vanilla-JS alternative: ship a `.glass-surface` CSS class set + `data-blur="0"`
-attribute selector that suppresses `backdrop-filter`. The contract is the same;
-only the binding differs.
+Legacy fallback only (NOT the target): for the Angular `orcast-angular/` or the
+root `css/`+`js/` bundles, the same contract reduces to a `.glass-surface` CSS
+class set plus a `data-blur="0"` attribute selector that suppresses
+`backdrop-filter`. Do not port there unless a directive explicitly says so.
 
-Reference file: `pax_v0/components/ui/GlassSurface.tsx`.
+Reference file: `pax_v0/components/ui/GlassSurface.tsx` → `web/app/components/ui/GlassSurface.tsx`.
 
 ---
 
@@ -169,8 +161,8 @@ Reference file: `pax_v0/components/ui/GlassSurface.tsx`.
 
 The single source of truth for "which surface owns the center right now." It is
 intentionally React-free and side-effect-free so it can be unit-tested
-exhaustively. **Copy this module as-is into ORCAST** (`js/focus/focusModel.js` or
-a TS equivalent); only the UI binding is framework-specific.
+exhaustively. **Copy this module as-is into `web/lib/focus/focusModel.ts`**; only
+the UI binding (`FocusProvider`) is framework-specific and it is already React here.
 
 ### Invariants (these ARE the M4 gate)
 
@@ -303,10 +295,11 @@ Reference file: `pax_v0/lib/consolePreload.ts`.
 
 ## 7. Part F — Honesty locks (ORCAST domain)
 
-ORCAST already ships a transparency layer (`js/forecast_transparency.js`,
-`js/transparency_integration.js`, `css/transparency_ui.css`). The liquid-glass
-restyle MUST preserve those captions: present, legible at AA contrast, unchanged
-in meaning, on every surface they appear on.
+ORCAST already renders honesty/transparency captions on the `web/` surfaces
+(gate-status, provenance, and out-of-region disclaimers — the legacy bundle's
+`js/forecast_transparency.js` / `css/transparency_ui.css` are the non-target
+analog). The liquid-glass restyle MUST preserve those captions: present, legible
+at AA contrast, unchanged in meaning, on every surface they appear on.
 
 Locked caption families (whale-research analogs of the pax modeled/CV/induction set):
 
@@ -410,19 +403,21 @@ wave. Gated waves require explicit O0 go.
 Everything ORCAST needs to replicate, with the pax source to copy/adapt from
 (`pax_v0` @ `793b86e`):
 
-| Concern | pax reference | ORCAST target (suggested) |
+Target is orcast `web/` (Next.js 14 / React 18 / TS 5) — paths below are under `web/`.
+
+| Concern | pax reference | ORCAST `web/` target |
 |---|---|---|
-| Design tokens | `app/globals.css` `:root` (Part A) | `css/base.css` `:root` |
-| GlassSurface | `components/ui/GlassSurface.tsx` | `components/glass-surface/` (Angular) or `.glass-surface` CSS set |
-| Focus model (pure) | `lib/focus/focusModel.ts` | `js/focus/focusModel.(t\|j)s` — port verbatim |
-| Focus model test | `lib/focus/focusModel.test.ts` | port as the M4 proof |
-| Focus binding | `components/focus/FocusProvider.tsx` | Angular service / RxJS store |
-| Chat self-hide | `components/chat/ChatLayer.tsx`, `FriendPane.tsx` | agent chat shell + transcript |
-| Dock self-hide | `components/console/ConsoleController.tsx` | analysis console controller |
-| Edge panels | `components/comfort/CollapsibleBorderPanel.tsx` | sightings/hydrophones/environmental panels |
-| Console shell + save preload UI | `components/console/SplitConsole.tsx` | analysis console shell |
-| Preload persistence | `lib/consolePreload.ts` | `js/console/consolePreload.(t\|j)s` |
-| Walkthrough (M9) | `e2e/lgc-comfort-walkthrough.spec.ts` | Cypress/Playwright `orcast-research-walkthrough` |
+| Design tokens | `app/globals.css` `:root` (Part A) | `web/app/globals.css` `:root` |
+| GlassSurface | `components/ui/GlassSurface.tsx` | `web/app/components/ui/GlassSurface.tsx` (copy as-is) |
+| Focus model (pure) | `lib/focus/focusModel.ts` | `web/lib/focus/focusModel.ts` — port verbatim |
+| Focus model test | `lib/focus/focusModel.test.ts` | `web/lib/focus/focusModel.test.ts` — the M4 proof |
+| Focus binding | `components/focus/FocusProvider.tsx` | `web/app/components/focus/FocusProvider.tsx` |
+| Chat self-hide | `components/chat/ChatLayer.tsx`, `FriendPane.tsx` | `web/app/components/ExploreGuidePanel.tsx` (agent chat shell) |
+| Dock self-hide | `components/console/ConsoleController.tsx` | `web/app/components/ActiveSurfaceHost.tsx` (surface controller) |
+| Edge panels | `components/comfort/CollapsibleBorderPanel.tsx` | sightings/hydrophones/environmental panels under `web/app/components/` |
+| Console shell + save preload UI | `components/console/SplitConsole.tsx` | analysis console shell under `web/app/components/console/` |
+| Preload persistence | `lib/consolePreload.ts` | `web/lib/consolePreload.ts` |
+| Walkthrough (M9) | `e2e/lgc-comfort-walkthrough.spec.ts` | `web/e2e/orcast-research-walkthrough.spec.ts` (Playwright; `web/playwright.config.ts` exists) |
 | Rubric | LGC `METHODOLOGY_RUBRIC.md` | Part I above |
 
 Do-not-touch seams (preserve the analog in ORCAST): the researcher auth gate and

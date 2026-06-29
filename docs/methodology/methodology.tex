@@ -6,7 +6,7 @@
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 
-\graphicspath{{figures/}}
+\graphicspath{{figures/}{../figures/fig-01-erd-dynamodb/}{../figures/fig-02-data-layer/}{../figures/fig-03-workflow/}{../figures/fig-04-auth-flow/}{../figures/fig-05-decisiondb-mapping/}{../figures/fig-06-provenance-graph/}{../figures/fig-07-gate-pipeline/}}
 
 % Let figures fill more of a page so they appear near their references
 % instead of all deferring to the end of the document.
@@ -206,7 +206,7 @@ the scheduled service self-writes the time-series streams.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\linewidth]{data_flow.pdf}
+  \includegraphics[width=\linewidth]{figure.pdf}% fig-02-data-layer TikZ
   \caption{Data-wiring flow: external sources $\to$ adapters $\to$ S3
   time-series and DynamoDB stores $\to$ service API $\to$ kernel model $\to$
   forecast surface, with the community self-posting endpoint and the EventBridge
@@ -232,7 +232,7 @@ the \texttt{acoustic\_detections} time-series is derived from OrcaHello
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\linewidth]{erd.pdf}
+  \includegraphics[width=\linewidth]{figure.pdf}% fig-01-erd-dynamodb TikZ
   \caption{Entity-relationship diagram of the five DynamoDB entities, the
   \texttt{SourceStatus} recorded per ingestion run, and the time-series stream,
   with the relationships described in the text.}

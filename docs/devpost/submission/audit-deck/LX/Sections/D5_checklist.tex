@@ -1,0 +1,133 @@
+\section{Section 5: Fix Checklist, Before June 29, 5:00 PM}
+
+Work through this list in priority order. P0 items must be done. P1 items should be done if time allows. The deadline is firm.
+
+\subsection{P0 items (must fix before submitting)}
+
+\begin{center}
+\small
+\begin{tabular}{p{5.5cm}p{4.5cm}p{2.2cm}}
+\toprule
+\textbf{Item} & \textbf{How to fix} & \textbf{Time est.} \\
+\midrule
+
+Fix PSTH kernel blank boxes (Beats 02, 03) &
+Load actual PSTH kernel shape images from S3 into the provenance modal and gates page; or remove placeholders and show modulation values only &
+2--3 hours \\
+
+\midrule
+
+Rebuild DynamoDB proof slide with all 9 tables (Beat 07) &
+Update \texttt{web/public/demo-slides/dynamodb-proof.png} to show all 9 tables with correct item counts; take a fresh AWS Console screenshot as backup &
+30 minutes \\
+
+\midrule
+
+Seed journal with realistic entries before re-recording (Beat 06a) &
+Add 3--5 realistic field notes via the agent credentials or manually before recording; remove or archive smoke test entries from the journal view &
+20 minutes \\
+
+\midrule
+
+Verify architecture.png in demo-slides is the new TikZ version (Beat 08) &
+Run \texttt{ls -lh web/public/demo-slides/architecture.png} and confirm size $>100$\,KB and date $\geq$ 2026-06-25. If not, run: \texttt{cp docs/figures/fig-08-architecture/figure.png web/public/demo-slides/architecture.png} &
+5 minutes \\
+
+\midrule
+
+Take AWS Console screenshot of DynamoDB showing all 9 tables &
+Open AWS Console $\to$ DynamoDB $\to$ Tables (us-west-2), filter ``orcast-aws-backend'', screenshot showing all 9 table names and statuses &
+10 minutes \\
+
+\midrule
+
+Re-record the demo video after all P0 fixes &
+Run \texttt{./tools/waves/run-gate.sh a-gate} to get a clean walkthrough; or record manually following DEMO\_STORYBOARD.md &
+30--60 minutes \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{P1 items (fix if time allows, today or Friday)}
+
+\begin{center}
+\small
+\begin{tabular}{p{5.5cm}p{4.5cm}p{2.2cm}}
+\toprule
+\textbf{Item} & \textbf{How to fix} & \textbf{Time est.} \\
+\midrule
+
+Clear smoke test entries from moderation queue before re-recording (Beat 06b) &
+Approve or reject all ``Automated agent smoke test entry.'' items in \texttt{/moderation} before recording &
+5 minutes \\
+
+\midrule
+
+Add narration for why 0\% confidence is the honest answer (Beat 01 + 03) &
+Update DEMO\_STORYBOARD.md Beat 1 and 3 narration to explicitly say: ``0\% because no human has promoted this fit yet. The gate is working correctly.'' &
+10 minutes \\
+
+\midrule
+
+Re-include Beat 4b (grounding benchmark slide) &
+Set Beat 4b back to included in DEMO\_NO\_CRED\_STORYBOARD.md; the 15-second benchmark slide is the strongest AMI-alignment proof point and the demo is only 2m 12s &
+10 minutes (+ re-record) \\
+
+\midrule
+
+Re-run grounding benchmark to confirm 0\% still holds &
+\texttt{python3 tools/testing/grounding\_parallel\_rag.py} scenarios 1 and 4 &
+5 minutes \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{P2 items (polish, Saturday if time)}
+
+\begin{center}
+\small
+\begin{tabular}{p{5.5cm}p{4.5cm}p{2.2cm}}
+\toprule
+\textbf{Item} & \textbf{How to fix} & \textbf{Time est.} \\
+\midrule
+
+Narrate the `promoted' badge + 0\% contradiction in Beat 03 &
+Update Beat 03 narration to explain the effective confidence gate &
+5 minutes \\
+
+\midrule
+
+Add Beat 4 narration for grounding benchmark connection &
+Already in DEMO\_NO\_CRED\_STORYBOARD.md Beat 4 narration; confirm it is being said on camera &
+2 minutes \\
+
+\midrule
+
+Whitepaper 2: re-run grounding benchmark for date freshness &
+Update the date in the abstract if results confirmed &
+5 minutes \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Submission order on June 29}
+
+\begin{enumerate}
+\item Complete all P0 fixes.
+\item Re-run \texttt{./tools/waves/run-gate.sh a-gate} and confirm PASS.
+\item Upload demo video to a video platform (YouTube, Vimeo, or Devpost direct upload).
+\item Open Devpost submission form.
+\item Paste DEVPOST\_DRAFT.md fields into the form.
+\item Upload architecture.png (the new TikZ version).
+\item Upload or link DynamoDB screenshot showing 9 tables.
+\item Add demo video link.
+\item Review each field one more time.
+\item Submit before 5:00 PM.
+\end{enumerate}
+
+\begin{p0box}
+\textbf{The submission deadline is June 29, 2026 at 5:00 PM.} Do not leave the Devpost form submission for the last hour. Complete the recording and fix checklist by Friday June 27 to allow review time on Saturday.
+\end{p0box}

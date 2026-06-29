@@ -7,13 +7,19 @@ from fastapi.testclient import TestClient
 from src.aws_backend import ingest_timeseries
 from src.aws_backend.ingest_timeseries import (
     ACOUSTIC,
+    ACOUSTIC_REVIEWED,
     CURRENTS,
+    NDBC_MET,
     SALMON,
+    SHORELINE,
     STATION_UPTIME,
     WATER_LEVEL,
+    ingest_acoustic_reviewed_outcomes,
     ingest_acoustic_history,
+    ingest_ndbc_realtime,
     ingest_noaa_history,
     ingest_salmon,
+    ingest_shoreline_snapshot,
     ingest_station_uptime,
     timeseries_status,
 )
@@ -37,6 +43,7 @@ class FakeOrcaHello:
 class FakeNoaa:
     station = "9449880"
     current_station = "PUG1515"
+    current_stations = ["PUG1515", "PUG1702"]
 
     def __init__(self, water, currents):
         self._water = water
@@ -46,7 +53,7 @@ class FakeNoaa:
         return list(self._water)
 
     def fetch_currents_history(self, begin, end, station):
-        return list(self._currents)
+        return [{**record, "station": station} for record in self._currents]
 
 
 class FakeSalmon:
@@ -63,6 +70,28 @@ class FakeHydrophones:
 
     def hydrophones(self):
         return list(self._records)
+
+
+class FakeNdbc:
+    def fetch_all_realtime(self):
+        return {
+            "46088": [
+                {"t": "2026-01-01T00:00:00+00:00", "id": "46088:1", "station": "46088", "wind_speed_m_s": 3.2}
+            ]
+        }
+
+
+class FakeShoreline:
+    def fetch_features(self, result_record_count=100, bbox=None):
+        return [
+            {
+                "t": "2026-01-01T00:00:00+00:00",
+                "id": "shore-1",
+                "source": "noaa_cusp",
+                "source_id": "GC1",
+                "geometry": {"paths": []},
+            }
+        ]
 
 
 def _acoustic_records():
@@ -89,6 +118,20 @@ def test_ingest_acoustic_groups_by_station():
     assert [r["id"] for r in lab] == ["b1"]
 
 
+def test_ingest_acoustic_reviewed_outcomes_only_writes_reviewed_labels():
+    store = MemoryTimeSeriesStore()
+    records = [
+        {"t": "2026-01-01T00:00:00+00:00", "id": "a1", "station": "Lime Kiln", "reviewed": True, "found": "yes", "confirmed": True},
+        {"t": "2026-01-02T00:00:00+00:00", "id": "a2", "station": "Lime Kiln", "reviewed": True, "found": "no", "confirmed": False},
+        {"t": "2026-01-03T00:00:00+00:00", "id": "a3", "station": "Lime Kiln", "reviewed": False, "found": None, "confirmed": False},
+    ]
+    summary = ingest_acoustic_reviewed_outcomes(adapter=FakeOrcaHello(records), store=store)
+    assert summary["stream"] == ACOUSTIC_REVIEWED
+    assert summary["records"] == 2
+    got = store.get_series(ACOUSTIC_REVIEWED, "Lime Kiln", _WIDE_START, _WIDE_END)
+    assert [r["outcome"] for r in got] == ["confirmed", "false_positive"]
+
+
 def test_ingest_noaa_writes_water_level_and_currents():
     store = MemoryTimeSeriesStore()
     water = [{"t": "2026-01-01T00:00:00+00:00", "value": 1.0, "product": "water_level", "station": "9449880"}]
@@ -102,10 +145,11 @@ def test_ingest_noaa_writes_water_level_and_currents():
         store=store,
     )
 
-    assert summary["records"] == 2
-    assert set(summary["stations"]) == {"9449880", "PUG1515"}
+    assert summary["records"] == 3
+    assert set(summary["stations"]) == {"9449880", "PUG1515", "PUG1702"}
     assert store.get_series(WATER_LEVEL, "9449880", _WIDE_START, _WIDE_END)
     assert store.get_series(CURRENTS, "PUG1515", _WIDE_START, _WIDE_END)
+    assert store.get_series(CURRENTS, "PUG1702", _WIDE_START, _WIDE_END)
 
 
 def test_ingest_salmon_writes_series():
@@ -157,6 +201,23 @@ def test_ingest_station_uptime_writes_up_and_down_records():
     status = timeseries_status(store=store)
     assert STATION_UPTIME in status
     assert status[STATION_UPTIME]["record_count"] == 2
+
+
+def test_ingest_ndbc_realtime_writes_met_stream():
+    store = MemoryTimeSeriesStore()
+    summary = ingest_ndbc_realtime(adapter=FakeNdbc(), store=store)
+    assert summary["stream"] == NDBC_MET
+    assert summary["records"] == 1
+    assert store.get_series(NDBC_MET, "46088", _WIDE_START, _WIDE_END)[0]["wind_speed_m_s"] == 3.2
+
+
+def test_ingest_shoreline_snapshot_writes_static_stream():
+    store = MemoryTimeSeriesStore()
+    summary = ingest_shoreline_snapshot(adapter=FakeShoreline(), store=store)
+    assert summary["stream"] == SHORELINE
+    assert summary["records"] == 1
+    got = store.get_series(SHORELINE, "san_juan_pilot", _WIDE_START, _WIDE_END)
+    assert got[0]["source_id"] == "GC1"
 
 
 def test_timeseries_status_reports_counts_and_bounds():
@@ -224,3 +285,38 @@ def test_refresh_endpoint_requires_key_when_configured(monkeypatch):
             headers={"X-ORCAST-Key": "test-secret-key"},
         )
         assert allowed.status_code == 202
+
+
+def test_ingest_spatial_grid_writes_cells():
+    store = MemoryTimeSeriesStore()
+    summary = ingest_timeseries.ingest_spatial_grid(step_degrees=0.2, store=store)
+    assert summary["records"] > 0
+    got = store.get_series(
+        ingest_timeseries.SPATIAL_GRID,
+        "san_juan_pilot",
+        _WIDE_START,
+        _WIDE_END,
+    )
+    assert "cell_id" in got[0]
+
+
+def test_ingest_obis_validation_writes_records():
+    class FakeObis:
+        def fetch_validation_records(self, start_date=None, end_date=None):
+            return [
+                {
+                    "t": "2024-07-15T00:00:00+00:00",
+                    "id": "obis:1",
+                    "latitude": 48.55,
+                    "longitude": -123.10,
+                    "quality_grade": "verified",
+                    "license": "CC-BY-4.0",
+                    "citation": "OBIS test",
+                    "source_url": "https://obis.org/occurrence/1",
+                    "source": "obis_verified",
+                }
+            ]
+
+    store = MemoryTimeSeriesStore()
+    summary = ingest_timeseries.ingest_obis_validation(adapter=FakeObis(), store=store)
+    assert summary["records"] == 1

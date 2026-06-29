@@ -1,0 +1,102 @@
+\section{Section 2: Submission Copy Audit}
+
+The DEVPOST\_DRAFT claims are reproduced below, each annotated with: (a) the live evidence that backs it, and (b) a flag if the claim is harder to demonstrate than it reads.
+
+\subsection{Project title and tagline}
+
+\begin{notebox}
+\textbf{Title:} Physical world model fusion for orca encounter forecasting and community platform for field researchers\\
+\textbf{Tagline:} Every map cell's confidence is bounded by a statistical gate battery. Every agent action is logged and citable. Every community sighting is quarantined until a human signs off.
+\end{notebox}
+
+\textbf{Review.} The tagline makes three claims. All three are true:
+\begin{enumerate}
+\item Gate battery bounds confidence $\to$ demonstrated in Beat 03 (gates page) and confirmed by effective\_confidence in the API.
+\item Agent actions logged and citable $\to$ demonstrated in Beat 04 (step-log expanded in interaction trace). \Ppp{The step-log requires clicking the disclosure widget, it is not immediately visible.}
+\item Community sighting quarantined until human signs off $\to$ demonstrated in Beat 06b (moderation queue). \Pp{The queue is full of smoke test entries in the current recording.}
+\end{enumerate}
+
+\subsection{Feature bullets}
+
+\textbf{Always-on forecast with inline confidence governed by fitness gates + human promotion.}
+\begin{notebox}
+\OK{} Beat 01 shows the forecast always on. Beat 03 shows the gates. The 0\% confidence is accurate. \Pp{A judge might interpret 0\% as ``the system is not working.'' The narration must explain why 0\% is the correct honest answer.}
+\end{notebox}
+
+\textbf{Click-to-trace provenance: kernels, gate verdicts, nearby evidence per map cell.}
+\begin{notebox}
+\OK{} Beat 02 shows the provenance modal with kernels and integrity conditions. \Po{} The PSTH kernel plots render as blank white boxes (offline fit artifact). This must be fixed before the demo is re-recorded or the screenshot submitted.
+\end{notebox}
+
+\textbf{Gates dashboard with integrity conditions and Level 1 PSTH visuals + glossary.}
+\begin{notebox}
+\OK{} Beat 03 shows the full gates page. \Po{} PSTH visuals are blank white boxes. Level 1 PSTH section of the claim is not demonstrated in the current recording.
+\end{notebox}
+
+\textbf{Sighting check: Bedrock-grounded chat separating encounter likelihood from species identification.}
+\begin{notebox}
+\OK{} Beat 05 is the strongest beat. Response is high quality, limits are disclosed, Bedrock attribution is visible. No gap.
+\end{notebox}
+
+\textbf{Field journal: private notes; publish sends a copy to the community moderation queue.}
+\begin{notebox}
+\Po{} Beat 06a shows a journal full of automated smoke test entries. The ``private notes'' framing requires realistic content. The journal beat actively undermines this claim in the current recording.
+\end{notebox}
+
+\textbf{Citizen-science moderation: quarantined in DynamoDB until a WorkOS-signed reviewer approves.}
+\begin{notebox}
+\Pp{} Beat 06b shows the queue but the first 5 entries are smoke test entries. The real sightings at the bottom of the queue make the governance intent visible but not prominent. Clear smoke test entries before re-recording.
+\end{notebox}
+
+\textbf{Exploration guide / surface planner via Central Casting.}
+\begin{notebox}
+\OK{} Beat 04 shows the surface planner with the 6-step interaction trace. The CAST badge, skill invocations, and step-log are all visible. \Ppp{The map is small relative to the chat panel. The explore guide and surface planner are conflated in the cast badge label.}
+\end{notebox}
+
+\textbf{Grounding quality benchmark: step-log reduces $R_\text{uncited}$ from 91\% to 0\%.}
+\begin{notebox}
+\Pp{} This claim is in the Devpost description but does not appear on camera in the current recording (Beat 4b was excluded). This is the strongest AMI-alignment proof point. Consider re-including the 15-second benchmark slide as Beat 4b.
+\end{notebox}
+
+\textbf{Immutable promotion audit log.}
+\begin{notebox}
+\Ppp{} Not shown on camera. The decision-records DynamoDB table exists (3 items confirmed by Q1c) but no beat shows it directly. The DynamoDB proof slide (Beat 07) should include decision-records with a non-zero count.
+\end{notebox}
+
+\subsection{DynamoDB section}
+
+\begin{notebox}
+The submission copy says: ``Nine on-demand tables in us-west-2: \texttt{sightings}, \texttt{community-submissions}, \texttt{decision-records}, \texttt{user-journal}, \texttt{hotspots}, \texttt{reports}, \texttt{ingestion-runs}, \texttt{partner-api-keys}, \texttt{managed-agents}.''
+\end{notebox}
+
+\begin{p0box}
+\textbf{P0, The DynamoDB proof slide (Beat 07) shows 6 tables and says ``Six on-demand tables.''} This directly contradicts the submission copy. The three missing tables (user-journal, partner-api-keys, managed-agents) are not shown. Fix: rebuild the dynamodb-proof.png slide with all 9 tables before the next recording.
+\end{p0box}
+
+\subsection{Screenshot proving AWS Database usage}
+
+\begin{notebox}
+The submission says: ``AWS Console screenshot showing nine \texttt{orcast-aws-backend-*} tables.''
+\end{notebox}
+
+\begin{p0box}
+\textbf{P0, No such screenshot exists in the submission materials.} The fallback is \texttt{docs/devpost/figures/dynamodb-proof.png} which shows only 6 tables. Take an actual AWS Console screenshot of the DynamoDB Tables view showing all 9 tables before submitting.
+\end{p0box}
+
+\subsection{Checklist status}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Item & Status & Note \\
+\midrule
+Live URL & \textcolor{okgreen}{\textbf{DONE}} & Returns 200 in 1.0s \\
+Description & \textcolor{okgreen}{\textbf{DONE}} & Ready to paste \\
+Demo video & \textcolor{P1amber}{\textbf{NEEDS RE-RECORD}} & Journal and DynamoDB beats must be fixed first \\
+AWS Database & \textcolor{okgreen}{\textbf{DONE}} & DynamoDB confirmed \\
+Vercel Team ID & \textcolor{okgreen}{\textbf{DONE}} & team\_dQQph8zC78tTPHDnGnvawdKo \\
+Architecture diagram & \textcolor{P0red}{\textbf{VERIFY}} & Confirm new TikZ version is in demo-slides \\
+DynamoDB screenshot & \textcolor{P0red}{\textbf{MISSING}} & Take AWS Console screenshot showing 9 tables \\
+\bottomrule
+\end{tabular}
+\end{center}

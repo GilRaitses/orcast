@@ -2,7 +2,7 @@
 
 Companion to [FORECAST_KERNELS.md](FORECAST_KERNELS.md). That doc defines the kernel model. This one sketches the plan level by level, sets a fitness gate at each level, and designs the estimation and calibration studies, using methods borrowed from sensory neuroscience (PSTH, reverse correlation, LNP cascades, signal detection theory, population decoding).
 
-Status: study design. Nothing is fitted yet. Each level states the data it needs and the go/no-go criterion. We do not promote a modeled surface to the default heat until its level passes.
+Status: study design plus partial implementation. The current repository has a Level 1-2 temporal fit report for single-station acoustic candidates with CV, PIT, pooled time-rescaling, and PSTH-vs-kernel diagnostics in `fit_report.json`; Level 0 detector QC fields are populated when reviewed labels exist. Spatial/prey/population levels are not complete. Each level states the data it needs and the go/no-go criterion. We do not promote sharper displayed confidence until the relevant gates pass and a human promotion decision is recorded.
 
 ## The unifying analogy: detections as a spike train, environment as the stimulus
 
@@ -84,7 +84,7 @@ Each level is a go/no-go. Do not build the next level until the current one pass
 - Goal: full spatiotemporal intensity.
 - Studies: add `k_salmon` (run-timing index with lag scan) and `s_space` (point-process intensity with bathymetry/channel covariates + effort-corrected sighting density).
 - Data: salmon run-timing series (new adapter); bathymetry; sightings for space.
-- Fitness gate: held-out skill beats the recent-detection-density baseline; probabilistic calibration within tolerance (reliability diagram near diagonal; PIT roughly uniform).
+- Fitness gate: held-out skill beats the recent-detection-density baseline; probabilistic calibration within tolerance (reliability diagram near diagonal; PIT roughly uniform). *Gate split (2026-06-27): `k_salmon` is judged on the temporal acoustic held-out CV-skill; static bathymetry enters `s_space` ONLY and is judged on spatial/visual-validation quality -- at the current 4-station cluster it does NOT move the temporal acoustic CV gate (SYN section 2; M3 section 0.2). The binding L3 lever is summer presence-days from new in-region nodes, not more prey/terrain transforms.*
 
 ### Level 4: population decoding + uncertainty
 - Goal: turn the station array into a region forecast with honest confidence.

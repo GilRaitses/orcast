@@ -42,5 +42,5 @@
     "tide_psth": "withheld: needs NOAA tidal-phase join per detection (not in cached index)"
   },
   "reason": "Diel PSTH modulation 1.79 beats the phase-randomized null (p=0.0005).",
-  "generated_at": "2026-06-27T05:34:58.727975+00:00"
+  "generated_at": "2026-06-27T20:45:42.826492+00:00"
 }
