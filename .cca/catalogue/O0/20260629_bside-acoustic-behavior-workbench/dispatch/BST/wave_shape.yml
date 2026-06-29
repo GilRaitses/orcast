@@ -1,0 +1,86 @@
+# BST dispatch shape (hydrophone station player breadth)
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BST/
+# Charter: ../../BSW-STATION_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Packet purpose: make BST-BUILD/INTEGRATE/ACCEPT launchable (deepen the slice's single-station rig
+# into a multi-station player + camera POV object).
+
+version: 1
+family: BSW
+code: BST
+label: hydrophone-station-player
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BST/
+charter: ../../BSW-STATION_CHARTER.md
+depends_on: [BSW-RESEARCH]
+status: gated-on-O0
+repo_state_verified_against: b983976f6a602b711fb0be984a1c5eee2f57cf75
+
+delta_from_slice:
+  exists: >-
+    web/lib/scene/hydrophone/ has makeHydrophoneRig (modeled cabled-hydrophone /
+    node-on-mooring), placement.ts (projectToScene + seabed raycast),
+    StationPlayer.ts (binds clip audio), stationCamera.ts + the BSH spectro
+    timeline as the clock; web/app/(sandbox)/station/ exercises ONE station
+    (Orcasound Lab) with hydrophone + top-down POVs. index.ts is the public barrel.
+  adds: >-
+    (1) Real MULTI-STATION catalog: drive the rig + player from
+    GET /api/live-hydrophones (src/integrations/live_orcasound_feeds.json) so any
+    real station can be selected, placed at its lat/lng, and have its streamUrl /
+    archived audio bound. (2) A richer-but-still-low-poly equipment model variant
+    per node class (cabled vs buoy/mooring) - mesh license-clear or parametric.
+    (3) The camera POV-SELECTION object as a reusable LGC-aligned glass control
+    (>=2 named POVs) that drives director.ts, not a one-off sandbox toggle.
+  not_in_scope: >-
+    Acoustic classification (BAM), spectrogram compute (BSH), orca reenactment
+    (BRE). Convergence-file mount is BST-INTEGRATE only.
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [web/lib/scene/hydrophone/**, web/public/hydrophone/**, "web/app/(sandbox)/station/**"]
+  convergence_files: [web/app/components/scene/SalishScene.tsx, web/app/components/AdaptiveExplore.tsx, web/app/globals.css]
+  serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]
+  single_convergence_file_editor: integrator
+  git_pull_rebase_before_edit: true
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  verify_on: aimez-gpu-capture (Tesla T4) via infra/render_host/render.sh
+  honesty_label: "equipment model is MODELED/representative (label it); placement + audio are measured"
+  built_on: three (+ existing director.ts)
+  heavy_assets_to_box: true                  # any external mesh/texture -> box; license-clear only
+
+waves:
+  - id: BST-BUILD
+    name: multi-station-player-build
+    parallelism: 3
+    convergence_file_edits: false            # net-new + sandbox only
+    launch_status: gated-on-O0
+    agents:
+      - { role: BST-B1, owns: web/lib/scene/hydrophone/catalog.ts (+ extend StationPlayer.ts/placement.ts), task: "drive the rig + player from the real station catalog (GET /api/live-hydrophones / live_orcasound_feeds.json); select any station -> place at its lat/lng on the seabed -> bind its streamUrl + BSW-R01 archived audio. No invented stream." }
+      - { role: BST-B2, owns: web/lib/scene/hydrophone/equipment/** (+ web/public/hydrophone/ if external mesh), task: "low-poly equipment variants per node class (cabled-hydrophone vs buoy/mooring); license-clear external mesh (CC0/CC-BY, attribution to PROVENANCE.md, heavy -> box) OR a parametric three model. Labeled MODELED." }
+      - { role: BST-B3, owns: "web/app/(sandbox)/station/** + web/lib/scene/hydrophone/povObject.ts", task: "the camera POV-selection object as a reusable LGC-aligned glass control (>=2 named POVs: hydrophone POV + top-down) driving director.ts; extend the station sandbox to switch stations + POVs. WIRING.md for the barrel." }
+    gate: "tsc/lint clean; the sandbox selects multiple real stations, places the right model at each, binds audio, and switches POVs via director.ts; GPU-host frame Read-examined; no convergence edits; no commit without O0."
+
+  - id: BST-INTEGRATE
+    name: station-player-integrate
+    depends_on: [BST-BUILD]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    agents:
+      - { role: BST-INT, owns: [web/app/components/scene/SalishScene.tsx, web/app/components/AdaptiveExplore.tsx, web/app/globals.css], task: "git pull --rebase first. Land station-select -> underwater equipment model + POV-selection object into the twin; bind the SceneIntent streamUrl AdaptiveExplore currently drops. Import the public barrel only. Serialize on the SalishScene queue (SEQUENCING.md)." }
+    gate: "GATED (O0): tsc/lint + copy-gate clean; station-select on the homepage shows the modeled rig at the real depth + the POV control; no WFX/ORCA/3D-TWIN regression; convergence diff reviewable. No commit without O0."
+
+  - id: BST-ACCEPT
+    name: station-player-accept
+    depends_on: [BST-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: BST-ACC, owns: [gate_screenshots/], task: "T4 GPU host: render >=2 real stations selected, each showing the equipment model at the right place/depth, hydrophone POV + top-down reachable, glass control legible, MODELED label present. Read-examine; honest verdict; evidence to dispatch/BST/gate_screenshots/." }
+    gate: "GATED (O0): Read-examined frames prove multi-station placement + both POVs + legible labeled control; frame budget held; honest verdict. No commit without O0."
+
+operator_gates:
+  - any external mesh/texture download (license/attribution verified, O0-gated, heavy -> box)
+  - integrate edits convergence files (single editor, O0-gated, serialize_across)
+  - GPU-host capture + compute (O0-gated)
+  - LGC token names (coordinate with O0; LGC is unbuilt)
+  - any commit or push (explicit operator request only)

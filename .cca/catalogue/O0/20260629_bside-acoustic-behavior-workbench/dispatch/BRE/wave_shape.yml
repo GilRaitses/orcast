@@ -1,0 +1,90 @@
+# BRE dispatch shape (scrub-synced multi-orca reenactment breadth)
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BRE/
+# Charter: ../../BSW-REENACTMENT_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Packet purpose: make BRE-BUILD/INTEGRATE/ACCEPT launchable - deepen the slice's presence-only
+# single-orca driver into multi-orca (nMax 3) with a real-DTAG-segment behavior->motion ethogram.
+
+version: 1
+family: BSW
+code: BRE
+label: scrub-synced-reenactment
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BRE/
+charter: ../../BSW-REENACTMENT_CHARTER.md
+depends_on: [BSW-RESEARCH, BSW-BAM, BSW-BSH]   # needs BAM's richer classification + BSH's timeline authority
+status: gated-on-O0
+repo_state_verified_against: b983976f6a602b711fb0be984a1c5eee2f57cf75
+
+delta_from_slice:
+  exists: >-
+    web/lib/scene/reenactment/ is REAL but THIN: OrcaPool.ts spawns + drives N
+    OrcaController instances on the REAL SRKW driver; TimelineDriver.ts follows
+    BSH's playhead with presence-gated visibility; spawnFromClassification.ts +
+    presenceAtTime read BAM's classification.json; clipSampleTime.ts folds the
+    playhead into a clip window; web/public/orca/motion/clips/manifest.json holds
+    REAL behavior clips derived offline (derive_srkw_clips.py) from the measured
+    SRKW driver. TODAY: spawnCount is presence-only (0/1), so it runs single-orca
+    baseline; clipId is a fixed "Traveling"; the behavior NAME is a modeled match.
+  adds: >-
+    (1) Real multi-orca: spawn up to nMax (R08 cap 3) from BAM's richer
+    classification (single-vs-multiple where BAM supports it), readable ~8 m
+    spacing, all on real SRKW kinematics. (2) A real ETHOGRAM: behavior->motion-
+    clip mapping derived from REAL classified DTAG segments (R04 schema from
+    dive_analysis.h5), so the clip a spawned orca plays reflects classified
+    behavior, not a single fixed clip - each disclosed as a modeled kinematic
+    match. (3) The camera POV wired to BST's POV-selection object for both views.
+  not_in_scope: >-
+    Acoustic model (BAM owns who/what). Spectrogram/timeline authority (BSH owns
+    the clock). Humpback never drives an orca (contrast/reference only). No
+    fabricated trajectory or scripted swim, ever.
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [web/lib/scene/reenactment/**, web/lib/scene/orca/motion/clips/**, web/public/orca/motion/clips/**]
+  convergence_files: [web/app/components/scene/SalishScene.tsx]
+  serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]   # ORCA especially: shares the orca rig/motion stack
+  single_convergence_file_editor: integrator
+  git_pull_rebase_before_edit: true
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  verify_on: aimez-gpu-capture (Tesla T4) via infra/render_host/render.sh
+  honesty_label: "motion = measured SRKW DTAG; behavior NAME = modeled kinematic match (disclosed); cross-sensor scrub = illustrative; mandatory: 'representative SRKW DTAG motion, not the recorded animal'"
+  compute_neutral: "N orcas join the existing opaque depth pre-pass (no 3rd full render); instance/share geometry+material; LOD by distance; nMax 3"
+  heavy_assets_to_box: true                  # large derived motion -> box; small clip manifest in repo
+
+waves:
+  - id: BRE-BUILD
+    name: multiorca-ethogram-build
+    parallelism: 3
+    convergence_file_edits: false            # net-new/extend + sandbox only
+    launch_status: gated-on-O0
+    agents:
+      - { role: BRE-B1, owns: web/lib/scene/reenactment/spawnFromClassification.ts (extend) + OrcaPool.ts (extend), task: "spawn up to nMax (3) from BAM's richer classification (single-vs-multiple where supported); readable ~8 m spacing; all on the REAL SRKW driver; never exceed what BAM's estimate supports. Keep presence-gated visibility." }
+      - { role: BRE-B2, owns: web/lib/scene/orca/motion/clips/** (extend clipSampleTime.ts + new ethogram.ts) + modeling/acoustic-or-dtag clip derivation note, task: "behavior->motion-clip ethogram from REAL classified DTAG segments (R04 schema from dive_analysis.h5 / behavior_mapping.json); each clip is a window into the real driver; the behavior NAME is a disclosed modeled kinematic match. Large derived motion -> box; small manifest in repo." }
+      - { role: BRE-B3, owns: "web/app/(sandbox)/orca/** or (sandbox)/slice reenactment harness + web/lib/scene/reenactment/povBinding.ts", task: "wire camera POV to BST's POV-selection object (hydrophone POV + top-down) via director.ts; sandbox exercises multi-orca scrub/slow synced to BSH's playhead; record a frame-time number for nMax orcas vs budget." }
+    gate: "tsc/lint clean; sandbox spawns the right count per BAM, plays behavior-mapped clips on real kinematics, scrubs/slows synced to BSH, both POVs work; mandatory representativeness label present; frame-time recorded; no convergence edits; no commit without O0."
+
+  - id: BRE-INTEGRATE
+    name: reenactment-integrate
+    depends_on: [BRE-BUILD]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    agents:
+      - { role: BRE-INT, owns: [web/app/components/scene/SalishScene.tsx], task: "git pull --rebase first. Land the multi-orca reenactment + POV into the twin; import public barrels only; reuse the existing OrcaRig mount pattern; serialize on the SalishScene queue + coordinate with ORCA (shared rig/motion stack) via O0." }
+    gate: "GATED (O0): tsc/lint + copy-gate clean; reenactment spawns per BAM + scrubs with BSH on the twin; mandatory label intact; no ORCA/WFX regression; convergence diff reviewable. No commit without O0."
+
+  - id: BRE-ACCEPT
+    name: reenactment-accept
+    depends_on: [BRE-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: BRE-ACC, owns: [gate_screenshots/, scrub_clip/, ACCEPT_VERDICT.md], task: "T4 GPU host: Read-examined frames + a short scrub clip - orcas spawn per the real classification, move on real DTAG kinematics, follow the scrub/slow playhead, viewable from both POVs; representativeness label intact; frame budget held at nMax. Honest verdict; evidence to dispatch/BRE/." }
+    gate: "GATED (O0): frames + scrub clip prove count-per-BAM + real-DTAG motion + scrub sync + both POVs + held budget + mandatory label; honest verdict (no reassurance bias). No commit without O0."
+
+operator_gates:
+  - any pressure to fabricate motion/counts -> STOP to O0 (locked: real DTAG only, count<=BAM's estimate)
+  - large derived motion data to the box; only the small clip manifest in git
+  - integrate edits convergence files (single editor, O0-gated, serialize_across; coordinate ORCA)
+  - GPU-host capture + compute (O0-gated)
+  - any commit or push (explicit operator request only)

@@ -18,6 +18,7 @@ Files:
 - `BSW-STUDIO-SKILLS_CHARTER.md` - annotation UI + tagtools pipeline studio + managed HUD skills (BSS).
 - `research/` - the ~14 findings docs + `SYNTHESIS_bside.md` (created by the wave).
 - `SIGN_OFF.md` - O0/operator ratification of the real demo-slice spec (created at slice-def time).
+- `dispatch/` - launchable per-lane packets (each: `wave_shape.yml` with an agent roster + `ORCHESTRATOR_DISPATCH_PROMPT.md`) for `SLICE-INTEGRATE` and the five breadth lanes `BST/BAM/BSH/BRE/BSS`, plus `SEQUENCING.md` (the dependency DAG + the single-editor SalishScene/console convergence queue). All remain `gated-on-O0`.
 
 How to start: dispatch the sub-orchestrator with `ORCHESTRATOR_DISPATCH_PROMPT.md`. It runs the
 ~14-agent read-only research wave, writes `research/SYNTHESIS_bside.md`, and returns to O0. The real
@@ -27,4 +28,8 @@ Serializes against LGC / CVP / ORCA / WFX / 3D-TWIN on `SalishScene.tsx`, `globa
 `AdaptiveExplore.tsx`, `ActiveSurfaceHost.tsx`. Research is read-only; no code changes, no commits
 (operator gate).
 
-Status: chartered 2026-06-29; research wave dispatch pending.
+Status: research wave run + synthesis; slice built, accepted on the T4, landed at `/workbench`, and
+committed (`b983976`). The five breadth lanes + `SLICE-INTEGRATE` are now dispatch-ready packets under
+`dispatch/`, all `gated-on-O0`. To launch one: background sub-orchestrator with
+`dispatch/<CODE>/ORCHESTRATOR_DISPATCH_PROMPT.md`; it runs that lane's BUILD, then pauses and returns
+to O0, which approves INTEGRATE/ACCEPT per `dispatch/SEQUENCING.md`.

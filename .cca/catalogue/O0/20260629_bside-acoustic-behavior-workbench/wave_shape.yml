@@ -94,6 +94,7 @@ waves:
     parallelism: 1
     single_convergence_file_editor: integrator
     launch_status: gated-on-O0
+    dispatch: dispatch/SLICE-INTEGRATE/        # launchable packet: wave_shape.yml + ORCHESTRATOR_DISPATCH_PROMPT.md
     note: "land the slice into SalishScene.tsx + console; serialize vs LGC/CVP/WFX/ORCA/3D-TWIN"
     gate: "GATED (O0): slice lands; tsc + copy-gate clean; GPU-host frame Read-examined; no commit without O0"
 
@@ -110,6 +111,7 @@ waves:
     depends_on: [BSW-RESEARCH]
     charter: BSW-STATION_CHARTER.md
     launch_status: gated-on-O0
+    dispatch: dispatch/BST/                     # launchable packet: wave_shape.yml + ORCHESTRATOR_DISPATCH_PROMPT.md
     note: "hydrophone equipment model + station player + camera POV object (BST-BUILD/INTEGRATE/ACCEPT). Owns web/lib/scene/hydrophone/, web/public/hydrophone/, web/app/(sandbox)/station/."
 
   - id: BSW-BAM
@@ -117,6 +119,7 @@ waves:
     depends_on: [BSW-RESEARCH]
     charter: BSW-ACOUSTIC-ML_CHARTER.md
     launch_status: gated-on-O0
+    dispatch: dispatch/BAM/                     # launchable packet: window-level/call-type/multi-caller follow-on (slice shipped binary presence)
     note: "community-annotation MLops + first real acoustic classifier (BAM-DATA/PIPELINE/TRAIN/ACCEPT). Owns infra/acoustic/, modeling/acoustic/. Weights to the box."
 
   - id: BSW-BSH
@@ -124,6 +127,7 @@ waves:
     depends_on: [BSW-RESEARCH]
     charter: BSW-SPECTRO-HUD_CHARTER.md
     launch_status: gated-on-O0
+    dispatch: dispatch/BSH/                     # launchable packet: HUD polish + promote the ocean stub to a real-stratification interpretive volumetric
     note: "WebAudio spectrogram HUD + interpretive double-diffusion layer (BSH-BUILD/INTEGRATE/ACCEPT). Owns web/lib/scene/hud/spectro/, web/lib/scene/ocean/."
 
   - id: BSW-BRE
@@ -131,6 +135,7 @@ waves:
     depends_on: [BSW-RESEARCH, BSW-BAM, BSW-BSH]
     charter: BSW-REENACTMENT_CHARTER.md
     launch_status: gated-on-O0
+    dispatch: dispatch/BRE/                     # launchable packet: multi-orca (nMax 3) + DTAG-segment ethogram (slice shipped presence-only single-orca)
     note: "multi-orca reenactment synced to the spectrogram playhead + camera POV (BRE-BUILD/INTEGRATE/ACCEPT). Owns web/lib/scene/reenactment/, web/lib/scene/orca/motion/clips/."
 
   - id: BSW-BSS
@@ -138,6 +143,7 @@ waves:
     depends_on: [BSW-RESEARCH]
     charter: BSW-STUDIO-SKILLS_CHARTER.md
     launch_status: gated-on-O0
+    dispatch: dispatch/BSS/                     # launchable packet: net-new annotation studio + tagtools + managed skills (route must not clobber web/app/workbench/)
     note: "annotation UI + tagtools pipeline studio + poster-viz managed HUD skills + behavior-capture automation (BSS-BUILD/INTEGRATE/ACCEPT). Owns web/app/(workbench)/, infra/tagtools/, src/aws_backend/casting/ additions."
 
 operator_gates:

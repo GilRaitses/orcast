@@ -1,0 +1,91 @@
+# BSH dispatch shape (spectrogram HUD + interpretive double-diffusion ocean layer breadth)
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSH/
+# Charter: ../../BSW-SPECTRO-HUD_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Packet purpose: make BSH-BUILD/INTEGRATE/ACCEPT launchable - HUD polish + turning the off-by-default
+# ocean STUB into a real-stratification-driven (still interpretive-labeled) double-diffusion volumetric.
+
+version: 1
+family: BSW
+code: BSH
+label: spectrogram-hud-ocean-layer
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSH/
+charter: ../../BSW-SPECTRO-HUD_CHARTER.md
+depends_on: [BSW-RESEARCH]
+status: gated-on-O0
+repo_state_verified_against: b983976f6a602b711fb0be984a1c5eee2f57cf75
+
+delta_from_slice:
+  exists: >-
+    web/lib/scene/hud/spectro/ is REAL: a WebAudio STFT engine (stft.worker.ts off
+    the main thread, audioEngine.ts, SpectrogramCache.ts, SpectroHud.ts, the
+    SpectroTimeline authority via createSpectroTimeline.ts) that decodes the one
+    real clip, renders a scrubbable spectrogram, and IS the single audio + clock
+    authority BRE follows (80 dB adaptive normalization so real SRKW call structure
+    is visible). web/lib/scene/ocean/interpretiveOceanLayer.ts exists as an HONEST,
+    off-by-default STUB: additive transparent stratified planes, never a raymarch,
+    never writes depth, mandatory "interpretive - stratified ocean mixing" chip,
+    forbidden-claim guard asserted at module load.
+  adds: >-
+    (1) HUD polish: frequency/time axis ticks + a real-SRKW-call colormap legend,
+    multi-clip support, and a costed perf pass vs 60fps/30fps. (2) Promote the
+    ocean stub into the operator's "lava lamp in both directions" - a stylized
+    double-diffusion / salt-fingering volumetric driven by REAL Salish Sea
+    stratification data (BSW-R09 sources), STILL labeled interpretive, gated/
+    optional, with NO water-realism regression (coordinate with WFX via O0).
+  not_in_scope: >-
+    Audio playback binding (BST). Classification (BAM). Orca reenactment (BRE).
+    Any claim that the ocean layer is measured orca perception.
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [web/lib/scene/hud/spectro/**, web/lib/scene/ocean/**, web/public/ocean/**]
+  convergence_files: [web/app/components/scene/SalishScene.tsx, web/app/globals.css]
+  serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]   # WFX especially: no water regression
+  single_convergence_file_editor: integrator
+  git_pull_rebase_before_edit: true
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  verify_on: aimez-gpu-capture (Tesla T4) via infra/render_host/render.sh
+  honesty_label: "spectrogram = measured audio; double-diffusion layer = INTERPRETIVE (real oceanography, speculative cognition), on-screen labeled, never 'measured perception'"
+  built_on: three + WebAudio (existing)
+  compute_neutral: "FFT off-thread; spectrogram is a 2D canvas/texture, not a 3rd full 3D pass; ocean layer adds no full pass"
+  heavy_assets_to_box: true                  # any stratification dataset / baked field -> box
+
+waves:
+  - id: BSH-BUILD
+    name: hud-polish-and-ocean-volumetric
+    parallelism: 3
+    convergence_file_edits: false            # net-new + sandbox only
+    launch_status: gated-on-O0
+    agents:
+      - { role: BSH-B1, owns: web/lib/scene/hud/spectro/axes.ts + legend.ts (+ extend SpectroHud.ts), task: "frequency/time axis ticks + a colormap legend keyed to the 80 dB adaptive normalization; multi-clip support; keep the SpectroTimeline authority contract BRE consumes unchanged. WIRING note." }
+      - { role: BSH-B2, owns: web/lib/scene/ocean/doubleDiffusion.ts + web/public/ocean/** (if external data), task: "stylized double-diffusion / salt-fingering volumetric driven by REAL Salish Sea stratification (BSW-R09 source, provenance + license; heavy -> box); additive/transparent, no depth write, no raymarch full pass; extends interpretiveOceanLayer's mandatory label + forbidden-claim guard. Gated/optional." }
+      - { role: BSH-B3, owns: "web/app/(sandbox)/spectro/** (extend) + web/lib/scene/ocean/perf.ts", task: "sandbox tuning of HUD + ocean layer together; a costed frame-time A/B (layer on/off, HUD on/off) vs 60fps-desktop/30fps-laptop, serial on the isolated GPU host (concurrent contexts corrupt timing). Prove no WFX water regression." }
+    gate: "tsc/lint clean; the sandbox shows polished scrubbable spectrogram + the labeled interpretive double-diffusion layer; frame-time A/B numbers recorded; no water regression; GPU-host frames Read-examined; no convergence edits; no commit without O0."
+
+  - id: BSH-INTEGRATE
+    name: hud-ocean-integrate
+    depends_on: [BSH-BUILD]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    agents:
+      - { role: BSH-INT, owns: [web/app/components/scene/SalishScene.tsx, web/app/globals.css], task: "git pull --rebase first. Mount the spectrogram HUD + (optional, off-by-default) ocean layer into the twin; import public barrels only; serialize on the SalishScene queue; coordinate any WFX-adjacent change via O0. Mandatory interpretive label wired wherever the ocean layer can show." }
+    gate: "GATED (O0): tsc/lint + copy-gate clean; HUD scrubs over the twin; ocean layer labeled interpretive; WFX water unregressed (frame Read-examined vs a WFX baseline); convergence diff reviewable. No commit without O0."
+
+  - id: BSH-ACCEPT
+    name: hud-ocean-accept
+    depends_on: [BSH-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: BSH-ACC, owns: [gate_screenshots/, ACCEPT_VERDICT.md], task: "T4 GPU host: spectrogram tracks the audio + scrub moves the playhead; the double-diffusion layer reads as a labeled interpretive layer; frame budget held; water unregressed. Read-examine; honest verdict; evidence to dispatch/BSH/gate_screenshots/." }
+    gate: "GATED (O0): Read-examined frames prove scrubbable spectrogram + labeled interpretive ocean layer + held frame budget + no water regression; honest verdict. No commit without O0."
+
+operator_gates:
+  - any stratification dataset / baked field download (license/provenance verified, heavy -> box, O0-gated)
+  - WFX water-regression risk: coordinate any water-adjacent change with O0 before integrate
+  - new render/audio dependency (O0-costed recommendation + three-only fallback)
+  - integrate edits convergence files (single editor, O0-gated, serialize_across)
+  - GPU-host capture + compute (O0-gated)
+  - any commit or push (explicit operator request only)

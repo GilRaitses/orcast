@@ -1,0 +1,100 @@
+# BAM dispatch shape (community-annotation acoustic classifier breadth)
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BAM/
+# Charter: ../../BSW-ACOUSTIC-ML_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Packet purpose: make BAM-DATA/PIPELINE/TRAIN/ACCEPT launchable - the window-level / call-type /
+# single-vs-multiple follow-on the slice's eval_report.json flags as STOP-to-O0.
+
+version: 1
+family: BSW
+code: BAM
+label: acoustic-classifier-mlops
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BAM/
+charter: ../../BSW-ACOUSTIC-ML_CHARTER.md
+depends_on: [BSW-RESEARCH]
+status: gated-on-O0
+repo_state_verified_against: b983976f6a602b711fb0be984a1c5eee2f57cf75
+
+delta_from_slice:
+  exists: >-
+    A REAL first model already shipped: modeling/acoustic/{fetch_orcasound_clip,
+    features,train_eval,infer_demo}.py + requirements.txt; infra/acoustic/
+    eval_report.json (binary SRKW-call presence, RF F1~0.99 / AUPRC~1.0 on a
+    temporal held-out split) + PROVENANCE.md; web/public/hydrophone/slice/
+    classification.json (precomputed inference, the BRE/integrator contract).
+    Weights (srkw_presence_v0.joblib) + raw audio live in the box, gitignored.
+  honest_limit_of_slice: >-
+    Bout-level WEAK labels on a SINGLE Orcasound Lab bout/session; positives vs
+    negatives are different times of the SAME session, so the high metrics are an
+    optimistic, partly-confounded presence estimate, not a per-call detector.
+    NOT claimed (and must never be): count, pod/individual ID, ecotype, call type,
+    single-vs-multiple callers.
+  adds: >-
+    The eval_report "to_strengthen" follow-on: fetch openly-licensed, WINDOW-LEVEL
+    annotated corpora (Pod.Cast / OrcaHello / DCLDE-2027), align per-annotation
+    windows to audio for true window-level labels, and train honest heads for the
+    categories the data actually supports (call-type and/or single-vs-multiple),
+    each reported as estimate+confidence with a held-out eval and stated confounds.
+    Cross-station / cross-day generalization is finally evaluated.
+  not_in_scope: >-
+    Kinematic behavior (BRE/BSS). Spectrogram HUD render (BSH). Orca motion. Any
+    claim the eval does not support.
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: [infra/acoustic/**, modeling/acoustic/**]
+  convergence_files: []                      # BAM serves via the public classification.json contract; no SalishScene edit
+  serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]   # only if a later integrate touches the console
+  no_dev_server_during_parallel_wave: true
+  validate_with: "python pipeline runs offline + reproducible; tsc only if the served JSON schema changes"
+  verify_on: aimez box dev host (training/compute) ; classification.json is the served artifact
+  honesty_label: "measured audio; model output is an ESTIMATE + confidence; claim only what held-out eval supports"
+  no_overclaim: true
+  heavy_assets_to_box: true                  # corpora, raw audio, weights -> S3, gitignored; small inference JSON + eval ship in repo
+  deps: "numpy + scipy + scikit-learn (+ joblib) only; no torch/librosa unless O0-costed"
+
+waves:
+  - id: BAM-DATA
+    name: corpora-fetch-provenance
+    parallelism: 2
+    web_enabled: true                        # O0-gated downloads; license/privacy verified first
+    launch_status: gated-on-O0
+    agents:
+      - { role: BAM-D1, owns: infra/acoustic/data/** (gitignored) + infra/acoustic/PROVENANCE.md (extend), task: "fetch openly-licensed WINDOW-LEVEL annotated corpora per BSW-R02 (Pod.Cast / OrcaHello / DCLDE-2027 CC-BY-4.0). Verify license + privacy per asset BEFORE download; NC/ND/unclear -> STOP to O0. Record provenance/attribution/license; raw -> box." }
+      - { role: BAM-D2, owns: infra/acoustic/manifests/** , task: "build a label manifest aligning each annotation's time window to audio (call-type and/or single-vs-multiple where the corpus supports it); document label QC + class balance + the train/val/test split policy (cross-station/cross-day, not within-session)." }
+    gate: "every asset license-clear + provenance-documented (NC authorized per SIGN_OFF; ND/unclear stopped); a window-level label manifest exists with an honest split policy; heavy raw in the box; no commit without O0."
+
+  - id: BAM-PIPELINE
+    name: window-level-pipeline
+    depends_on: [BAM-DATA]
+    parallelism: 2
+    launch_status: gated-on-O0
+    agents:
+      - { role: BAM-P1, owns: modeling/acoustic/features.py (extend) + modeling/acoustic/windows.py, task: "window-level feature extraction reusing the existing scipy log-mel silhouette features; shared with BSH's front-end FFT path (compute the feature once). Reproducible, pinned offline deps." }
+      - { role: BAM-P2, owns: modeling/acoustic/train_eval.py (extend) + modeling/acoustic/heads.py, task: "training + HONEST held-out eval for the supported heads (call-type / single-vs-multiple), precision/recall/F1/confusion + AUPRC, plus the stated confounds; cross-station/cross-day generalization measured. No metric without a split." }
+    gate: "pipeline runs end-to-end offline + reproducible from PROVENANCE; the eval harness emits metrics + confusion + confounds per head; no overclaim baked in; no commit without O0."
+
+  - id: BAM-TRAIN
+    name: train-real-heads
+    depends_on: [BAM-PIPELINE]
+    parallelism: 1
+    compute: aimez box dev host
+    launch_status: gated-on-O0
+    agents:
+      - { role: BAM-T1, owns: infra/acoustic/eval_report.json (new version) + web/public/hydrophone/slice/classification.json (extend schema) + infra/acoustic/PROVENANCE.md, task: "train the supported heads on the box; emit an honest eval report (metrics + failure modes + confounds) + a small inference artifact; extend classification.json with the new estimate+confidence fields (presence stays; add call-type / single-vs-multiple ONLY if the eval supports them). Weights -> box. Reference point: the prior minGRU 0% attempt - do not repeat it without honest metrics." }
+    gate: "GATED (O0): a trained model + reproducible pipeline + an honest held-out eval; the served classification.json carries only claims the eval supports; weights in the box with a re-fetch pointer; no commit without O0."
+
+  - id: BAM-ACCEPT
+    name: honest-claim-accept
+    depends_on: [BAM-TRAIN]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: BAM-ACC, owns: [gate_screenshots/, ACCEPT_VERDICT.md], task: "on the demo slice clip(s), confirm the model produces a real classification and that the exact HUD wording matches measured performance (estimate+confidence, the stated confounds carried). Verdict cites eval numbers, never a claim. Hand BRE the spawn-driving fields it consumes." }
+    gate: "GATED (O0): model output on the slice clip is real + honestly worded; metrics reported; the HUD claim never exceeds the eval; honest verdict (no reassurance bias). No commit without O0."
+
+operator_gates:
+  - all corpora / audio downloads (license + privacy verified per asset, NC authorized per SIGN_OFF, ND/unclear STOP-to-O0)
+  - model training + box compute/host use (O0-gated)
+  - any claim beyond presence requires the held-out eval to support it (anti-overclaim, O0-gated)
+  - heavy artifacts (corpora, raw audio, weights) to the box; only the small JSON + eval in git
+  - any commit or push (explicit operator request only)

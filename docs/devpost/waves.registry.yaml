@@ -1672,7 +1672,8 @@ waves:
       - web/app/globals.css
       - web/app/components/AdaptiveExplore.tsx
       - web/app/components/ActiveSurfaceHost.tsx
-    note: "Land the slice into the live twin + console; tsc + copy-gate clean; GPU-host frame Read-examined; no commit without O0."
+    dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/SLICE-INTEGRATE/
+    note: "Land the slice into the live twin + console; tsc + copy-gate clean; GPU-host frame Read-examined; no commit without O0. Dispatch-ready packet (SI-INTEGRATE single editor + SI-ACCEPT)."
 
   - id: BSW-SLICE-ACCEPT
     family: BSW
@@ -1690,7 +1691,8 @@ waves:
     charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-STATION_CHARTER.md
     operator_gate: O0-gated; net-new then single-editor integrate; serialize vs convergence lanes
     scope_globs: [web/lib/scene/hydrophone/**, web/public/hydrophone/**, "web/app/(sandbox)/station/**"]
-    note: "Hydrophone equipment model + station player + camera POV-selection object (hydrophone POV / top-down) extending LGC tokens; binds the unused streamUrl + real Orcasound archived audio. BST-BUILD/INTEGRATE/ACCEPT."
+    dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BST/
+    note: "Hydrophone equipment model + station player + camera POV-selection object (hydrophone POV / top-down) extending LGC tokens; binds the unused streamUrl + real Orcasound archived audio. BST-BUILD/INTEGRATE/ACCEPT. Dispatch-ready packet (3-agent BUILD deepens the slice's single-station rig)."
 
   - id: BSW-BAM
     family: BSW
@@ -1700,7 +1702,8 @@ waves:
     charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-ACOUSTIC-ML_CHARTER.md
     operator_gate: O0-gated; data/training license + compute gated; honest metrics; weights to the box
     scope_globs: [infra/acoustic/**, modeling/acoustic/**]
-    note: "Community-annotation MLops + first REAL acoustic classifier (presence/call-type/[count if real], honest eval). BAM-DATA/PIPELINE/TRAIN/ACCEPT. No standins, no overclaim."
+    dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BAM/
+    note: "Community-annotation MLops + first REAL acoustic classifier (presence/call-type/[count if real], honest eval). BAM-DATA/PIPELINE/TRAIN/ACCEPT. No standins, no overclaim. Dispatch-ready packet = the window-level/call-type/multi-caller follow-on the slice's eval_report.json flags as STOP-to-O0 (slice already shipped binary presence)."
 
   - id: BSW-BSH
     family: BSW
@@ -1710,7 +1713,8 @@ waves:
     charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-SPECTRO-HUD_CHARTER.md
     operator_gate: O0-gated; net-new then single-editor integrate; compute-neutral; no water regression
     scope_globs: [web/lib/scene/hud/spectro/**, web/lib/scene/ocean/**]
-    note: "Scrubbable WebAudio spectrogram HUD over the twin (no ONC token) + the labeled-interpretive double-diffusion ocean-process layer. BSH-BUILD/INTEGRATE/ACCEPT."
+    dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSH/
+    note: "Scrubbable WebAudio spectrogram HUD over the twin (no ONC token) + the labeled-interpretive double-diffusion ocean-process layer. BSH-BUILD/INTEGRATE/ACCEPT. Dispatch-ready packet (HUD polish + promote the off-by-default ocean stub to a real-stratification interpretive volumetric; no WFX water regression)."
 
   - id: BSW-BRE
     family: BSW
@@ -1720,7 +1724,8 @@ waves:
     charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-REENACTMENT_CHARTER.md
     operator_gate: O0-gated; net-new then single-editor integrate; never fabricates trajectory/counts
     scope_globs: [web/lib/scene/reenactment/**, web/lib/scene/orca/motion/clips/**]
-    note: "Scrub/slow audio -> multi-orca reenactment driven by classified behavior (kinematic) + real DTAG motion, synced to the spectrogram playhead; camera POV via director.ts. BRE-BUILD/INTEGRATE/ACCEPT."
+    dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BRE/
+    note: "Scrub/slow audio -> multi-orca reenactment driven by classified behavior (kinematic) + real DTAG motion, synced to the spectrogram playhead; camera POV via director.ts. BRE-BUILD/INTEGRATE/ACCEPT. Dispatch-ready packet (multi-orca nMax 3 + DTAG-segment ethogram; slice shipped presence-only single-orca; depends on BAM+BSH)."
 
   - id: BSW-BSS
     family: BSW
@@ -1730,7 +1735,8 @@ waves:
     charter: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/BSW-STUDIO-SKILLS_CHARTER.md
     operator_gate: O0-gated; net-new then single-editor integrate; Central Casting tier/honesty preserved
     scope_globs: ["web/app/(workbench)/**", infra/tagtools/**, src/aws_backend/casting/**]
-    note: "Annotation UI (from the real h5 schema) + reusable tagtools/animaltags pipeline studio the console can invoke + poster R/ggplot2/Plotly viz registered as managed Central Casting HUD skills + behavior-capture automation reusing the demo-production director. BSS-BUILD/INTEGRATE/ACCEPT."
+    dispatch: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSS/
+    note: "Annotation UI (from the real h5 schema) + reusable tagtools/animaltags pipeline studio the console can invoke + poster R/ggplot2/Plotly viz registered as managed Central Casting HUD skills + behavior-capture automation reusing the demo-production director. BSS-BUILD/INTEGRATE/ACCEPT. Dispatch-ready packet (genuinely net-new, 3 build + 1 adversarial; annotation route must NOT clobber the existing web/app/workbench/ slice route)."
 
 next_wave_set: H1
 

@@ -1,0 +1,102 @@
+# BSW-SLICE-INTEGRATE dispatch shape (homepage convergence integrate)
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/SLICE-INTEGRATE/
+# Charter authority: ../../wave_shape.yml (BSW-SLICE-INTEGRATE wave) + PROGRAM.md
+# Packet purpose: make the gated slice-integrate launchable (single serialized editor on SalishScene).
+
+version: 1
+family: BSW
+code: BSW-SLICE-INTEGRATE
+label: slice-integrate-homepage
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/SLICE-INTEGRATE/
+depends_on: [BSW-SLICE-BUILD, BSW-SLICE-ACCEPT]      # slice is built + accepted on /workbench
+status: gated-on-O0
+repo_state_verified_against: b983976f6a602b711fb0be984a1c5eee2f57cf75
+
+# What already exists vs what this packet lands.
+delta_from_slice:
+  exists: >-
+    The four slice lanes are built, accepted on the T4, and live at a dedicated
+    /workbench route (web/app/workbench/{page,WorkbenchHost,WorkbenchScene}.tsx +
+    workbench.module.css), importing only the lanes' public barrels
+    (web/lib/scene/hydrophone, hud/spectro, ocean, reenactment) and the public
+    artifacts (web/public/hydrophone/slice/classification.json,
+    web/public/orca/motion/clips/manifest.json). No convergence file is edited.
+  adds: >-
+    Land the SAME real slice composition into the live twin homepage
+    (SalishScene.tsx) + console (AdaptiveExplore.tsx / ActiveSurfaceHost.tsx),
+    gated behind a station selection, so the B-side is reachable from the primary
+    surface, not only /workbench. This is the convergence-file integrate the
+    /workbench route was created to defer.
+  not_in_scope: >-
+    No new lane capability. This packet does not deepen any module (that is
+    BST/BAM/BSH/BRE). It only mounts the existing thin-but-real slice into the
+    homepage and serializes the convergence edit.
+
+execution_model:
+  one_file_one_owner: true
+  single_convergence_file_editor: integrator       # exactly one agent edits convergence files
+  convergence_files:
+    - web/app/components/scene/SalishScene.tsx
+    - web/app/components/AdaptiveExplore.tsx
+    - web/app/components/ActiveSurfaceHost.tsx
+    - web/app/globals.css
+  serialize_across: [LGC, CVP, ORCA, WFX, 3D-TWIN]  # hold the SalishScene queue; one lane at a time
+  git_pull_rebase_before_edit: true
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check                         # tsc --noEmit + lint + copy/deny-term gate
+  verify_on: aimez-gpu-capture (Tesla T4) via infra/render_host/render.sh
+  honesty_label: "measured (audio/DTAG) vs modeled (mesh/motion) vs interpretive (ocean layer); no standins"
+  heavy_assets_to_box: true
+
+waves:
+  - id: SI-INTEGRATE
+    name: land-slice-into-twin
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    agents:
+      - role: SI-INT
+        owns:
+          - web/app/components/scene/SalishScene.tsx
+          - web/app/components/AdaptiveExplore.tsx
+          - web/app/components/ActiveSurfaceHost.tsx
+          - web/app/globals.css
+        task: >-
+          git pull --rebase first. Mount the slice composition (the same imports
+          /workbench uses: hydrophone rig + station player, spectro HUD authority,
+          precomputed classification, presence-gated reenactment) into SalishScene
+          gated on a hydrophone station selection. Reuse the already-present
+          hydrophone SceneIntent {id,name,lat,lng,streamUrl}; stop dropping
+          streamUrl in AdaptiveExplore. No new lane capability; import public
+          barrels only; do not duplicate lane internals. Keep all chrome on
+          LGC-token fallbacks. tsc/lint + copy-gate clean.
+    gate: >-
+      GATED (O0): tsc --noEmit + lint + deny-term/copy gate clean; the homepage
+      mounts the real slice on station-select; /workbench still works; no
+      regression to WFX water / ORCA rig / 3D-TWIN; convergence diff is reviewable
+      and touches only the four files above. No commit without O0.
+
+  - id: SI-ACCEPT
+    name: homepage-slice-accept
+    depends_on: [SI-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - role: SI-ACC
+        owns: [gate_screenshots/]
+        task: >-
+          On the T4 GPU host, render the homepage with a station selected (default
+          + hydrophone POV + top-down + a scrub frame + an absence frame), Read-
+          examine each frame, and write an honest verdict. Confirm honesty chips
+          intact (estimate+confidence wording; "orcas shown: N" presence-gated;
+          interpretive ocean label if shown). Evidence to
+          dispatch/SLICE-INTEGRATE/gate_screenshots/.
+    gate: >-
+      GATED (O0): Read-examined homepage frames prove station-select -> underwater
+      rig + POVs + scrub + honest chips; errorCount 0; frame budget held. Honest
+      verdict (no reassurance bias). No commit without O0.
+
+operator_gates:
+  - integrate edits convergence files (single editor, O0-gated, serialize_across the SalishScene queue)
+  - GPU-host capture + any compute (O0-gated)
+  - any commit or push (explicit operator request only)

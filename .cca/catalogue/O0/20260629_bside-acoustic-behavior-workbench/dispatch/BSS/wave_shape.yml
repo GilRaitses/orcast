@@ -1,0 +1,95 @@
+# BSS dispatch shape (annotation studio + tagtools pipeline + managed HUD skills breadth)
+# Home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSS/
+# Charter: ../../BSW-STUDIO-SKILLS_CHARTER.md   Umbrella: ../../PROGRAM.md
+# Packet purpose: make BSS-BUILD/INTEGRATE/ACCEPT launchable - the genuinely NET-NEW lane.
+
+version: 1
+family: BSW
+code: BSS
+label: annotation-studio-managed-skills
+home: .cca/catalogue/O0/20260629_bside-acoustic-behavior-workbench/dispatch/BSS/
+charter: ../../BSW-STUDIO-SKILLS_CHARTER.md
+depends_on: [BSW-RESEARCH]
+status: gated-on-O0
+repo_state_verified_against: b983976f6a602b711fb0be984a1c5eee2f57cf75
+
+delta_from_slice:
+  exists: >-
+    Nothing of BSS is built. Adjacent reusable surfaces: Central Casting managed
+    skills (src/aws_backend/casting/skills.py + skills_manifest.json,
+    docs/devpost/casting/{SKILL_CATALOG.md,MANAGED_AGENTS_CONTRACT.md}, tiers
+    T0-T3, T0/T1 public); the console turn (AdaptiveExplore -> ActiveSurfaceHost
+    renders allowlisted ui_intent.panels; web/lib/uiIntent.ts types); the demo-
+    production director (.cca/catalogue/O0/20260628_demo-production/ blk/cam/scr/
+    set stages) for capture; the REAL analysis h5 + poster viz (R/ggplot2 statics
+    + one Plotly 3D dive lattice) at the operator's whale-behavior repo.
+  collision_note: >-
+    A route already exists at web/app/workbench/ (no parens) - the B-side SLICE
+    route. The BSS annotation studio is NET-NEW and MUST NOT clobber it; use a
+    route group web/app/(workbench)/ or a distinct sub-route, confirmed with O0.
+  adds: >-
+    (1) Annotation UI reading the real h5-derived data, round-tripping a new
+    annotation with provenance (via the existing API contract). (2) A reusable
+    tagtools/animaltags pipeline STUDIO (calibration, orientation, stroke/glide,
+    ODBA, dive detection - R11) exposed as console-invokable steps. (3) Poster
+    R/ggplot2/Plotly viz registered as managed HUD skills (R10 decides per-viz:
+    server-render PNG vs JS port). (4) Behavior-capture automation on the demo-
+    production director that pulls a REAL classified DTAG example into a 3D capture.
+  not_in_scope: >-
+    Acoustic model (BAM). Orca reenactment motion (BRE). Inventing schema - start
+    from the real h5 schema only.
+
+execution_model:
+  one_file_one_owner: true
+  scope_globs: ["web/app/(workbench)/**", infra/tagtools/**, src/aws_backend/casting/**, docs/devpost/casting/**]
+  convergence_files: [web/app/components/AdaptiveExplore.tsx, web/app/components/ActiveSurfaceHost.tsx, web/lib/uiIntent.ts, web/app/globals.css]
+  serialize_across: [LGC, CVP]               # console turn convergence shared with LGC/CVP
+  single_convergence_file_editor: integrator
+  git_pull_rebase_before_edit: true
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  honesty_label: "annotations attributable + license-clear; managed-skill tiering/honesty preserved (T0/T1 public); behavior capture pulls REAL classified DTAG examples - no scripted fakes"
+  privacy_first: true
+  heavy_assets_to_box: true                   # large h5 derivatives / corpora -> box
+  deps: "R runtime / tagtools is an O0-costed decision (server-render PNG vs JS port), not a default"
+
+waves:
+  - id: BSS-BUILD
+    name: studio-skills-build
+    parallelism: 4                            # 3 build + 1 adversarial (privacy/license)
+    convergence_file_edits: false             # net-new + sandbox only
+    launch_status: gated-on-O0
+    agents:
+      - { role: BSS-B1, owns: "web/app/(workbench)/annotate/** + web/lib/annotation/**", task: "annotation UI for audio + kinematics reading the REAL h5-derived data (dive_analysis schema); round-trip a new annotation with provenance via the existing API contract; attributable + privacy-preserving. NET-NEW route group (do NOT clobber web/app/workbench/)." }
+      - { role: BSS-B2, owns: infra/tagtools/**, task: "reusable tagtools/animaltags pipeline studio steps (calibration, orientation, stroke/glide, ODBA, dive detection - R11) with skill descriptors; reproducible, offline; consumes h5 outputs. R-vs-JS / dependency choice is an O0-costed recommendation, not a default." }
+      - { role: BSS-B3, owns: "src/aws_backend/casting/ additions + docs/devpost/casting/ additions", task: "register poster R/ggplot2/Plotly viz + the pipeline steps as managed HUD skills extending Central Casting; preserve tiers (T0/T1 public) + honesty; R10 per-viz server-render-PNG vs JS-port. Layer behavior-capture automation on the demo-production director to pull a REAL classified DTAG example into a 3D capture." }
+      - { role: BSS-B4, owns: dispatch/BSS/ADVERSARIAL.md, adversarial: true, task: "privacy + license audit (community/expert annotation provenance, PII, NC/ND), honesty-tier audit (no T0/T1 overclaim), no-scripted-fake audit on behavior capture, convergence-collision audit (the workbench route + console turn). Hunt overclaims." }
+    gate: "tsc/lint clean; annotation UI round-trips a provenance-tagged annotation against real h5 data; >=1 tagtools step + >=1 poster-viz skill run in a sandbox; behavior-capture pulls a real DTAG example; adversarial audit clean; no convergence edits; no commit without O0."
+
+  - id: BSS-INTEGRATE
+    name: studio-skills-integrate
+    depends_on: [BSS-BUILD]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    agents:
+      - { role: BSS-INT, owns: [web/app/components/AdaptiveExplore.tsx, web/app/components/ActiveSurfaceHost.tsx, web/lib/uiIntent.ts, web/app/globals.css], task: "git pull --rebase first. Wire the studio + managed skills into the console turn (allowlist the new ui_intent.panels); serialize vs LGC/CVP on the console convergence files. Import public surfaces only." }
+    gate: "GATED (O0): tsc/lint + copy-gate clean; the console can invoke a poster-viz HUD skill + a tagtools pipeline step; tiering/honesty preserved; no LGC/CVP regression; convergence diff reviewable. No commit without O0."
+
+  - id: BSS-ACCEPT
+    name: studio-skills-accept
+    depends_on: [BSS-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    agents:
+      - { role: BSS-ACC, owns: [gate_screenshots/, ACCEPT_VERDICT.md], task: "Read-examined: the console invokes a poster-viz HUD skill + a tagtools pipeline step; an annotation round-trips with provenance; a managed behavior-capture run captures a REAL classified behavior from a REAL DTAG example into a 3D capture. Honest verdict; evidence to dispatch/BSS/gate_screenshots/." }
+    gate: "GATED (O0): all three acceptance criteria proven with evidence; privacy/license clean; honesty tiers intact; honest verdict (no reassurance bias). No commit without O0."
+
+operator_gates:
+  - route collision: confirm the annotation studio path with O0 (do NOT clobber web/app/workbench/)
+  - R runtime / tagtools dependency adoption (O0-costed: server-render PNG vs JS port)
+  - annotation privacy + license (PII, NC/ND, provenance) verified before any community data use
+  - Central Casting tier/honesty changes (O0-gated; T0/T1 public)
+  - integrate edits convergence files (single editor, O0-gated, serialize vs LGC/CVP)
+  - large h5 derivatives / corpora to the box
+  - any commit or push (explicit operator request only)
