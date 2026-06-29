@@ -104,8 +104,11 @@ YOUR TASK: own `.cca/catalogue/O0/20260627_mlops/research/L2_burstiness_timing.m
 time-rescaling blocker is detection burstiness (W1 `time_rescaling_diag.json`: pooled KS p=0, a
 constant-rate Poisson fails identically, 63-91% of detections within 6 min of the prior). Investigate
 the ungated modeling fixes:
-- self-exciting (Hawkes) / refractory / hurdle terms, and bin-level GOF (the held-out NB PIT already
-  covers count overdispersion) as alternatives to event-level Exp(1) rescaling;
+- self-exciting (Hawkes) / refractory terms, and bin-level GOF (the held-out NB PIT already
+  covers count overdispersion) as alternatives to event-level Exp(1) rescaling. NOTE (2026-06-27,
+  per M1/SYN): "hurdle" here means the onset-dedup / bin-level timing DIAGNOSTIC only -- NOT a
+  NB->ZI/hurdle COUNT upgrade (a dead-end); and Hawkes is retained as an event-level GOF diagnostic
+  only, never served intensity. The adjudicated fix is the bin-level timing gate;
 - prototype the most promising one against the cached multi-station data (read-only reuse of
   `time_rescaling_diag.py` and the fit), and report whether it makes the timing gate pass HONESTLY;
 - give a concrete wiring spec (where it would attach in the conditional intensity / GOF) for a future

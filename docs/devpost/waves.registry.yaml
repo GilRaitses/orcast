@@ -1463,6 +1463,107 @@ waves:
       - web/app/globals.css
     note: "RP3 build: geo-anchored gazetteer place labels, distance-proportional clamped scale (min/max), LGC glass .scene-label (blur=0 over the canvas). Dispatch: W-LABELS_DISPATCH.md. Accept gate: Read-verified frames at far/rest/near + AA contrast + tsc/copy-gate."
 
+  - id: WFX-RESEARCH
+    family: WATER-FX
+    type: research
+    status: dispatched
+    home: .cca/catalogue/O0/20260628_water-fx/
+    repo_state_verified_against: 915e4cc77923de93ed5f7e9a75feab9eb2e12896
+    note: "13 read-only research agents (WFX-R01..R13) on water + atmosphere shading realism for the twin: above-surface (surface BRDF, wave spectrum, reflections, sky/sun/fog/tonemap, foam, caustics) + underwater/bathymetric (volumetrics, per-channel RGB absorption, seabed read, Salish optics, surface-from-below) + a perf/adversarial member. Root cause: ad-hoc two-stop water color + flat-sky Fresnel + no procedural sky = distracting/unreal. Feeds 3D-TWIN W3/W4. Dispatch: ORCHESTRATOR_DISPATCH_PROMPT.md."
+
+  - id: WFX-BUILD
+    family: WATER-FX
+    type: implement
+    status: gated
+    depends_on: [WFX-RESEARCH]
+    operator_gate: O0-gated; net-new shader/material modules + sandbox tuning; no SalishScene edits
+    note: "Build the chosen shading stack as net-new modules under web/lib/scene/...; maps onto 3D-TWIN W3 agents (coordinate ownership via O0)."
+
+  - id: WFX-INTEGRATE
+    family: WATER-FX
+    type: implement
+    status: gated
+    depends_on: [WFX-BUILD]
+    operator_gate: O0-gated; single editor; serialize SalishScene.tsx + globals.css vs W-CAM/W-LABELS/W3/W4/LGC
+    scope_globs:
+      - web/app/components/scene/SalishScene.tsx
+      - web/app/globals.css
+    note: "Land the chosen water/atmosphere stack in the live scene; tsc + copy-gate clean; no commit without O0."
+
+  - id: WFX-ACCEPT
+    family: WATER-FX
+    type: accept
+    status: gated
+    depends_on: [WFX-INTEGRATE]
+    operator_gate: O0-gated; Read-examined before/after frames
+    note: "Accept: open water, shoreline, dive/underwater, horizon at sunrise/noon/sunset read physical (not distracting), soft horizon with sun+fog, turbid-green Salish underwater, within frame budget; honesty intact."
+
+  - id: ORCA-OM-R
+    family: ORCA
+    type: research
+    status: dispatched
+    home: .cca/catalogue/O0/20260628_orca-biologging-twin/
+    repo_state_verified_against: 915e4cc77923de93ed5f7e9a75feab9eb2e12896
+    note: "ORCA-MESH research: ranked license-verified open-source orca meshes (CC0/CC-BY); STOP+return to O0 if only NC/ND/unclear. Owns infra/orca/mesh/. No orca mesh exists in repo. Charter: ORCA-MESH_CHARTER.md."
+
+  - id: ORCA-OR-R
+    family: ORCA
+    type: research
+    status: dispatched
+    note: "ORCA-RIG research: docs/orca/SKELETON.md - cited odontocete anatomy + bone hierarchy + named DOFs (body_yaw/pitch/roll, caudal[] fluke chain, pectoral_L/R, jaw). Defines the OrcaRig contract OG drives. Charter: ORCA-RIG_CHARTER.md."
+
+  - id: ORCA-OG-R
+    family: ORCA
+    type: research
+    status: dispatched
+    note: "ORCA-MOTION research: animaltags/tagtools H5 schema + parse decision (h5wasm vs python pre-bake, costed) + channel->DOF mapping (heading->yaw, pitch/roll->body, depth->Y on NAVD88-0m datum, accel Az->fluke beat). In-repo dtag is SIMULATED (cascadia_2010_k33_test). Charter: ORCA-MOTION_CHARTER.md."
+
+  - id: ORCA-OMAT-R
+    family: ORCA
+    type: research
+    status: dispatched
+    depends_on: [ORCA-OM-R]
+    note: "ORCA-MATERIALS research: skin PBR + SRKW countershading (eyepatch/saddle) + wet BRDF/SSS, lit by the WATER-FX environment above + underwater (must be consistent, not disjoint). Owns web/lib/scene/orca/materials/. Charter: ORCA-MATERIALS_CHARTER.md."
+
+  - id: ORCA-OEYE-R
+    family: ORCA
+    type: research
+    status: dispatched
+    depends_on: [ORCA-OM-R, ORCA-OR-R, ORCA-OMAT-R]
+    note: "ORCA-EYES research: eye mesh/material (cornea catch-light) + bounded gaze layering on OR head bone / OG orientation; LOD anti-uncanny. Owns web/lib/scene/orca/eyes/. Charter: ORCA-EYES_CHARTER.md."
+
+  - id: ORCA-OMOU-R
+    family: ORCA
+    type: research
+    status: dispatched
+    depends_on: [ORCA-OM-R, ORCA-OR-R, ORCA-OG-R]
+    note: "ORCA-MOUTH research: teeth(~40-56)/tongue/cavity interior + jaw articulation on OR jaw DOF + labeled OG foraging/buzz-cued subtle open. Owns web/lib/scene/orca/mouth/. Charter: ORCA-MOUTH_CHARTER.md."
+
+  - id: ORCA-OPHYS-R
+    family: ORCA
+    type: research
+    status: dispatched
+    depends_on: [ORCA-OR-R, ORCA-OG-R]
+    note: "ORCA-PHYSICS research: bounded secondary dynamics (spring/damped flex, follow-through, drag/banking, spine IK) layered on the OG telemetry pose; HARD LINE: never fabricates trajectory, tracks data within tolerance. Owns web/lib/scene/orca/physics/. Charter: ORCA-PHYSICS_CHARTER.md."
+
+  - id: ORCA-BUILD
+    family: ORCA
+    type: implement
+    status: gated
+    depends_on: [ORCA-OM-R, ORCA-OR-R, ORCA-OG-R, ORCA-OMAT-R, ORCA-OEYE-R, ORCA-OMOU-R, ORCA-OPHYS-R]
+    operator_gate: O0/operator-gated; mesh download+conversion (OM-BUILD), rig (OR-BUILD), motion driver (OG-BUILD), materials/eyes/mouth/physics builds; new deps O0-decided
+    note: "Build lanes after research: orca.glb (meshopt/KTX2)+LICENSE, armature+skinning+OrcaRig API, loadBiologging+driveOrca, skin material (WFX-lit), eyes, mouth, secondary-dynamics physics. Net-new under web/lib/scene/orca/ + web/public/orca/. Honesty: modeled animal, simulated/partnership-gated motion; physics never fabricates trajectory."
+
+  - id: ORCA-OINT
+    family: ORCA
+    type: implement
+    status: gated
+    depends_on: [ORCA-BUILD]
+    operator_gate: O0-gated; single editor; serialize SalishScene.tsx vs W-CAM/W-LABELS/W3/W4/WFX/LGC
+    scope_globs:
+      - web/app/components/scene/SalishScene.tsx
+    note: "Mount the fully dressed + driven orca into the twin underwater view (3D-TWIN W4); commit is operator gate."
+
 next_wave_set: H1
 
 gates:

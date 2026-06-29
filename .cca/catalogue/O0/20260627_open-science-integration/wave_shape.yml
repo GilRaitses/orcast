@@ -1,0 +1,29 @@
+# Open-Science Integration (OS) waveset. Lane O0, forecast ML-ops.
+# Canonical prose: WAVESET_CHARTER.md. Subagent hydration: OS_DISPATCH.md.
+# Read-only research + spec; nothing deploys, ingests, promotes, or commits (B.1/B.5/B.6/B.10).
+# Effective confidence 0.0. Authority: integrate-promote + signal-modeling HANDOFF_CHARTER section B,
+# SYNTHESIS_signal_modeling.md + graduation verdicts.
+open_science_integration:
+  status: CHARTERED                       # 2026-06-27; background subagent executing OS1
+  model: inherit
+  premise: "Ground OPEN tools/data/standards found in the 2026-06-27 scan into reusable specs + measured estimates that close the graduation gaps (effort/detectability log E denominator; net-new summer presence-day sources; an external probabilistic-forecast disclosure + scoring standard). Research + spec only; the integrate/fetch/ingest/promote are separate operator gates."
+  honesty: "B.1 nothing promotes; B.2 every quantity classed effort/exposure vs effect-modifier vs validation-only and MEASURED or marked NOT-MEASURED; B.3 withhold over fake; B.10 no commit. License + provenance + reachability recorded per source."
+  execution: "single background subagent, lanes serialized in priority order, one findings doc per lane, orchestrator-steered (review + resume). No convergence-file edit, no served write."
+  home: .cca/catalogue/O0/20260627_open-science-integration/
+  lanes:
+    OS1: "effort/detectability log E from OSF osf.io/6ctjq SPL+propagation coefficients + DFO Salish Sea Monte Carlo detection-range method (PLOS One 2025) + ONC Oceans 3.0 uptime -> reusable per-(station,day) log E spec; closes TB4/TA3 denominator"
+    OS2: "net-new JJA presence-day source screen from NCEI/DCLDE-2027, DORI-ONC, arXiv 2602.09295 literature map, OrcaSound public -> per-source net-new estimate + independence + license; extends S1"
+    OS3: "EFI forecast standards (eco4cast/EFIstandards) + proper scoring (scoringRules / scoringrules / xskillscore, CRPS) -> served-forecast disclosure + scoring spec mapped to the supervisor/DECISION_RECORD gate"
+    OS4: "inlabru/R-INLA partial-pooling NB cross-check of the landed TA2 served +0.155; spatial LGCP only post node-expansion (SYN dead-end at current N)"
+    OS5: "open detector cross-check (PAMGuard/ANIMAL-SPOT/Ketos/Koogu) for L0 ROC + detector-independence on a public node"
+    OS_SYN: "rank what graduates to the single-editor integrate path, cheapest high-value first, dead-ends; map to existing graduation lanes"
+  gates:
+    - "OS launch (chartered)"
+    - "any convergence-file integrate of an OS PATCH-SPEC -> separate single-editor step"
+    - "any production fetch-that-writes / ingest / deploy -> operator/deploy-gated"
+    - "any confidence promotion -> passing SERVED gate + recorded supervisor decision (B.1)"
+    - "any commit/push -> explicit operator request only; surgical staging"
+  no_convergence_file_edits: true
+  no_deploy: true
+  no_promotion: true
+  no_commit: true

@@ -14,7 +14,8 @@ directory holds two complementary things, which it is important not to confuse:
 - The research waveset (investigation-first). `RESEARCH_CHARTER.md`, `RESEARCH_DISPATCH.md`, and the
   `research_dispatch:` block of `wave_shape.yml` charter six parallel research agents to find ways to
   push L2 and L3 off their honest blockers (counts vs binary presence, conditioning, temperature,
-  burstiness/Hawkes timing fix, the data-volume dependency). Findings land under `research/` as
+  burstiness / bin-level timing gate (Hawkes retained as an event-level GOF diagnostic ONLY, not
+  served intensity), the data-volume dependency). Findings land under `research/` as
   decision aids; nothing promotes confidence. RAN 2026-06-27; graduated to W4.
 - The forward-path campaign (ground + activate). `CAMPAIGN_CHARTER.md`, `CAMPAIGN_DISPATCH.md`, and the
   `forward_path_campaign:` block of `wave_shape.yml` structure the path off 0% after the W4 adoption:

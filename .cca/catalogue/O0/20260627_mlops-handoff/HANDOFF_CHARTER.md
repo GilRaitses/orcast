@@ -12,8 +12,11 @@ The new thread owns the forecast ML-ops lane: bring the aggregated weather and w
 covariates into the leveled, gated kernel model honestly, and push Level 2 off 0% effective
 confidence. The biggest recent finding is that multi-station acoustic coverage flips held-out
 skill positive, so the frontier is now productionizing multi-station and clearing the two
-remaining L2 blockers (time-rescaling GOF and cross-station kernel consistency), then validating
-a real Chinook feed for L3. The MLO platform (feature store, registry, scheduled gated retrain,
+remaining L2 blockers (time-rescaling GOF and cross-station kernel consistency), then clearing L3.
+(Updated 2026-06-27 per SYN/G3: L3's binding lever is summer Jun-Sep PRESENCE-DAYS from new in-region
+nodes -- TB1/S1 nodes + accruing summers -- NOT "validating a real Chinook feed." The Albion feed is
+already real/complete/stock-aligned; refresh (TB3) is supporting-only. L3 stays WITHHELD until the
+presence-day / LOYO power bar is met.) The MLO platform (feature store, registry, scheduled gated retrain,
 monitoring, CI) follows. No confidence promotion without a passing gate plus a recorded human
 decision via the supervisor.
 
@@ -67,7 +70,7 @@ decision via the supervisor.
 | M-TIDE | harmonic M2/S2/N2/K1/O1 model; tide phase coverage 0.42 to 1.00 | done (`d4e6b06`, `70526ee`) |
 | M-L2 single-station refit | k_tide enters the fit; held-out skill -0.047, time-rescaling fail | done, FAIL/0% (`70526ee`) |
 | M-L2 multi-station experiment | 4 nodes, 2089 det, all 4 kernels; held-out skill +0.078 (4/5 folds) | done, FAIL/0% (`79f863b`) |
-| M-L3 salmon lag | lag scan on climatology placeholder; withheld | done, WITHHELD (`d4e6b06`) |
+| M-L3 salmon lag | lag scan exercised on the REAL Albion feed (G3; no longer a climatology placeholder); WITHHELD on presence-day power, not the feed | done, WITHHELD (`d4e6b06`) |
 | WILDLIFE | 4-lane source research + ranked register | done (`70526ee`) |
 | MLO | mlops-gate + honesty guard | done; platform chartered |
 
@@ -78,16 +81,18 @@ modeling with PIML (`.cca/catalogue/O0/20260627_orcast-handoff/ORCHESTRATOR_NOTE
 multi-station experiment is the breakthrough: skill is now positive. The two remaining L2 blockers
 are concrete: (1) time-rescaling GOF fails (pooled KS p=0.0), which points at per-station effort /
 `log E` and the conditional-intensity timing, not the covariate list; (2) the cross-station kernels
-are testable but not yet consistent (PSTH correlations 0.14-0.34, below 0.5). L3 needs a real
-Chinook run-timing feed to replace the climatology placeholder.
+are testable but not yet consistent (PSTH correlations 0.14-0.34, below 0.5). L3's binding lever is
+summer presence-days from new in-region nodes (SYN section 1 / TB1 / TB4), gated on a LOYO/power bar
+(>=3/n, n>=8, ~12-15 presence-days/yr); the real Albion run-timing feed is already in hand (G3) and is
+supporting-only -- a feed refresh alone does not unblock L3.
 
 ## E. Dispatch table
 
 | Lane | Owner | Inputs | Exit bar | Status |
 |------|-------|--------|----------|--------|
 | M-L2 productionize multi-station | orchestrator | ingest the 3 extra Orcasound nodes into the production `acoustic_detections` stream; per-station effort/uptime so `log E` binds; cross-station consistency | held-out skill beats climatology AND time-rescaling passes AND cross-station consistent | open (frontier) |
-| M-L3 real Chinook feed | orchestrator | validate the Albion/DART parsers in `src/aws_backend/sources/salmon.py` (both wired, both fall through to climatology); re-run the lag scan | lag scan on a real feed beats the permutation null | open |
-| WILDLIFE ingest follow-on | orchestrator/operator | `WILDLIFE_SOURCES_REGISTER.md` P0 order (multi-station acoustic, real Chinook, held-out visual) | adapters validated, not climatology | open |
+| M-L3 re-test (presence-day-gated) | orchestrator | PRIMARY dependency = new observation nodes adding summer presence-days (SYN B1 / TB1 Port Townsend+Bush Point, TB4 Boundary Pass); Albion refresh (TB3) is supporting (DART is stock-mismatched -- PATCH-salmon caveat) | held-out L3 skill vs density baseline once the LOYO/power bar (~12-15 presence-days/yr) is met -- NOT parser validation | open |
+| WILDLIFE ingest follow-on | orchestrator/operator | read SYNTHESIS_signal_modeling.md + graduation TB1/TB3 FIRST (the register's P0 order is stale on L3); presence-day nodes first, prey refresh supporting | adapters validated; presence-day nodes grounded | open |
 | MLO platform | operator/deploy-gated | FEAT/REG/SCHED/MON/CI | scheduled gated retrain without auto-promotion | chartered |
 | Promotion | operator | a passing L2 gate + supervisor decision | `effective_confidence` raised on the record | gated (no gate passes yet) |
 | DEMO capture | dormant | B.8 target decision | A/B narrated videos | blocked (operator) |

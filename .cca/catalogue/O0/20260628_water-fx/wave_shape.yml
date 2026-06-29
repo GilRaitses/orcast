@@ -1,0 +1,83 @@
+# WATER-FX (water + atmosphere shading realism), machine-readable shape
+# Home: .cca/catalogue/O0/20260628_water-fx/
+# Canonical prose: WAVESET_CHARTER.md
+# Feeds: 3D-TWIN W3 (world-materials-and-shading) and W4 (underwater-and-exploration-modes)
+
+version: 1
+family: WATER-FX
+code: WFX
+label: water-atmosphere-shading-realism
+home: .cca/catalogue/O0/20260628_water-fx/
+status: chartered-2026-06-28
+repo_state_verified_against: 915e4cc77923de93ed5f7e9a75feab9eb2e12896
+
+execution_model:
+  research_wave_read_only: true
+  one_file_one_owner: true
+  convergence_file: web/app/components/scene/SalishScene.tsx   # not edited in research; serialize vs W-CAM/W-LABELS/W3/W4/LGC in build/integrate
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  honesty_label: "modeled, not measured"
+  built_on: three                                              # new dependency = recommendation w/ cost, not default
+  frame_budget: 60fps-desktop / 30fps-laptop
+
+grounding_paths:
+  surface_water: web/lib/scene/water2/depthWater.ts
+  water_tuning: web/lib/scene/bathy/style/   # bathyTint.ts, deepRamp.ts, waterTuning.ts, WATER2_TUNING_REQUEST.md
+  realism: web/app/components/scene/realism/ # sun.ts, atmosphere.ts, palette.ts, water.ts, applyRealism.ts
+  decor: web/lib/scene/decor/                # sky.ts, fogTuning.ts, horizonRing.ts
+  transition: web/lib/scene/atmosphere/transition.ts
+  sandbox: web/app/(sandbox)/water/
+
+waves:
+  - id: WFX-RESEARCH
+    name: water-fx-research
+    parallelism: 13
+    convergence_file_edits: false
+    launch_status: dispatched-2026-06-28
+    agents:
+      - { role: WFX-R01, owns: research/WFX-R01_surface_brdf.md,          topic: physically-based ocean surface BRDF; fix distracting specular/glitter }
+      - { role: WFX-R02, owns: research/WFX-R02_wave_spectrum.md,         topic: oceanographic wave spectrum vs hand-tuned Gerstner; Salish fetch }
+      - { role: WFX-R03, owns: research/WFX-R03_reflections.md,           topic: planar/SSR/env-cube reflections; fix flat-sky stark horizon }
+      - { role: WFX-R04, owns: research/WFX-R04_sky_atmosphere.md,        topic: procedural sky bound to sun + aerial fog; fix white sky + horizonRing }
+      - { role: WFX-R05, owns: research/WFX-R05_lighting_tonemap.md,      topic: sun disk, exposure, ACES tonemap, PMREM env }
+      - { role: WFX-R06, owns: research/WFX-R06_shoreline_foam.md,        topic: foam/run-up/wet-sand realism at the waterline }
+      - { role: WFX-R07, owns: research/WFX-R07_caustics_godrays.md,      topic: surface caustics on seabed + volumetric light shafts }
+      - { role: WFX-R08, owns: research/WFX-R08_underwater_volumetrics.md, topic: underwater depth fog/in-scatter/visibility; defines underwater module }
+      - { role: WFX-R09, owns: research/WFX-R09_rgb_absorption.md,        topic: per-channel Beer-Lambert extinction; extend WATER2_TUNING_REQUEST; Jerlov }
+      - { role: WFX-R10, owns: research/WFX-R10_seabed_interaction.md,    topic: depth pre-pass quality, seabed refraction, soft shoreline contact }
+      - { role: WFX-R11, owns: research/WFX-R11_salish_optics.md,         topic: real Salish Sea optics (CDOM/turbidity/green); truthful color targets }
+      - { role: WFX-R12, owns: research/WFX-R12_surface_from_below.md,    topic: underside of surface when diving; Snell window, TIR }
+      - { role: WFX-R13, owns: research/WFX-R13_perf_adversarial.md,      adversarial: true, topic: frame-budget accounting + distracting/unreal + collision map }
+    gate: "report to O0: 13 findings + research/SYNTHESIS_water_fx.md; each cites real files; perf claims carry numbers; ranked sequenced build plan; no code changed"
+
+  - id: WFX-BUILD
+    name: shader-material-build
+    depends_on: [WFX-RESEARCH]
+    parallelism: 6
+    convergence_file_edits: false        # net-new modules + sandbox tuning only
+    launch_status: gated-on-O0
+    note: "maps onto 3D-TWIN W3 agents where overlapping; coordinate ownership via O0 to avoid duplicate seams"
+    gate: "net-new modules tuned in /water + /world sandboxes; tsc clean; visually verified; no SalishScene edits"
+
+  - id: WFX-INTEGRATE
+    name: land-in-live-scene
+    depends_on: [WFX-BUILD]
+    parallelism: 1
+    single_convergence_file_editor: integrator
+    launch_status: gated-on-O0
+    note: "serialize SalishScene.tsx + globals.css edits vs W-CAM/W-LABELS/W3/W4/LGC via O0"
+    gate: "GATED (O0): chosen stack lands; tsc + copy-gate clean; no commit without O0"
+
+  - id: WFX-ACCEPT
+    name: realism-acceptance
+    depends_on: [WFX-INTEGRATE]
+    parallelism: 1
+    launch_status: gated-on-O0
+    gate: "GATED (O0): Read-examined before/after frames (open water, shoreline, dive, horizon at sunrise/noon/sunset); water reads physical not distracting; sky/horizon soft w/ sun+fog; underwater turbid-green; within frame budget; honesty intact"
+
+operator_gates:
+  - research wave runs read-only now (dispatched)
+  - any commit or push (explicit operator request only)
+  - wave-to-wave promotion after the stated gate (build/integrate/accept all O0-gated)
+  - new runtime dependency adoption (operator/O0 decision)

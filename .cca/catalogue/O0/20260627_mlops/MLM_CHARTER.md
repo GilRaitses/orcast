@@ -52,7 +52,7 @@ sightings; Thornton et al. 2022 CSAS, SRKW summer distribution and habitat use):
 | M-L0 | 0 instrument | OrcaHello detector ROC/d' vs confirmed labels + per-station effort series | per-station effort known; detector ROC AUC with CI |
 | M-L1 | 1 single-covariate | PSTH for `k_diel`, then `k_tide`, with phase-shuffle null | PSTH beats shuffled null (permutation p + effect size); shape consistent across stations |
 | M-L2 | 2 joint temporal | joint LNP (tide + diel + lunar + season); lift coverage exclusion when clear | held-out Poisson log-likelihood beats climatology and best single-covariate; CV-stable; joint vs PSTH agree |
-| M-L3 | 3 prey + space | add `k_salmon` (run-timing index + lag scan) and `s_space` (bathymetry + effort-corrected CAND sighting density) | held-out skill beats recent-detection-density baseline; calibration (reliability + PIT) within tolerance |
+| M-L3 | 3 prey + space | add `k_salmon` (run-timing index + lag scan) and `s_space` (bathymetry + effort-corrected CAND sighting density) | SPLIT GATE (2026-06-27): (a) `k_salmon` judged on the temporal acoustic held-out CV-skill vs the recent-detection-density baseline; (b) `s_space`/bathymetry judged on spatial/visual-validation quality ONLY -- at the 4-station cluster it does NOT move the +0.144 temporal acoustic gate (SYN section 2 terrain dead-end; M3 section 0.2). Calibration (reliability + PIT) within tolerance. Binding L3 lever = summer presence-days from new nodes |
 
 Each wave writes a study report under `modeling/studies/reports/` and, when it changes the
 served fit, updates `data/models/fit_report.json` carrying `fit_plan_id`,

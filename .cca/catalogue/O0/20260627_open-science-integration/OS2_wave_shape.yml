@@ -1,0 +1,83 @@
+waveset: os2_netnew_summer_presence
+lane: O0
+status: CHARTERED_LAUNCH_HELD          # holds until launch_gates confirmed by operator
+effective_confidence: 0.0
+promotes: false
+charter: OS2_BUILD_CHARTER.md
+research: OS2_open_node_screen.md
+
+hypothesis: >
+  Open DCLDE-2027 (CC-BY-4.0) net-new JJA SRKW presence-days, led by Tekteksen/SIMRES Boundary Pass,
+  added with a measured per-deployment effort frame, lift the summer-conditioned served CV deviance-skill
+  toward +0.144. Top open lever after OS1 closed NO-GO.
+
+banked_from_os1:                        # OS1 physics that OS2 consumes (spatially-separated nodes)
+  - data/external/osf_6ctjq/validate_detection_range.py   # validated detection-range calculator
+  - orcasound_welch_dsp_pipeline                          # proven ambient -> band-SPL chain
+
+launch_gates:                           # BOTH must be operator-confirmed before W1
+  region_expansion:
+    held_by: [TB1, TB4]
+    decision: two-box (keep SAN_JUAN_BOUNDS; add disjoint Boundary Pass box)
+    file: src/aws_backend/geo_region.py
+    confirm: operator approves disjoint region box(es) + nodes (Tekteksen first; CarmanahPt optional)
+  per_deployment_effort:
+    status: NOT_MEASURED
+    decision: measure effort FIRST (W1); no skill credit until it lands
+    inputs: [simres_jasco_duty_cycle, os1_detection_range_per_node]
+    confirm: operator agrees effort-measured-first, no interim skill credit
+
+sources:
+  - name: Tekteksen_SIMRES_BoundaryPass
+    netnew_jja_srkw_days: 11
+    epoch: 2022
+    license: CC-BY-4.0
+    role: primary
+  - name: CarmanahPt_DFO
+    netnew_jja_srkw_days: 4
+    epoch: 2022
+    license: CC-BY-4.0
+    role: optional_second
+  - name: Haro_corridor_JASCO2017_SMRU2019
+    netnew_jja_srkw_days: 8
+    epoch: 2017/2019
+    license: CC-BY-4.0
+    role: detector_epoch_corroboration
+  - name: SIMRES_broader_archive
+    netnew_jja_srkw_days: NOT_MEASURED
+    epoch: 2014+
+    role: highest_value_followon
+dclde_artifact: gs://noaa-passive-bioacoustic/dclde/2027/dclde_2027_killer_whales/Annotations.csv
+
+out_of_scope: [served_region_promotion, DORI_ONC, OrcaSound_reshelving, Swiftsure_until_jja_screened,
+               small_old_uncertain_sites]
+
+waves:
+  - id: W1
+    name: effort_detectability_frame
+    output: per_(node,day)_log_E_offset
+    gate_to_next: effort defensible per node
+  - id: W2
+    name: ingest_netnew_presence_days
+    behind: two_box_region_expansion
+    edits: [modeling/studies/common.py, src/aws_backend/ingest_multistation.py, src/aws_backend/geo_region.py]
+    provenance: {source: dclde_2027_killer_whales, attribute_per: Dataset_provider}
+    output: expanded_local_design_with_log_E
+  - id: W3
+    name: measure_summer_skill
+    method: block_cv mean_deviance_skill (summer-conditioned)
+    bar: 0.144
+    output: GO_NOGO + fold_stability
+  - id: SYN
+    name: synthesis
+    output: [ranked_outcome, simres_followon_reco, consolidated_gates, single_next_action]
+
+rails:
+  presence_days_are_deliverable: true
+  no_skill_credit_until_effort: true
+  no_store_write: true
+  no_deploy: true
+  no_promotion: true
+  no_commit_without_operator_ask: true
+
+next_action: operator confirms both launch_gates; then dispatch W1 background subagent under O0 steering.

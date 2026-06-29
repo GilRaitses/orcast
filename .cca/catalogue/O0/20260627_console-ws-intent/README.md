@@ -7,20 +7,24 @@ factoring the sandbox fly-through into a reusable controller.
 
 ## Scope of THIS task
 
-Research wave and Discovery wave only (waves 1 and 2 of the six-wave lifecycle).
-Read-only on code. The deliverables are Markdown docs in this folder plus a PROPOSED
-implementation dispatch for the program orchestrator to gate. No code or config is
-created or edited, no dev server is run, nothing is committed, and no other
-subagents are launched.
+Research, Discovery, Implementation, and program-level Acceptance are **COMPLETE**.
+The code landed in the 2026-06-27 console-journey batch implementation (phase A +
+SalishScene convergence). Formal per-waveset Adversarial/Remediation were folded
+into the program Director visual gate (`../20260627_console-journey-trips/STEP_LOG.md`,
+`acceptance_screenshots/gate_search_*`).
 
 ## The six-wave lifecycle (this waveset)
 
-1. Research. Done here. Output `RESEARCH_SYNTHESIS.md`.
-2. Discovery. Done here. Output `DISCOVERY_MAP.md`.
-3. Implementation. PROPOSED here in `IMPLEMENTATION_DISPATCH.md`, pending the gate.
-4. Adversarial. Not started.
-5. Remediation. Not started.
-6. Acceptance. Not started.
+1. Research. **DONE** — `RESEARCH_SYNTHESIS.md`.
+2. Discovery. **DONE** — `DISCOVERY_MAP.md`.
+3. Implementation. **DONE** — `web/lib/intent/transducer.ts`, `web/lib/journey/controller.ts`,
+   additive `adaptiveConsole.ts`, Viewport Bridge in `SalishScene.tsx`, additive
+   `AdaptiveExplore.tsx` (`mapViewportFromIntent` after `setPlan`).
+4. Adversarial. **Folded into program batch** (no separate `DEFECT_REGISTER.md` here).
+5. Remediation. **N/A** (no WS-INTENT-specific defects filed separately).
+6. Acceptance. **PASS** at program level — search-driven journey screenshots
+   `gate_search_00..05`; turn-driven camera via `map_viewport` wiring in
+   `AdaptiveExplore.tsx`.
 
 ## Convergence file and calendar position
 
@@ -53,5 +57,11 @@ wavesets.
 - `README.md` this overview.
 - `RESEARCH_SYNTHESIS.md` how the seam works today and the bridge techniques.
 - `DISCOVERY_MAP.md` the integration seams and the one file one owner table.
-- `IMPLEMENTATION_DISPATCH.md` PROPOSED phase-A and phase-B prompts, pending gate.
+- `IMPLEMENTATION_DISPATCH.md` phase-A/B prompts (executed 2026-06-27 program batch).
 - `STEP_LOG.md` the running log for this waveset.
+
+## Status: COMPLETE
+
+Implementation + acceptance recorded under
+`../20260627_console-journey-trips/STEP_LOG.md` (2026-06-27 late). Do not
+re-run implementation unless a regression is found.

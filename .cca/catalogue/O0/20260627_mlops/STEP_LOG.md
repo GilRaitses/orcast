@@ -590,6 +590,40 @@ Operator: "execute". Launched both W4 integrators in parallel (disjoint files); 
   that would pollute the tracked study tree; the findings docs + report JSONs + the figure are the
   durable deliverables. They remain locally untracked.
 
+## 2026-06-27 (signal & modeling research campaign LAUNCHED + SYN; graduation waveset CHARTERED)
+
+- Launched the `signal_modeling_research` waveset (the +0.144 lever) from the launch-handoff home, per
+  the section-H ack. Dispatched five parallel read-only research subagents: W9 S1 (in-region node
+  source discovery), S2 (covariate source discovery); W10 M1 (sparse-data methods), M2 (nonlinear /
+  physics), M3 (derived covariates). Each wrote one findings doc under
+  `research/signal_modeling/`; nothing deployed, fetched-to-write, promoted, or committed.
+- S2 hit a transient resource limit twice as a subagent; on the operator's instruction the orchestrator
+  wrote `S2_covariate_sources.md` directly (focused web sourcing: MUR/VIIRS SST, SalishSeaCast NEMO
+  ~500 m currents/salinity, Fraser at Hope 08MF005, CUTI/BEUTI, Marine Cadastre AIS, HFRNet).
+- Ran SYN (orchestrator) -> `research/signal_modeling/SYNTHESIS_signal_modeling.md`. Convergent finding
+  across all five docs: the +0.078 -> +0.144 gap is an OBSERVATION problem first, a MODEL problem
+  second (effective independent N ~300 onsets, not 2089). Ranked plan:
+  - Tier A (extract from existing data): 2-state occupancy MMPP (attacks the time-rescaling GOF
+    blocker), hierarchical NB + regularization + presence reframe, AIS effort term in log E, in-repo
+    F1/A1 covariates, physics shape priors.
+  - Tier B (new independent observation, the +0.144 lever): ground Port Townsend + Bush Point
+    (cheapest new obs), SST-front gradient, real Albion feed + run anomaly (presence-day-gated per G3),
+    ONC/Boundary Pass node, SalishSeaCast subtidal-current shear.
+  - Dead-ends (B.3): PINN, reservoir/ESN, EDM, neural TPP, SDE-movement, spatial GP/LGCP at our N,
+    synthetic augmentation, NB->ZI upgrade, CUTI/BEUTI (coverage), HF radar (shadow), terrain-on-gate.
+  - Cheapest high-value experiment: the 2-state MMPP (zero sourcing) in parallel with the PT+Bush
+    Point dry-run (cheapest new obs); bundle hierarchical-NB + AIS-effort before judging any covariate.
+- Chartered the GRADUATION waveset to act on SYN with deep parallel subagents in three waves:
+  `GRADUATION_WAVESET_CHARTER.md`, `GRADUATION_DISPATCH.md`, and the `signal_modeling_graduation:`
+  block in `wave_shape.yml`. TA (5 lanes) prototype-and-measure (no convergence edit, no served write,
+  fits in isolated scratch with write_outputs=False, patch-specs only). TB (5 lanes) dry-run + runbook
+  (no fetch-that-writes; TB1 carries the modeling-region-expansion operator decision). DE (3 lanes)
+  read-only drift audit of whether the adjudicated dead-ends have crept into repo TEXTS or METHODS as
+  if live (preserving the Hawkes-as-diagnostic nuance), producing remediation recommendations only.
+- CHARTERED, not launched. TA/TB/DE launch is the next operator gate (DE is read-only, safest first).
+  Nothing promotes; effective confidence stays 0.0. Findings + charter docs are uncommitted decision
+  aids until an explicit operator commit ask (surgical staging only).
+
 ## Open / awaiting operator
 
 - W4 has RUN (both integrators returned; see the W4 EXECUTED entry above). Items 1+2 landed; mlops-gate
@@ -650,3 +684,89 @@ Operator: "execute". Launched both W4 integrators in parallel (disjoint files); 
   `ORCAST_STORAGE_BACKEND=aws ORCAST_RAW_PAYLOAD_BUCKET=198456344617-us-west-2-orcast-aws-backend-raw-payloads AWS_REGION=us-west-2 PYTHONPATH=. .venv-modeling/bin/python -m modeling.fit_kernels`.
 - MLO scheduling/monitoring AWS infra is operator/deploy-gated.
 - A confidence promotion still requires a passing gate + a recorded supervisor decision.
+
+## 2026-06-27 (graduation waveset: DE complete, TA/TB recalibrated + launched)
+
+- Ran Wave DE first (read-only drift audit). Three registers landed under
+  `research/signal_modeling/graduation/`: `DE1_text_drift.md` (13 drift sources: 4 high/5 med/4 low,
+  methodology + charter prose), `DE2_method_drift.md` (0 HIGH/2 MED/8 LOW; served code clean, Hawkes
+  correctly contained as event-level GOF diagnostic, no dead-end family reachable from the served
+  path), `DE3_strategy_drift.md` (16: 2 P0/7 P1/6 P2/1 P3, operator strategy prose).
+- DE conclusion: no dead-end leaks into the served model; all drift is PROSE. Dominant clusters:
+  (1) `M2_nonlinear_physics.md` still reads LGCP rank-2 as "GO / PROMISING AT OUR N" (pre-SYN);
+  (2) the "L3 blocked on a real Chinook feed" framing propagated across the mlops-handoff chain,
+  contradicting G3 (feed is real; the lever is summer presence-days); (3) `wave_shape.yml`
+  objectives + the wildlife register still frame dead-ends (CUTI/BEUTI, LGCP, ZI/hurdle) without
+  caveats. Remediation is RECOMMENDED, not applied (separate operator-gated step).
+- Recalibrated TA/TB from DE: added a binding "RECALIBRATION FROM DE" drift-guard to
+  `GRADUATION_DISPATCH.md` (SYN section 2 dead-end set overrides any stale GO in the source docs
+  TA/TB read; TA1 MMPP-only/no-LGCP; TA2 presence-hurdle GO vs ZI-count NO-GO; TB3 feed is
+  supporting-only/L3 stays WITHHELD; CUTI/BEUTI + HF-radar NO-GO; terrain = s_space only; patch-specs
+  touching a flagged doc carry a DE drift note). Updated `GRADUATION_WAVESET_CHARTER.md` section 7 and
+  the `signal_modeling_graduation` block in `wave_shape.yml` (DE=complete, TA/TB=recalibrated).
+- Launched the recalibrated TA (TA1-TA5) and TB (TB1-TB5) waves as 10 parallel background subagents.
+  Each prototypes/dry-runs in isolation, writes ONE findings doc + patch-spec, edits no convergence
+  file, runs no served write, fetches-to-write nothing, commits nothing. Judged by held-out,
+  fold-stable CV mean-deviance-skill toward +0.144. Nothing promotes; effective confidence stays 0.0.
+  Integrate / production fetch / region expansion / promotion remain separate operator gates.
+
+## 2026-06-27 (graduation TA/TB measured + SYNTHESIS_graduation)
+
+- All 10 TA/TB lanes landed measured docs under `research/signal_modeling/graduation/`; wrote
+  `SYNTHESIS_graduation.md`. Measurement OVERTURNED SYN's two flagships and elevated a "small" lane:
+  - **TA1 MMPP = NO-GO.** Marginal +0.137 is `baseline_GLM x per-fold constant (~0.70)` (zero shape
+    content, breaks PIT, KS p=4.4e-05) and the occupancy chain does NOT repair the time-rescaling GOF
+    (oracle posterior still KS p=0.0; failure is sub-hour within-encounter chatter). SYN A1 superseded.
+  - **TB1 Port Townsend + Bush Point = 25 net-new region presence-days but 0 SUMMER.** CONDITIONAL GO
+    as off-season coverage; NO-GO as a summer +0.144 lever. SYN B1 framing superseded.
+  - **TA5 smoothness shape prior = GO, strongest lever: +0.177 (5/5 folds, across-fold LB +0.111, PIT
+    calibrated, kernel-curve SD cut ~12-19x) on the EXPERIMENT store**; n_harmonics=1 control only
+    +0.084 (gain is graded shrinkage, not fewer harmonics). NOT-MEASURED on the served store.
+  - **TB4 ONC/JASCO Boundary Pass = GO conditional, the real new-observation lever:** summer coverage
+    YES (continuous ULS JJA 2016+2017), independent operator/detector/corridor, disjoint 2015-2019
+    epoch; summer SRKW presence-day count ESTIMATED-positive but NOT-MEASURED (parse ECHO Annotations.csv).
+  - **TA2 hierarchical NB (+0.047) + TA3 AIS effort** = enablers/insurance, not skill: fold-stability +
+    a non-flat `log E`; land them BEFORE judging covariates. **TA4, TB5 (at current N), TB3 (feed as
+    lever)** + all drift-guard dead-ends (LGCP/GP, ZI/hurdle, CUTI/BEUTI, HF-radar, terrain-on-gate)
+    held NO-GO. No drift-guard violation in any lane.
+- Every lane confirmed rails: nothing deployed/fetched-to-write/ingested/promoted/committed; no
+  convergence edit; no served/S3 write; mlops-gate ALL PASS at served_confidence 0.0. Effective
+  confidence stays 0.0.
+- NEXT operator gates (recorded in `wave_shape.yml` + SYNTHESIS_graduation section 4): (1) re-measure
+  TA5 on the SERVED store under G2; (2) measure the TB4 summer SRKW count; (3) land TA2+TA3 as the
+  clean baseline; (4) then re-judge TB2/TB5 against it. Integrate/fetch/ingest/region-expansion/
+  promotion all remain separate operator gates. DE source-doc drift fixes remain recommended-not-applied.
+
+## 2026-06-28 (integrate-grounding waveset: Wave 1 GROUNDING + Wave 2 PATCH-SPEC, propose-only)
+
+Sub-orchestrator answering O0 (not the human operator). Grounded the graduation verdicts (TA/TB/DE) into
+a single ranked, PROPOSE-ONLY integrate plan for the served forecast path. Nothing promoted, fit,
+deployed, ingested, store/S3-written, or committed; no edit to `modeling/**` or `src/aws_backend/**`;
+effective confidence stays 0.0.
+
+- Wave 1 GROUNDING: wrote `INTEGRATE_GROUNDING.md` (ranked ledger with verdict + MEASURED served
+  held-out CV-skill + the exact served file/seam + dependency/order; dead-ends named; the single
+  highest-value integrate; the per-candidate promotion gate). Ranked GO/GO-conditional: (1) TA5
+  smoothness prior SERVED ON +0.1686 (5/5, LB +0.109, PIT 0.090, conf 0.63), clears all 5 G2 bands;
+  (2) TA2 partial-pool+ridge SERVED +0.1547 (5/5, PIT 0.614, conf 0.61), the alternative regularizer,
+  NOT additive with TA5; (3) TA3 AIS effort wire, skill NOT-MEASURED (log E flat); (4) TB4 ONC Boundary
+  Pass, 6 net-new summer SRKW-certain days MEASURED, CV-skill NOT-MEASURED (needs ONC token); (5) TB1
+  PT/BP 25 net-new region days, 0 summer (off-season coverage only). Dead-ends held NO-GO: TA1 MMPP
+  (artifact), TA4, LGCP/GP at N, NB->ZI/hurdle, Hawkes-as-skill (keep as GOF diagnostic), CUTI/BEUTI,
+  HF-radar, terrain-on-gate, PINN/reservoir/EDM/neural-TPP. TB2 deferred (feed unreachable), TB5 NO-GO
+  at N, TB3 supporting/WITHHELD.
+- Wave 2 PATCH-SPEC: wrote `PATCH_SPEC.md` (propose-only) per GO candidate: exact files/functions,
+  math/parameterization, config/flag surface, the held-out CV metric moved (cited Wave 1 numbers),
+  rollback, and the G2 acceptance test that would gate promotion. KEY CODE-STATE FINDING (verified
+  read-only): the TA5/TA2/TA3/TB2 wires are ALREADY LANDED in `modeling/estimator.py` +
+  `modeling/fit_kernels.py` as default-OFF, byte-identical opt-ins (`smoothness_prior` /
+  `ORCAST_SMOOTHNESS_PRIOR`; `baseline_enablers` / `ORCAST_BASELINE_ENABLERS`; `linear_covariates` /
+  `season_orthogonalize`; `ais_noise.py`). So the integrate for the measured levers is a single-editor
+  default flip + a recorded B.1 refit, NOT new code authorship. TA5 and TA2 are flagged MUTUALLY
+  EXCLUSIVE (pick-one regularizer; no double-count). The B.1 supervisor decision (TA5 vs TA2) is the
+  explicit operator gate and is NOT recorded.
+- Adversarial gate applied: every served metric traces to a cited Wave 1 measurement; every NOT-MEASURED
+  quantity is labeled with its reason; no promotion language (movement stated as "IF the gate passes and
+  the operator records B.1").
+- Returned to O0 with the two doc paths, the ranked candidate list + measured deltas, and the B.1 gate.
+  Did not push. Effective confidence stays 0.0.

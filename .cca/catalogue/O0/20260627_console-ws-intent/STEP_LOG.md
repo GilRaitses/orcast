@@ -64,3 +64,27 @@ server, no commit, no other subagents.
   integration seam, with no unowned convergence-file edits. Met, with one ownership
   confirmation flagged for `AdaptiveExplore.tsx`.
 - Implementation wave, PROPOSED, pending the program-orchestrator gate.
+
+## 2026-06-27 — Implementation COMPLETE (program batch)
+
+Operator chose option 1 (WS-INTENT next). Investigation shows implementation already
+landed in the 2026-06-27 console-journey batch — do not re-run.
+
+Code (verified in repo):
+- `web/lib/intent/transducer.ts` + `transducer.test.ts` — director registry,
+  throttled sampler, `enrichTurnContext`.
+- `web/lib/journey/controller.ts` + `controller.test.ts` — `runPlaceJourney` +
+  cancel handle.
+- `web/lib/adaptiveConsole.ts` — calls `enrichTurnContext` in turn/narration paths.
+- `web/app/components/scene/SalishScene.tsx` — Viewport Bridge (DirectorRig,
+  SearchAffordance, transducer register/clear, focus → journey).
+- `web/app/components/AdaptiveExplore.tsx` — `mapViewportFromIntent(resp.ui_intent)`
+  after `setPlan` (operator granted ownership 2026-06-27).
+
+Acceptance: program Director visual gate PASS
+(`../20260627_console-journey-trips/acceptance_screenshots/gate_search_*`,
+`gate_rest`, `gate_zoom_rest_canvas`). WS-INTENT catalog docs synced to COMPLETE.
+
+Remaining (not WS-INTENT blockers): TRIPS live anonymous route wiring (planner
+allowed_panels + served config redeploy); optional formal WS-INTENT-only adversarial
+register if the program wants per-waveset paper trail.

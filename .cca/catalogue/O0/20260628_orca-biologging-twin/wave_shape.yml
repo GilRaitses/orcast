@@ -1,0 +1,112 @@
+# ORCA biologging twin (mesh + skeleton + data-driven motion), machine-readable shape
+# Home: .cca/catalogue/O0/20260628_orca-biologging-twin/
+# Canonical prose: PROGRAM.md + ORCA-MESH/RIG/MOTION charters
+# Lands in 3D-TWIN W4 (underwater) underwater view; developed in a net-new /orca sandbox first.
+
+version: 1
+family: ORCA
+label: orca-biologging-twin
+home: .cca/catalogue/O0/20260628_orca-biologging-twin/
+status: chartered-2026-06-28
+repo_state_verified_against: 915e4cc77923de93ed5f7e9a75feab9eb2e12896
+
+execution_model:
+  research_wave_read_only: true
+  one_file_one_owner: true
+  convergence_file: web/app/components/scene/SalishScene.tsx   # mount is later, O0-gated; serialize vs W-CAM/W-LABELS/W3/W4/WFX/LGC
+  no_dev_server_during_parallel_wave: true
+  validate_with: type-check
+  render_runtime: react-three-fiber / three
+  honesty_label: "modeled animal; motion driven by simulated/partnership-gated biologging; not a measured swim of a named individual"
+
+grounding:
+  no_mesh_in_repo: true            # Glob **/*.{glb,gltf} = 0
+  no_h5_in_repo: true              # Glob **/*.{h5,hdf5,nc} = 0; H5 is the operator's whale-tagger export
+  dtag_schema_source: [scripts/database/create_dtag_tables.py, scripts/ml_services/dtag_data_processor.py, src/aws_backend/routers/dtag.py]
+  dtag_fixture: data/dtag_analysis_results.json   # SIMULATED cascadia_2010_k33_test, simulated:true
+  twin_datum: NAVD88-0m == scene Y 0 (W2.6); worldUnitsPerMeter ~0.003
+
+charters:
+  - code: OM
+    name: orca-mesh
+    file: ORCA-MESH_CHARTER.md
+    owns: [web/public/orca/, infra/orca/mesh/]
+    waves:
+      - { id: OM-R,     type: research, read_only: true, deliverable: "infra/orca/mesh/OM-R_candidates.md: ranked license-verified open-source orca meshes; STOP+return if only NC/ND/unclear" }
+      - { id: OM-BUILD, type: build, gated_on_O0: true, deliverable: "web/public/orca/orca.glb (meshopt/KTX2) + LICENSE.md + web/lib/scene/orca/loadOrcaMesh.ts; scaled/oriented to twin frame" }
+
+  - code: OR
+    name: orca-rig
+    file: ORCA-RIG_CHARTER.md
+    depends_on: [OM]
+    owns: [docs/orca/SKELETON.md, web/lib/scene/orca/rig/]
+    waves:
+      - { id: OR-R,     type: research, read_only: true, deliverable: "docs/orca/SKELETON.md: cited anatomy + bone hierarchy + named DOFs (body_yaw/pitch/roll, caudal[] fluke chain, pectoral_L/R, jaw) + limits" }
+      - { id: OR-BUILD, type: build, gated_on_O0: true, deliverable: "web/lib/scene/orca/rig/: armature + skinning on OM mesh + typed OrcaRig API (setOrientation/setFluke/setDepthPose/setPectoral)" }
+
+  - code: OG
+    name: orca-motion
+    file: ORCA-MOTION_CHARTER.md
+    depends_on: [OR]
+    owns: [infra/orca/biologging/, web/lib/scene/orca/motion/]
+    mapping:
+      heading: body_yaw
+      pitch: body_pitch
+      roll: body_roll
+      depth: world-Y-on-twin-datum
+      accel_Az_oscillation: fluke-beat (phase+amplitude)
+    waves:
+      - { id: OG-R,     type: research, read_only: true, deliverable: "infra/orca/biologging/OG-R_h5_mapping.md: animaltags/tagtools H5 schema + parse decision (h5wasm vs python pre-bake, costed) + channel->DOF mapping + honesty" }
+      - { id: OG-BUILD, type: build, gated_on_O0: true, deliverable: "web/lib/scene/orca/motion/: loadBiologging + driveOrca(rig,t) from the stream; labeled procedural fallback only when no stream; tuned vs simulated fixture" }
+
+  - code: OMAT
+    name: orca-materials
+    file: ORCA-MATERIALS_CHARTER.md
+    depends_on: [OM]
+    consumes: WATER-FX environment (sun/sky/PMREM above + absorption/in-scatter below)
+    owns: [web/lib/scene/orca/materials/, web/public/orca/textures/]
+    waves:
+      - { id: OMAT-R,     type: research, read_only: true, deliverable: "web/lib/scene/orca/materials/OMAT-R_shading.md: texture-vs-procedural; wet-skin BRDF+SSS spec; SRKW countershading (eyepatch/saddle); WFX light binding above+below; costs" }
+      - { id: OMAT-BUILD, type: build, gated_on_O0: true, deliverable: "material module + textures lit by the WFX env in /orca sandbox; glossy-black wet read; tsc clean" }
+
+  - code: OEYE
+    name: orca-eyes
+    file: ORCA-EYES_CHARTER.md
+    depends_on: [OM, OR, OMAT]
+    owns: [web/lib/scene/orca/eyes/]
+    waves:
+      - { id: OEYE-R,     type: research, read_only: true, deliverable: "web/lib/scene/orca/eyes/OEYE-R_eyes.md: eye placement vs OMAT eyepatch; cornea/iris+catch-light material; bounded gaze composing on OR head bone + OG orientation; LOD" }
+      - { id: OEYE-BUILD, type: build, gated_on_O0: true, deliverable: "eye module in /orca sandbox; wet catch-light + optional subtle gaze; no uncanny; LOD far; tsc clean" }
+
+  - code: OMOU
+    name: orca-mouth
+    file: ORCA-MOUTH_CHARTER.md
+    depends_on: [OM, OR, OG]
+    owns: [web/lib/scene/orca/mouth/]
+    waves:
+      - { id: OMOU-R,     type: research, read_only: true, deliverable: "web/lib/scene/orca/mouth/OMOU-R_mouth.md: teeth(~40-56)/tongue/cavity anatomy; interior sub-mesh; jaw articulation curve on OR jaw DOF; OG buzz/foraging->subtle-open (labeled); LOD" }
+      - { id: OMOU-BUILD, type: build, gated_on_O0: true, deliverable: "mouth module in /orca sandbox; credible jaw+interior; relaxed default; labeled foraging cue; tsc clean" }
+
+  - code: OPHYS
+    name: orca-motion-physics
+    file: ORCA-PHYSICS_CHARTER.md
+    depends_on: [OR, OG]
+    honesty_hard_line: "never fabricates trajectory; OG telemetry stays primary; bounded secondary motion only; tracks data within tolerance"
+    owns: [web/lib/scene/orca/physics/]
+    waves:
+      - { id: OPHYS-R,     type: research, read_only: true, deliverable: "web/lib/scene/orca/physics/OPHYS-R_dynamics.md: spring/damped secondary dynamics on spine/caudal/flipper chains + spine IK + drag/banking from OG turn rate; data-tracking tolerance; stability+frame-rate independence; perf" }
+      - { id: OPHYS-BUILD, type: build, gated_on_O0: true, deliverable: "dynamics layer on top of OG in /orca sandbox; lively but provably tracks telemetry within tolerance; stable; tsc clean" }
+
+  - code: OINT
+    name: mount-in-underwater-view
+    depends_on: [OM, OR, OG, OMAT, OEYE, OMOU, OPHYS]
+    gated_on_O0: true
+    note: "mount the fully dressed + driven orca in SalishScene.tsx underwater view (3D-TWIN W4); single editor; serialize vs W-CAM/W-LABELS/W3/W4/WFX/LGC; commit is operator gate"
+
+operator_gates:
+  - research waves (OM-R/OR-R/OG-R) run read-only now (dispatched)
+  - any mesh download / conversion (OM-BUILD) - O0/operator gated
+  - any commit or push (explicit operator request only)
+  - real (non-simulated) DTAG deployment load requires a data-sharing agreement
+  - new runtime dependency adoption (h5wasm, etc.) - O0 decision
+  - mount into the live scene (OINT) - O0 gated

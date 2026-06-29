@@ -27,10 +27,12 @@ multi-station. No commit or push without an explicit operator ask; surgical stag
 
 Current frontier: L0 PASS, L1 PASS, L2 FAIL at 0% but the multi-station experiment flips held-out
 skill POSITIVE (+0.078); the two remaining L2 blockers are time-rescaling (per-station effort /
-log E) and cross-station kernel consistency. L3 withheld pending a real Chinook feed. Next:
-productionize multi-station (ingest the 3 extra Orcasound nodes into the acoustic_detections
-stream), fix effort so time-rescaling passes, lift cross-station consistency; validate the
-Albion/DART salmon parsers. MLO platform is operator/deploy-gated. The 3d-twin, DEMO, and BSIDE
+log E) and cross-station kernel consistency. L3 withheld pending summer PRESENCE-DAYS from new
+in-region nodes (SYN/G3; the Albion Chinook feed is already real, so L3 is presence-day/power-gated,
+not feed-gated). Next: TB1 node dry-run (Port Townsend/Bush Point) + TA1 MMPP in parallel; productionize
+multi-station (ingest the 3 extra Orcasound nodes into the acoustic_detections stream), fix effort so
+time-rescaling passes, lift cross-station consistency; Albion refresh (TB3) is supporting-only.
+MLO platform is operator/deploy-gated. The 3d-twin, DEMO, and BSIDE
 lanes are out of scope (3d-twin has its own orchestrator; DEMO/BSIDE are dormant). Do not read the
 chat transcript linearly.
 

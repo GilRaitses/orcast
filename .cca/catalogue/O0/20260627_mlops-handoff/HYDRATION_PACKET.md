@@ -21,7 +21,9 @@ linearly. Paths are repo-relative to `/Users/gilraitses/orcast` unless noted.
 - `.cca/catalogue/O0/20260627_mlops/MLM_CHARTER.md`, `MLO_CHARTER.md`, `wave_shape.yml`, `STEP_LOG.md`
   (the MLM/MLO charters and the running step log, including the L2 multi-station result)
 - `.cca/catalogue/O0/20260627_wildlife-sources/WILDLIFE_SOURCES_REGISTER.md` (ranked sources to
-  aggregate; the P0 order: multi-station acoustic, real Chinook index, held-out visual validation)
+  aggregate; NOTE: for the forecast-skill path read `SYNTHESIS_signal_modeling.md` FIRST -- the
+  register's prey-priority P0 order is stale on L3. Binding lever = summer presence-days from new nodes,
+  not a prey index; CUTI/BEUTI is NO-GO/out-of-coverage)
 - `.cca/catalogue/O0/20260627_forecast-candidates/` (CAND set + the cached OrcaHello indexes)
 
 ## 4. Evidence / artifacts (latest verdicts)

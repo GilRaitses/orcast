@@ -309,9 +309,9 @@ signal_modeling_research:
   objectives:
     S1_nodes:       "enumerate every additional in-region acoustic/hydrophone node + reviewed-detection source beyond the 4; per-node access/provenance/license + W6-style grounding plan; flag genuinely-independent vs cache-duplicate"
     S2_covariates:  "catalogue sourceable physical/oceanographic/biological signals; per-signal access + admissible role under B.2 + collinearity with existing covariates"
-    M1_sparse:      "sparse/bursty count + point-process methods (LGCP, GP intensity, hierarchical Bayes, Hawkes, hurdle/NB, penalized GAM) that lift held-out skill at our N"
-    M2_nonlinear:   "nonlinear-dynamics + physics-based methods (state-space/SDE/PINN/reservoir/delay-embedding) with HONEST over-fitting risk at our N"
-    M3_derived:     "subtler covariates computable from existing or S2-sourceable signals (tidal nonlinearities, current shear/fronts, terrain features, prey-lag, spatiotemporal terms)"
+    M1_sparse:      "sparse/bursty count + point-process methods surveyed in W10 (hierarchical Bayes/partial-pooling NB, MMPP, penalized GAM/shape priors); the AUTHORITATIVE graduate/dead-end split is SYNTHESIS_signal_modeling.md sections 1-2 -- LGCP/GP intensity at current N, NB->ZI/hurdle count upgrade, and Hawkes-as-skill are DEAD-ENDS (Hawkes retained only as an event-level GOF diagnostic); do not read this objective as those lifting held-out skill at our N"
+    M2_nonlinear:   "nonlinear-dynamics + physics-based methods (state-space/SDE/PINN/reservoir/delay-embedding) surveyed with HONEST over-fitting risk at our N; per SYNTHESIS_signal_modeling.md section 2 full PINN/reservoir/ESN/EDM/neural-TPP are DEAD-ENDS at current N (graduates: physics shape priors)"
+    M3_derived:     "subtler covariates computable from existing or S2-sourceable signals (tidal nonlinearities, current shear/fronts, prey-lag, spatiotemporal terms); B.2 roles: terrain = s_space/validation-only per M3 E-family (NOT the temporal acoustic gate); subtidal currents = SalishSeaCast residual only (HF radar shadowed/NO-GO in-region per S2 section 3 #8); SST admissible only as the season-orthogonalized |grad SST| gradient"
     SYN:            "rank what graduates to a build/deploy wave (data vs model), what is a dead-end, and the cheapest high-value experiment toward fold-stable +0.144"
   findings_dir: .cca/catalogue/O0/20260627_mlops/research/signal_modeling/
   investigation_first: true
@@ -348,4 +348,80 @@ signal_modeling_research:
   operator_gates:
     - W9 + W10 research launch <- NEXT
     - graduating a finding to a build/deploy/promote wave (separate, gated)
+    - any commit or push (unchanged)
+
+# Graduation waveset: act on the SYN ranked plan with deep parallel subagents in three waves.
+# TA extracts the last fold-stable skill from existing data (model + effort); TB grounds genuinely new
+# independent observation (the +0.144 lever); DE audits whether the adjudicated dead-ends have drifted
+# into repo TEXTS or METHODS as if live, and recommends remediation (read-only). Canonical prose:
+# GRADUATION_WAVESET_CHARTER.md. Prompts: GRADUATION_DISPATCH.md. Nothing promotes; effective
+# confidence stays 0.0. TA/TB subagents do NOT edit convergence files and run NO served write: they
+# prototype/measure in isolation (write_outputs=False) and emit patch-specs; the integrate/deploy/
+# promote steps are separate single-editor operator-gated waves (execution_model under
+# frontier_dispatch applies: single_convergence_file_editor_per_wave + no_concurrent_heavy_fit).
+signal_modeling_graduation:
+  status: TA_TB_DE_COMPLETE                   # 2026-06-27; all 13 lanes landed + SYNTHESIS_graduation.md. served-store re-measure of TA5 + TB4 summer count are next operator gates. nothing promoted; effective confidence 0.0
+  synthesis: research/signal_modeling/graduation/SYNTHESIS_graduation.md
+  result: "SYN's two flagships fell under measurement (TA1 MMPP = artifact, does not fix GOF; TB1 PT/BP = 25 net-new days but 0 summer). Strongest measured lever = TA5 smoothness prior (+0.177, 5/5, LB +0.111, experiment store; served-store NOT-MEASURED). Real new-observation lever = TB4 ONC Boundary Pass (summer coverage YES, disjoint epoch; SRKW count NOT-MEASURED). TA2/TA3 = enablers not skill. TA4/TB5/TB3 + all drift-guard dead-ends held NO-GO."
+  model: inherit
+  premise: "SYN ranked the campaign output. The +0.078 -> +0.144 gap is an OBSERVATION problem first (TB) and a MODEL problem second (TA); DE keeps the adjudicated dead-ends from drifting back into texts/methods. Judge every TA/TB graduate by held-out, fold-stable CV mean-deviance-skill (block_cv), never in-sample fit."
+  inputs: research/signal_modeling/SYNTHESIS_signal_modeling.md
+  findings_dir: .cca/catalogue/O0/20260627_mlops/research/signal_modeling/graduation/
+  honesty: "B.1 nothing promotes; B.2 covariate roles (effort/exposure vs effect-modifier vs validation-only); B.3 withhold over fake; B.5/B.6 refit-upload-disabled; B.7 local-only pipeline; B.10 no agent commits."
+  execution_model:                           # inherits frontier_dispatch.execution_model
+    single_convergence_file_editor_per_wave: true
+    no_concurrent_heavy_fit_during_parallel_wave: true
+    subagents_edit_no_convergence_file: true       # they emit patch-specs; integrate is a separate single-editor step
+    no_production_store_write: true                 # TB is dry-run + runbook only
+    refit_upload_disabled: "fk._maybe_write_s3 = lambda: None; write_outputs=False"
+    isolated_scratch_fit_only: true                 # never data/models/fit_report.json
+    envs: { heavy_fit: .venv-modeling, ladder_and_gate: system-python3, backend: .venv }
+    external_feeds_via: aimez-ec2                    # i-04a649f91274e9fce (B.9)
+    no_agent_commits: true
+  waves:
+    - id: TA
+      name: extract-from-existing-data
+      parallelism: 5
+      status: complete                          # 2026-06-27 measured: TA5 GO (+0.177 exp-store, strongest); TA2/TA3 enablers; TA1/TA4 NO-GO. served-store re-measure pending.
+      kind: prototype-and-measure              # no convergence edit, no served write
+      agents:
+        - { role: occupancy-mmpp,      owns: research/signal_modeling/graduation/TA1_occupancy_mmpp.md,     graduate: "M2 rank1 2-state MMPP", type: model, exit: "per-fold CV-skill + time-rescaling GOF repair + GO/NO-GO + patch-spec" }
+        - { role: hierarchical-nb,     owns: research/signal_modeling/graduation/TA2_hierarchical_nb.md,    graduate: "M1 ranks1-3 partial-pooling NB + nested-CV reg + presence reframe", type: model, exit: "per-fold CV-skill + calibration + pooling factor + GO/NO-GO + patch-spec" }
+        - { role: ais-effort,          owns: research/signal_modeling/graduation/TA3_ais_effort.md,         graduate: "S2 rank1 AIS effort term in log E", type: data-effort, role_b2: effort-exposure, exit: "skill delta from cleaner log E + GO/NO-GO + patch-spec" }
+        - { role: inrepo-covariates,   owns: research/signal_modeling/graduation/TA4_inrepo_covariates.md,  graduate: "M3 F1 lunar x diel + A1 slack/max-flow vs A3 control", type: model, exit: "marginal CV-skill vs control + GO/NO-GO + patch-spec" }
+        - { role: shape-priors,        owns: research/signal_modeling/graduation/TA5_shape_priors.md,       graduate: "M2 rank3 physics shape priors", type: model, exit: "variance/calibration effect + GO/NO-GO + patch-spec" }
+      gate: "each lane lands measured per-fold held-out CV-skill (never in-sample) + GO/NO-GO + patch-spec; nothing promotes; integrate is a separate single-editor operator-gated step"
+    - id: TB
+      name: ground-new-observation
+      parallelism: 5
+      status: complete                          # 2026-06-27 measured: TB4 GO-conditional (summer YES, the real lever); TB1 0-summer (off-season only); TB2 GO-conditional; TB3 supporting/WITHHELD; TB5 NO-GO at N
+      kind: dry-run-and-runbook                # no fetch-that-writes, no convergence edit
+      agents:
+        - { role: port-townsend-bush-point, owns: research/signal_modeling/graduation/TB1_port_townsend_bush_point.md, graduate: "S1 ranks1-2 OrcaHello nodes", type: data, exit: "dry-run net-new presence-days + REGION-EXPANSION decision memo + log E plan + runbook" }
+        - { role: sst-front,                 owns: research/signal_modeling/graduation/TB2_sst_front.md,                 graduate: "S2 rank2 + M3 C1 SST-front gradient", type: data-model, role_b2: effect-modifier, exit: "incremental CV-skill (dry-run) + provenance + patch-spec" }
+        - { role: albion-anomaly,            owns: research/signal_modeling/graduation/TB3_albion_anomaly.md,            graduate: "M3 D1 real Albion feed + run anomaly", type: data-model, role_b2: effect-modifier, exit: "live-feed runbook (EC2) + anomaly recipe + re-test vs G3 bar (stays WITHHELD)" }
+        - { role: onc-boundary-pass,         owns: research/signal_modeling/graduation/TB4_onc_boundary_pass.md,         graduate: "S1 rank3 ONC/JASCO Boundary Pass", type: data, exit: "presence-day extraction plan + duty-cycle log E + independence + runbook" }
+        - { role: salishseacast-currents,    owns: research/signal_modeling/graduation/TB5_salishseacast_currents.md,    graduate: "S2 rank3 + M3 B1 subtidal currents/shear", type: data-model, role_b2: effect-modifier, exit: "de-tided residual/shear recipe + provenance + conditional payoff (needs more nodes)" }
+      gate: "each lane lands a runbook + DRY-RUN measured estimate + go/no-go; the fetch/ingest/region-expansion/refit are SEPARATE operator-gated steps (TB1 region expansion = operator scope decision)"
+    - id: DE
+      name: dead-end-drift-audit
+      parallelism: 3
+      status: complete                          # 2026-06-27; 3 registers landed. served code clean (DE2 0 HIGH); all drift is prose. DE1 13 (4h/5m/4l); DE2 0h/2m/8l; DE3 16 (2 P0/7 P1/6 P2/1 P3). remediation RECOMMENDED, not applied.
+      kind: read-only-audit                    # applies no edit; recommends remediation
+      dead_end_set: [full-PINN, reservoir-ESN, EDM-forecasting, neural-TPP, SDE-diffusion-movement, hawkes-as-skill, GP-LGCP-at-N, synthetic-augmentation, NB-to-ZI-upgrade, CUTI-BEUTI-coverage, HF-radar-shadow, terrain-on-temporal-gate]
+      preserve: "self-exciting Hawkes is NO-GO as skill but GO as the event-level GOF DIAGNOSTIC (it justifies the bin-level timing gate); do not recommend deleting the diagnostic"
+      agents:
+        - { role: text-drift,     owns: research/signal_modeling/graduation/DE1_text_drift.md,     scope: "docs/methodology/** + .cca/catalogue/** prose + READMEs", exit: "register: file -> quote -> why drift vs SYN -> recommended edit" }
+        - { role: method-drift,   owns: research/signal_modeling/graduation/DE2_method_drift.md,   scope: "modeling/** + src/aws_backend/**", exit: "register: symbol/path -> current behavior -> drift/leak risk -> recommended remediation (esp. Hawkes not in served intensity; terrain not on temporal gate)" }
+        - { role: strategy-drift, owns: research/signal_modeling/graduation/DE3_strategy_drift.md, scope: "ORCHESTRATOR_NOTES.md + handoff charters + PIML strategy", exit: "register: where -> recommends -> why drift -> recommended caveat/edit" }
+      gate: "three registers land with concrete file/line/symbol citations + a prioritized remediation list; remediation RECOMMENDED, not applied"
+  operator_gates:
+    - DE / TA / TB launches = DONE (all 13 lanes landed + SYNTHESIS_graduation.md)
+    - re-measure TA5 smoothness prior on the SERVED store under the G2 gate <- NEXT (the one measured lever that cleared +0.144)
+    - measure the TB4 summer SRKW presence-day count (parse ECHO Annotations.csv + reconstruct ULS effort) <- NEXT
+    - land TA2 + TA3 as the clean fold-stable / non-flat-log-E baseline before judging covariates
+    - TB1 modeling-region expansion (out-of-box nodes) = explicit operator scope decision
+    - integrate of any TA/TB graduate into a convergence file = separate single-editor step
+    - any production fetch-that-writes / ingest / deploy (TB) = operator-/deploy-gated
+    - any confidence promotion = passing gate on SERVED data + recorded supervisor decision
     - any commit or push (unchanged)

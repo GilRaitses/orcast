@@ -16,5 +16,7 @@ section H ack from `HANDOFF_CHARTER.md` before any action.
 
 Lane status: L0 PASS (ROC AUC 0.879), L1 PASS, L2 FAIL at 0% but multi-station flips held-out
 skill positive (+0.078); remaining L2 blockers are time-rescaling and cross-station consistency.
-L3 withheld pending a real Chinook feed. MLO platform chartered (operator/deploy-gated). Effective
+L3 withheld pending summer PRESENCE-DAYS from new in-region nodes (SYN/G3; the Albion Chinook feed is
+already real, so L3 is presence-day/power-gated, not feed-gated). MLO platform chartered
+(operator/deploy-gated). Effective
 confidence stays 0% until a passing gate plus a recorded supervisor decision.

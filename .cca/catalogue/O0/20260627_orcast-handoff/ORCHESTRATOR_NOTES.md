@@ -51,6 +51,9 @@ Highest-value PIML moves, in order:
    transported by the NOAA current field with a fitted lag, rather than a bare climatology
    index. Even a simple convolution of run-timing with a current-derived transport kernel is
    physics-informed and testable with the lag scan already chartered in M-L3.
+   (PRIORITY DEMOTED per G3/SYN/M3: the salmon covariate (M3 D1) is BOTH feed-gated AND
+   presence-day-gated; it cannot close L3 without first adding summer presence-days from new nodes
+   (TB1). D1 stays WITHHELD until then -- sequence prey-transport work AFTER the node grounding.)
 3. Frontal / hydrodynamic habitat for `s_space`. Replace effort-confounded sighting density
    with physical proxies for foraging habitat: bathymetric slope, tidal-front index (gradient
    of predicted current speed), channel constriction. This de-biases `s_space` and matches the
@@ -69,18 +72,26 @@ structure.
 
 - The single-station, sparse-hourly-count regime is the core problem, not the covariate list.
   A frequentist NB GLM with a binary gate is brittle here (negative CV skill on one station).
-  I would move the backbone to a hierarchical Bayesian log-Gaussian Cox process (LGCP) with
-  partial pooling across stations. It gives calibrated uncertainty natively, which matches the
-  project's own principle that "confidence is part of the forecast," and replaces the binary
-  gate with a posterior the supervisor can threshold.
+  The fix that GRADUATED (SYN section 2 / M1 Tier A / TA2) is a hierarchical NB with a
+  **partial-pooling random station intercept** (a ridge `1/tau^2` on station deviations), which
+  cures the held-out-station fragility WITHOUT the flexibility an LGCP adds. A full hierarchical
+  Bayesian log-Gaussian Cox process (LGCP) is a **conditional prototype only and a DEAD-END at
+  current N** (SYN section 2: GP-modulated/spatial LGCP at 4 stations / ~300 effective onsets):
+  it must first beat the GLM on fold-stable held-out CV-skill toward +0.144 (never in-sample
+  likelihood) and be coordinated with M1/TA2 to avoid double-counting. The default path is Tier A
+  (MMPP, partial-pooling NB), NOT a backbone replacement. Calibrated uncertainty is a fair goal,
+  but it does not by itself justify the LGCP at this N.
 - Close Level 0 first. The detector ROC needs the confidence-scored detection feed (OrcaHello
   carries a `confidence` field); pairing scores with the moderated labels gives a real ROC/d'.
   Every later kernel is confounded until the detector is characterized.
 - Prioritize multi-station coverage and the effort model before adding covariates. A covariate
   added on one station with negative skill cannot earn confidence no matter how good the
   covariate is.
-- For the sparse-count regime, a zero-inflated or hurdle model (or the LGCP) fits better than
-  an NB GLM on hourly bins.
+- For the sparse-count regime: the GRADUATE (TA2) is a **presence-hurdle REFRAME** -- a
+  Bernoulli/cloglog companion head on per-bin PRESENCE, scored alongside the NB count fit. A
+  **zero-inflated / hurdle COUNT upgrade** on the hourly NB target is a **DEAD-END** (SYN section 2
+  / M1 section 1.3): do not replace the NB count model with a ZI/hurdle count model. (LGCP likewise
+  remains the conditional-prototype dead-end at current N noted above.)
 - Decide the acoustic-to-visual bridge explicitly (the standing open decision). The "encounter
   forecast" claim depends on it; deferring it leaves a gap between what is modeled (acoustic
   presence) and what is promised (a viewer's visual encounter).
@@ -126,6 +137,13 @@ Tidal harmonics and movement:
 1. Build the harmonic tide covariate, re-run M-L2 with `k_tide` included, and see whether
    held-out skill turns positive. This is the fastest path off 0%.
 2. Pair OrcaHello detection confidence with moderated labels to close M-L0 (real ROC/d').
-3. Prototype the LGCP backbone on the cached acoustic series and compare calibrated PIT +
-   held-out log-likelihood against the current NB GLM.
-4. Run the M-L3 salmon lag scan against a real Albion/Bonneville run-timing series.
+3. (CONDITIONAL / sequence after A1 MMPP + A2 hierarchical NB.) If prototyping the LGCP backbone
+   on the cached acoustic series, gate it IDENTICALLY to every other candidate: `block_cv`
+   fold-stable held-out CV mean-deviance-skill toward +0.144 -- NOT calibrated PIT or in-sample
+   log-likelihood alone (a flexible GP always fits better in-sample; SYN section 4 residual-risk
+   trap). LGCP is a dead-end at current N (SYN section 2); the promising-now substitute is the TA2
+   partial-pooling NB.
+4. Re-test M-L3 only AFTER a presence-day lift from new nodes/summers (the binding lever, G3/SYN);
+   refresh Albion (TB3) as support. Bonneville/DART is stock-mismatched (PATCH-salmon caveat) and an
+   Albion extension alone adds no presence-days, so a lag scan on a refreshed feed cannot move L3 by
+   itself.
