@@ -1816,6 +1816,142 @@ waves:
     serialize_across: [3D-TWIN, WFX, ORCA, OCN, ENV]
     note: "station-tileset-extent (OPTIONAL). Wider Puget Sound nodes (Port Townsend, Bush Point; real DCLDE station-days) need a 3D-TWIN-owned tileset-extent change with a measured load-cost trade-off (W-PERFUX: leaf terrain geometry is 74.7% of load). STX-Q may return a deferral decision with cost stated as a valid outcome."
 
+  # ── DPR: demo-production recut, B-side-forward (2026-06-29) ────────────────
+  # Home: .cca/catalogue/O0/20260629_demo-production-recut/  Umbrella: PROGRAM.md
+  # Re-cut the stale demo (newest asset Jun 28, predates /workbench B-side + BSWR).
+  # Reuses the DEMO-PROD director chain; adds a research-first front + a description deliverable.
+  # Lifecycle: R -> S(gate) -> CAP(director chain) -> ASM -> ADV(joy+honesty) -> DESC -> PROMOTE(gate). Verified against main e794dbd.
+  - id: DPR-R
+    family: DPR
+    type: research
+    status: chartered
+    home: .cca/catalogue/O0/20260629_demo-production-recut/
+    charter: .cca/catalogue/O0/20260629_demo-production-recut/PROGRAM.md
+    dispatch: .cca/catalogue/O0/20260629_demo-production-recut/dispatch/RESEARCH/
+    repo_state_verified_against: e794dbd
+    gate: null
+    note: "Ungated read-only research: arc (R1), current-script audit (R2), today's B-side + console (R3), narration method (R4), pax technique (R5), HAII/IST675 framing (R6). Returns RESEARCH_SYNTHESIS.md + JOY_DIAGNOSIS.md, pauses at the script gate."
+  - id: DPR-S
+    family: DPR
+    type: implement
+    status: planned
+    spec: .cca/catalogue/O0/20260629_demo-production-recut/SCRIPT_DRAFT_SPEC.md
+    depends_on: [DPR-R]
+    gate: operator
+    note: "Finalized SCRIPT_DRAFT.md: rebalanced A-side + new B-side beats, both sides on the current build, live console exploration on >=1 beat per side, honesty locks intact, runtime budget. Operator approves before any capture."
+  - id: DPR-CAP
+    family: DPR
+    type: implement
+    status: planned
+    depends_on: [DPR-S]
+    gate: operator
+    note: "Capture via the DEMO-PROD director chain (SET/BLK/CAM/SCR) on aimez-gpu-capture Tesla T4 (infra/render_host/render.sh). GPU start + render start are operator gates."
+  - id: DPR-ASM
+    family: DPR
+    type: implement
+    status: planned
+    depends_on: [DPR-CAP]
+    note: "Narrate via tools/testing/tts_narrate.py (XTTS clone) + assemble with the demo-video-assembly bed-ducking step. Output docs/devpost/figures/_demo-run/demo-final-narrated.mp4, verified by ffprobe + a Read-examined frame."
+  - id: DPR-ADV
+    family: DPR
+    type: verify
+    status: planned
+    depends_on: [DPR-ASM]
+    note: "Binary screen-test rubric R1-R5 + the J live-exploration check (console drives exploration on >=1 A-side and >=1 B-side beat). Any FAIL loops to DPR-S or DPR-CAP."
+  - id: DPR-DESC
+    family: DPR
+    type: implement
+    status: planned
+    depends_on: [DPR-R]
+    note: "Submission description: problem, two-sided loop, the HAII intent-detection + domain-grounding feedback-loop framing from IST675, honesty locks, architecture. For the desktop submission folder."
+  - id: DPR-PROMOTE
+    family: DPR
+    type: implement
+    status: planned
+    depends_on: [DPR-ADV, DPR-DESC]
+    gate: operator
+    note: "Operator gate: deliver the fresh cut + description to the operator-confirmed desktop submission folder and web/public/demo. Target folder is not assumed."
+
+  # GP grounding-post lane, aligned to the pax GP orchestrator.
+  # home: .cca/catalogue/O0/20260630_grounding-post/
+  # status: chartered 2026-06-30 (O0). Documentation and reconciliation lane. Stands up a per-project grounding post presenting orcast through NINE fixed ordered perspectives (critical gap, concept, construction, costs, qualifications, limits and tracked boundaries, risks, future direction, outcomes) + a charter index + a code index (each waveset to its landing commits and key files) + a PROVENANCE LEDGER (the .ddb decision ledger and every step log with dates, a timeline, and a dependency and supersession graph), plus one consolidated grounding surface indexing the project and all wavesets. Root work is RECONCILIATION not transcription: enumerate every registry family + every dated home (unregistered lanes exist), map each waveset to real code verified against the orcast git log, reconcile inline STALE corrections, mark anything unverifiable UNVERIFIED. 2026-06-30 operator extension: GP-PROVENANCE + GP-LEDGER added to inventory .ddb (9 decisions, 9 receipts, registry.json, tools) + .sst (9 states) + .cca/STEP_LOG.md (actor O0) + 28 lane STEP_LOG.md, emitting findings/GP-LEDGER.json and docs/devpost/grounding/LEDGER.md. LOCKED: nine sections named exactly even when none-known; outcome = landed+verifiable (aspiration is future direction); honesty locks travel in (modeled-not-measured, CV-estimates, simulated-user proxies, no canonical sigma); registry path is docs/devpost/waves.registry.yaml not .cca/waves.registry.yml; W0 discovery read-only, W1 build NEW files on docs/devpost/grounding/, W2 GP-CONSOLIDATE GATED (register + land + commit/push), W3 GP-ACCEPT link-and-commit verification. Escalation: subagents -> lane O0 -> dispatching O0, never the operator. repo_state_verified_against orcast e794dbd. See WAVESET_CHARTER.md + GROUNDING_POST_TEMPLATE.md + ORCHESTRATOR_DISPATCH_PROMPT.md.
+  - id: GP-INVENTORY
+    family: GP
+    type: research
+    status: done
+    charter: .cca/catalogue/O0/20260630_grounding-post/
+    scope_globs:
+      - .cca/catalogue/O0/20260630_grounding-post/dispatch/CATALOG/CATALOG.md
+    note: "Authoritative waveset list across registry families and catalogued dated homes, including unregistered lanes. Landed in CATALOG.md (coverage rollup + reconciliation)."
+  - id: GP-CODE-MAP
+    family: GP
+    type: research
+    status: done
+    depends_on: [GP-INVENTORY]
+    note: "Each waveset to its landing commits and key files, verified against the orcast git log. Landed in the four area tables of CATALOG.md."
+  - id: GP-SCHEMA
+    family: GP
+    type: research
+    status: done
+    depends_on: [GP-INVENTORY]
+    note: "Resolve the schema fork: machine registry docs/devpost/waves.registry.yaml vs prose docs/devpost/WAVES_REGISTRY.md, plus catalogued dirs with no family and families with no dir. Writes findings/GP-SCHEMA.md."
+  - id: GP-PROVENANCE
+    family: GP
+    type: research
+    status: done
+    depends_on: [GP-INVENTORY]
+    scope_globs:
+      - .cca/catalogue/O0/20260630_grounding-post/findings/GP-LEDGER.json
+    note: "Inventory the .ddb decision ledger (9 decisions, 9 receipts, registry.json), .sst (9 states), the actor log .cca/STEP_LOG.md, and 28 lane STEP_LOG.md, with dates and a timeline and a dependency and supersession graph. Emits findings/GP-LEDGER.json. Dates America/New_York, UNDATED never invented."
+  - id: GP-ADV
+    family: GP
+    type: verify
+    status: done
+    depends_on: [GP-CODE-MAP, GP-SCHEMA, GP-PROVENANCE]
+    note: "Adversarial review of Wave 0 findings for completeness, traceability, and overclaim. Any miss loops back to the W0 member."
+  - id: GP-TEMPLATE
+    family: GP
+    type: implement
+    status: done
+    note: "Finalize GROUNDING_POST_TEMPLATE.md: nine sections, charter index, code index."
+  - id: GP-POST
+    family: GP
+    type: implement
+    status: done
+    depends_on: [GP-ADV, GP-TEMPLATE]
+    scope_globs:
+      - docs/devpost/grounding/orcast_grounding_post.md
+    note: "Author the orcast grounding post, nine sections filled from CATALOG.md and the ledger."
+  - id: GP-INDEX
+    family: GP
+    type: implement
+    status: done
+    depends_on: [GP-ADV]
+    scope_globs:
+      - docs/devpost/grounding/INDEX.md
+    note: "Consolidated surface indexing the project and all wavesets, other projects as roadmap."
+  - id: GP-LEDGER
+    family: GP
+    type: implement
+    status: done
+    depends_on: [GP-PROVENANCE]
+    scope_globs:
+      - docs/devpost/grounding/LEDGER.md
+    note: "Render LEDGER.md from findings/GP-LEDGER.json: pointer record, dated timeline, dependency and supersession graph."
+  - id: GP-CONSOLIDATE
+    family: GP
+    type: implement
+    status: done
+    depends_on: [GP-POST, GP-INDEX, GP-LEDGER]
+    gate: operator
+    note: "GATED operator gate: register the lane, land INDEX.md + orcast_grounding_post.md + LEDGER.md on docs/devpost/grounding/ (operator confirms the home), then commit and push. The sub-orchestrator does not commit."
+  - id: GP-ACCEPT
+    family: GP
+    type: verify
+    status: done
+    depends_on: [GP-CONSOLIDATE]
+    note: "Link-and-commit verification: every cited commit resolves in the orcast git log, every internal link resolves, every waveset in the catalog appears in the index."
+
 next_wave_set: H1
 
 gates:

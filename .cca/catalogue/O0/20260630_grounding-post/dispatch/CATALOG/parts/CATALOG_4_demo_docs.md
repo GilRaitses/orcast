@@ -1,0 +1,56 @@
+## Demo, media, documentation, governance
+
+Catalog shard 4 of 4. Area is demo and media plus documentation and governance.
+Each row traces a charter to the code it produced, a commit, status, gate, and
+outcome. No claim without a trace. Planned-never-shipped says so.
+
+### Demo and media
+
+Catalogued program directories under `.cca/catalogue/O0/` plus the registry
+families that drive the submission video, the per-beat captures, the voice
+clone, the agent demo, and the GPU render host.
+
+| id or family | charter | intent | resulting code and commit | status | gate | outcome |
+|---|---|---|---|---|---|---|
+| DEMO, demo-waveset | `.cca/catalogue/O0/20260627_demo-waveset/DEMO_CAPTURE_CHARTER.md` | orcast-side execution mirror of the pax DEMO design. Lock the A-side and B-side script, then capture the first beats. Honesty locks: nothing unbuilt shown as live, forecast effective confidence 0 percent stays on screen. | `W-STORY.md`, beats under `web/e2e/beats/`. Commit `e30d0ab`. | done for the story lock and first beats | none formal, capture had an operator green-light | shipped the locked script. The render was blocked then superseded by DEMO-PROD and DPR. |
+| DEMO-PROD, demo-production | `.cca/catalogue/O0/20260628_demo-production/PROGRAM.md` | Director-based demo production modeled on the pax briefing. Four-stage chain SET, BLK, CAM, SCR, render, with a binary R1 to R5 screen-test rubric and eight orcast honesty locks. Replaces the old A-side cut and the blocked B-side DEMO render. | program and stage docs under `.cca/catalogue/O0/20260628_demo-production/`, beat specs under `web/e2e/beats/`, `tools/testing/build_ddb_proof_slide.py`. Commits `d19fd56`, `ca5fd6a`. | program shipped, render chartered not rendered | DSCR screen-test-binary-R1-R5, DRENDER v-beat plus v-stitch plus v-render, render is operator-gated | shipped the production framework and beat captures. DRENDER stayed chartered, then recut by DPR. |
+| DPR, demo-production-recut | `.cca/catalogue/O0/20260629_demo-production-recut/PROGRAM.md` | Re-cut the stale narrated demo, which predates the `/workbench` B-side and the BSWR remediations. Research first, then a script gate, then the DEMO-PROD director chain, then a written submission description. | research findings, `SCRIPT_DRAFT.md`, `PROGRAM.md` present on disk under the program dir, none committed. | research on disk, all else planned | DPR-S script operator gate, DPR-CAP and DPR-PROMOTE operator gates | nothing landed in git. Research and a script draft exist uncommitted, no fresh cut promoted yet. |
+| V, per-beat video | registry `V0` to `V3`, output `docs/devpost/figures/_demo-run/demo-final.webm` | Per-beat Playwright capture, beat-check and stitch gates, then the stitched narrated demo. | `web/e2e/beats/`, `docs/devpost/figures/_demo-run/`. Commits `c306e41`, `52637f5`, `070b24d`. | done | v-beat, v-stitch | shipped the narrated demo video and its beat captures. |
+| VX, voice clone | registry `VX0` to `VX3`, output `docs/devpost/figures/_demo-run/demo-final-cloned.webm` | XTTS voice clone narration over the demo, rendered to a cloned-voice cut. | `tools/testing/tts_clone.py`, `tools/testing/tts_narrate.py`, `tools/waves/gates/vx-render.sh`. Commits `c306e41`, `070b24d`, `97b6397`. | done | manual | shipped the XTTS narration tooling and the narrated cut. |
+| A, agent demo | registry `A0` to `A5`, charter `docs/devpost/submission/A0_AGENT_DEMO_CHARTER.md` | No-credential agent demo path, demo slides, maps smoke and video gates. Mostly demo and submission media, with auth pieces that overlap the frontend area. | `web/public/demo-slides/`, `docs/devpost/DEMO_NO_CRED_STORYBOARD.md`, `web/lib/agentAuth.ts`, `tools/waves/gates/a-video-gate.sh`. Commits `f36da3f`, `8e5c6ee`, `722d676`. | done | a-gate, a-maps, a-video-gate | shipped demo slides, the no-cred storyboard, and the agent auth path. |
+| render-host | `.cca/catalogue/O0/20260628_render-host/` proof frames, registry note on the Tesla T4 host | Reliable headless GPU render and capture host on aimez-gpu-capture Tesla T4 via SSM and S3, used to capture twin and B-side frames. | `infra/render_host/`, proof PNGs under the program dir. Commits `3ae716a`, `08b89df`, `fa6c0f2`. | done | none formal, GPU start is an operator gate | shipped the real GPU capture host and refreshed proof frames. |
+
+### Documentation and figures
+
+Registry families with no catalogue directory of their own. They live under
+`docs/`. Whitepaper, figures, submission copy, research sync.
+
+| id or family | charter | intent | resulting code and commit | status | gate | outcome |
+|---|---|---|---|---|---|---|
+| S, submission sync | charter `docs/devpost/submission/S0_SUBMISSION_SYNC_CHARTER.md` | Architecture figure, the ERD workflows diagram, and the submission copy set kept in sync. | `docs/devpost/figures/architecture.png`, `docs/devpost/figures/orcast-erd-workflows.drawio`, `docs/devpost/SUBMISSION.md`. Commits `e64b78a`, `0eefcee`, `722d676`. | done | s-gate | shipped the architecture and ERD figures plus the synced submission copy. |
+| W, whitepaper | charter `docs/whitepaper/W0_WHITEPAPER_CHARTER.md` | Build the orcast whitepaper LaTeX, references, equations, figures, and the compiled PDF. | `docs/whitepaper/`, output `docs/whitepaper/Build/Raitses_orcast_2026.pdf`. Commits `3c74c35`, `97b6397`, `9fe0a69`. | W1 in progress per registry, W6 PDF verified done | manual-pdf-verify | shipped the compiled PDF. W1 build still flagged in_progress in the registry. |
+| MP, multi-panel figures | output `docs/figures/mp-benchmark-results.json` and `docs/figures/MP4_MULTI_PANEL_REVIEW.md` | Benchmark-backed multi-panel problem, mechanism, and benchmark-scope figures. | `docs/figures/`. Commit `f0feb7a`. | done | none | shipped the benchmark figures and the multi-panel review. |
+| FA, figure audit | output `docs/figures/FA0_DEFECT_REGISTER.md` | Audit, remediate, validate, and adversarially review the TikZ figures. | `docs/figures/fig-*/figure.tex`. Commits `f36da3f`, `e13d091`. | done | none formal | shipped the corrected figure set with validation and adversarial reports. |
+| R0 to R5, research sync | charter `docs/devpost/submission/R0_RESEARCH_SYNC_CHARTER.md` | Research-source files for the whitepaper, the second grounding whitepaper, and refreshed demo storyboards and devpost copy. Distinct from the backend R-Alpha to R-backlog channel family, which belongs to another shard. | `docs/whitepaper/research/`, `docs/whitepaper2/`, `docs/devpost/DEMO_STORYBOARD.md`. Commits `f0feb7a`, `3c74c35`. | done | none | shipped the research sources and the second whitepaper PDF. |
+| SC, search cycle | charter `docs/devpost/submission/SC0_SEARCH_CYCLE_CHARTER.md` | Literature search-cycle research files SF-01 to SF-16, folded into both whitepapers. | `docs/whitepaper/research/SF-*`, `docs/whitepaper2/LX/`. Commits `f0feb7a`, `3c74c35`. | done | SC6 gate | shipped the search-cycle sources and the updated PDFs. |
+
+### Governance and probes
+
+Probe, scrutiny, packaging, hackathon-submit, and closeout families. These set
+or check the project's locks and the submission posture.
+
+| id or family | charter | intent | resulting code and commit | status | gate | outcome |
+|---|---|---|---|---|---|---|
+| P, probes | playbook `docs/devpost/ADVERSARIAL_PROBE_PLAYBOOK.md` | Adversarial probe family. P0 the workflow truth table and lane ownership, P1 to P3 planned probe panels. | `docs/devpost/workflow-truth-table.md`, `infra/aws/state/LANE_OWNERSHIP.md`, the playbook. Commit `97b6397`. | P0 done, P1 to P3 planned | P1-gate, P2 and P3 manual | shipped the truth table and playbook. P1 to P3 never ran. |
+| Q, scrutiny | charter `docs/devpost/submission/Q0_SCRUTINY_CHARTER.md` | Six-layer scrutiny pass Q1a to Q1f, remediation Q2, and the adversarial review gate QF. | `docs/devpost/QF_ADVERSARIAL_REVIEW.md`, `tools/waves/gates/q1b-api-schema.sh`, `tools/waves/gates/q1c-ddb-schema.sh`, `tools/waves/gates/q1f-wp-claims.sh`. Commit `97b6397`. | done | QF gate | shipped the scrutiny gates and the adversarial review, gaps Q1e-01 and Q1f-07 closed. |
+| U, uploads and packaging | charter `docs/devpost/submission/U0_UPLOADS_AND_PACKAGING_CHARTER.md` | Evidence upload route plus S3, account content management, media-upload UI, content-only share PDFs, and arXiv tarballs. Distinct from the planned UX U1 to U6 family, which belongs to the frontend area. | charter committed under `docs/devpost/submission/`. Commit `97b6397`. | U0 charter done, U1 in_progress, U2 to UF planned | U5 gate, UF review | shipped the charter only. The upload route and packaging never landed. |
+| H, hackathon submit | checklist `docs/devpost/HACKATHON_SUBMIT_CHECKLIST.md` | Hackathon submit verification and the manual submit record. | `docs/devpost/HACKATHON_SUBMIT_CHECKLIST.md`, output `docs/devpost/submission/H1_MANUAL_SUBMIT.md`. Commit `915e4cc`. | H0 on_demand, H1 manual | H0 gate | shipped the submit checklist. H1 is a manual operator step. |
+| CLOSEOUT, WS-CLOSEOUT | registry families `TLR`, `CAP-*`, `DGM-*` | Ratify the tracked-limits register, publish the capabilities, limits, risks, and future surface in docs and on `/about`, rebuild the nine-table DynamoDB proof slide, and add the AWS4 architecture diagram. | `.sst/tracked_limits_register_v1.json`, `docs/devpost/SUBMISSION.md`, `web/app/about/page.tsx`, `tools/testing/build_ddb_proof_slide.py`, `docs/devpost/figures/architecture-aws4.drawio`. Commits `0eefcee`, `d19fd56`, `f36da3f`. | TLR, CAP-DOCS, CAP-WEB, DGM-DDB done, DGM-ARCH in_progress | ddb-register, cxr-deny-terms, read-verified-frame | shipped the limits register, the public capabilities surface, and the proof slide. The AWS4 diagram is the in_progress item. |
+| GND, project grounding surface | `.cca/catalogue/O0/20260630_project-grounding-surface/PROGRAM.md` and `POST_SPEC.md` | The umbrella for this catalog. Build one grounding surface across nine lenses that traces every waveset to its code and outcome. This shard is GND-R catalog work. | `.cca/catalogue/O0/20260630_project-grounding-surface/`, this file under `dispatch/CATALOG/parts/`. No commit yet, the program is in flight. | in progress | post-gate, operator consolidate gate | the catalog and the grounding post are being authored now. Nothing committed yet. |
+
+### Families and dirs this shard did not take, with reasons
+
+- `D1` to `D4`, data wiring, planned only, doc target `docs/methodology/DATA_WIRING.md`. Folded into `G4` per the registry note. Data and modeling oriented, so it belongs to the modeling shard.
+- UX `U1` to `U6`, planned only, doc `docs/ux/IMPLEMENTATION_BACKLOG.md`. Frontend and UX, belongs to the frontend shard. Note that the letter U is reused by the uploads family above.
+- `E` and `F`, backend exploration and probe features under `src/aws_backend/exploration/`. Belong to the backend shard. Their doc outputs `E3`, `E5`, `F0`, `F4` under `docs/devpost/exploration/` are docs but track backend work.
+- `G1` to `G4`, AI gateway and explore-map features. Belong to the backend or frontend shard. `G3` probe dossier `docs/devpost/adversarial-findings-2026-06.md` and `G4` `docs/devpost/G4_DATA_WIRING_STATUS.md` are governance and docs outputs but track feature work.

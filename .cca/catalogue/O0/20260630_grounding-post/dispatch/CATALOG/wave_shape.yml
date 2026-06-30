@@ -1,0 +1,51 @@
+# GND-R catalog wave shape
+# Read-only inventory. One sub-orchestrator, sharded by project area.
+
+wave: GND-R
+family: GND
+type: research
+mode: read-only
+gate: post-gate (after GND-POST, downstream)
+output: .cca/catalogue/O0/20260630_project-grounding-surface/dispatch/CATALOG/CATALOG.md
+
+sources:
+  catalogue_dirs: .cca/catalogue/O0/*
+  registry_machine: docs/devpost/waves.registry.yaml
+  registry_prose: docs/devpost/WAVES_REGISTRY.md
+  code_history: git log per scope_glob
+
+units:
+  - id: CAT-fcst
+    area: forecasting and modeling
+    scope_hint: [modeling/, src/aws_backend/routers/, infra/aws/stepfunctions/]
+  - id: CAT-be
+    area: backend and API
+    scope_hint: [src/aws_backend/, web/app/api/]
+  - id: CAT-fe
+    area: frontend and console
+    scope_hint: [web/app/, web/components/, web/lib/]
+  - id: CAT-twin
+    area: 3D twin and water effects
+    scope_hint: [web/lib/scene/, web/app/components/scene/]
+  - id: CAT-bside
+    area: B-side acoustic and behavior workbench
+    scope_hint: [web/app/workbench/, web/app/(workbench)/, web/lib/scene/hydrophone/, web/lib/scene/ocean/]
+  - id: CAT-infra
+    area: infra and hosting
+    scope_hint: [infra/aws/, tools/deployment/, .github/workflows/]
+  - id: CAT-demo
+    area: demo and media
+    scope_hint: [docs/devpost/figures/, web/e2e/beats/, tools/testing/]
+  - id: CAT-docs
+    area: documentation and governance
+    scope_hint: [docs/, .cca/catalogue/]
+
+ownership: one read-only sub-orchestrator may fan the units out internally;
+  all units write into the single CATALOG.md grouped by area.
+
+return:
+  - wavesets catalogued (count)
+  - shipped vs planned vs superseded
+  - wavesets present in only one source
+  - code areas no waveset claims
+  - pause for operator before GND-LENS
