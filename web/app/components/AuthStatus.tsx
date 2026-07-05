@@ -15,7 +15,12 @@ export default async function AuthStatus() {
     );
   }
 
-  const { user } = await withAuth();
+  let user = null;
+  try {
+    ({ user } = await withAuth());
+  } catch {
+    user = null;
+  }
 
   if (!user) {
     return (
