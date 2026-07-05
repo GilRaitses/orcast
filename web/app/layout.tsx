@@ -7,6 +7,26 @@ import AuthStatus from "./components/AuthStatus";
 export const metadata: Metadata = {
   title: "orcast",
   description: "Orca encounter forecasting with provenance, gates, and community moderation.",
+  openGraph: {
+    title: "orcast",
+    description: "Orca encounter forecasting with provenance, gates, and community moderation.",
+    url: "https://orcast.aimez.ai",
+    siteName: "orcast",
+    images: [
+      {
+        url: "https://orcast.aimez.ai/social/og-preview.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "orcast",
+    description: "Orca encounter forecasting with provenance, gates, and community moderation.",
+    images: ["https://orcast.aimez.ai/social/og-preview.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
