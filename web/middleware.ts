@@ -1,6 +1,5 @@
 import { authkitMiddleware } from "@workos-inc/authkit-nextjs";
 import type { NextFetchEvent, NextRequest } from "next/server";
-import { NextResponse } from "next/server";
 
 // ORCAST_REQUIRE_LOGIN gates the whole site behind WorkOS AuthKit login. It is set
 // only on the product deployment (orcast.aimez.ai); the public hackathon build
@@ -15,30 +14,31 @@ import { NextResponse } from "next/server";
 // withAuth() works everywhere; pages stay public unless they call withAuth() themselves.
 const requireLogin = process.env.ORCAST_REQUIRE_LOGIN === "1";
 
-const authMiddleware = authkitMiddleware(
-  requireLogin
-    ? {
-        middlewareAuth: {
-          enabled: true,
-          unauthenticatedPaths: ["/login", "/sign-in", "/signup", "/callback", "/api/:path*", "/social/:path*"],
-        },
-      }
-    : {},
-);
+const strictAuth = authkitMiddleware({
+  middlewareAuth: {
+    enabled: true,
+    unauthenticatedPaths: ["/login", "/sign-in", "/signup", "/callback", "/api/:path*", "/social/:path*"],
+  },
+});
+
+// Lazy mode: same call server components rely on for a working session context
+// (withAuth() resolves to { user: null } instead of throwing), but it never
+// redirects. This is the same mode orcast-h0 runs in at all times.
+const lazyAuth = authkitMiddleware({});
 
 // Link-preview crawlers (LinkedIn, Twitter/X, Facebook, Slack, Discord, WhatsApp,
-// Telegram) carry no session. When the full-site gate is on, a redirect to
-// hosted sign-in is all they ever see, so a shared orcast.aimez.ai link shows no
-// title, description, or image. These bots are read-only and never reach an
-// authenticated surface, so they skip the gate by user agent instead of by path.
+// Telegram) carry no session. Under the strict gate they only ever see a
+// redirect to hosted sign-in, so a shared orcast.aimez.ai link shows no title,
+// description, or image. These bots are read-only and never reach an
+// authenticated surface, so they get the lazy, non-redirecting pass instead of
+// the strict one, by user agent rather than by path.
 const CRAWLER_UA =
   /facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|TelegramBot|Pinterest/i;
 
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
-  if (requireLogin && CRAWLER_UA.test(request.headers.get("user-agent") ?? "")) {
-    return NextResponse.next();
-  }
-  return authMiddleware(request, event);
+  if (!requireLogin) return lazyAuth(request, event);
+  if (CRAWLER_UA.test(request.headers.get("user-agent") ?? "")) return lazyAuth(request, event);
+  return strictAuth(request, event);
 }
 
 export const config = {
