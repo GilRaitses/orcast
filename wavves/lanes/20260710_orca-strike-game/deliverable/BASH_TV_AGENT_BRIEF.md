@@ -66,7 +66,7 @@ Optional deep specs (read when implementing or debugging):
 
 ```bash
 cd web && npm install
-cp .env.game.example .env.local
+cp game.env.example .env.local
 npm run game:dev
 ```
 
