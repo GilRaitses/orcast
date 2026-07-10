@@ -1,5 +1,11 @@
 import { authkitMiddleware } from "@workos-inc/authkit-nextjs";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
+
+// Orca Strike (/orca-strike) is a standalone arcade game: no WorkOS gate, no site
+// chrome. Bash.tv and local game dev hit this path only.
+function isOrcaStrikePath(pathname: string): boolean {
+  return pathname === "/orca-strike" || pathname.startsWith("/orca-strike/");
+}
 
 // ORCAST_REQUIRE_LOGIN gates the whole site behind WorkOS AuthKit login. It is set
 // only on the product deployment (orcast.aimez.ai); the public hackathon build
@@ -36,6 +42,13 @@ const CRAWLER_UA =
   /facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|TelegramBot|Pinterest/i;
 
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  const { pathname } = request.nextUrl;
+  if (isOrcaStrikePath(pathname)) {
+    const response = NextResponse.next();
+    response.headers.set("x-orcast-standalone", "1");
+    return response;
+  }
+
   if (!requireLogin) return lazyAuth(request, event);
   if (CRAWLER_UA.test(request.headers.get("user-agent") ?? "")) return lazyAuth(request, event);
   return strictAuth(request, event);

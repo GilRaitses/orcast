@@ -5,6 +5,7 @@
   "description": "Next.js (App Router) front end for orcast kernel forecasting.",
   "scripts": {
     "dev": "next dev",
+    "game:dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import "./globals.css";
 import Nav from "./components/Nav";
 import AuthStatus from "./components/AuthStatus";
+
+function isOrcaStrikeStandalone(): boolean {
+  return headers().get("x-orcast-standalone") === "1";
+}
 
 export const metadata: Metadata = {
   title: "orcast",
@@ -30,6 +35,14 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  if (isOrcaStrikeStandalone()) {
+    return (
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en">
       <body>

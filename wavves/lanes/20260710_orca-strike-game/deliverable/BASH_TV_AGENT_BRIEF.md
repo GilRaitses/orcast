@@ -10,6 +10,30 @@ Do not ask the operator to re-type controls, score tables, or architecture in ch
 
 Clone or import this repo. **Do not** `git init` a new project. Work under `web/`.
 
+## FORBIDDEN — do not do these (common Bash.tv derailments)
+
+The orcast repo contains **forecasting site** infrastructure (WorkOS login,
+Playwright demo tests, Vercel deploy config). **Orca Strike ignores all of it.**
+
+| Do NOT | Why |
+|--------|-----|
+| Run `npm run demo:*` or `playwright test` | Demo capture only; not the game |
+| Configure WorkOS / `WORKOS_*` env vars | `/orca-strike` bypasses AuthKit middleware |
+| Set `ORCAST_REQUIRE_LOGIN=1` | Gates the forecasting site, not the game |
+| Deploy to Vercel, Netlify, or any host | Run **`npm run game:dev`** in the VM only |
+| Read `web/README.md` deploy section for game | Use **this file** only |
+| Build a new Next app from scratch | Game already at `web/app/(game)/orca-strike/` |
+
+**Only command to run the game:**
+
+```bash
+cd web && npm install && npm run game:dev
+```
+
+Then open **`http://localhost:3000/orca-strike`** (or whatever port Next prints).
+
+Optional: `cp game.env.example .env.local` (all empty is fine).
+
 ## Hydrate (read in order, before any edit)
 
 1. `wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_AGENT_BRIEF.md` (this file)
@@ -42,10 +66,11 @@ Optional deep specs (read when implementing or debugging):
 
 ```bash
 cd web && npm install
-npm run dev
+cp .env.game.example .env.local
+npm run game:dev
 ```
 
-Open **`/orca-strike`**. Confirm lobby → Start → playable scene loads.
+Open **`/orca-strike`** (not `/`, not `/workbench`, not `/login`).
 
 ### Step 2 — Verify shipped mechanics
 

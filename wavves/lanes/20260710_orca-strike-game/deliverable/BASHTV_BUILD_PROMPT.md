@@ -26,8 +26,9 @@ Work under web/. Run /orca-strike when the dev server is up.
 
 | Item | Action |
 |------|--------|
-| Hydrophone m4a | Attach `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` to Bash if O-key is silent after pull. Fallback: `web/public/hydrophone/slice/PROVENANCE.md` |
-| Model | Medium/high for first run (tileset + lobby flow) |
+| Hydrophone m4a | Attach `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` if O-key silent |
+| Run command | **`npm run game:dev`** only — not Playwright, not deploy |
+| Env | Copy `web/.env.game.example` → `.env.local` (empty OK; no WorkOS) |
 
 ---
 
