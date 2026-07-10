@@ -1,0 +1,255 @@
+ - All right, cool.
+ Yeah, so we do have like a bit of a feed here.
+ You just got a couple options where you can see
+ like what's popular and the ones you've created.
+ You can also bookmark bashes.
+ We also have a couple of chats that I think
+ we're gonna get a stream chat going just so
+ if people wanna chat in here during the hackathon
+ or once they get access,
+ that should make things a little easier to communicate.
+ Don't have to hop to Discord and stuff, but yeah.
+ So bashes is kind of interesting.
+ I'm sure a lot of you have seen these types
+ of vibe-coded like apps before.
+ You know, it's not like super ground breaking on that front,
+ but I think what's interesting is the whole network side
+ of it and the way that we can integrate the network
+ into the outputs like you saw with how we had
+ the profile pictures and usernames.
+ That's often like kind of cumbersome
+ to set that up on your own when you're making your own app.
+ So it's kind of nice to get like user authentication
+ for free.
+ It comes in handy and like almost pretty much
+ any multiplayer app.
+ So that's something that I really appreciate about it.
+ I mean, having like instant access to an audience
+ is also really cool. It can be kind of hard
+ to like share your creation sometimes online.
+ This is like an environment where everybody's making stuff
+ together and like contributing ideas.
+ And it's really quick too.
+ Like you don't have to publish it anywhere.
+ It's just like instantly available through the agent,
+ which is super nice.
+ So the network is great.
+ We'll continue to add integrations between the apps
+ that you can make and bash itself.
+ So I think as more people join and start making things
+ and we add some more of these integrations
+ that should start to feel a little bit more unique
+ and special.
+ But yeah, so some of the stuff I like to make on here.
+ I've just like random ideas like stuff I want to see.
+ Like I was really interested in different types
+ of displays recently.
+ So like, I don't know if you know, flipped out displays,
+ but I was curious about that.
+ So I made a little bash to explore what you could do
+ with that, how you could use that display
+ in like an interesting way.
+ Little game ideas, like I'm not really a game designer
+ or developer, but like having access to these tools
+ kind of makes that possible.
+ So I made like a little ant game here
+ and I also like to make little tools.
+ So this is like image studios, like an image generator
+ on an infinite canvas, kind of like Figma.
+ I'll get into some of those in a minute,
+ but yeah, let's look at some of the other ones.
+ They also don't need to like, they can be silly.
+ Like this one from Bobby, I really like,
+ it's an auto-tetris, so you can even do.
+ It just auto-plays Tetris.
+ Chris, did you have something to add?
+ Yeah, I just shared the link to the FU one, but yeah.
+ Oh yeah, the FU one, we'll look at that in a minute.
+ But yeah, I mean, stuff like this, it's just fun.
+ Like there's nothing to do here, but like, you know,
+ seeing this, it's like a fun thing to spend a few minutes on.
+ Maybe it inspires you to like riff on it
+ and like make your own version of it
+ or like an idea to like translate it to something else.
+ And yeah, like we said, it'll go out.
+ You can make these public or private,
+ so if it's public, it'll go out to the feed
+ so everyone can see it and engage with it.
+ If it's private, you can do like a session
+ with just with your friends, work on something together,
+ maybe like start private, once it feels good,
+ you can like make it public and like let everyone see,
+ that's something we do a lot.
+ Chris mentioned, it's called FU and it's from Bobby,
+ our great creative director, designer and another silly one.
+ It takes a second for the agents to wake up.
+ So they because they're running in like their own little machine,
+ their own little virtual machine,
+ if they haven't been started in a while, they take a second,
+ but when they are active, they just come on right away.
+ Yeah, it's like a 10 second game
+ that you might play a few times because it's fun.
+ I might wanna like share the score with your friends.
+ We have an integration that'll let you share screenshots
+ out of the app into the chat, which this one could benefit
+ from for like high score leaderboard stuff.
+ That's one of those integrations, that's really nice.
+ Let's see what else here.
+ Yeah, so those are some fun ones.
+ I'll just show a couple of these games real quick,
+ even though it's not like nothing too crazy.
+ It's kind of fun to see.
+ Another cool thing is like just scrolling back
+ through the agent blog, you do have the ability
+ to like clear the context.
+ If there's like stuff in there,
+ you don't wanna share with everyone.
+ But it's kind of interesting to see
+ sometimes like the context won't be clear
+ than you can kind of see like here.
+ This is this little ant game.
+ It's kind of like Simant, if you're familiar with that.
+ And I was running into some issues
+ where it was rendering strangely.
+ So I dropped at some images
+ and I had it work out those issues for me.
+ But like if you're curious, you know,
+ how this project got to where it was,
+ you can kind of like scroll back a bit
+ and like see what the process was.
+ Or if you're curious how someone did something,
+ if they left the transcript up there,
+ you can read through it.
+ So yeah, this is just a little kind of retro ant game,
+ idle clicker sort of thing,
+ where these ants have a little colony
+ and they like go looking for food and water
+ and little spiders will come
+ and you have to like manage the colony a bit
+ and you can kind of see the ants
+ like coming in and out with the food.
+ You can like draw little like tunnels for them to dig out.
+ You can see them digging.
+ Again, there's like cute sounds and stuff.
+ You can like set there's a,
+ there's a question just I can answer real quick.
+ So you can go either way.
+ There's not a lot of this is like the code driven generation,
+ not image model generation.
+ Sometimes there might be an instance
+ where it wants to do like an image generator, whatever,
+ but you can add your own assets.
+ I'll give you an example.
+ So someone made a or a pet using their own art,
+ which actually I think is like kind of the most powerful
+ flow there is, which is basically,
+ yeah, so she drew all these like kind of sprites herself
+ to my knowledge and then would copy them in
+ and then was loading them into the kind of editor.
+ So yeah, you can kind of do whichever way you want.
+ A lot of times it'll start just by the nature of code gen
+ by filling in some placeholder art via like vector art
+ like code driven art.
+ Not the same as like, you know,
+ generative image models or anything like that,
+ but you can use those if you want.
+ - Well, yeah, a couple more things.
+ Another like, again, nothing like groundbreaking here,
+ but interesting to me, really into Balattro recently
+ and I like the shaders were cool.
+ I was like, here's how that was done.
+ So I like made like my own little solitary version of it.
+ And it's just kind of like a fun place to experiment
+ and try ideas.
+ So that was a fun one.
+ And then, yeah, last one I'll share here real quick
+ is this kind of a more advanced version.
+ But I mentioned this earlier, which it's like,
+ I do a lot of image generation and editing
+ and I also have a background in design.
+ So I'm in Figma a lot.
+ I really love the infinite canvas surface.
+ And I wanted a place like that for making images.
+ So I built this like little tool.
+ This is kind of interesting because it generates images
+ which requires credits, it requires tokens.
+ So I actually like integrated it.
+ This again, this is advanced but I integrated it
+ with the same token pool that or credit pool
+ that the agent uses.
+ So you can create images and it'll draw down
+ the credit balance in here.
+ So, you know, potentially we could, you know,
+ build out those features more in the future
+ to make it easier so people could do that.
+ But yeah, so like you saw some of the bashes
+ have custom thumbnails.
+ So, you know, I was working through some ideas
+ for like the image studio thumbnails here.
+ It kind of like this app keeps track
+ of like reference images and the prompt I use to make them.
+ It's kind of nice because you can like generate
+ four at a time, sometimes like these models are really good
+ but you might need to do a couple generations
+ to like get a good output.
+ I set up some prefixes so you could use this
+ to make like thumbnails and icons
+ and like user banner for your bash profile picture banner
+ or the like the bash you're making.
+ You can make your own little custom thumbnail with it.
+ And yeah, like kind of just use this
+ as a playground to work through some ideas.
+ If you did want to use image end,
+ there's a few tricks to get it to do that
+ but you have to explicitly ask for it.
+ So, most bashes right now do not use image gen.
+ But like with the thing that Scott just showed,
+ a lot of times like the thumbnail
+ that you're having for your bash session,
+ you want it to be like a little more inviting, you know.
+ So like as an example, if I like kind of scroll through here,
+ some of them have cool kind of thumbnails, some don't.
+ Maybe you want to generate thumbnail.
+ You can go into Scots and kind of generate that
+ or maybe you want to draw on yourself.
+ It's up to you.
+ No judgment kind of either way.
+ Shrews, what are the limitations?
+ What is it?
+ Is there a size limitation right now?
+ I mean, you can do 10 files at once, I know that.
+ - I think we let you upload one gigabyte per like batch
+ but the space itself won't be limited.
+ I mean, practically I think it might tap out
+ like a hundred gigs or something
+ but yeah, you can upload a lot to it.
+ - Oh yeah, wait, we got to do two more.
+ Sorry, there's two more we have to do.
+ So there's this one, which is kind of cool.
+ It's an example of like a network on top of the network.
+ So this is people generating tiny, tiny games
+ as a social network that was made on top of bash.
+ And so you can kind of see like,
+ that's when it starts to get like inception,
+ like network inside of network.
+ You can go to the editor.
+ You can describe the game you want, pixels,
+ kind of stuff like that and then you can post it.
+ And then actually we should use this
+ 'cause this is what we're going to use for the,
+ so what we're going to use for the raffle.
+ And then we start the race, you know, you get a little bit up.
+ And now we see all our PFR usernames over the marbles
+ and hopefully, well, I definitely lost.
+ How did that happen?
+ And what do we have Mallory as the winner?
+ There's, okay, so those are the two winners.
+ Really excited to meet all your own person and stuff.
+ And again, there's space for 90 people.
+ We've overbooked the event just in case people drop off.
+ So arrive early 'cause there is a chance
+ it might fill up even if you are approved.
+ And invite details will be going on and stuff like that.
+ Okay, great, awesome.
+ All right, thanks everyone.
+ Bye.

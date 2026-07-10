@@ -1,0 +1,42 @@
+Reference repo: https://github.com/GilRaitses/orcast
+
+Clone that repo. Build a standalone Orca Strike arcade game by PORTING and
+INTEGRATING the existing modules — do not invent placeholder meshes or controls.
+
+## Operator-attached files (already uploaded to this chat)
+Place at these paths in your game project:
+- public/orca/orca.glb
+- public/orca/motion/orca_srkw_oo14_driver.json
+- public/orca/motion/orca_srkw_oo14_driver.bin
+- public/hydrophone/slice/classification.json
+- public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a
+
+## Read from cloned repo (in order — all context is in files, not chat)
+1. wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_OPERATOR_ATTACH.md
+2. wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_AGENT_BRIEF.md
+3. wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_ASSETS.md
+4. wavves/lanes/20260710_orca-strike-game/decisions/STRIKE-controls.md
+5. wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W4-integration.md
+
+## Port these modules into your Bash game app (integrate, do not npm-run orcast web)
+- web/lib/scene/orca/ — loadOrcaMesh, OrcaRig, biologging driveOrca, materials
+- web/lib/scene/orcaStrike/ — controls, pilotStateMachine, breach, blowhole, scoring, match, islands
+- web/lib/scene/orcaPilot/ — deadReckoning, chaseCamera (do NOT edit input.ts semantics; use orcaStrike/controls for Q/E)
+- web/lib/scene/boats/ — spawnBoats, spawnKayaks, BoatMarker, KayakMarker, collision, sink
+- web/lib/scene/sonar/ — ping, teleport, radar
+- web/app/(game)/orca-strike/ — reference integration (OrcaStrikeScene.tsx, lobby, HUD)
+
+## Hard gates
+- Load orca.glb skinned mesh + DTAG driver — NEVER substitute polygon orca
+- Q dive, E surface, A/D roll, W/S thrust (read STRIKE-controls.md)
+- Boats AND kayaks in scene
+- O-key plays hydrophone m4a slice
+- Tileset: https://d8kxxpcnj3ub5.cloudfront.net/3dtwin/full/tileset.json
+
+## First commands
+cd <cloned-orcast>
+bash wavves/lanes/20260710_orca-strike-game/deliverable/fetch-assets.sh
+# copy ported modules into your new game app's src/ or lib/ tree
+# verify acceptance checklist in BASH_TV_AGENT_BRIEF.md
+
+No WorkOS. No Playwright. No Vercel/Netlify deploy. Build and run dev server only.

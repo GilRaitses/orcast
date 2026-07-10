@@ -1,0 +1,128 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.680
+ Hello, welcome to your unsolicited walkthrough of bash.tv presented by me, Richard.
+
+00:00:05.680 --> 00:00:10.320
+ Alright, let's begin. So here we have the beautiful landing page of bash.tv,
+
+00:00:10.320 --> 00:00:14.560
+ where you will find a feed right in the center and you can look at all the projects that everyone's
+
+00:00:14.560 --> 00:00:19.120
+ building. Look at that, PlayStation Modeling Tool. You can also filter by most popular,
+
+00:00:19.680 --> 00:00:24.400
+ and also the ones that you created yourself. On the top left, you're going to see chats,
+
+00:00:24.400 --> 00:00:29.200
+ which is just a chat that you can join and chat with your friends. For the hackathon,
+
+00:00:29.200 --> 00:00:33.280
+ we're going to be using this one right here. And below that, you're just going to see a recent
+
+00:00:33.280 --> 00:00:38.320
+ feed of projects that you've opened. Now on the top right, you're going to have your profile,
+
+00:00:38.320 --> 00:00:42.560
+ and let's take a look at mine. When creating one, you'll be able to change your display name,
+
+00:00:42.560 --> 00:00:48.160
+ and also link out to a website. You can even change your username, color here, and add a creator emoji.
+
+00:00:48.160 --> 00:00:53.360
+ But how do we create space for build? Okay, okay, settle down, settle down, I got you.
+
+00:00:53.360 --> 00:00:58.160
+ All you have to do is just hit the screen button over here that says create. You can name your space.
+
+00:00:58.160 --> 00:01:02.560
+ Let's use an emoji for the space. And for permissions, this is where you can designate
+
+00:01:02.560 --> 00:01:06.880
+ who's allowed to interact with the agent. So this is what it looks like when you create a space.
+
+00:01:06.880 --> 00:01:11.360
+ And you can see over here, it says let's get started, launch with 500 credits. So if you look
+
+00:01:11.360 --> 00:01:16.640
+ over here, you're going to see 1.1,000 credits. This is my personal balance. And for every new
+
+00:01:16.640 --> 00:01:21.920
+ project that you start, you'll have to add in 500 credits. So let's begin. All right, over here,
+
+00:01:21.920 --> 00:01:25.760
+ you're going to see the 500 credits that we added in. The cool thing is that every single person
+
+00:01:25.760 --> 00:01:31.280
+ that you add into this space is able to boost the project itself. If you click the settings icon
+
+00:01:31.280 --> 00:01:36.880
+ over here, it's going to open this menu where you can change the detail level of the messages
+
+00:01:36.880 --> 00:01:42.320
+ that you receive from the agent, you can add your own skills, you can change permissions,
+
+00:01:42.320 --> 00:01:47.200
+ you can check out the history, and also look at the metrics. Down here on the lower left,
+
+00:01:47.200 --> 00:01:52.320
+ you're going to see your prompt box for the agent. You're going to see an attached file icon where
+
+00:01:52.320 --> 00:01:57.200
+ you can attach files. You're going to see the emojis and the model selector, where you will
+
+00:01:57.200 --> 00:02:04.160
+ currently find 264 models to build whatever your mind can think of. Now, if you're completely
+
+00:02:04.160 --> 00:02:09.840
+ new to vibe coding, every time you prompt the agent, it's going to spend some of your credit.
+
+00:02:09.840 --> 00:02:14.640
+ The amount of credit that gets used depends on the model that you have selected. I know a lot
+
+00:02:14.640 --> 00:02:18.800
+ of you're going to want to go with opus for some of your prompts. Just keep an eye on your credit
+
+00:02:18.800 --> 00:02:23.760
+ balance because opus will use a lot of credit. Over here on the right side, you're going to see
+
+00:02:23.760 --> 00:02:29.360
+ it's as humans. This is where you and all your friends can chat as you build together. You can
+
+00:02:29.360 --> 00:02:35.280
+ say things like hello, hi, how are you? Well, I guess there's only one thing left to do. We need
+
+00:02:35.280 --> 00:02:42.080
+ a bathroom. What do I want to build today? Alright, so I'm having it build me a 3D game set in a zoo
+
+00:02:42.080 --> 00:02:46.960
+ enclosure where players are able to get their picture taken and the game then turns them into
+
+00:02:46.960 --> 00:02:52.400
+ animals that inhabit the space. Time to pass. The cool thing while the agent is thinking,
+
+00:02:52.400 --> 00:02:56.960
+ you can just be here chatting with your friends about the next steps and other things that they
+
+00:02:56.960 --> 00:03:01.840
+ should be building. And also, if someone gets another idea, they can just type it in here and
+
+00:03:01.840 --> 00:03:07.040
+ their prompt enters a queue. And look at that, it finished. Alright, let's check it out. Let's see,
+
+00:03:07.040 --> 00:03:14.960
+ let's see. Okay, we can move around, noise. We can also drag our mouse to spin the camera around.
+
+00:03:14.960 --> 00:03:19.040
+ Alright, I guess it's time to join the zoo, huh? Oh god, here we go.
+
+00:03:22.080 --> 00:03:32.160
+ Richard. Snap and release. Oh, am I here? Hello? Where is that me?
+
+00:03:36.160 --> 00:03:43.840
+ What am I? Some kind of frog? A beetle? A bear. I'm a bear. Alright, so yeah,
+
+00:03:43.840 --> 00:03:48.400
+ That's how you build with bash. I will see you guys at the hackathon. Bye-bye!
+

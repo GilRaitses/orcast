@@ -9,23 +9,19 @@ See **`BASH_TV_OPERATOR_ATTACH.md`** for paths. Minimum:
 - `classification.json`
 - `orcasound_lab_20210825_srkw.m4a` (**only on your Mac, not GitHub**)
 
-## 2. Paste this
+## 2. Paste this (builder — pull + integrate)
+
+Use **`BASH_TV_BUILDER_PROMPT.txt`** for the full paste block.
+
+Short form:
 
 ```
 Reference repo: https://github.com/GilRaitses/orcast
-
-I attached orca.glb, DTAG driver json+bin, classification.json, and hydrophone m4a.
-Place them under public/ at the paths in BASH_TV_OPERATOR_ATTACH.md.
-
-Build a new Orca Strike game from assets. Do NOT use placeholder polygon orca.
-Do NOT skip boats, kayaks, or Q/E controls.
-
-Read and follow in order:
-wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_OPERATOR_ATTACH.md
-wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_AGENT_BRIEF.md
-wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_ASSETS.md
-
-Run deliverable/fetch-assets.sh if any download is missing (except m4a).
+Clone it. Attach orca.glb, DTAG json+bin, classification.json, hydrophone m4a.
+Read deliverable/BASH_TV_OPERATOR_ATTACH.md then BASH_TV_AGENT_BRIEF.md.
+Port web/lib/scene/orcaStrike/, boats/, sonar/, orca/, orcaPilot/ into a new game app.
+Reference integration: web/app/(game)/orca-strike/OrcaStrikeScene.tsx
+No placeholder orca. Q/E controls. Boats + kayaks required.
 ```
 
 ## Why Bash agents miss assets

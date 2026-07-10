@@ -1,0 +1,42 @@
+ Hello, welcome to your unsolicited walkthrough of bash.tv presented by me, Richard.
+ Alright, let's begin. So here we have the beautiful landing page of bash.tv,
+ where you will find a feed right in the center and you can look at all the projects that everyone's
+ building. Look at that, PlayStation Modeling Tool. You can also filter by most popular,
+ and also the ones that you created yourself. On the top left, you're going to see chats,
+ which is just a chat that you can join and chat with your friends. For the hackathon,
+ we're going to be using this one right here. And below that, you're just going to see a recent
+ feed of projects that you've opened. Now on the top right, you're going to have your profile,
+ and let's take a look at mine. When creating one, you'll be able to change your display name,
+ and also link out to a website. You can even change your username, color here, and add a creator emoji.
+ But how do we create space for build? Okay, okay, settle down, settle down, I got you.
+ All you have to do is just hit the screen button over here that says create. You can name your space.
+ Let's use an emoji for the space. And for permissions, this is where you can designate
+ who's allowed to interact with the agent. So this is what it looks like when you create a space.
+ And you can see over here, it says let's get started, launch with 500 credits. So if you look
+ over here, you're going to see 1.1,000 credits. This is my personal balance. And for every new
+ project that you start, you'll have to add in 500 credits. So let's begin. All right, over here,
+ you're going to see the 500 credits that we added in. The cool thing is that every single person
+ that you add into this space is able to boost the project itself. If you click the settings icon
+ over here, it's going to open this menu where you can change the detail level of the messages
+ that you receive from the agent, you can add your own skills, you can change permissions,
+ you can check out the history, and also look at the metrics. Down here on the lower left,
+ you're going to see your prompt box for the agent. You're going to see an attached file icon where
+ you can attach files. You're going to see the emojis and the model selector, where you will
+ currently find 264 models to build whatever your mind can think of. Now, if you're completely
+ new to vibe coding, every time you prompt the agent, it's going to spend some of your credit.
+ The amount of credit that gets used depends on the model that you have selected. I know a lot
+ of you're going to want to go with opus for some of your prompts. Just keep an eye on your credit
+ balance because opus will use a lot of credit. Over here on the right side, you're going to see
+ it's as humans. This is where you and all your friends can chat as you build together. You can
+ say things like hello, hi, how are you? Well, I guess there's only one thing left to do. We need
+ a bathroom. What do I want to build today? Alright, so I'm having it build me a 3D game set in a zoo
+ enclosure where players are able to get their picture taken and the game then turns them into
+ animals that inhabit the space. Time to pass. The cool thing while the agent is thinking,
+ you can just be here chatting with your friends about the next steps and other things that they
+ should be building. And also, if someone gets another idea, they can just type it in here and
+ their prompt enters a queue. And look at that, it finished. Alright, let's check it out. Let's see,
+ let's see. Okay, we can move around, noise. We can also drag our mouse to spin the camera around.
+ Alright, I guess it's time to join the zoo, huh? Oh god, here we go.
+ Richard. Snap and release. Oh, am I here? Hello? Where is that me?
+ What am I? Some kind of frog? A beetle? A bear. I'm a bear. Alright, so yeah,
+ That's how you build with bash. I will see you guys at the hackathon. Bye-bye!
