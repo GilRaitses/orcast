@@ -1,0 +1,114 @@
+lanes:
+  STRIKE:
+    label: orca-strike-game
+    home: wavves/lanes/20260710_orca-strike-game
+    waves: [STRIKE-W1, STRIKE-W2, STRIKE-W3, STRIKE-W4, STRIKE-W5, STRIKE-ACCEPT]
+    status: chartered
+    note: >
+      Standalone arcade game expansion of HUNT. Full control map (Q/E/A/D/S/W,
+      Space breach mash, B blowhole, O hydrophone sonar), DTAG-derived pilot
+      articulation state machine, scoring/timed rounds, breach slow-mo replay,
+      island spawn picker, phased MMO multiplayer (Dodo room codes). All new
+      code under web/lib/scene/orcaStrike/ and web/app/(game)/orca-strike/.
+      ASSET_DEPENDENCY_MAP.md is the builder authority. HUNT locks preserved.
+      /mod-decide 2026-07-10: PartyKit on Bash.tv (not EC2), ACCEPT at W4 solo,
+      hydrophone attach+fetch (STRIKE-hydrophone-audio.md). W5 follow-on lane.
+      W1 complete; W2 preflight landed (orcaStrike/ modules, tsc clean). W3 core
+      mechanics landed (FSM, scoring, breach, lobby shell). W4 integration ready.
+      Bash.tv: deliverable/BASHTV_BUILD_PROMPT.md (repo-pull only; push required).
+  HUNT:
+    label: orca-boat-hunt
+    home: wavves/lanes/20260709_orca-boat-hunt
+    waves: [HUNT-W1, HUNT-W2, HUNT-INT, HUNT-ACCEPT]
+    status: chartered
+    note: >
+      Bash Hackathon (July 10) build. Player-piloted free-swim orca over the
+      real bathymetry, sinking simple arcade boats, with a sonar radar that
+      pings boat/place targets and a Floo-style instant-teleport to a pinged
+      target. Reuses the existing OrcaController/OrcaRig/CameraDirector/
+      gazetteer/useTilesLayer stack; the only existing-file touch is one
+      additive optional-track param on createOrcaController. Everything else
+      is new files under web/lib/scene/{orcaPilot,boats,sonar}/ plus a new
+      sandbox route web/app/(sandbox)/orca-strike/. Wave 2 also produces a
+      portable Bash.tv build-prompt package as a non-code deliverable. W1+W2
+      run now; HUNT-INT and HUNT-ACCEPT are GATED on O0 approval. W1+W2
+      landed (uncommitted); two open design calls (bathymetry seabed-clamp
+      fidelity, OrbitControls coexistence) were locked via /mod-decide on
+      2026-07-09, see decisions/HUNT-bathy-fidelity.md and
+      HUNT-orbit-coexistence.md. HCHK adversarial check (2026-07-09) verdict
+      REVISE surfaced one genuine unlocked fork (movement-scale under the
+      real tileset); locked 2026-07-10 via /mod-decide as arcade_fixed_scale
+      (worldUnitsPerMeter: 1 for the pilot regardless of tileset fit), see
+      decisions/HUNT-movement-scale.md. HUNT-INT is ready to /charter with
+      all three locks plus HCHK's frame-order-collision and non-blocking
+      scope-gap findings folded in as named constraints.
+      deliverable/BASHTV_BUILD_PROMPT.md was revised twice on 2026-07-10:
+      first against BREC's video/PDF-only recon (assume zero code/repo
+      import, inline everything as prose), then again after the operator
+      supplied a Discord Q&A with the Sup Team that confirmed public-GitHub-
+      link referencing works (orcast is public) and general file attach
+      works beyond images. Current state: Prompt 1 gives the agent the
+      `https://github.com/GilRaitses/orcast` link plus a git-init/commit
+      instruction as its opening lines, uses the repo reference as the
+      primary asset path with every inlined prose value kept as a fallback,
+      and the movement-scale lock is folded into Prompt 1's swim-speed
+      instruction. Operator notes section now includes model/thinking-level
+      tier guidance per prompt and notes the confirmed two-spaces-at-once
+      option (not used — kept sequential, too tightly coupled to split).
+  HCHK:
+    label: orca-boat-hunt-check
+    home: wavves/lanes/20260709_orca-boat-hunt-check
+    waves: [HCHK-W1a, HCHK-W1b, HCHK-W1c, HCHK-W1d, HCHK-VERDICT]
+    status: verdict-revise
+    note: >
+      Read-only adversarial check of the HUNT lane's HUNT-INT/HUNT-ACCEPT
+      plan and the actual W2 delivered code. Four parallel high-reasoning
+      lenses landed; verdict REVISE (see findings/HCHK-verdict.md). One
+      genuine unlocked product fork (movement-scale under the real
+      bathymetry tileset makes boats effectively unreachable) routed to
+      /mod-decide before /charter-ing HUNT-INT. A frame-order collision
+      between the pilot and the sonar teleport beat (found independently by
+      two lenses) and six non-blocking build-scope gaps are named as
+      required HUNT-INT constraints, not forks. One decision record
+      (HUNT-bathy-fidelity.md) was corrected in place: pick unchanged,
+      mis-cited justification fixed, new cosmetic risk named.
+  BREC:
+    label: bash-ecosystem-recon
+    home: wavves/lanes/20260710_bash-ecosystem-recon
+    waves: [BREC-W1]
+    status: complete
+    note: >
+      Recon-only lane, no code changes. whisper-cpp (brew + ggml-base.en.bin)
+      transcribed both local Bash.tv videos cleanly on first try, no
+      fallback needed. Findings (findings/BREC-capabilities.md, cited to
+      transcript timestamps / PDF pages / marked [web search]): (1)
+      execution model is one agent per space on a serial prompt queue, no
+      parallel/background/multi-agent orchestration anywhere in either
+      video, the PDF, or 4 web searches — nothing like this repo's own
+      `wavves` model runs on Bash.tv; (2) no confirmed git/repo-clone import
+      path, only file attachment into the agent chat, demonstrated for
+      images/art assets only (never code), capped at 10 files/1GB per
+      batch, ~100GB informal space ceiling; whether non-image files land
+      verbatim vs. as reference-only context is unconfirmed by any source.
+      Open questions (flagged for operator, not resolved): literal-vs-
+      reference handling of attached non-image files, any git/GitHub
+      import path, npm/pip install availability inside the VM, what the
+      PDF's "Skills" upload feature actually does, build-state persistence
+      across VM sleep/wake, VM internet access, which rendering library
+      Bash.tv's own generated 3D scenes use. Consumed immediately by a
+      revision to HUNT's deliverable/BASHTV_BUILD_PROMPT.md (see HUNT
+      entry above). UPDATE 2026-07-10: operator supplied a direct Discord
+      FAQ + live-stream Q&A transcript from the Sup Team (platform's own
+      builders), a higher-confidence primary source than the video/web-
+      search recon. This resolved the two biggest open questions: (1) code
+      import IS possible via a public GitHub link given as reference
+      material, confirmed directly usable since orcast is public, plus
+      general (non-image) file attachment also works; (2) confirmed
+      "two bashes at once" as a real but manual, cross-space parallelism
+      option (does not change the core "no in-space multi-agent
+      orchestration" finding). Also newly established: code export via
+      zip download, git-init/commit-per-round as a promptable pattern,
+      agent-generated reusable Skills, arbitrary reference links (not just
+      GitHub), and OpenRouter for extra models/image-gen. Findings doc
+      updated in place with an "Update" section preserving both the
+      original claims and the superseding resolution for audit trail.

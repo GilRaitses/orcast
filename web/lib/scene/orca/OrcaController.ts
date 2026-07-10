@@ -36,6 +36,10 @@ export interface OrcaControllerOptions {
   worldUnitsPerMeter?: number;
   /** Extra multiplier on the depth descent for a watchable sandbox dive. */
   depthScale?: number;
+  /** Live pose source (e.g. a player-piloted PilotTrack). When present, skips
+   * loadBiologging(motionUrl) and drives from this track directly. Backward
+   * compatible: omit this to keep the existing biologging-driven behavior. */
+  track?: BiologgingTrack;
 }
 
 export interface OrcaCost {
@@ -69,7 +73,7 @@ export async function createOrcaController(opts: OrcaControllerOptions): Promise
 
   const [{ geometry, sourceMaterial }, track] = await Promise.all([
     loadOrcaMesh(meshUrl),
-    loadBiologging(motionUrl),
+    opts.track ? Promise.resolve(opts.track) : loadBiologging(motionUrl),
   ]);
 
   const matHandle: OrcaMaterialHandle = makeOrcaMaterial({
