@@ -1,9 +1,9 @@
 # Orca Strike — Bash.tv operator card
 
-Everything the Bash.tv agent needs is **in the repo**. The operator pastes **one
-short message** (below). No control maps, score tables, or architecture in chat.
+**Mode: BUILD FROM ASSETS** — Bash.tv creates the game using repo specs and real
+assets. It does **not** run the pre-built orcast `/orca-strike` route.
 
-**Repo:** `https://github.com/GilRaitses/orcast` (pushed on `main`)
+**Repo:** `https://github.com/GilRaitses/orcast`
 
 ---
 
@@ -12,12 +12,12 @@ short message** (below). No control maps, score tables, or architecture in chat.
 ```
 Reference repo: https://github.com/GilRaitses/orcast
 
-Clone or import that repo. Do not git init a new project.
+Build a new Orca Strike game from the repo assets and spec files.
+Do NOT run orcast/web npm run dev and call it done.
 
 Read and follow exactly:
 wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_AGENT_BRIEF.md
-
-Work under web/. Run /orca-strike when the dev server is up.
+wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_ASSETS.md
 ```
 
 ---
@@ -26,30 +26,29 @@ Work under web/. Run /orca-strike when the dev server is up.
 
 | Item | Action |
 |------|--------|
-| Hydrophone m4a | Attach `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` if O-key silent |
-| Run command | **`npm run game:dev`** only — not Playwright, not deploy |
-| Env | Copy `web/game.env.example` → `.env.local` (empty OK; no WorkOS) |
+| Orca mesh | Attach `web/public/orca/orca.glb` if GitHub raw fetch fails |
+| Hydrophone m4a | Attach `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` for O-key |
+| Phases | 3 turns per brief (world → mechanics → lobby); specs all in repo files |
 
 ---
 
-## Where context lives (agent reads these, not chat)
+## Where context lives (agent reads files, not chat)
 
 | Topic | File |
 |-------|------|
-| Agent runbook | `deliverable/BASH_TV_AGENT_BRIEF.md` |
+| Build runbook | `deliverable/BASH_TV_AGENT_BRIEF.md` |
+| Asset URLs | `deliverable/BASH_TV_ASSETS.md` |
 | Authority / ACCEPT | `waveset.md` |
-| Paths and ownership | `ASSET_DEPENDENCY_MAP.md` |
-| Controls, deploy, scope locks | `decisions/STRIKE-*.md` |
-| FSM, scoring, breach specs | `findings/STRIKE-W1b-*.md`, `STRIKE-W1d-*.md` |
-| Integration map | `findings/STRIKE-W4-integration.md` |
-| Build skill | `wavves/skills/orca-strike-game/SKILL.md` |
+| Controls + locks | `decisions/STRIKE-*.md` |
+| FSM / scoring / breach | `findings/STRIKE-W1b-*.md`, `STRIKE-W1d-*.md` |
+| Reference TS to port | `web/lib/scene/orcaStrike/` |
 
 ---
 
-## Deprecated
+## orcast vs Bash.tv
 
-Multi-prompt sequences (Prompt 1/2/3) are removed. The game is integrated on
-`main` at `web/app/(game)/orca-strike/`. One repo-pull session + brief file is
-sufficient.
-
-Prompt 4 (PartyKit multiplayer) remains deferred; see `decisions/STRIKE-mp-stack.md`.
+| | orcast repo | Bash.tv job |
+|--|-------------|-------------|
+| Purpose | Forecast site + reference implementation | **Ship standalone game** |
+| Entry | `web/app/(game)/orca-strike/` exists as reference | **Build fresh** from assets |
+| WorkOS / Playwright | Present in repo | **Ignore** |

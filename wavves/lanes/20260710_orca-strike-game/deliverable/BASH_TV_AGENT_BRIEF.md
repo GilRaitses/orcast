@@ -1,134 +1,92 @@
-# Bash.tv agent brief — Orca Strike
+# Bash.tv agent brief — Orca Strike (build from assets)
 
-**For the Bash.tv agent.** The operator pastes only the repo link and this file
-path into chat. **All** specs, locks, and acceptance live in the files below.
-Do not ask the operator to re-type controls, score tables, or architecture in chat.
+**For the Bash.tv agent.** Build a **new playable Orca Strike game** in your Bash
+project using real assets and specs from the orcast repo. **Do not** run the
+pre-built orcast web app and call it done.
 
-## Repo
+The operator pastes only the repo link + this file path. **All** specs live in
+repo files — nothing retyped in chat.
+
+## Reference repo (read specs + copy assets)
 
 `https://github.com/GilRaitses/orcast`
 
-Clone or import this repo. **Do not** `git init` a new project. Work under `web/`.
+Use the repo as **reference material**: read charter files, download assets,
+optionally read source modules to port logic. The shipped game on orcast
+(`web/app/(game)/orca-strike/`) is a **reference implementation**, not something
+you npm-run.
 
-## FORBIDDEN — do not do these (common Bash.tv derailments)
-
-The orcast repo contains **forecasting site** infrastructure (WorkOS login,
-Playwright demo tests, Vercel deploy config). **Orca Strike ignores all of it.**
+## FORBIDDEN
 
 | Do NOT | Why |
 |--------|-----|
-| Run `npm run demo:*` or `playwright test` | Demo capture only; not the game |
-| Configure WorkOS / `WORKOS_*` env vars | `/orca-strike` bypasses AuthKit middleware |
-| Set `ORCAST_REQUIRE_LOGIN=1` | Gates the forecasting site, not the game |
-| Deploy to Vercel, Netlify, or any host | Run **`npm run game:dev`** in the VM only |
-| Read `web/README.md` deploy section for game | Use **this file** only |
-| Build a new Next app from scratch | Game already at `web/app/(game)/orca-strike/` |
+| `cd web && npm run dev` on orcast and open `/orca-strike` | That runs the forecasting site's pre-built route — not your job |
+| WorkOS, Playwright, Vercel, Netlify deploy setup | Forecasting-site infra; irrelevant to the game |
+| Ask operator to paste controls, scores, or FSM in chat | Read `decisions/` and `findings/` instead |
+| Present boats as real vessel traffic | Arcade props only |
 
-**Only command to run the game:**
+## Hydrate (read these files from the repo, in order)
 
-```bash
-cd web && npm install && npm run game:dev
-```
+1. This file
+2. `wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_ASSETS.md` — asset URLs + copy paths
+3. `wavves/lanes/20260710_orca-strike-game/waveset.md`
+4. `wavves/lanes/20260710_orca-strike-game/ASSET_DEPENDENCY_MAP.md`
+5. `wavves/lanes/20260710_orca-strike-game/decisions/STRIKE-controls.md`
+6. `wavves/lanes/20260709_orca-boat-hunt/decisions/HUNT-movement-scale.md`
+7. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W1b-pilot-fsm.md`
+8. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W1d-scoring-breach.md`
+9. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W1c-articulation-blend.md`
 
-Then open **`http://localhost:3000/orca-strike`** (or whatever port Next prints).
+**Reference source (port logic, do not blindly copy-paste the whole app):**
 
-Optional: `cp game.env.example .env.local` (all empty is fine).
+- `web/lib/scene/orcaStrike/` — controls, FSM, breach, scoring (TypeScript reference)
+- `web/lib/scene/orcaPilot/` — dead reckoning, chase camera
+- `web/lib/scene/boats/`, `web/lib/scene/sonar/` — HUNT mechanics
+- `web/lib/scene/orca/rig/OrcaRig.ts`, `motion/biologging.ts` — rig drive pattern
 
-## Hydrate (read in order, before any edit)
+## Your job — build the game in 3 phases
 
-1. `wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_AGENT_BRIEF.md` (this file)
-2. `wavves/lanes/20260710_orca-strike-game/waveset.md`
-3. `wavves/lanes/20260710_orca-strike-game/ASSET_DEPENDENCY_MAP.md`
-4. `wavves/skills/orca-strike-game/SKILL.md`
-5. `wavves/lanes/20260710_orca-strike-game/decisions/` — all `STRIKE-*.md`
-6. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W4-integration.md`
+Work in **your Bash.tv project** (Next.js + R3F or Vite + R3F). Commit after
+each phase.
 
-Optional deep specs (read when implementing or debugging):
+### Phase 1 — World + swim (one turn)
 
-- `findings/STRIKE-W1b-pilot-fsm.md` — FSM modes and frame order
-- `findings/STRIKE-W1d-scoring-breach.md` — breach, blowhole, scoring, replay
-- `findings/STRIKE-W3-core.md` — module contracts
+Read: `BASH_TV_ASSETS.md`, `HUNT-movement-scale.md`, `ASSET_DEPENDENCY_MAP.md` §4.
 
-## Game entry (already implemented on `main`)
+- Create a fresh game app (not the orcast `web/` forecast site).
+- Load **orca.glb** and the **full tileset** (URLs in `BASH_TV_ASSETS.md`).
+- Fixed arcade swim: `worldUnitsPerMeter: 1`, depth band 0–25 m, chase camera.
+- Transparent water surface, sky/fog, land vs sea readable.
+- Documented flat-plane fallback only if tileset fails.
 
-| What | Path |
-|------|------|
-| Route | `/orca-strike` |
-| Page + lobby | `web/app/(game)/orca-strike/page.tsx` |
-| Scene hub | `web/app/(game)/orca-strike/OrcaStrikeScene.tsx` |
-| Standalone layout | `web/app/(game)/orca-strike/layout.tsx` |
-| STRIKE library | `web/lib/scene/orcaStrike/` |
-| HUNT pilot / boats / sonar | `web/lib/scene/orcaPilot/`, `boats/`, `sonar/` |
+### Phase 2 — STRIKE controls + mechanics (one turn)
 
-## Your job (single session)
+Read: `STRIKE-controls.md`, `STRIKE-W1b-pilot-fsm.md`, `STRIKE-W1d-scoring-breach.md`.
 
-### Step 1 — Install and run
+Implement locked controls (Q/E/A/D/S/W, Space breach, B blowhole, O sonar, F
+radar, 1–9 teleport). Port or reimplement:
 
-```bash
-cd web && npm install
-cp game.env.example .env.local
-npm run game:dev
-```
+- Pilot FSM (12 modes)
+- Boat ram/sink + kayaks (arcade props)
+- Breach mash, blowhole squirt, scoring table from W1d
+- O-key hydrophone slice (attach operator m4a or fetch per `PROVENANCE.md`)
 
-Open **`/orca-strike`** (not `/`, not `/workbench`, not `/login`).
+### Phase 3 — Lobby + solo round (one turn)
 
-### Step 2 — Verify shipped mechanics
+Read: `waveset.md` ACCEPT, `web/lib/scene/orcaStrike/islands/definitions.ts`
+(three islands), `STRIKE-standalone.md`.
 
-Use locked controls in `decisions/STRIKE-controls.md` (read file; do not guess).
-
-Smoke checklist:
-
-- Q/E dive and surface
-- W/S forward and reverse
-- A/D body roll (not turn-assist)
-- Space breach mash, air phase, landing
-- B blowhole squirt on kayaks
-- O hydrophone sonar (audio + pulse)
-- F radar, 1–9 teleport (HUNT carry-over)
-- 180s solo round, score HUD, island spawn picker
-
-### Step 3 — Hydrophone audio (if O-key is silent)
-
-1. Read `web/public/hydrophone/slice/PROVENANCE.md`
-2. Run the fetch script documented there, **or** use operator-attached
-   `orcasound_lab_20210825_srkw.m4a` placed at
-   `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a`
-3. `classification.json` is already in the repo
-
-### Step 4 — Compile gate
-
-```bash
-cd web && npx tsc --noEmit
-```
-
-Must exit 0 before reporting done.
-
-### Step 5 — Fix gaps only
-
-If something in the smoke checklist fails, fix **inside the cloned repo** using
-existing modules. Read `findings/STRIKE-W4-integration.md` for integration
-points. Do not rebuild from scratch.
-
-When done, offer a project zip download if the operator asks.
-
-## Hard rules (do not violate)
-
-- **Never** edit `web/lib/scene/orcaPilot/input.ts`
-- **Never** edit `web/app/components/scene/SalishScene.tsx`, `web/app/workbench/`, or primary site nav
-- **Never** present boats as real vessel traffic (arcade props only)
-- **Never** add scientific, acoustic, or navigational claims
-- Ship target is **Bash.tv** (not EC2)
-- Multiplayer is **out of scope** until `decisions/STRIKE-mp-stack.md` follow-on lane
+- Orca skin pick, island spawn picker on context map
+- 180s solo timer, score HUD, breach slow-mo replay
+- Standalone fullscreen shell (no forecast site nav)
 
 ## Acceptance
 
-Solo ACCEPT criteria are in `waveset.md` § STRIKE-ACCEPT. W5 multiplayer is
-deferred per `decisions/STRIKE-accept-scope.md`.
+`waveset.md` § STRIKE-ACCEPT (solo). Multiplayer deferred per
+`decisions/STRIKE-accept-scope.md`.
 
 ## Escalate to operator only if
 
-- `/orca-strike` route missing after pulling latest `main`
-- `npm install` or tileset URL blocked (no network in VM)
-- Hydrophone fetch and attach both fail
-
-Otherwise resolve from repo files without asking the operator to paste specs.
+- Asset download from repo/GitHub raw URLs fails
+- Tileset URL blocked (no network)
+- Hydrophone m4a missing after attach + provenance fetch

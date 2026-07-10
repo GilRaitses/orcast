@@ -1,8 +1,8 @@
 Reference repo: https://github.com/GilRaitses/orcast
 
-Clone or import that repo. Do not git init a new project.
+Build a new Orca Strike game from the repo assets and spec files.
+Do NOT run orcast/web npm run dev and call it done.
 
 Read and follow exactly:
 wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_AGENT_BRIEF.md
-
-Work under web/. Run /orca-strike when the dev server is up.
+wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_ASSETS.md
