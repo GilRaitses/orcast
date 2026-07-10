@@ -1,92 +1,74 @@
 # Bash.tv agent brief — Orca Strike (build from assets)
 
-**For the Bash.tv agent.** Build a **new playable Orca Strike game** in your Bash
-project using real assets and specs from the orcast repo. **Do not** run the
-pre-built orcast web app and call it done.
+Build a **new** Orca Strike game in your Bash project. **All specs in repo files.**
 
-The operator pastes only the repo link + this file path. **All** specs live in
-repo files — nothing retyped in chat.
+## Step 0 — Assets BEFORE any game code (mandatory)
 
-## Reference repo (read specs + copy assets)
+Read: `deliverable/BASH_TV_OPERATOR_ATTACH.md`
 
-`https://github.com/GilRaitses/orcast`
+1. Run `deliverable/fetch-assets.sh` **OR** use operator-attached files at:
+   - `public/orca/orca.glb`
+   - `public/orca/motion/orca_srkw_oo14_driver.{json,bin}`
+   - `public/hydrophone/slice/classification.json`
+   - `public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` (**operator attach — not on GitHub**)
 
-Use the repo as **reference material**: read charter files, download assets,
-optionally read source modules to port logic. The shipped game on orcast
-(`web/app/(game)/orca-strike/`) is a **reference implementation**, not something
-you npm-run.
+2. **GATE:** Load `orca.glb` with GLTFLoader. If you see a placeholder polygon
+   orca instead of the skinned GLB, **STOP** and fix asset paths. Never substitute
+   a handmade mesh.
+
+3. Wire `OrcaRig` + `driveOrca` + DTAG driver (read `web/lib/scene/orca/rig/OrcaRig.ts`,
+   `motion/biologging.ts`). Articulation comes from the **skeleton + DTAG bin**,
+   not invented animation.
 
 ## FORBIDDEN
 
 | Do NOT | Why |
 |--------|-----|
-| `cd web && npm run dev` on orcast and open `/orca-strike` | That runs the forecasting site's pre-built route — not your job |
-| WorkOS, Playwright, Vercel, Netlify deploy setup | Forecasting-site infra; irrelevant to the game |
-| Ask operator to paste controls, scores, or FSM in chat | Read `decisions/` and `findings/` instead |
-| Present boats as real vessel traffic | Arcade props only |
+| Build a "simple stylized orca" mesh | Use **orca.glb** only |
+| Skip boats/kayaks | Port `web/lib/scene/boats/` — Phase 2 incomplete without them |
+| Use S/Space for dive/surface | **Q dive, E surface** per `decisions/STRIKE-controls.md` |
+| Run orcast `web/` npm run dev as deliverable | Build fresh game app |
+| WorkOS / Playwright / deploy platforms | Irrelevant |
 
-## Hydrate (read these files from the repo, in order)
+## Hydrate (read from repo, in order)
 
-1. This file
-2. `wavves/lanes/20260710_orca-strike-game/deliverable/BASH_TV_ASSETS.md` — asset URLs + copy paths
-3. `wavves/lanes/20260710_orca-strike-game/waveset.md`
-4. `wavves/lanes/20260710_orca-strike-game/ASSET_DEPENDENCY_MAP.md`
-5. `wavves/lanes/20260710_orca-strike-game/decisions/STRIKE-controls.md`
-6. `wavves/lanes/20260709_orca-boat-hunt/decisions/HUNT-movement-scale.md`
-7. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W1b-pilot-fsm.md`
-8. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W1d-scoring-breach.md`
-9. `wavves/lanes/20260710_orca-strike-game/findings/STRIKE-W1c-articulation-blend.md`
+1. `deliverable/BASH_TV_OPERATOR_ATTACH.md`
+2. `deliverable/BASH_TV_ASSETS.md`
+3. `decisions/STRIKE-controls.md`
+4. `findings/STRIKE-W1b-pilot-fsm.md`
+5. `findings/STRIKE-W1d-scoring-breach.md`
+6. `findings/STRIKE-W1c-articulation-blend.md`
+7. `ASSET_DEPENDENCY_MAP.md`
 
-**Reference source (port logic, do not blindly copy-paste the whole app):**
+## Build phases
 
-- `web/lib/scene/orcaStrike/` — controls, FSM, breach, scoring (TypeScript reference)
-- `web/lib/scene/orcaPilot/` — dead reckoning, chase camera
-- `web/lib/scene/boats/`, `web/lib/scene/sonar/` — HUNT mechanics
-- `web/lib/scene/orca/rig/OrcaRig.ts`, `motion/biologging.ts` — rig drive pattern
+### Phase 1 — Assets + tileset + orca with DTAG rig
 
-## Your job — build the game in 3 phases
+- `fetch-assets.sh` or attached files
+- Tileset URL in `BASH_TV_ASSETS.md`
+- Load orca.glb, build OrcaRig, sample DTAG driver
+- Chase camera, depth 0–25 m
 
-Work in **your Bash.tv project** (Next.js + R3F or Vite + R3F). Commit after
-each phase.
+### Phase 2 — STRIKE controls + boats + kayaks + sonar
 
-### Phase 1 — World + swim (one turn)
+- **Q/E/A/D/S/W/Space/B/O/F/1-9** per `STRIKE-controls.md`
+- Port `orcaStrike/controls.ts`, `pilotStateMachine.ts`, `boats/`, `sonar/`
+- Spawn boats AND kayaks (procedural markers from repo source)
 
-Read: `BASH_TV_ASSETS.md`, `HUNT-movement-scale.md`, `ASSET_DEPENDENCY_MAP.md` §4.
+### Phase 3 — Scoring, breach, blowhole, lobby
 
-- Create a fresh game app (not the orcast `web/` forecast site).
-- Load **orca.glb** and the **full tileset** (URLs in `BASH_TV_ASSETS.md`).
-- Fixed arcade swim: `worldUnitsPerMeter: 1`, depth band 0–25 m, chase camera.
-- Transparent water surface, sky/fog, land vs sea readable.
-- Documented flat-plane fallback only if tileset fails.
+- Port `breach.ts`, `blowhole.ts`, `scoring.ts`, `match.ts`, `hydrophoneSonar.ts`
+- O-key plays m4a slice from `classification.json`
+- Island spawn picker from `islands/definitions.ts`
 
-### Phase 2 — STRIKE controls + mechanics (one turn)
+## Acceptance checklist (report each item PASS/FAIL)
 
-Read: `STRIKE-controls.md`, `STRIKE-W1b-pilot-fsm.md`, `STRIKE-W1d-scoring-breach.md`.
+- [ ] orca.glb skinned mesh visible (black/white, not grey primitives)
+- [ ] DTAG driver moves rig (fluke, pitch, roll visible)
+- [ ] Q dive, E surface work
+- [ ] Boats spawn and sink on ram
+- [ ] Kayaks spawn (breach/blowhole targets)
+- [ ] O-key plays hydrophone audio
+- [ ] F sonar + 1-9 teleport
 
-Implement locked controls (Q/E/A/D/S/W, Space breach, B blowhole, O sonar, F
-radar, 1–9 teleport). Port or reimplement:
-
-- Pilot FSM (12 modes)
-- Boat ram/sink + kayaks (arcade props)
-- Breach mash, blowhole squirt, scoring table from W1d
-- O-key hydrophone slice (attach operator m4a or fetch per `PROVENANCE.md`)
-
-### Phase 3 — Lobby + solo round (one turn)
-
-Read: `waveset.md` ACCEPT, `web/lib/scene/orcaStrike/islands/definitions.ts`
-(three islands), `STRIKE-standalone.md`.
-
-- Orca skin pick, island spawn picker on context map
-- 180s solo timer, score HUD, breach slow-mo replay
-- Standalone fullscreen shell (no forecast site nav)
-
-## Acceptance
-
-`waveset.md` § STRIKE-ACCEPT (solo). Multiplayer deferred per
-`decisions/STRIKE-accept-scope.md`.
-
-## Escalate to operator only if
-
-- Asset download from repo/GitHub raw URLs fails
-- Tileset URL blocked (no network)
-- Hydrophone m4a missing after attach + provenance fetch
+Repo: `https://github.com/GilRaitses/orcast`

@@ -1,77 +1,81 @@
 # Bash.tv asset manifest — Orca Strike
 
-**Authority for Phase 1.** Download or reference these from the orcast repo.
-Do not guess URLs.
+**Read `BASH_TV_OPERATOR_ATTACH.md` first.** Binary assets do not arrive via
+GitHub "reference" paraphrase. Download with `fetch-assets.sh` or operator attach.
 
 Repo: `https://github.com/GilRaitses/orcast`  
-Raw base: `https://raw.githubusercontent.com/GilRaitses/orcast/main/`
+Raw base: `https://raw.githubusercontent.com/GilRaitses/orcast/main`
 
-## Meshes and motion
+## MANDATORY files (game is broken without these)
 
-| Asset | Repo path | Raw URL |
-|-------|-----------|---------|
-| Orca GLB | `web/public/orca/orca.glb` | `https://raw.githubusercontent.com/GilRaitses/orcast/main/web/public/orca/orca.glb` |
-| DTAG driver JSON | `web/public/orca/motion/orca_srkw_oo14_driver.json` | `.../web/public/orca/motion/orca_srkw_oo14_driver.json` |
-| DTAG driver BIN | `web/public/orca/motion/orca_srkw_oo14_driver.bin` | `.../web/public/orca/motion/orca_srkw_oo14_driver.bin` |
+| Asset | Repo path | Full raw URL | In GitHub? |
+|-------|-----------|--------------|------------|
+| **Orca GLB (skinned rig)** | `web/public/orca/orca.glb` | https://raw.githubusercontent.com/GilRaitses/orcast/main/web/public/orca/orca.glb | YES |
+| **DTAG driver JSON** | `web/public/orca/motion/orca_srkw_oo14_driver.json` | https://raw.githubusercontent.com/GilRaitses/orcast/main/web/public/orca/motion/orca_srkw_oo14_driver.json | YES |
+| **DTAG driver BIN** | `web/public/orca/motion/orca_srkw_oo14_driver.bin` | https://raw.githubusercontent.com/GilRaitses/orcast/main/web/public/orca/motion/orca_srkw_oo14_driver.bin | YES |
+| **Hydrophone labels** | `web/public/hydrophone/slice/classification.json` | https://raw.githubusercontent.com/GilRaitses/orcast/main/web/public/hydrophone/slice/classification.json | YES |
+| **Hydrophone audio** | `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` | — | **NO — operator attach only** |
 
-Attach `orca.glb` directly in Bash.tv if raw fetch fails.
+### Verify orca.glb loaded correctly
 
-## Terrain
+- File size ~**486752** bytes
+- `GLTFLoader` shows **skinned mesh** with bones (not a single BoxGeometry substitute)
+- Load pattern: `web/lib/scene/orca/loadOrcaMesh.ts`, rig: `web/lib/scene/orca/rig/OrcaRig.ts`
+
+### Verify DTAG driver
+
+- JSON ~5118 bytes, BIN ~1146236 bytes
+- 7 channels: yaw, pitch, roll, depthM, flukePhase, flukeAmp (see `biologging.ts` header)
+- `driveOrca(rig, pose)` applies articulation each frame
+
+## Terrain (URL, not in repo)
 
 | Asset | Value |
 |-------|-------|
-| Tileset (full, not pilot) | `https://d8kxxpcnj3ub5.cloudfront.net/3dtwin/full/tileset.json` |
+| Tileset | https://d8kxxpcnj3ub5.cloudfront.net/3dtwin/full/tileset.json |
 | Bounds | lat 48.4–48.7, lng -123.25 to -122.75 |
-| Fit hints | See `web/lib/scene/tiles/useTilesLayer.ts` in repo — `groupRotationX: -π/2`, metric fit, `errorTarget: 16` |
-| Movement scale lock | `wavves/lanes/20260709_orca-boat-hunt/decisions/HUNT-movement-scale.md` — `worldUnitsPerMeter: 1` |
+| Movement scale | `decisions/HUNT-movement-scale.md` — `worldUnitsPerMeter: 1` |
 
-## Hydrophone (O-key sonar)
+## Boats and kayaks (CODE — not GLB files)
 
-| Asset | Repo path | Notes |
-|-------|-----------|-------|
-| Classifications | `web/public/hydrophone/slice/classification.json` | In repo |
-| Audio slice | `web/public/hydrophone/slice/orcasound_lab_20210825_srkw.m4a` | **Gitignored** — operator attaches to Bash, or fetch per `web/public/hydrophone/slice/PROVENANCE.md` |
+Agent must **read and port** from repo:
 
-## Geo / places (F radar + teleport)
+| File | Role |
+|------|------|
+| `web/lib/scene/boats/spawnBoats.ts` | spawn floating boats |
+| `web/lib/scene/boats/spawnKayaks.ts` | spawn kayaks |
+| `web/lib/scene/boats/BoatMarker.tsx` | boat mesh ~2.8 m |
+| `web/lib/scene/boats/KayakMarker.tsx` | kayak capsule ~1.5 m |
+| `web/lib/scene/boats/collision.ts` | ram detection |
+| `web/lib/scene/boats/sinkAnimation.ts` | sink on hit |
 
-| Asset | Repo path |
-|-------|-----------|
-| Gazetteer | `web/lib/geo/gazetteer.ts` |
-| Scene frame | `web/lib/sceneIntent.ts` — `SCENE_WIDTH=120`, `projectToScene` |
+**Phase 2 is incomplete without boats AND kayaks in the scene.**
 
-## Islands (spawn picker)
+## Controls Q/E (locked — read file)
 
-Read and port values from:
+`decisions/STRIKE-controls.md`:
 
-`web/lib/scene/orcaStrike/islands/definitions.ts`
+- **Q** = dive (depth rate +)
+- **E** = surface (depth rate −)
+- **Not** S/Space (old HUNT remap)
 
-Locked v1: `san-juan-core`, `haro-strait`, `puget-approach`.
+Port: `web/lib/scene/orcaStrike/controls.ts` + `inputAdapter.ts` + `pilotStateMachine.ts`
 
-## Spec files (mechanics — read, do not skip)
+## Reference TypeScript to port (read, do not npm-run orcast web)
 
-| Topic | File |
-|-------|------|
-| Controls | `decisions/STRIKE-controls.md` |
-| FSM | `findings/STRIKE-W1b-pilot-fsm.md` |
-| Scoring / breach / blowhole | `findings/STRIKE-W1d-scoring-breach.md` |
-| Rig blends | `findings/STRIKE-W1c-articulation-blend.md` |
-| Full path map | `ASSET_DEPENDENCY_MAP.md` |
-
-## Reference implementation (read to port, not to npm-run)
-
-| Module | Repo path |
-|--------|-----------|
-| STRIKE library | `web/lib/scene/orcaStrike/` |
+| Module | Path |
+|--------|------|
+| Full STRIKE stack | `web/lib/scene/orcaStrike/` |
+| Orca rig + material | `web/lib/scene/orca/` |
 | Pilot | `web/lib/scene/orcaPilot/` |
-| Boats | `web/lib/scene/boats/` |
 | Sonar | `web/lib/scene/sonar/` |
-| Integrated scene | `web/app/(game)/orca-strike/OrcaStrikeScene.tsx` |
+| Integrated scene (reference) | `web/app/(game)/orca-strike/OrcaStrikeScene.tsx` |
 
-## npm packages (game app only)
+## First command in new Bash project
 
+```bash
+bash wavves/lanes/20260710_orca-strike-game/deliverable/fetch-assets.sh
+# or use operator-attached files at public/ paths above
 ```
-three @react-three/fiber @react-three/drei 3d-tiles-renderer
-```
 
-Install in **your** Bash game project. Do not assume orcast `web/package.json`
-scripts are your entrypoint.
+Then confirm m4a exists before implementing O-key.
